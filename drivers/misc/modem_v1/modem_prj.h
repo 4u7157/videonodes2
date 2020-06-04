@@ -118,8 +118,11 @@ IOCTL commands
 
 #define IOCTL_SECURITY_REQ		_IO('o', 0x53)	/* Request smc_call */
 #define IOCTL_SHMEM_FULL_DUMP		_IO('o', 0x54)	/* For shmem dump */
+<<<<<<< HEAD
 #define IOCTL_MODEM_CRASH_REASON	_IO('o', 0x55)	/* Get Crash Reason */
 #define IOCTL_MODEM_AIRPLANE_MODE	_IO('o', 0x56)	/* Set Airplane mode on/off */
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /*
 Definitions for IO devices
@@ -235,6 +238,18 @@ static inline bool sipc_ps_ch(u8 ch)
 #define sipc5_is_not_reserved_channel(ch) \
 	((ch) != 0 && (ch) != 5 && (ch) != 6 && (ch) != 27 && (ch) != 255)
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MODEM_IF_QOS
+#define MAX_NDEV_TX_Q 2
+#else
+#define MAX_NDEV_TX_Q 1
+#endif
+#define MAX_NDEV_RX_Q 1
+/* mark value for high priority packet, hex QOSH */
+#define RAW_HPRIO	0x514F5348
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct vnet {
 	struct io_device *iod;
 	struct link_device *ld;
@@ -420,6 +435,7 @@ struct link_device {
 	struct modem_data *mdm_data;
 
 	/* TX queue of socket buffers */
+<<<<<<< HEAD
 	struct sk_buff_head sk_fmt_tx_q;
 	struct sk_buff_head sk_raw_tx_q;
 	struct sk_buff_head *skb_txq[MAX_SIPC_DEVICES];
@@ -428,6 +444,12 @@ struct link_device {
 	struct sk_buff_head sk_fmt_rx_q;
 	struct sk_buff_head sk_raw_rx_q;
 	struct sk_buff_head *skb_rxq[MAX_SIPC_DEVICES];
+=======
+	struct sk_buff_head skb_txq[MAX_SIPC_MAP];
+
+	/* RX queue of socket buffers */
+	struct sk_buff_head skb_rxq[MAX_SIPC_MAP];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Stop/resume control for network ifaces */
 	spinlock_t netif_lock;
@@ -482,6 +504,7 @@ struct link_device {
 	/* Change secure mode, Call SMC API */
 	int (*security_req)(struct link_device *ld, struct io_device *iod,
 			unsigned long arg);
+<<<<<<< HEAD
 
 	/* Get crash reason form modem_if driver */
 	int (*crash_reason)(struct link_device *ld, struct io_device *iod,
@@ -490,6 +513,8 @@ struct link_device {
 	/* Set airplane mode for power saving */
 	int (*airplane_mode)(struct link_device *ld, struct io_device *iod,
 			unsigned long arg);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #define pm_to_link_device(pm)	container_of(pm, struct link_device, pm)
@@ -642,6 +667,7 @@ struct modem_ctl {
 	unsigned int mbx_cp_status;
 	unsigned int mbx_perf_req;
 
+<<<<<<< HEAD
 	/* for notify uart connection with direction*/
 	unsigned int mbx_uart_noti;
 	unsigned int int_uart_noti;
@@ -667,12 +693,18 @@ struct modem_ctl {
 	unsigned int sbi_uart_noti_pos;
 
 	unsigned int airplane_mode;
+=======
+	/* for checking aliveness of CP */
+	struct modem_irq irq_cp_wdt;		/* watchdog timer */
+	struct modem_irq irq_cp_fail;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifdef CONFIG_EXYNOS_BUSMONITOR
 	struct notifier_block busmon_nfb;
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_MUIC_NOTIFIER)
 	struct notifier_block uart_notifier;
 #endif
@@ -681,6 +713,8 @@ struct modem_ctl {
 
 	struct work_struct pm_qos_work;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Switch with 2 links in a modem */
 	unsigned int gpio_link_switch;
 

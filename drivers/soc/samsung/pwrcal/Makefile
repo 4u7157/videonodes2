@@ -8,9 +8,12 @@
 
 obj-y				+= power-cal.o pwrcal-cmu.o pwrcal-pll.o pwrcal-dfs.o \
 				pwrcal-pmu.o pwrcal-rae.o pwrcal-vclk.o pwrcal-dbg.o
+<<<<<<< HEAD
 obj-$(CONFIG_PMUCAL_MOD)	+= pmucal_mod/pmucal_system.o pmucal_mod/pmucal_local.o \
 				   pmucal_mod/pmucal_cpu.o pmucal_mod/pmucal_rae.o
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 ifeq ($(CONFIG_SOC_EXYNOS8890), y)
 ifeq ($(CONFIG_SOC_EXYNOS8890_EVT1), y)
 obj-y				+= S5E8890/S5E8890-cmu.o S5E8890/S5E8890-pmu.o \
@@ -31,9 +34,12 @@ obj-$(CONFIG_SOC_EXYNOS7870)	+= S5E7870/S5E7870-cmu.o S5E7870/S5E7870-pmu.o \
 				S5E7870/S5E7870-syspwr.o S5E7870/S5E7870-vclk.o \
 				S5E7870/S5E7870-drampara.o S5E7870/S5E7870-pll.o \
 				S5E7870/S5E7870-rae.o \
+<<<<<<< HEAD
 
 obj-$(CONFIG_SOC_EXYNOS7570)	+= S5E7570/S5E7570-cmu.o \
 				S5E7570/S5E7570-dfs.o S5E7570/S5E7570-asv.o \
 				S5E7570/S5E7570-vclk.o \
 				S5E7570/S5E7570-drampara.o S5E7570/S5E7570-pll.o \
 				S5E7570/S5E7570-rae.o \
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

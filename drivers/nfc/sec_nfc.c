@@ -154,6 +154,7 @@ static irqreturn_t sec_nfc_irq_thread_fn(int irq, void *dev_id)
 
 static irqreturn_t sec_nfc_clk_irq(int irq, void *dev_id)
 {
+<<<<<<< HEAD
 	struct sec_nfc_info *info = dev_id;
 	struct sec_nfc_platform_data *pdata = info->pdata;
 	struct device_node *np = info->dev->of_node;
@@ -168,6 +169,8 @@ static irqreturn_t sec_nfc_clk_irq(int irq, void *dev_id)
 			val |= SEC_NFC_CLKCTRL_REQ_POLA;
 		writel(val, info->clkctrl);
 	}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return IRQ_HANDLED;
 }
 
@@ -449,7 +452,11 @@ int sec_nfc_i2c_probe(struct i2c_client *client)
 	if(prop){
 		info->clk_irq = gpio_to_irq(pdata->clk_irq);
 		ret = request_threaded_irq(info->clk_irq, NULL, sec_nfc_clk_irq,
+<<<<<<< HEAD
 			IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT, "nfc_clk",
+=======
+			IRQF_TRIGGER_RISING | IRQF_ONESHOT, "nfc_clk",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				info);
 		if (ret < 0) {
 			dev_err(dev, "failed to register IRQ handler\n");
@@ -826,7 +833,11 @@ static int sec_nfc_parse_dt(struct device *dev,
 
 	prop = of_find_property(np, "sec-nfc,ven-gpio", NULL);
 	if (prop)
+<<<<<<< HEAD
 		pdata->ven = of_get_named_gpio(np, "sec-nfc,ven-gpio", 0);
+=======
+	pdata->ven = of_get_named_gpio(np, "sec-nfc,ven-gpio", 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	else {
 		if (of_property_read_u32(np, "clkctrl-reg", (u32 *)&pdata->clkctrl_addr))
 			return -EINVAL;
@@ -1075,6 +1086,12 @@ static int __devinit __sec_nfc_probe(struct device *dev)
 			pr_info("%s : nfc support model : %d\n", __func__, nfc_support);
 		}else{
 			pr_info("%s : nfc not support model : %d\n", __func__, nfc_support);
+<<<<<<< HEAD
+=======
+			if (dev->of_node)
+				devm_kfree(dev, pdata);
+			kfree(info);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -ENXIO;
 		}
 	}
@@ -1087,12 +1104,21 @@ static int __devinit __sec_nfc_probe(struct device *dev)
 
 	prop = of_find_property(np, "sec-nfc,ven-gpio", NULL);
 	if (prop) {
+<<<<<<< HEAD
 		ret = gpio_request(pdata->ven, "nfc_ven");
 		if (ret) {
 			dev_err(dev, "failed to get gpio ven\n");
 			goto err_gpio_ven;
 		}
 		gpio_direction_output(pdata->ven, SEC_NFC_PW_OFF);
+=======
+	ret = gpio_request(pdata->ven, "nfc_ven");
+	if (ret) {
+		dev_err(dev, "failed to get gpio ven\n");
+		goto err_gpio_ven;
+	}
+	gpio_direction_output(pdata->ven, SEC_NFC_PW_OFF);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		if (pdata->clkctrl_addr != 0) {
 			info->clkctrl = ioremap_nocache(pdata->clkctrl_addr, 0x4);

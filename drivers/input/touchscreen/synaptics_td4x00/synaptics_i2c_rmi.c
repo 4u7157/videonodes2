@@ -463,8 +463,15 @@ static int synaptics_rmi4_i2c_read(struct synaptics_rmi4_data *rmi4_data,
 				"%s: I2C read over retry limit\n",
 				__func__);
 		retval = -EIO;
+<<<<<<< HEAD
 		if (rmi4_data->tsp_probe)
 			schedule_delayed_work(&rmi4_data->incell_reset_work, msecs_to_jiffies(5));
+=======
+#ifdef CONFIG_SEC_INCELL
+		if (rmi4_data->tsp_probe)
+			schedule_delayed_work(&rmi4_data->incell_reset_work, msecs_to_jiffies(5));
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 exit:
@@ -513,11 +520,19 @@ static int synaptics_rmi4_i2c_write(struct synaptics_rmi4_data *rmi4_data,
 				__func__);
 		return -ENOMEM;
 	}
+<<<<<<< HEAD
 	
 	page = ((addr >> 8) & MASK_8BIT);
 	buf_page[0] = MASK_8BIT;
 	buf_page[1] = page;
 	
+=======
+
+	page = ((addr >> 8) & MASK_8BIT);
+	buf_page[0] = MASK_8BIT;
+	buf_page[1] = page;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	msg[1].buf = buf;
 
 	mutex_lock(&(rmi4_data->rmi4_io_ctrl_mutex));
@@ -556,8 +571,15 @@ static int synaptics_rmi4_i2c_write(struct synaptics_rmi4_data *rmi4_data,
 				"%s: I2C write over retry limit\n",
 				__func__);
 		retval = -EIO;
+<<<<<<< HEAD
 		if (rmi4_data->tsp_probe)
 			schedule_delayed_work(&rmi4_data->incell_reset_work, msecs_to_jiffies(5));
+=======
+#ifdef CONFIG_SEC_INCELL
+		if (rmi4_data->tsp_probe)
+			schedule_delayed_work(&rmi4_data->incell_reset_work, msecs_to_jiffies(5));
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 exit:
@@ -1068,7 +1090,15 @@ static int synaptics_rmi4_f12_abs_report(struct synaptics_rmi4_data *rmi4_data,
 			touch_count++;
 			rmi4_data->all_finger_count++;
 
+<<<<<<< HEAD
 			if ((touch_count > 4) && (rmi4_data->check_multi == 0)) {
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+			if ((touch_count > 4) && (rmi4_data->check_multi == 0)) {
+#else
+			if ((touch_count > 2) && (rmi4_data->check_multi == 0)) {
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				rmi4_data->check_multi = 1;
 				rmi4_data->multi_count++;
 			}
@@ -1265,9 +1295,21 @@ static void synaptics_rmi4_incell_reset_work(struct work_struct *work)
 
 	input_info(true, &rmi4_data->i2c_client->dev, "%s [START]\n", __func__);
 
+<<<<<<< HEAD
 	if (incell_data.blank_unblank)
 		incell_data.blank_unblank(NULL);
 
+=======
+	rmi4_data->irq_enabled = false;
+	disable_irq_nosync(rmi4_data->irq);
+
+	if (incell_data.blank_unblank)
+		incell_data.blank_unblank(NULL);
+
+	enable_irq(rmi4_data->irq);
+	rmi4_data->irq_enabled = true;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_info(true, &rmi4_data->i2c_client->dev, "%s [DONE]\n", __func__);
 }
 #endif
@@ -1491,7 +1533,11 @@ static int synaptics_rmi4_irq_enable(struct synaptics_rmi4_data *rmi4_data,
 
 	if (enable) {
 		if (rmi4_data->irq_enabled)
+<<<<<<< HEAD
 			goto exit;
+=======
+			return retval;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		/* Clear interrupts first */
 		retval = synaptics_rmi4_i2c_read(rmi4_data,
@@ -1501,7 +1547,11 @@ static int synaptics_rmi4_irq_enable(struct synaptics_rmi4_data *rmi4_data,
 		if (retval < 0) {
 			input_err(true, &rmi4_data->i2c_client->dev, "%s, %4d: Failed to read. error = %d\n",
 				__func__, __LINE__, retval);
+<<<<<<< HEAD
 			goto exit;
+=======
+			return retval;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 
 		retval = request_threaded_irq(rmi4_data->irq, NULL,
@@ -1511,7 +1561,11 @@ static int synaptics_rmi4_irq_enable(struct synaptics_rmi4_data *rmi4_data,
 			input_err(true, &rmi4_data->i2c_client->dev,
 					"%s: Failed to create irq thread\n",
 					__func__);
+<<<<<<< HEAD
 			goto exit;
+=======
+			return retval;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 
 		rmi4_data->irq_enabled = true;
@@ -4230,8 +4284,16 @@ static int synaptics_rmi4_stop_device(struct synaptics_rmi4_data *rmi4_data)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	synaptics_rmi4_irq_enable(rmi4_data, false, false);
 
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+	synaptics_rmi4_irq_enable(rmi4_data, false, false);
+#else
+	disable_irq(rmi4_data->i2c_client->irq);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	synpatics_rmi4_release_all_event(rmi4_data, RELEASE_TYPE_ALL);
 
 	rmi4_data->flag_incell_reset_work = true;
@@ -4309,8 +4371,17 @@ static int synaptics_rmi4_start_device(struct synaptics_rmi4_data *rmi4_data)
 	}
 #endif
 
+<<<<<<< HEAD
 	synaptics_rmi4_irq_enable(rmi4_data, true, false);
 
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+	synaptics_rmi4_irq_enable(rmi4_data, true, false);
+#else
+	enable_irq(rmi4_data->i2c_client->irq);
+
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_info(true, &rmi4_data->i2c_client->dev, "%s\n", __func__);
 
 out:

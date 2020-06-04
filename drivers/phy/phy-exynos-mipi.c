@@ -29,6 +29,11 @@
 #define MIPI_PHY_MxSx_SHARED 	(1 << 1)
 #define MIPI_PHY_MxSx_INIT_DONE (2 << 1)
 
+<<<<<<< HEAD
+=======
+#define INVALID_OPT_BIT	256
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* reference count for phy-m4s4 */
 static int phy_m4s4_count;
 
@@ -53,6 +58,10 @@ struct exynos_mipi_phy {
 		enum exynos_mipi_phy_type type;
 		unsigned int iso_offset;
 		unsigned int rst_bit;
+<<<<<<< HEAD
+=======
+		unsigned int opt_bit;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		u8 flags;
 	} phys[EXYNOS_MIPI_PHYS_NUM];
 };
@@ -73,6 +82,34 @@ static int __set_phy_isolation(struct regmap *reg_pmu,
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static int __set_phy_option(struct exynos_mipi_phy *state,
+		unsigned int bit, int val)
+{
+	void __iomem *addr = state->regs;
+	unsigned int cfg;
+
+	if (!addr)
+		return 0;
+
+	if (IS_ERR(addr)) {
+		dev_err(state->dev, "%s Invalid address\n", __func__);
+		return -EINVAL;
+	}
+
+	cfg = readl(addr);
+	if (val)
+		cfg |= (1 << bit);
+	else
+		cfg &= ~(1 << bit);
+	writel(cfg, addr);
+
+	pr_debug("%s bit=%d, val=0x%x\n", __func__, bit, cfg);
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* 1: Enable reset -> release reset, 0: Enable reset */
 static int __set_phy_reset(struct exynos_mipi_phy *state,
 		unsigned int bit, unsigned int on)
@@ -80,7 +117,14 @@ static int __set_phy_reset(struct exynos_mipi_phy *state,
 	void __iomem *addr = state->regs;
 	unsigned int cfg;
 
+<<<<<<< HEAD
 	if (IS_ERR_OR_NULL(addr)) {
+=======
+	if (!addr)
+		return 0;
+
+	if (IS_ERR(addr)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		dev_err(state->dev, "%s Invalid address\n", __func__);
 		return -EINVAL;
 	}
@@ -257,6 +301,10 @@ static const struct of_device_id exynos_mipi_phy_of_table[] = {
 		.compatible = "samsung,mipi-phy-s1",
 		.data = &mipi_phy_m0sx,
 	},
+<<<<<<< HEAD
+=======
+	{ },
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 MODULE_DEVICE_TABLE(of, exynos_mipi_phy_of_table);
 
@@ -271,6 +319,19 @@ static int exynos_mipi_phy_init(struct phy *phy)
 	return __set_phy_init(state, phy_desc, 1);
 }
 
+<<<<<<< HEAD
+=======
+static int exynos_mipi_phy_set(struct phy *phy, int option, void *info)
+{
+	struct mipi_phy_desc *phy_desc = phy_get_drvdata(phy);
+	struct exynos_mipi_phy *state = to_mipi_video_phy(phy_desc);
+
+	if (phy_desc->opt_bit != INVALID_OPT_BIT)
+		return __set_phy_option(state, phy_desc->opt_bit, option);
+
+	return 0;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int exynos_mipi_phy_power_on(struct phy *phy)
 {
@@ -301,6 +362,10 @@ static struct phy *exynos_mipi_phy_of_xlate(struct device *dev,
 
 static struct phy_ops exynos_mipi_phy_ops = {
 	.init		= exynos_mipi_phy_init,
+<<<<<<< HEAD
+=======
+	.set		= exynos_mipi_phy_set,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.power_on	= exynos_mipi_phy_power_on,
 	.power_off	= exynos_mipi_phy_power_off,
 	.owner		= THIS_MODULE,
@@ -317,6 +382,10 @@ static int exynos_mipi_phy_probe(struct platform_device *pdev)
 	const struct of_device_id *of_id;
 	unsigned int iso[EXYNOS_MIPI_PHYS_NUM];
 	unsigned int rst[EXYNOS_MIPI_PHYS_NUM];
+<<<<<<< HEAD
+=======
+	unsigned int opt[EXYNOS_MIPI_PHYS_NUM];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int i, elements;
 	int ret = 0;
 
@@ -349,6 +418,14 @@ static int exynos_mipi_phy_probe(struct platform_device *pdev)
 	}
 
 	elements = of_property_count_u32_elems(node, "isolation");
+<<<<<<< HEAD
+=======
+	if (elements < 0 || elements >= EXYNOS_MIPI_PHYS_NUM) {
+		dev_err(dev, "invalid number of PHYs (%d).\n", elements);
+		return -EINVAL;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = of_property_read_u32_array(node, "isolation", iso,
 					elements);
 	if (ret) {
@@ -363,11 +440,29 @@ static int exynos_mipi_phy_probe(struct platform_device *pdev)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < elements; i++) {
 		state->phys[i].iso_offset = iso[i];
 		state->phys[i].rst_bit    = rst[i];
 		dev_dbg(dev, "%s: iso 0x%x, reset %d\n", __func__,
 			state->phys[i].iso_offset, state->phys[i].rst_bit);
+=======
+	for (i = 0; i < EXYNOS_MIPI_PHYS_NUM; ++i)
+		opt[i] = INVALID_OPT_BIT;
+	/* it's optional */
+	if (!of_property_read_u32_array(node, "option", opt,
+				elements))
+		dev_info(dev, "use mipi-phy option!!!\n");
+
+	for (i = 0; i < elements; i++) {
+		state->phys[i].iso_offset = iso[i];
+		state->phys[i].rst_bit    = rst[i];
+		state->phys[i].opt_bit    = opt[i];
+		dev_dbg(dev, "%s: iso 0x%x, reset %d, option %d\n",
+			__func__, state->phys[i].iso_offset,
+			state->phys[i].rst_bit,
+			state->phys[i].opt_bit);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	for (i = 0; i < elements; i++) {
@@ -399,11 +494,29 @@ static int exynos_mipi_phy_probe(struct platform_device *pdev)
 	return PTR_ERR_OR_ZERO(phy_provider);
 }
 
+<<<<<<< HEAD
 static struct platform_driver exynos_mipi_phy_driver = {
 	.probe	= exynos_mipi_phy_probe,
 	.driver = {
 		.name  = "exynos-mipi-phy",
 		.of_match_table = of_match_ptr(exynos_mipi_phy_of_table),
+=======
+static int exynos_mipi_phy_remove(struct platform_device *pdev)
+{
+	struct device *dev = &pdev->dev;
+
+	dev_info(dev, "%s, successfully removed\n", __func__);
+	return 0;
+}
+
+static struct platform_driver exynos_mipi_phy_driver = {
+	.probe	= exynos_mipi_phy_probe,
+	.remove	= exynos_mipi_phy_remove,
+	.driver = {
+		.name  = "exynos-mipi-phy",
+		.of_match_table = of_match_ptr(exynos_mipi_phy_of_table),
+		.suppress_bind_attrs = true,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 };
 module_platform_driver(exynos_mipi_phy_driver);

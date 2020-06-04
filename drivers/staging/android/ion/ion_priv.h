@@ -244,6 +244,9 @@ struct ion_heap {
 	struct task_struct *task;
 
 	int (*debug_show)(struct ion_heap *heap, struct seq_file *, void *);
+	atomic_long_t total_allocated;
+	atomic_long_t total_allocated_peak;
+	atomic_long_t total_handles;
 };
 
 /**
@@ -415,7 +418,10 @@ void ion_chunk_heap_destroy(struct ion_heap *);
 struct ion_heap *ion_cma_heap_create(struct ion_platform_heap *);
 void ion_cma_heap_destroy(struct ion_heap *);
 
+<<<<<<< HEAD
 unsigned long reclaim_ion_for_oom(struct ion_heap *heap);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 typedef void (*ion_device_sync_func)(const void *, size_t, int);
 void ion_device_sync(struct ion_device *dev, struct scatterlist *sgl,
 			int nents, enum dma_data_direction dir,
@@ -641,6 +647,13 @@ struct ion_eventlog {
 
 void ION_EVENT_SHRINK(struct ion_device *dev, size_t size);
 void ION_EVENT_CLEAR(struct ion_buffer *buffer, ktime_t begin);
+<<<<<<< HEAD
+=======
+
+void show_ion_system_heap_size(struct seq_file *s);
+void show_ion_system_heap_pool_size(struct seq_file *s);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define ION_EVENT_BEGIN()		do { } while (0)
 #define ION_EVENT_DONE()		do { } while (0)

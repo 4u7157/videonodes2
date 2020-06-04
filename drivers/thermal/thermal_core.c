@@ -68,7 +68,10 @@ static void start_poll_queue(struct thermal_zone_device *tz, int delay)
 			msecs_to_jiffies(delay));
 }
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static atomic_t in_suspend;
 
 static struct thermal_governor *def_governor;
@@ -579,8 +582,14 @@ curr_temp_show(struct device *dev, struct device_attribute *attr, char *buf)
 			len += sprintf(&buf[len], ",");
 		ret = thermal_zone_get_temp(tz, &temperature);
 		if (ret)
+<<<<<<< HEAD
 			return ret;
 		len += sprintf(&buf[len], "%ld", temperature / 1000);
+=======
+			len += sprintf(&buf[len], "-1");
+		else
+			len += sprintf(&buf[len], "%ld", temperature / 1000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		cnt++;
 	}
 	len += sprintf(&buf[len], "\n");
@@ -1971,7 +1980,7 @@ static int thermal_pm_notify(struct notifier_block *nb,
 }
 
 static struct notifier_block thermal_pm_nb = {
-	.notifier_call = thermal_pm_notify,
+       .notifier_call = thermal_pm_notify,
 };
 
 static int __init thermal_init(void)
@@ -1997,7 +2006,10 @@ static int __init thermal_init(void)
 #ifdef CONFIG_SCHED_MC
 	register_hotcpu_notifier(&thermal_cpu_notifier);
 #endif
+<<<<<<< HEAD
 	register_pm_notifier(&thermal_pm_nb);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 

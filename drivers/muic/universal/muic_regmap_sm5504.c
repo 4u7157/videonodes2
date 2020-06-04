@@ -44,7 +44,10 @@
 #include "muic-internal.h"
 #include "muic_i2c.h"
 #include "muic_regmap.h"
+<<<<<<< HEAD
 #include "muic_vps.h"
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 enum sm5504_muic_reg_init_value {
 	REG_INTMASK1_VALUE	= (0xDC),
@@ -67,7 +70,11 @@ enum sm5504_muic_reg {
 	REG_MANSW1	= 0x13,
 	REG_MANSW2	= 0x14,
 	REG_RESET	= 0x1B,
+<<<<<<< HEAD
 	REG_SET		= 0x20,
+=======
+	REG_RSVDID2	= 0x20,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* 0x22 is reserved. */
 	REG_CHGTYPE	= 0x24,
 	REG_RSVDID4	= 0x3A,
@@ -80,7 +87,10 @@ enum sm5504_muic_reg {
 enum sm5504_muic_reg_item {
 	DEVID_VendorID = REG_ITEM(REG_DEVID, _BIT0, _MASK3),
 
+<<<<<<< HEAD
 	CTRL_ADC_EN	= REG_ITEM(REG_CTRL, _BIT7, _MASK1),
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	CTRL_USBCHDEN	= REG_ITEM(REG_CTRL, _BIT6, _MASK1),
 	CTRL_SW_OPEN	= REG_ITEM(REG_CTRL, _BIT4, _MASK1),
 	CTRL_RAWDATA	= REG_ITEM(REG_CTRL, _BIT3, _MASK1),
@@ -184,7 +194,10 @@ enum sm5504_muic_devt2{
 						CTRL_RAW_DATA_MASK | CTRL_MANUAL_SW_MASK |	\
 						CTRL_INT_MASK_MASK)
 
+<<<<<<< HEAD
 #define INT1_DCD_OUT_MASK	(0x1 << 3)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define INT2_UVLO_MASK		(0x1 << 1)
 #define REG_CTRL_INITIAL (CTRL_MASK | CTRL_MANUAL_SW_MASK)
 
@@ -215,9 +228,12 @@ static int sm5703_com_value_tbl[] = {
 	[COM_USB_CP]		= _COM_USB_CP,
 };
 
+<<<<<<< HEAD
 #define INIT_VBUS_140MS		(0x0E)
 #define INIT_VBUS_300MS		(0x06)
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static regmap_t sm5504_muic_regmap_table[] = {
 	[REG_DEVID]	= {"DeviceID",	 0x01, 0x00, INIT_NONE},
 	[REG_CTRL]	= {"CONTROL", 0x1F, 0x00, REG_CTRL_INITIAL,},
@@ -235,7 +251,11 @@ static regmap_t sm5504_muic_regmap_table[] = {
 	[REG_RESET]	= {"RESET", 0x00, 0x00, INIT_NONE,},
 	/* 0x1C: Reserved */
 	/* 0x1E ~ 0x1F: Reserved */
+<<<<<<< HEAD
 	[REG_SET]	= {"Reserved_ID2", 0x06, 0x00, INIT_VBUS_140MS,},
+=======
+	[REG_RSVDID2]	= {"Reserved_ID2",	 0x04, 0x00, INIT_NONE,},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* 0x22: Reserved */
 	[REG_CHGTYPE]	= {"REG_CHG_TYPE", 0xFF, 0x00, INIT_NONE,},
 	[REG_END]	= {NULL, 0, 0, INIT_NONE},
@@ -398,6 +418,7 @@ static int sm5504_set_rustproof(struct regmap_desc *pdesc, int op)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int sm5504_set_manual_JIGON(struct regmap_desc *pdesc, int jig_attached)
 {
 	int attr = 0, value = 0, ret = 0; 
@@ -430,6 +451,8 @@ static int sm5504_set_manual_JIGON(struct regmap_desc *pdesc, int jig_attached)
 	return ret; 
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sm5504_get_vps_data(struct regmap_desc *pdesc, void *pbuf)
 {
 	muic_data_t *pmuic = pdesc->muic;
@@ -454,6 +477,7 @@ static int sm5504_get_vps_data(struct regmap_desc *pdesc, void *pbuf)
 		pr_info("%s : USB_CDP DETECTED\n", MUIC_DEV_NAME);
 		break;
 	case SM5504_DEVT1_USB:
+<<<<<<< HEAD
 		if (vps_is_supported_dev(ATTACHED_DEV_TIMEOUT_OPEN_MUIC) &&
 				pmuic->intr.intr1 & INT1_DCD_OUT_MASK) {
 			pvps->t.attached_dev = ATTACHED_DEV_TIMEOUT_OPEN_MUIC;
@@ -462,6 +486,10 @@ static int sm5504_get_vps_data(struct regmap_desc *pdesc, void *pbuf)
 			pvps->t.attached_dev = ATTACHED_DEV_USB_MUIC;
 			pr_info("%s : USB DETECTED\n", MUIC_DEV_NAME);
 		}
+=======
+		pvps->t.attached_dev = ATTACHED_DEV_USB_MUIC;
+		pr_info("%s : USB DETECTED\n", MUIC_DEV_NAME);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case SM5504_DEVT1_CAR_KIT_CHARGER:
 	case SM5504_DEVT1_DCP:
@@ -538,6 +566,7 @@ static void sm5504_set_switching_mode(struct regmap_desc *pdesc, int mode)
 		_REGMAP_TRACE(pdesc, 'w', ret, attr, value);
 }
 
+<<<<<<< HEAD
 static void sm5504_set_adc_scan_mode(struct regmap_desc *pdesc, int en)
 {
 	int attr, value;
@@ -554,6 +583,8 @@ static void sm5504_set_adc_scan_mode(struct regmap_desc *pdesc, int en)
 		_REGMAP_TRACE(pdesc, 'w', ret, attr, value);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sm5504_get_fromatted_dump(struct regmap_desc *pdesc, char *mesg)
 {
 	muic_data_t *muic = pdesc->muic;
@@ -578,7 +609,11 @@ static void sm5504_get_fromatted_dump(struct regmap_desc *pdesc, char *mesg)
 	sprintf(mesg+strlen(mesg), "DT1:%x ", val);
 	val = i2c_smbus_read_byte_data(muic->i2c, REG_DEVT2);
 	sprintf(mesg+strlen(mesg), "DT2:%x ", val);
+<<<<<<< HEAD
 	val = i2c_smbus_read_byte_data(muic->i2c, REG_SET);
+=======
+	val = i2c_smbus_read_byte_data(muic->i2c, REG_RSVDID2);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sprintf(mesg+strlen(mesg), "RS2:%x", val);
 }
 
@@ -601,8 +636,11 @@ static struct vendor_ops sm5504_muic_vendor_ops = {
 	.set_switch = sm5504_set_switching_mode,
 	.get_vps_data = sm5504_get_vps_data,
 	.set_rustproof = sm5504_set_rustproof,
+<<<<<<< HEAD
 	.set_manual_JIGON = sm5504_set_manual_JIGON,
 	.set_adc_scan_mode = sm5504_set_adc_scan_mode,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static struct regmap_desc sm5504_muic_regmap_desc = {

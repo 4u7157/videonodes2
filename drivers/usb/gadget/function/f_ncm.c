@@ -1096,6 +1096,7 @@ static struct sk_buff *ncm_wrap_ntb(struct gether *port,
 	unsigned	max_size = ncm->port.fixed_in_len;
 	const struct ndp_parser_opts *opts = ncm->parser_opts;
 	unsigned	crc_len = ncm->is_crc ? sizeof(uint32_t) : 0;
+<<<<<<< HEAD
 
 	div = le16_to_cpu(ntb_parameters.wNdpInDivisor);
 	rem = le16_to_cpu(ntb_parameters.wNdpInPayloadRemainder);
@@ -1111,6 +1112,24 @@ static struct sk_buff *ncm_wrap_ntb(struct gether *port,
 	ncb_len += pad;
 
 	if (ncb_len + skb->len + crc_len > max_size) {
+=======
+
+	div = le16_to_cpu(ntb_parameters.wNdpInDivisor);
+	rem = le16_to_cpu(ntb_parameters.wNdpInPayloadRemainder);
+	ndp_align = le16_to_cpu(ntb_parameters.wNdpInAlignment);
+
+	ncb_len += opts->nth_size;
+	ndp_pad = ALIGN(ncb_len, ndp_align) - ncb_len;
+	ncb_len += ndp_pad;
+	ncb_len += opts->ndp_size;
+	ncb_len += 2 * 2 * opts->dgram_item_len; /* Datagram entry */
+	ncb_len += 2 * 2 * opts->dgram_item_len; /* Zero datagram entry */
+	pad = ALIGN(ncb_len, div) + rem - ncb_len;
+	ncb_len += pad;
+
+	if (ncb_len + skb->len + crc_len > max_size) {
+		printk(KERN_ERR"usb: %s Dropped skb skblen (%d) \n",__func__,skb->len);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		dev_kfree_skb_any(skb);
 		return NULL;
 	}
@@ -1122,7 +1141,11 @@ static struct sk_buff *ncm_wrap_ntb(struct gether *port,
 	dev_kfree_skb_any(skb);
 #ifdef CONFIG_USB_NCM_SUPPORT_MTU_CHANGE
 	if (!skb2) {
+<<<<<<< HEAD
 		printk(KERN_ERR"Dropped skb \n");
+=======
+		printk(KERN_ERR"usb: %s Dropped skb skblen realloc failed (%d) \n",__func__,skb->len);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return NULL;
 	}
 #else
@@ -1315,6 +1338,7 @@ static int ncm_unwrap_ntb(struct gether *port,
 	     "Parsed NTB with %d frames\n", dgram_counter);
 	return 0;
 err:
+	printk(KERN_DEBUG"usb:%s Dropped %d \n",__func__,skb->len);
 	skb_queue_purge(list);
 	dev_kfree_skb_any(skb);
 	return ret;
@@ -1583,3 +1607,7 @@ int ncm_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN],
 		kfree(ncm);
 	return status;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

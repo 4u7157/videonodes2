@@ -507,6 +507,12 @@ static void lis2ds_acc_work_func(struct work_struct *work)
 	struct lis2ds_data *cdata =
 		container_of(work, struct lis2ds_data, acc_work);
 
+<<<<<<< HEAD
+=======
+	struct timespec ts = ktime_to_timespec(ktime_get_boottime());
+	u64 timestamp_new = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+	int time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int n;
 	int err;
 	int data[3];
@@ -543,9 +549,20 @@ static void lis2ds_acc_work_func(struct work_struct *work)
 	cdata->accel_data[1] = tmp_data[1] - cdata->accel_cal_data[1];
 	cdata->accel_data[2] = tmp_data[2] - cdata->accel_cal_data[2];
 
+<<<<<<< HEAD
 	input_report_rel(cdata->acc_input, REL_X, cdata->accel_data[0]);
 	input_report_rel(cdata->acc_input, REL_Y, cdata->accel_data[1]);
 	input_report_rel(cdata->acc_input, REL_Z, cdata->accel_data[2]);
+=======
+	time_hi = (int)((timestamp_new & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp_new & TIME_LO_MASK);
+
+	input_report_rel(cdata->acc_input, REL_X, cdata->accel_data[0]);
+	input_report_rel(cdata->acc_input, REL_Y, cdata->accel_data[1]);
+	input_report_rel(cdata->acc_input, REL_Z, cdata->accel_data[2]);
+	input_report_rel(cdata->acc_input, REL_DIAL, time_hi);
+	input_report_rel(cdata->acc_input, REL_MISC, time_lo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_sync(cdata->acc_input);
 
 exit:
@@ -688,9 +705,13 @@ static void lis2ds_event_management(struct work_struct *data_work)
 
 	if ((cdata->sensors[LIS2DS_STEP_C].enabled) &&
 	    (ck_gate_val & LIS2DS_FUNC_CK_GATE_STEP_D_MASK)) {
+<<<<<<< HEAD
 		mutex_lock(&cdata->mutex_read);
 		lis2ds_report_step_c_data(cdata, &step_cnt);
 		mutex_unlock(&cdata->mutex_read);
+=======
+		lis2ds_report_step_c_data(cdata, &step_cnt);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		cdata->last_steps_c = cdata->steps_c + step_cnt;
 		SENSOR_INFO("last_steps_c : %lld, steps_c : %lld, step_cnt : %d\n", cdata->last_steps_c, cdata->steps_c, step_cnt);
 		input_report_rel(cdata->sc_input, REL_MISC, cdata->last_steps_c+1);
@@ -1000,7 +1021,11 @@ static int lis2ds_disable_sensors(struct lis2ds_data *cdata, int sindex)
 	case LIS2DS_ACCEL:
 		hrtimer_cancel(&cdata->acc_timer);
 		cancel_work_sync(&cdata->acc_work);
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (cdata->sensors[LIS2DS_TILT].enabled
 			|| cdata->sensors[LIS2DS_SIGN_M].enabled
 			|| cdata->sensors[LIS2DS_STEP_C].enabled
@@ -1011,15 +1036,26 @@ static int lis2ds_disable_sensors(struct lis2ds_data *cdata, int sindex)
 					  lis2ds_odr_table.mask,
 					  LIS2DS_ODR_25HZ_HR_VAL,
 					  true);
+<<<<<<< HEAD
 		SENSOR_INFO("ODR = %d\n", LIS2DS_ODR_25HZ_HR_VAL);
 
 		} else {
 	    		err = lis2ds_write_data_with_mask(cdata,
+=======
+			SENSOR_INFO("ODR = %d\n", LIS2DS_ODR_25HZ_HR_VAL);
+
+		} else {
+			err = lis2ds_write_data_with_mask(cdata,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					  lis2ds_odr_table.addr,
 					  lis2ds_odr_table.mask,
 					  LIS2DS_ODR_POWER_OFF_VAL,
 					  true);
+<<<<<<< HEAD
 		SENSOR_INFO("ODR = %d\n", LIS2DS_ODR_POWER_OFF_VAL);
+=======
+			SENSOR_INFO("ODR = %d\n", LIS2DS_ODR_POWER_OFF_VAL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		}
 
@@ -1128,7 +1164,12 @@ static ssize_t lis2ds_acc_enable_store(struct device *dev,
 	if (enable) {
 		if (pre_enable == 0) {
 			lis2ds_acc_open_calibration(cdata);
+<<<<<<< HEAD
 			err = lis2ds_set_fs(cdata, LIS2DS_ACCEL, LIS2DS_ACCEL_FS);
+=======
+			err = lis2ds_set_fs(cdata, LIS2DS_ACCEL,
+				LIS2DS_ACCEL_FS);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			err = lis2ds_enable_sensors(cdata, LIS2DS_ACCEL);
 			atomic_set(&cdata->acc_wkqueue_en, 1);
 		}
@@ -1739,7 +1780,11 @@ static int lis2ds_selftest_run(struct lis2ds_data *cdata,
 		NOST[2] += xyz[2];
 	}
 
+<<<<<<< HEAD
 	for (i = 0 ; i < 3; i ++) {
+=======
+	for (i = 0 ; i < 3; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		NOST[i] /= 5;
 		NOST[i] = LIS2DS_ACC_LSB_TO_MG(NOST[i]);
 	}
@@ -1773,7 +1818,11 @@ static int lis2ds_selftest_run(struct lis2ds_data *cdata,
 		POS_ST[2] += xyz[2];
 	}
 
+<<<<<<< HEAD
 	for (i = 0 ; i < 3; i ++) {
+=======
+	for (i = 0 ; i < 3; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		POS_ST[i] /= 5;
 		POS_ST[i] = LIS2DS_ACC_LSB_TO_MG(POS_ST[i]);
 	}
@@ -1816,7 +1865,11 @@ static int lis2ds_selftest_run(struct lis2ds_data *cdata,
 		NEG_ST[2] += xyz[2];
 	}
 
+<<<<<<< HEAD
 	for (i = 0 ; i < 3; i ++) {
+=======
+	for (i = 0 ; i < 3; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		NEG_ST[i] /= 5;
 		NEG_ST[i] = LIS2DS_ACC_LSB_TO_MG(NEG_ST[i]);
 	}
@@ -1987,7 +2040,11 @@ static ssize_t lis2ds_smart_alert_store(struct device *dev,
 					   LIS2DS_INT1_WAKEUP_MASK,
 					   0x00, true);
 
+<<<<<<< HEAD
 		if(!cdata->sensors[LIS2DS_ACCEL].enabled) {
+=======
+		if (!cdata->sensors[LIS2DS_ACCEL].enabled) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			lis2ds_write_data_with_mask(cdata,
 					  lis2ds_odr_table.addr,
 					  lis2ds_odr_table.mask,
@@ -2115,6 +2172,11 @@ static int lis2ds_acc_input_init(struct lis2ds_data *cdata)
 	input_set_capability(dev, EV_REL, REL_X);
 	input_set_capability(dev, EV_REL, REL_Y);
 	input_set_capability(dev, EV_REL, REL_Z);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_DIAL);
+	input_set_capability(dev, EV_REL, REL_MISC);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(dev, cdata);
 
 	ret = input_register_device(dev);
@@ -2326,11 +2388,32 @@ static u32 lis2ds_parse_dt(struct lis2ds_data *cdata)
 	struct device_node *np;
 	enum of_gpio_flags flags;
 	u32 orientation[9], i = 0;
+<<<<<<< HEAD
+=======
+	int ret = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	np = cdata->dev->of_node;
 	if (!np)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	/* ldo_pin setup */
+	cdata->lis2ds_ldo_pin = of_get_named_gpio_flags(np, "st,vdd_ldo_pin", 0, &flags);
+	if (cdata->lis2ds_ldo_pin < 0) {
+		SENSOR_ERR("Cannot set vdd_ldo_pin through DTSI\n\n");
+		cdata->lis2ds_ldo_pin = 0;
+	} else {
+		ret = gpio_request(cdata->lis2ds_ldo_pin, "st,vdd_ldo_pin");
+		if (ret < 0)
+			SENSOR_ERR("gpio %d request failed %d\n",
+				cdata->lis2ds_ldo_pin, ret);
+		else
+			gpio_direction_output(cdata->lis2ds_ldo_pin, 0);
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cdata->irq_gpio = of_get_named_gpio_flags(np, "st,irq_gpio", 0, &flags);
 	if (cdata->irq_gpio < 0) {
 		SENSOR_ERR("get irq_gpio = %d error\n", cdata->irq_gpio);
@@ -2350,6 +2433,20 @@ static u32 lis2ds_parse_dt(struct lis2ds_data *cdata)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int lis2ds_vdd_onoff(struct lis2ds_data *cdata, int onoff)
+{
+	/* ldo control */
+	if (cdata->lis2ds_ldo_pin) {
+		gpio_set_value(cdata->lis2ds_ldo_pin, onoff);
+		if (onoff)
+			msleep(20);
+	}
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int lis2ds_common_probe(struct lis2ds_data *cdata, int irq, u16 bustype)
 {
 	int32_t err, i;
@@ -2359,6 +2456,7 @@ int lis2ds_common_probe(struct lis2ds_data *cdata, int irq, u16 bustype)
 	SENSOR_INFO("Start!\n");
 
 	mutex_init(&cdata->bank_registers_lock);
+<<<<<<< HEAD
 	mutex_init(&cdata->tb.buf_lock);
 	mutex_init(&cdata->mutex_enable);
 	mutex_init(&cdata->mutex_read);
@@ -2390,6 +2488,32 @@ int lis2ds_common_probe(struct lis2ds_data *cdata, int irq, u16 bustype)
 		if (err < 0)
 			goto parse_dt_error;
 	}
+=======
+	mutex_init(&cdata->mutex_enable);
+
+	if (irq > 0) {
+		err = lis2ds_parse_dt(cdata);
+		if (err < 0)
+			goto parse_dt_error;
+	}
+
+	lis2ds_vdd_onoff(cdata, ON);
+
+	/* Read Chip ID register */
+	while (retry--) {
+		err = cdata->tf->read(cdata, LIS2DS_WHO_AM_I_ADDR, 1, &wai, true);
+		if (err < 0)
+			SENSOR_ERR("failed to read Who-Am-I register. err = %d\n", err);
+
+		if (wai != LIS2DS_WHO_AM_I_DEF)
+			SENSOR_ERR("Who-Am-I value not valid. wai = %d err = %d\n", wai, err);
+		else
+			break;
+	}
+
+	if (retry < 0)
+		goto exit_err_chip_id_or_i2c_error;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* input device init */
 	err = lis2ds_acc_input_init(cdata);
@@ -2542,10 +2666,15 @@ exit_acc_input_init:
 exit_err_chip_id_or_i2c_error:
 parse_dt_error:
 	mutex_destroy(&cdata->bank_registers_lock);
+<<<<<<< HEAD
 	mutex_destroy(&cdata->tb.buf_lock);
 	mutex_destroy(&cdata->mutex_enable);
 	mutex_destroy(&cdata->mutex_read);
 
+=======
+	mutex_destroy(&cdata->mutex_enable);
+	SENSOR_INFO("failed!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return err;
 }
 EXPORT_SYMBOL(lis2ds_common_probe);
@@ -2557,16 +2686,30 @@ void lis2ds_common_remove(struct lis2ds_data *cdata, int irq)
 	for (i = 0; i < LIS2DS_SENSORS_NUMB; i++)
 		lis2ds_disable_sensors(cdata, i);
 
+<<<<<<< HEAD
 }
 EXPORT_SYMBOL(lis2ds_common_remove);
 
 
+=======
+        lis2ds_vdd_onoff(cdata, OFF);
+}
+EXPORT_SYMBOL(lis2ds_common_remove);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void lis2ds_common_shutdown(struct lis2ds_data *cdata)
 {
 	u8 i;
 
+<<<<<<< HEAD
 	for (i = 0; i < LIS2DS_SENSORS_NUMB; i++)
 		lis2ds_disable_sensors(cdata, i);
+=======
+	for (i = 0; i < LIS2DS_SENSORS_NUMB; i++) {
+		if(cdata->sensors[i].enabled)
+			lis2ds_disable_sensors(cdata, i);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 }
 EXPORT_SYMBOL(lis2ds_common_shutdown);
@@ -2586,9 +2729,13 @@ static int lis2ds_resume_sensors(struct lis2ds_data *cdata)
 		|| cdata->sensors[LIS2DS_STEP_D].enabled) {
 
 		if (cdata->sensors[LIS2DS_STEP_C].enabled) {
+<<<<<<< HEAD
 			mutex_lock(&cdata->mutex_read);
 			lis2ds_report_step_c_data(cdata, &step_cnt);
 			mutex_unlock(&cdata->mutex_read);
+=======
+			lis2ds_report_step_c_data(cdata, &step_cnt);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			cdata->last_steps_c = cdata->steps_c + step_cnt;
 			input_report_rel(cdata->sc_input, REL_MISC, cdata->last_steps_c+1);
 			input_report_rel(cdata->sc_input, REL_X, time_hi);
@@ -2648,6 +2795,12 @@ int lis2ds_common_suspend(struct lis2ds_data *cdata)
 		SENSOR_ERR(": suspend failed\n");
 		return err;
 	}
+<<<<<<< HEAD
+=======
+
+	SENSOR_INFO(" finished\n");
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 EXPORT_SYMBOL(lis2ds_common_suspend);
@@ -2661,6 +2814,11 @@ int lis2ds_common_resume(struct lis2ds_data *cdata)
 		return err;
 	}
 
+<<<<<<< HEAD
+=======
+	SENSOR_INFO(" finished\n");
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 EXPORT_SYMBOL(lis2ds_common_resume);

@@ -100,7 +100,11 @@ u32 ist30xx_get_fw_chksum(struct ist30xx_data *data)
 	return chksum;
 }
 
+<<<<<<< HEAD
 #define KEY_SENSITIVITY_OFFSET  0x10
+=======
+#define KEY_SENSITIVITY_OFFSET  0x04
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 u32 key_sensitivity = 0;
 int ist30xx_get_key_sensitivity(struct ist30xx_data *data, int id)
 {
@@ -168,7 +172,12 @@ static void not_support_cmd(void *dev_data)
 	mutex_unlock(&sec->cmd_lock);
 
 	sec->cmd_state = CMD_STATE_NA;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: \"%s\"\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: \"%s(%d)\"\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return;
 }
 
@@ -185,7 +194,12 @@ static void get_chip_vendor(void *dev_data)
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void get_chip_name(void *dev_data)
@@ -201,7 +215,12 @@ static void get_chip_name(void *dev_data)
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void get_chip_id(void *dev_data)
@@ -217,7 +236,12 @@ static void get_chip_id(void *dev_data)
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 #include <linux/uaccess.h>
 #define MAX_FW_PATH 255
@@ -267,7 +291,12 @@ static void fw_update(void *dev_data)
 		snprintf(fw_path, MAX_FW_PATH, "/sdcard/%s", IST30XX_FW_NAME);
 		fp = filp_open(fw_path, O_RDONLY, 0);
 		if (IS_ERR(fp)) {
+<<<<<<< HEAD
 			tsp_warn("%s(), file %s open error\n", __func__, fw_path);
+=======
+			tsp_warn("%s(), file %s open error\n", __func__,
+					fw_path);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			sec->cmd_state= CMD_STATE_FAIL;
 			set_fs(old_fs);
 			break;
@@ -322,6 +351,10 @@ static void fw_update(void *dev_data)
 		mutex_unlock(&ist30xx_mutex);
 
 		ist30xx_calibrate(data, 1);
+<<<<<<< HEAD
+=======
+		ist30xx_start(data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 
 	default:
@@ -374,7 +407,12 @@ static void get_fw_ver_bin(void *dev_data)
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (data->dt_data->fw_bin && firmware) {
 		release_firmware(firmware);
@@ -394,7 +432,12 @@ static void get_config_ver(void *dev_data)
 
         set_cmd_result(sec, buff, strnlen(buff, sizeof(buff)));
         sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
         tsp_info("%s(): %s\n", __func__, buff);
+=======
+        tsp_info("%s(): %s(%d)\n", __func__, buff,
+                 strnlen(buff, sizeof(buff)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 static void get_checksum_data(void *dev_data)
 {
@@ -423,7 +466,12 @@ static void get_checksum_data(void *dev_data)
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void get_fw_ver_ic(void *dev_data)
@@ -453,7 +501,12 @@ static void get_fw_ver_ic(void *dev_data)
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void set_edge_mode(void *dev_data)
@@ -488,7 +541,12 @@ static void set_edge_mode(void *dev_data)
 		snprintf(buf, sizeof(buf), "%s", "NG");
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void get_threshold(void *dev_data)
@@ -518,7 +576,12 @@ static void get_threshold(void *dev_data)
 
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__,
+			buf, (int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void get_scr_x_num(void *dev_data)
@@ -539,7 +602,12 @@ static void get_scr_x_num(void *dev_data)
 	if (val >= 0) {
 		snprintf(buf, sizeof(buf), "%u", val);
 		sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 		dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+		dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+				(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		snprintf(buf, sizeof(buf), "%s", "NG");
 		sec->cmd_state = CMD_STATE_FAIL;
@@ -568,7 +636,12 @@ static void get_scr_y_num(void *dev_data)
 	if (val >= 0) {
 		snprintf(buf, sizeof(buf), "%u", val);
 		sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 		dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+		dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+				(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		snprintf(buf, sizeof(buf), "%s", "NG");
 		sec->cmd_state = CMD_STATE_FAIL;
@@ -597,7 +670,12 @@ static void get_all_x_num(void *dev_data)
 	if (val >= 0) {
 		snprintf(buf, sizeof(buf), "%u", val);
 		sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 		dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+		dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+				(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		snprintf(buf, sizeof(buf), "%s", "NG");
 		sec->cmd_state = CMD_STATE_FAIL;
@@ -626,7 +704,12 @@ static void get_all_y_num(void *dev_data)
 	if (val >= 0) {
 		snprintf(buf, sizeof(buf), "%u", val);
 		sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 		dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+		dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+				(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		snprintf(buf, sizeof(buf), "%s", "NG");
 		sec->cmd_state = CMD_STATE_FAIL;
@@ -644,6 +727,19 @@ int check_tsp_channel(void *dev_data, int width, int height)
 	struct ist30xx_data *data = (struct ist30xx_data *)dev_data;
 	struct sec_factory *sec = (struct sec_factory *)&data->sec;
 
+<<<<<<< HEAD
+=======
+	if (data->tsp_info.dir.swap_xy) {
+		if ((sec->cmd_param[0] < 0) || (sec->cmd_param[0] >= height) ||
+			(sec->cmd_param[1] < 0) || (sec->cmd_param[1] >= width)) {
+				tsp_info("%s: parameter error: %u,%u\n",
+					__func__, sec->cmd_param[0], sec->cmd_param[1]);
+		} else {
+			node = sec->cmd_param[1] + sec->cmd_param[0] * width;
+			tsp_info("%s: node = %d\n", __func__, node);
+		}
+	} else {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((sec->cmd_param[0] < 0) || (sec->cmd_param[0] >= width) ||
 			(sec->cmd_param[1] < 0) || (sec->cmd_param[1] >= height)) {
 		tsp_info("%s: parameter error: %u,%u\n",
@@ -652,6 +748,10 @@ int check_tsp_channel(void *dev_data, int width, int height)
 		node = sec->cmd_param[0] + sec->cmd_param[1] * width;
 		tsp_info("%s: node = %d\n", __func__, node);
 	}
+<<<<<<< HEAD
+=======
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return node;
 }
@@ -764,7 +864,12 @@ void run_raw_read(void *dev_data)
 
 	sec->cmd_state = CMD_STATE_OK;
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+			(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void run_raw_read_key(void *dev_data)
@@ -799,7 +904,12 @@ void run_raw_read_key(void *dev_data)
 
 	sec->cmd_state = CMD_STATE_OK;
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+			(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void get_raw_value(void *dev_data)
@@ -825,7 +935,12 @@ void get_raw_value(void *dev_data)
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	tsp_info("%s(), [%d][%d]: %s\n", __func__,
 			sec->cmd_param[0], sec->cmd_param[1], buf);
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+			(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 extern u8 *ts_cmcs_bin;
@@ -938,9 +1053,18 @@ int get_read_all_data(struct ist30xx_data *data, u8 flag)
 			case TEST_CM_ALL_DATA:
 				count += snprintf(temp, 10, "%d,", ts_cmcs_buf->cm[ii]);
 				break;
+<<<<<<< HEAD
 			case TEST_SLOPE_ALL_DATA:
 				count += snprintf(temp, 10, "%d,", ts_cmcs_buf->slope0[ii]);
 				break;
+=======
+			case TEST_SLOPE0_ALL_DATA:
+				count += snprintf(temp, 10, "%d,", ts_cmcs_buf->slope0[ii]);
+				break;
+			case TEST_SLOPE1_ALL_DATA:
+				count += snprintf(temp, 10, "%d,", ts_cmcs_buf->slope1[ii]);
+				break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			case TEST_CS_ALL_DATA:
 				count += snprintf(temp, 10, "%d,", ts_cmcs_buf->cs[ii]);
 				break;
@@ -976,17 +1100,41 @@ void get_cm_all_data(void *dev_data) {
 		sec->cmd_state = CMD_STATE_FAIL;
 	else
 		sec->cmd_state = CMD_STATE_OK;
+<<<<<<< HEAD
 
 }
 
 void get_slope_all_data(void *dev_data) {
+=======
+}
+
+void get_slope0_all_data(void *dev_data) {
 	struct ist30xx_data *data = (struct ist30xx_data *)dev_data;
 	struct sec_factory *sec = (struct sec_factory *)&data->sec;
 	int ret;
 
 	set_default_result(sec);
 
+	ret = get_read_all_data(data, TEST_SLOPE0_ALL_DATA);
+	if (ret < 0)
+		sec->cmd_state = CMD_STATE_FAIL;
+	else
+		sec->cmd_state = CMD_STATE_OK;
+}
+
+void get_slope1_all_data(void *dev_data) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+	struct ist30xx_data *data = (struct ist30xx_data *)dev_data;
+	struct sec_factory *sec = (struct sec_factory *)&data->sec;
+	int ret;
+
+	set_default_result(sec);
+
+<<<<<<< HEAD
 	ret = get_read_all_data(data, TEST_SLOPE_ALL_DATA);
+=======
+	ret = get_read_all_data(data, TEST_SLOPE1_ALL_DATA);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		sec->cmd_state = CMD_STATE_FAIL;
 	else
@@ -1071,7 +1219,12 @@ void run_cm_test(void *dev_data)
 
 	sec->cmd_state = CMD_STATE_OK;
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+			(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void run_cm_test_key(void *dev_data)
@@ -1137,7 +1290,12 @@ void run_cm_test_key(void *dev_data)
 
 	sec->cmd_state = CMD_STATE_OK;
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+			(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void get_cm_value(void *dev_data)
@@ -1163,7 +1321,12 @@ void get_cm_value(void *dev_data)
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
 	tsp_info("%s(), [%d][%d]: %s\n", __func__,
 			sec->cmd_param[0], sec->cmd_param[1], buf);
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n", __func__, buf,
+			(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void run_cmcs_test(void *dev_data)
@@ -1204,7 +1367,12 @@ void run_cmcs_test(void *dev_data)
 
 	sec->cmd_state = CMD_STATE_OK;
 	set_cmd_result(sec, buf, strnlen(buf, sizeof(buf)));
+<<<<<<< HEAD
 	dev_info(&data->client->dev, "%s: %s\n", __func__, buf);
+=======
+	dev_info(&data->client->dev, "%s: %s(%d)\n",
+			__func__, buf,	(int)strnlen(buf, sizeof(buf)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void get_cm_array(void *dev_data)
@@ -1401,6 +1569,7 @@ static ssize_t store_cmd(struct device *dev, struct device_attribute
 	int param_cnt = 0;
 	int ret;
 
+<<<<<<< HEAD
 	if (strlen(buf) >= SEC_CMD_STR_LEN) {
 		pr_err("%s: cmd length(strlen(buf)) is over (%d,%s)!!\n",
 				__func__, (int)strlen(buf), buf);
@@ -1416,6 +1585,21 @@ static ssize_t store_cmd(struct device *dev, struct device_attribute
 	if (sec->cmd_is_running == true) {
 		dev_err(&client->dev, "tsp_cmd: other cmd is running.\n");
 		tsp_err("tsp_cmd: other cmd is running.\n");
+=======
+	if (sec->cmd_is_running == true) {
+		dev_err(&client->dev, "tsp_cmd: other cmd is running.\n");
+		tsp_err("tsp_cmd: other cmd is running.\n");
+		goto err_out;
+	}
+
+	if (strlen(buf) >= SEC_CMD_STR_LEN) {
+		tsp_err("%s: cmd length(strlen(buf)) is over (%s,%d)!!\n", __func__, buf, (int)strlen(buf));
+		goto err_out;
+	}
+
+	if (count >= (unsigned int)SEC_CMD_STR_LEN) {
+		tsp_err("%s: cmd length(count) is over (%s,%d)!!\n", __func__, buf, (unsigned int)count);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto err_out;
 	}
 
@@ -1600,7 +1784,12 @@ struct tsp_cmd tsp_cmds[] = {
 	{ TSP_CMD("get_raw_value",   get_raw_value),   },
 	{ TSP_CMD("get_raw_all_data", get_raw_all_data),},
 	{ TSP_CMD("get_cm_all_data", get_cm_all_data),},
+<<<<<<< HEAD
 	{ TSP_CMD("get_slope_all_data", get_slope_all_data),},
+=======
+	{ TSP_CMD("get_slope0_all_data", get_slope0_all_data),},
+	{ TSP_CMD("get_slope1_all_data", get_slope1_all_data),},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{ TSP_CMD("get_cs_all_data", get_cs_all_data),},
 	{ TSP_CMD("get_checksum_data", get_checksum_data),},
 	{ TSP_CMD("run_cm_test",     run_cm_test),     },
@@ -1742,12 +1931,21 @@ int sec_touch_sysfs(struct ist30xx_data *data)
 	return 0;
 
 #if IST30XX_USE_KEY
+<<<<<<< HEAD
 err_sec_fac_dev_attr:
 	sec_device_destroy(2);
 err_sec_fac_dev:
 err_sec_touchkey_attr:
 	sec_device_destroy(1);
 err_sec_touchkey:
+=======
+	err_sec_fac_dev_attr:
+		sec_device_destroy(2);
+	err_sec_fac_dev:
+	err_sec_touchkey_attr:
+		sec_device_destroy(1);
+	err_sec_touchkey:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 	err_sec_fac_dev_attr:
 		sec_device_destroy(1);

@@ -94,7 +94,11 @@ static bool sec_multi_chg_check_sub_charging(struct sec_multi_charger_info *char
 	if (charger->pdata->sub_charger_condition &
 		SEC_SUB_CHARGER_CONDITION_CURRENT_NOW) {
 		int max_current_now = (charger->total_current.fast_charging_current / 2) +
+<<<<<<< HEAD
 			charger->full_check_current_1st + SEC_SUB_CHARGER_CURRENT_MARGIN;
+=======
+			charger->total_current.full_check_current_1st + SEC_SUB_CHARGER_CURRENT_MARGIN;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_info("%s: update max_current_now(%d)\n", __func__, max_current_now);
 
 		psy_do_property(charger->pdata->battery_name, get,
@@ -214,7 +218,11 @@ static void sec_multi_chg_check_input_current(struct sec_multi_charger_info *cha
 	union power_supply_propval value;
 	bool sub_is_charging = charger->sub_is_charging;
 
+<<<<<<< HEAD
 	if (!sub_is_charging || charger->cable_type == SEC_BATTERY_CABLE_NONE) {
+=======
+	if (!sub_is_charging || charger->cable_type == POWER_SUPPLY_TYPE_BATTERY) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_info("%s: does not need that check input current when sub charger is off.", __func__);
 		return;
 	}
@@ -259,7 +267,11 @@ static int sec_multi_chg_check_enable(struct sec_multi_charger_info *charger)
 	union power_supply_propval value;
 	bool sub_is_charging = charger->sub_is_charging;
 
+<<<<<<< HEAD
 	if ((charger->cable_type == SEC_BATTERY_CABLE_NONE) ||
+=======
+	if ((charger->cable_type == POWER_SUPPLY_TYPE_BATTERY) ||
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		(charger->status == POWER_SUPPLY_STATUS_DISCHARGING) ||
 		charger->chg_mode != SEC_BAT_CHG_MODE_CHARGING) {
 		pr_info("%s: skip multi charging routine\n", __func__);
@@ -309,7 +321,11 @@ static int sec_multi_chg_get_property(struct power_supply *psy,
 			    union power_supply_propval *val)
 {
 	struct sec_multi_charger_info *charger =
+<<<<<<< HEAD
 		power_supply_get_drvdata(psy);
+=======
+		container_of(psy, struct sec_multi_charger_info, psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enum power_supply_ext_property ext_psp = psp;
 	union power_supply_propval value;
 
@@ -319,7 +335,11 @@ static int sec_multi_chg_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_HEALTH:
 		psy_do_property(charger->pdata->battery_name, get,
 			POWER_SUPPLY_PROP_HEALTH, value);
+<<<<<<< HEAD
 		if (charger->cable_type != SEC_BATTERY_CABLE_NONE && 
+=======
+		if (charger->cable_type != POWER_SUPPLY_TYPE_BATTERY && 
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			value.intval != POWER_SUPPLY_HEALTH_UNDERVOLTAGE)
 			psy_do_property(charger->pdata->sub_charger_name, get, psp, value);
 	case POWER_SUPPLY_PROP_STATUS:
@@ -388,7 +408,11 @@ static int sec_multi_chg_set_property(struct power_supply *psy,
 			    const union power_supply_propval *val)
 {
 	struct sec_multi_charger_info *charger =
+<<<<<<< HEAD
 		power_supply_get_drvdata(psy);
+=======
+		container_of(psy, struct sec_multi_charger_info, psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enum power_supply_ext_property ext_psp = psp;
 	union power_supply_propval value, get_value;
 
@@ -400,7 +424,11 @@ static int sec_multi_chg_set_property(struct power_supply *psy,
 			psp, value);
 
 		psy_do_property(charger->pdata->main_charger_name, get, POWER_SUPPLY_PROP_ONLINE, get_value);
+<<<<<<< HEAD
 		if (get_value.intval != SEC_BATTERY_CABLE_NONE) {
+=======
+		if (get_value.intval != POWER_SUPPLY_TYPE_BATTERY) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (val->intval != SEC_BAT_CHG_MODE_CHARGING) {
 				psy_do_property(charger->pdata->sub_charger_name, set,
 					psp, value);
@@ -417,7 +445,11 @@ static int sec_multi_chg_set_property(struct power_supply *psy,
 			psp, value);
 
 		/* INIT */
+<<<<<<< HEAD
 		if (val->intval == SEC_BATTERY_CABLE_NONE) {
+=======
+		if (val->intval == POWER_SUPPLY_TYPE_BATTERY) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			charger->sub_is_charging = false;
 			charger->main_current.input_current_limit = 0;
 			charger->main_current.fast_charging_current = 0;
@@ -451,7 +483,11 @@ static int sec_multi_chg_set_property(struct power_supply *psy,
 		psy_do_property(charger->pdata->sub_charger_name, set, psp, value);
 		break;
 	case POWER_SUPPLY_PROP_CURRENT_FULL:
+<<<<<<< HEAD
 		charger->full_check_current_1st = val->intval;
+=======
+		charger->total_current.full_check_current_1st = val->intval;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		psy_do_property(charger->pdata->main_charger_name, set, psp, value);
 		psy_do_property(charger->pdata->sub_charger_name, set, psp, value);
 		break;
@@ -641,6 +677,7 @@ static int sec_multi_charger_parse_dt(struct device *dev,
 }
 #endif
 
+<<<<<<< HEAD
 static const struct power_supply_desc sec_multi_charger_power_supply_desc = {
 	.name = "sec-multi-charger",
 	.type = POWER_SUPPLY_TYPE_UNKNOWN,
@@ -655,6 +692,12 @@ static int sec_multi_charger_probe(struct platform_device *pdev)
 	struct sec_multi_charger_info *charger;
 	struct sec_multi_charger_platform_data *pdata = NULL;
 	struct power_supply_config multi_charger_cfg = {};
+=======
+static int __devinit sec_multi_charger_probe(struct platform_device *pdev)
+{
+	struct sec_multi_charger_info *charger;
+	struct sec_multi_charger_platform_data *pdata = NULL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret = 0;
 
 	dev_info(&pdev->dev,
@@ -691,10 +734,22 @@ static int sec_multi_charger_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, charger);
 	charger->dev = &pdev->dev;
+<<<<<<< HEAD
 	multi_charger_cfg.drv_data = charger;
 
 	charger->psy_chg = power_supply_register(&pdev->dev, &sec_multi_charger_power_supply_desc, &multi_charger_cfg);
 	if (!charger->psy_chg) {
+=======
+	charger->psy_chg.name		= "sec-multi-charger";
+	charger->psy_chg.type		= POWER_SUPPLY_TYPE_UNKNOWN;
+	charger->psy_chg.get_property	= sec_multi_chg_get_property;
+	charger->psy_chg.set_property	= sec_multi_chg_set_property;
+	charger->psy_chg.properties	= sec_multi_charger_props;
+	charger->psy_chg.num_properties	= ARRAY_SIZE(sec_multi_charger_props);
+
+	ret = power_supply_register(&pdev->dev, &charger->psy_chg);
+	if (ret) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		dev_err(charger->dev,
 			"%s: Failed to Register psy_chg\n", __func__);
 		goto err_pdata_free;
@@ -712,11 +767,19 @@ err_charger_free:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int sec_multi_charger_remove(struct platform_device *pdev)
 {
 	struct sec_multi_charger_info *charger = platform_get_drvdata(pdev);
 
 	power_supply_unregister(charger->psy_chg);
+=======
+static int __devexit sec_multi_charger_remove(struct platform_device *pdev)
+{
+	struct sec_multi_charger_info *charger = platform_get_drvdata(pdev);
+
+	power_supply_unregister(&charger->psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	dev_dbg(charger->dev, "%s: End\n", __func__);
 
@@ -764,7 +827,11 @@ static struct platform_driver sec_multi_charger_driver = {
 #endif
 	},
 	.probe = sec_multi_charger_probe,
+<<<<<<< HEAD
 	.remove = sec_multi_charger_remove,
+=======
+	.remove = __devexit_p(sec_multi_charger_remove),
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static int __init sec_multi_charger_init(void)

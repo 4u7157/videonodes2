@@ -39,6 +39,11 @@
 #include "include/sbd.h"
 #include "include/sipc5.h"
 
+<<<<<<< HEAD
+=======
+#include "link_device_ect.h"
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef GROUP_MEM_TYPE
 
 enum mem_iface_type {
@@ -58,6 +63,7 @@ enum mem_iface_type {
 
 #ifdef GROUP_MEM_TYPE_SHMEM
 
+<<<<<<< HEAD
 
 #ifdef CONFIG_MODEMIF_SHM_IPC_1MB
 #define SHM_4M_RESERVED_SZ	4056
@@ -65,6 +71,16 @@ enum mem_iface_type {
 #define SHM_4M_FMT_RX_BUFF_SZ	4096
 #define SHM_4M_RAW_TX_BUFF_SZ	249856
 #define SHM_4M_RAW_RX_BUFF_SZ	786432
+=======
+#ifdef CONFIG_MODEM_IF_QOS
+#define SHM_4M_RESERVED_SZ	4040
+#define SHM_4M_FMT_TX_BUFF_SZ	4096
+#define SHM_4M_FMT_RX_BUFF_SZ	4096
+#define SHM_4M_RAW_HPRIO_TX_BUFF_SZ	518144
+#define SHM_4M_RAW_HPRIO_RX_BUFF_SZ	518144
+#define SHM_4M_RAW_TX_BUFF_SZ	1048576
+#define SHM_4M_RAW_RX_BUFF_SZ	2097152
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define SHM_4M_RESERVED_SZ	4056
 #define SHM_4M_FMT_TX_BUFF_SZ	4096
@@ -75,12 +91,15 @@ enum mem_iface_type {
 
 #define SHM_UL_USAGE_LIMIT	SZ_32K	/* Uplink burst limit */
 
+<<<<<<< HEAD
 #if defined (CONFIG_SOC_EXYNOS7570)
 #define FLOW_CTRL_BIT (0x1<<3)
 #else
 #define FLOW_CTRL_BIT 0x10
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct __packed shmem_4mb_phys_map {
 	u32 magic;
 	u32 access;
@@ -91,6 +110,17 @@ struct __packed shmem_4mb_phys_map {
 	u32 fmt_rx_head;
 	u32 fmt_rx_tail;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MODEM_IF_QOS
+	u32 raw_hprio_tx_head;
+	u32 raw_hprio_tx_tail;
+
+	u32 raw_hprio_rx_head;
+	u32 raw_hprio_rx_tail;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u32 raw_tx_head;
 	u32 raw_tx_tail;
 
@@ -102,6 +132,14 @@ struct __packed shmem_4mb_phys_map {
 	char fmt_tx_buff[SHM_4M_FMT_TX_BUFF_SZ];
 	char fmt_rx_buff[SHM_4M_FMT_RX_BUFF_SZ];
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MODEM_IF_QOS
+	char raw_hprio_tx_buff[SHM_4M_RAW_HPRIO_TX_BUFF_SZ];
+	char raw_hprio_rx_buff[SHM_4M_RAW_HPRIO_RX_BUFF_SZ];
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	char raw_tx_buff[SHM_4M_RAW_TX_BUFF_SZ];
 	char raw_rx_buff[SHM_4M_RAW_RX_BUFF_SZ];
 };
@@ -159,7 +197,11 @@ struct mem_ipc_device {
 	struct sk_buff_head *skb_rxq;
 
 	unsigned int req_ack_cnt[MAX_DIR];
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spinlock_t tx_lock;
 };
 
@@ -196,8 +238,13 @@ struct __packed mem_snapshot {
 	unsigned int magic;
 	unsigned int access;
 
+<<<<<<< HEAD
 	unsigned int head[MAX_SIPC5_DEVICES][MAX_DIR];
 	unsigned int tail[MAX_SIPC5_DEVICES][MAX_DIR];
+=======
+	unsigned int head[MAX_SIPC_MAP][MAX_DIR];
+	unsigned int tail[MAX_SIPC_MAP][MAX_DIR];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	u16 int2ap;
 	u16 int2cp;
@@ -229,6 +276,7 @@ enum mem_ipc_mode {
 	MEM_SBD_IPC,
 };
 
+<<<<<<< HEAD
 #define MEM_CRASH_REASON_CP		0
 #define MEM_CRASH_REASON_AP		1
 #define MEM_CRASH_REASON_RIL	2
@@ -246,6 +294,8 @@ struct freq_table {
 	u32 freq[FREQ_MAX_LV];
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct mem_link_device {
 	/**
 	 * COMMON and MANDATORY to all link devices
@@ -286,11 +336,14 @@ struct mem_link_device {
 	u8 __iomem *base;
 
 	/**
+<<<<<<< HEAD
 	 * CP Binary size for CRC checking
 	 */
 	u32 cp_binary_size;
 
 	/**
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	 * (u32 *) syscp_alive[0] = Magic Code, Version
 	 * (u32 *) syscp_alive[1] = CP Reserved Size
 	 * (u32 *) syscp_alive[2] = Shared Mem Size
@@ -299,7 +352,11 @@ struct mem_link_device {
 	/**
 	 * Actual logical IPC devices (for IPC_FMT and IPC_RAW)
 	 */
+<<<<<<< HEAD
 	struct mem_ipc_device ipc_dev[MAX_SIPC5_DEVICES];
+=======
+	struct mem_ipc_device ipc_dev[MAX_SIPC_MAP];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/**
 	 * Pointers (aliases) to IPC device map
@@ -307,7 +364,11 @@ struct mem_link_device {
 	u32 __iomem *magic;
 	u32 __iomem *access;
 	u32 __iomem *clk_table;
+<<<<<<< HEAD
 	struct mem_ipc_device *dev[MAX_SIPC5_DEVICES];
+=======
+	struct mem_ipc_device *dev[MAX_SIPC_MAP];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	struct sbd_link_device sbd_link_dev;
 	struct work_struct iosm_w;
@@ -333,10 +394,15 @@ struct mem_link_device {
 	struct work_struct pm_qos_work_cpu;
 	struct work_struct pm_qos_work_mif;
 	struct work_struct pm_qos_work_int;
+<<<<<<< HEAD
 
 	struct freq_table cpu_table;
 	struct freq_table mif_table;
 	struct freq_table int_table;
+=======
+	
+	struct ect_table_data ect_table_data;	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	unsigned int *ap_clk_table;
 	unsigned int ap_clk_cnt;
@@ -346,10 +412,13 @@ struct mem_link_device {
 
 	unsigned int *int_clk_table;
 	unsigned int int_clk_cnt;
+<<<<<<< HEAD
 	
 	u32 requested_mif_clk;
 
 	int current_mif_val;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	unsigned int mbx_cp2ap_status;	/* MBOX# for TX FLOWCTL */
 	unsigned int irq_cp2ap_status;	/* INTR# for TX FLOWCTL */
@@ -449,7 +518,10 @@ struct mem_link_device {
 	enum link_state state;
 
 	struct pktlog_data *pktlog;
+<<<<<<< HEAD
 	struct crash_reason crash_reason;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #define to_mem_link_device(ld) \
@@ -464,8 +536,11 @@ struct mem_link_device {
 #define MEM_BOOT_MAGIC		0x424F4F54
 #define MEM_DUMP_MAGIC		0x44554D50
 
+<<<<<<< HEAD
 #define MAX_TABLE_COUNT 8
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct clock_table_info {
 	char table_name[4];
 	u32 table_count;
@@ -667,6 +742,23 @@ static inline enum dev_format dev_id(enum sipc_ch_id ch)
 	return sipc5_fmt_ch(ch) ? IPC_FMT : IPC_RAW;
 }
 
+<<<<<<< HEAD
+=======
+static inline enum dev_format get_mmap_idx(enum sipc_ch_id ch,
+		struct sk_buff *skb)
+{
+	if (sipc5_fmt_ch(ch))
+		return IPC_MAP_FMT;
+	else
+#ifdef CONFIG_MODEM_IF_QOS
+		return (skb->queue_mapping == 1) ?
+			IPC_MAP_HPRIO_RAW : IPC_MAP_NORM_RAW;
+#else
+		return IPC_MAP_NORM_RAW;
+#endif
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifdef GROUP_MEM_LINK_DEVICE
@@ -691,9 +783,12 @@ static inline void set_access(struct mem_link_device *mld, unsigned int val)
 	iowrite32(val, mld->access);
 }
 
+<<<<<<< HEAD
 void shmem_unlock_mif_freq(struct mem_link_device *mld);
 void shmem_restore_mif_freq(struct mem_link_device *mld);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifdef GROUP_MEM_LINK_SNAPSHOT

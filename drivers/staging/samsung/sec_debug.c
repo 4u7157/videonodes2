@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+=======
+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *      http://www.samsung.com
  *
  * Samsung TN debugging code
@@ -64,6 +68,7 @@ int sec_debug_is_enabled_for_ssr(void)
 }
 #endif
 
+<<<<<<< HEAD
 int dynsyslog_on;
 static int __init dynsyslog_level(char *str)
 {
@@ -105,6 +110,8 @@ out:
 }
 __setup("sec_bl_mem=", sec_bl_mem_setup);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int sec_debug_get_debug_level(void)
 {
 	return sec_debug_level.uint_val;
@@ -167,7 +174,11 @@ enum sec_debug_upload_cause_t {
 	UPLOAD_CAUSE_KERNEL_PANIC	= 0x000000C8,
 	UPLOAD_CAUSE_FORCED_UPLOAD	= 0x00000022,
 #ifdef CONFIG_SEC_UPLOAD
+<<<<<<< HEAD
 	UPLOAD_CAUSE_USER_FORCED_UPLOAD = 0x00000074,
+=======
+	UPLOAD_CAUSE_USER_FORCED_UPLOAD	= 0x00000074,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	UPLOAD_CAUSE_CP_ERROR_FATAL	= 0x000000CC,
 	UPLOAD_CAUSE_USER_FAULT		= 0x0000002F,
@@ -494,7 +505,11 @@ int sec_debug_print_file_list(void)
 				p_filename = file->f_path.dentry->d_name.name;
 
 			pr_err("[%04d]%s%s\n", i, p_rootname ? p_rootname : "null",
+<<<<<<< HEAD
 				p_filename ? p_filename : "null");
+=======
+			       p_filename ? p_filename : "null");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret++;
 		}
 		rcu_read_unlock();

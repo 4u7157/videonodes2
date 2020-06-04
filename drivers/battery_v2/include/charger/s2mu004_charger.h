@@ -14,7 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+=======
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #ifndef S2MU004_CHARGER_H
@@ -23,8 +28,11 @@
 #include <linux/mfd/samsung/s2mu004-private.h>
 #include "../sec_charging_common.h"
 
+<<<<<<< HEAD
 extern unsigned int lpcharge;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MASK(width, shift)	(((0x1 << (width)) - 1) << shift)
 
 #define S2MU004_CHG_STATUS0		0x0A
@@ -89,7 +97,11 @@ extern unsigned int lpcharge;
 
 /* S2MU004_CHG_STATUS1 */
 #define SELF_DISCHG_STATUS_SHIFT	7
+<<<<<<< HEAD
 #define SELF_DISCHG_STATUS_MASK		BIT(SELF_DISCHG_STATUS_SHIFT)
+=======
+#define SELF_DISCHG_STATUS_MASK 	BIT(SELF_DISCHG_STATUS_SHIFT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define CHG_FAULT_STATUS_SHIFT		3
 #define CHG_FAULT_STATUS_WIDTH		4
@@ -195,10 +207,16 @@ extern unsigned int lpcharge;
 #define SET_VF_VBYP_SHIFT	5
 #define SET_VF_VBYP_WIDTH	2
 #define SET_VF_VBYP_MASK	MASK(SET_VF_VBYP_WIDTH, SET_VF_VBYP_SHIFT)
+<<<<<<< HEAD
 #define SET_VSYS_SHIFT		0
 #define SET_VSYS_WIDTH		3
 #define SET_VSYS_MASK		MASK(SET_VSYS_WIDTH, SET_VSYS_SHIFT)
 #define EN_CHG_RESTART_MASK	0x80
+=======
+#define SET_VSYS_SHIFT	0
+#define SET_VSYS_WIDTH	3
+#define SET_VSYS_MASK	MASK(SET_VSYS_WIDTH, SET_VSYS_SHIFT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* S2MU004_CHG_CTRL8 */
 #define COOL_CHARGING_CURRENT_SHIFT	0
@@ -291,6 +309,7 @@ enum {
 #define SELF_DISCHG_MODE_SHIFT	7
 #define SELF_DISCHG_MODE_MASK	BIT(SELF_DISCHG_MODE_SHIFT)
 
+<<<<<<< HEAD
 /* S2MU004_REG_SC_INT2 */
 #define S2MU004_IVR_I	(1 << 1)
 #define S2MU004_AICL_I	(1 << 2)
@@ -307,6 +326,8 @@ enum {
 #define MINIMUM_INPUT_CURRENT			100
 #define SLOW_CHARGING_CURRENT_STANDARD		400
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum {
 	CHIP_ID = 0,
 };
@@ -361,6 +382,7 @@ enum {
 	S2MU004_FC_CHG_TIMER_16hr	= 0x7,
 };
 
+<<<<<<< HEAD
 enum {
 	S2MU004_SET_OTG_OCP_500mA	= 0x0,
 	S2MU004_SET_OTG_OCP_900mA	= 0x1,
@@ -368,6 +390,8 @@ enum {
 	S2MU004_SET_OTG_OCP_1500mA	= 0x3,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 typedef struct s2mu004_charger_platform_data {
 	sec_charging_current_t *charging_current;
 	int chg_float_voltage;
@@ -376,11 +400,16 @@ typedef struct s2mu004_charger_platform_data {
 	bool chg_eoc_dualpath;
 	uint32_t is_1MHz_switching:1;
 	int chg_switching_freq;
+<<<<<<< HEAD
 	bool chg_freq_ctrl;
 	/* 2nd full check */
 	sec_battery_full_charged_t full_check_type_2nd;
 	/* Slow charging current */
 	int slow_charging_current;
+=======
+	/* 2nd full check */
+	sec_battery_full_charged_t full_check_type_2nd;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 } s2mu004_charger_platform_data_t;
 
 struct s2mu004_charger_data {
@@ -393,8 +422,13 @@ struct s2mu004_charger_data {
 	struct delayed_work	otg_vbus_work;
 #endif
 	struct workqueue_struct *charger_wqueue;
+<<<<<<< HEAD
 	struct power_supply		*psy_chg;
 	struct power_supply		*psy_otg;
+=======
+	struct power_supply	psy_chg;
+	struct power_supply	psy_otg;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	s2mu004_charger_platform_data_t *pdata;
 	int dev_id;
 	int input_current;
@@ -423,6 +457,7 @@ struct s2mu004_charger_data {
 	int irq_rst;
 	int irq_done;
 	int irq_sys;
+<<<<<<< HEAD
 	int irq_bat;
 	int irq_ivr;
 
@@ -435,6 +470,12 @@ struct s2mu004_charger_data {
 	/* wireless charge, w(wpc), v(vbus) */
 	int wc_w_irq;
 	int wc_w_state;
+=======
+
+	/* wireless charge, w(wpc), v(vbus) */
+	int 	wc_w_irq;
+	int 	wc_w_state;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 

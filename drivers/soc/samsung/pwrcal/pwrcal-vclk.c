@@ -4,7 +4,11 @@
 #include "pwrcal-clk.h"
 #include "pwrcal-rae.h"
 #include <linux/exynos-ss.h>
+<<<<<<< HEAD
 #include <trace/events/exynos.h>
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define is_vclk(id)	((id & 0x0F000000) == 0x0A000000)
 
@@ -913,6 +917,7 @@ static int d1_set(struct vclk *vclk, unsigned long freq_to)
 		parent = pwrcal_clk_get_parent(d1->div);
 		parent_freq = pwrcal_clk_get_rate(parent);
 
+<<<<<<< HEAD
 		if (parent_freq < temp_freq) {
 			if (pwrcal_div_set_ratio(d1->div, 1))
 				goto out;
@@ -925,6 +930,18 @@ static int d1_set(struct vclk *vclk, unsigned long freq_to)
 			if (pwrcal_div_set_ratio(d1->div, ratio))
 				goto out;
 		}
+=======
+		if (parent_freq < temp_freq)
+			goto out;
+
+		parent_temp = parent_freq;
+		do_div(parent_temp, temp_freq);
+		if (parent_freq > parent_temp * temp_freq)
+			parent_temp += 1;
+		ratio = (unsigned int)parent_temp;
+		if (pwrcal_div_set_ratio(d1->div, ratio))
+			goto out;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	ret = 0;
@@ -991,7 +1008,11 @@ struct pwrcal_vclk_none vclk_0;
 int vclk_setrate(struct vclk *vclk, unsigned long rate)
 {
 	int ret = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CLK
+=======
+#if defined(CONFIG_EXYNOS_SNAPSHOT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *name = "vclk_setrate";
 #endif
 
@@ -1001,7 +1022,10 @@ int vclk_setrate(struct vclk *vclk, unsigned long rate)
 	}
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_clk_in(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (vclk->ops->set_rate)
 		ret = vclk->ops->set_rate(vclk, rate);
@@ -1011,27 +1035,41 @@ int vclk_setrate(struct vclk *vclk, unsigned long rate)
 	if (!ret) {
 		vclk->vfreq = rate;
 		exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
+<<<<<<< HEAD
 		trace_exynos_clk_out(vclk, __func__);
 	} else {
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
 		trace_exynos_clk_on(vclk, __func__);
 	}
+=======
+	} else
+		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 out:
 	return ret;
 }
 unsigned long vclk_getrate(struct vclk *vclk)
 {
 	int ret = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CLK
+=======
+#if defined(CONFIG_EXYNOS_SNAPSHOT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *name = "vclk_getrate";
 #endif
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_clk_in(vclk, __func__);
 
 	if (!vclk->ref_count) {
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
 		trace_exynos_clk_on(vclk, __func__);
+=======
+	if (!vclk->ref_count) {
+		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto out;
 	}
 
@@ -1040,11 +1078,16 @@ unsigned long vclk_getrate(struct vclk *vclk)
 	if (ret > 0) {
 		vclk->vfreq = (unsigned long)ret;
 		exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
+<<<<<<< HEAD
 		trace_exynos_clk_out(vclk, __func__);
 	} else {
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
 		trace_exynos_clk_on(vclk, __func__);
 	}
+=======
+	} else
+		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 out:
 	return ret;
 }
@@ -1052,7 +1095,11 @@ int vclk_enable(struct vclk *vclk)
 {
 	int ret = 0;
 	unsigned int tmp;
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CLK
+=======
+#if defined(CONFIG_EXYNOS_SNAPSHOT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *name = "vclk_enable";
 #endif
 
@@ -1063,7 +1110,10 @@ int vclk_enable(struct vclk *vclk)
 		ret = vclk_enable(vclk->parent);
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_clk_in(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret)
 		goto out;
 
@@ -1080,6 +1130,7 @@ int vclk_enable(struct vclk *vclk)
 		pr_warn("vclk retenction fail (%s) (%ld)\n",
 				vclk->name, vclk->vfreq);
 
+<<<<<<< HEAD
 	if (vclk->type == vclk_group_dfs)
 		vclk->vfreq = tmp;
 
@@ -1091,6 +1142,13 @@ out:
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
 		trace_exynos_clk_on(vclk, __func__);
 	}
+=======
+out:
+	if (!ret) {
+		exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
+	} else
+		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return ret;
 }
@@ -1098,7 +1156,11 @@ int vclk_disable(struct vclk *vclk)
 {
 	int ret = 0;
 	int parent_disable = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CLK
+=======
+#if defined(CONFIG_EXYNOS_SNAPSHOT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *name = "vclk_disable";
 #endif
 
@@ -1112,17 +1174,26 @@ int vclk_disable(struct vclk *vclk)
 		goto out;
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_clk_in(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = vclk->ops->disable(vclk);
 
 	if (ret) {
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+<<<<<<< HEAD
 		trace_exynos_clk_on(vclk, __func__);
 		goto out;
 	} else {
 		exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
 		trace_exynos_clk_out(vclk, __func__);
 	}
+=======
+		goto out;
+	} else
+		exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (parent_disable && vclk->parent != VCLK_NONE)
 		ret = vclk_disable(vclk->parent);

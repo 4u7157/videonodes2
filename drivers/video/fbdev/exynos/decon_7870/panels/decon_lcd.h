@@ -67,6 +67,10 @@ struct decon_lcd {
 	unsigned int dsc_slice;
 	enum mic_ver mic_ver;
 	enum type_of_ddi ddi_type;
+<<<<<<< HEAD
+=======
+	unsigned int clklane_onoff;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #endif

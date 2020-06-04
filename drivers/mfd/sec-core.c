@@ -495,6 +495,7 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
 
 	if (of_get_property(np, "ten-bit-address", NULL))
 		pdata->ten_bit_address = true;
+<<<<<<< HEAD
 
 	/* init time */
 	pdata->init_time = devm_kzalloc(dev, sizeof(*pdata->init_time),
@@ -537,6 +538,75 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
 	if (ret)
 		return ERR_PTR(ret);
 
+=======
+
+	/* init time */
+	pdata->init_time = devm_kzalloc(dev, sizeof(*pdata->init_time),
+			GFP_KERNEL);
+	if (!pdata->init_time)
+		return ERR_PTR(-ENOMEM);
+
+	ret = of_property_read_u32(np, "init_time,sec",
+			&pdata->init_time->tm_sec);
+	if (ret)
+		return ERR_PTR(ret);
+
+	ret = of_property_read_u32(np, "init_time,min",
+			&pdata->init_time->tm_min);
+	if (ret)
+		return ERR_PTR(ret);
+
+	ret = of_property_read_u32(np, "init_time,hour",
+			&pdata->init_time->tm_hour);
+	if (ret)
+		return ERR_PTR(ret);
+
+	ret = of_property_read_u32(np, "init_time,mday",
+			&pdata->init_time->tm_mday);
+	if (ret)
+		return ERR_PTR(ret);
+
+	ret = of_property_read_u32(np, "init_time,mon",
+			&pdata->init_time->tm_mon);
+	if (ret)
+		return ERR_PTR(ret);
+
+	ret = of_property_read_u32(np, "init_time,year",
+			&pdata->init_time->tm_year);
+	if (ret)
+		return ERR_PTR(ret);
+
+	ret = of_property_read_u32(np, "init_time,wday",
+			&pdata->init_time->tm_wday);
+	if (ret)
+		return ERR_PTR(ret);
+
+	/* rtc optimize */
+	ret = of_property_read_u32(np, "osc-bias-up", &val);
+	if (!ret)
+		pdata->osc_bias_up = val;
+	else
+		pdata->osc_bias_up = -1;
+
+	ret = of_property_read_u32(np, "rtc_cap_sel", &val);
+	if (!ret)
+		pdata->cap_sel = val;
+	else
+		pdata->cap_sel = -1;
+
+	ret = of_property_read_u32(np, "rtc_osc_xin", &val);
+	if (!ret)
+		pdata->osc_xin = val;
+	else
+		pdata->osc_xin = -1;
+
+	ret = of_property_read_u32(np, "rtc_osc_xout", &val);
+	if (!ret)
+		pdata->osc_xout = val;
+	else
+		pdata->osc_xout = -1;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return pdata;
 }
 #else
@@ -589,6 +659,12 @@ static int sec_pmic_probe(struct i2c_client *i2c,
 		pdata->device_type = sec_pmic->type;
 	}
 
+<<<<<<< HEAD
+=======
+	if (pdata == NULL)
+		return -ENOMEM;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (pdata) {
 		sec_pmic->device_type = pdata->device_type;
 		sec_pmic->ono = pdata->ono;

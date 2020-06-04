@@ -37,7 +37,11 @@
 #include <linux/of_gpio.h>
 
 #include <linux/sensor/sensors_core.h>
+<<<<<<< HEAD
 #include "linux/sensor/stk3013.h"
+=======
+#include "stk3013.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define DRIVER_VERSION  "3.10.0_ps_only_20150508"
 
@@ -46,7 +50,10 @@
 #undef STK_CHK_REG
 
 #define PROX_READ_NUM   40
+<<<<<<< HEAD
 #undef PROXIMITY_FOR_TEST /* for HW to tune up */
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* Define Register Map */
 #define STK_STATE_REG           0x00
@@ -125,9 +132,18 @@
 #define STK_FLG_IR_RDY_MASK     0x02
 #define STK_FLG_NF_MASK         0x01
 
+<<<<<<< HEAD
 #define VENDOR           "SENSORTEK"
 #define CHIP_ID          "STK3013"
 #define MODULE_NAME      "proximity_sensor"
+=======
+#define VENDOR                  "SENSORTEK"
+#define CHIP_ID                 "STK3013"
+#define MODULE_NAME_PROX        "proximity_sensor"
+#define MODULE_NAME_PROX_ALERT  "proximity_alert_sensor"
+
+#define PROX_ALERT_DELAY         2000 * NSEC_PER_MSEC
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define STK3310SA_PID    0x17
 #define STK3311SA_PID    0x1E
@@ -166,12 +182,24 @@ struct stk3013_data {
 	uint16_t ps_cal_fail_adc;
 	uint16_t ps_default_offset;
 	uint16_t ps_offset;
+<<<<<<< HEAD
 	unsigned int cal_result;
 	struct mutex io_lock;
 	struct input_dev *ps_input_dev;
 	int32_t ps_distance_last;
 	bool ps_enabled;
 	bool re_enable_ps;
+=======
+	uint16_t ps_alert_thd;
+	unsigned int cal_result;
+	struct mutex io_lock;
+	struct input_dev *ps_input_dev;
+	struct input_dev *ps_alert_input_dev;
+	int32_t ps_distance_last;
+	uint8_t ps_enabled;
+	uint8_t ps_alert_enabled;
+	uint8_t ps_alert_mode_support;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct wake_lock ps_wakelock;
 	ktime_t ps_poll_delay;
 	bool first_boot;
@@ -179,6 +207,7 @@ struct stk3013_data {
 	uint8_t pid;
 	uint8_t p_wv_r_bd_with_co;
 	struct regulator *vdd;
+<<<<<<< HEAD
 	struct regulator *vled;
 
 	struct device *ps_dev;
@@ -186,6 +215,18 @@ struct stk3013_data {
 	ktime_t prox_poll_delay;
 	struct workqueue_struct *prox_wq;
 	struct work_struct work_prox;
+=======
+	struct regulator *vio;
+	struct device *ps_dev;
+	struct device *ps_alert_dev;
+	struct hrtimer prox_timer;
+	struct hrtimer prox_alert_timer;
+	ktime_t prox_poll_delay;
+	struct workqueue_struct *prox_wq;
+	struct workqueue_struct *prox_alert_wq;
+	struct work_struct work_prox;
+	struct work_struct work_prox_alert;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int avg[3];
 };
 
@@ -203,6 +244,7 @@ static int check_calibration_offset(struct stk3013_data *ps_data);
 #ifdef STK_CHK_REG
 static int stk3013_validate_n_handle(struct i2c_client *client);
 #endif
+<<<<<<< HEAD
 static int32_t stk3013_init_all_setting(struct i2c_client *client,
 				struct stk3013_platform_data *plat_data);
 
@@ -292,6 +334,13 @@ static int proximity_vled_onoff(struct device *dev, bool onoff)
 	return 0;
 }
 
+=======
+static int stk3013_regulator_onoff(struct device *dev, bool onoff);
+static int stk3013_vled_onoff(struct device *dev, bool onoff);
+static int32_t stk3013_init_all_setting(struct i2c_client *client,
+				struct stk3013_platform_data *plat_data);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int stk3013_i2c_read_data(struct i2c_client *client,
 	unsigned char command, int length, unsigned char *values)
 {
@@ -412,10 +461,18 @@ static void stk3013_proc_plat_data(struct stk3013_data *ps_data,
 		ps_data->ps_cancel_thd_l = plat_data->ps_cancel_thd_l;
 		ps_data->ps_cal_skip_adc = plat_data->ps_cal_skip_adc;
 		ps_data->ps_cal_fail_adc = plat_data->ps_cal_fail_adc;
+<<<<<<< HEAD
 		ps_data->ps_default_offset = plat_data->ps_default_offset;
 		/*initialize the offset data*/
 		ps_data->ps_offset = ps_data->ps_default_offset;
 	}
+=======
+		/*initialize the offset data*/
+		ps_data->ps_default_offset = plat_data->ps_default_offset;
+		ps_data->ps_offset = ps_data->ps_default_offset;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	w_reg = 0;
 	w_reg |= STK_INT_PS_MODE;
 
@@ -699,9 +756,14 @@ static int32_t stk3013_enable_ps(struct device *dev,
 			uint8_t enable, uint8_t validate_reg)
 {
 	struct stk3013_data *ps_data =  dev_get_drvdata(dev);
+<<<<<<< HEAD
 	int32_t ret;
 	uint8_t w_state_reg;
 	uint8_t curr_ps_enable;
+=======
+	int32_t ret = 0;
+	uint8_t w_state_reg;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	uint32_t read_value;
 	int32_t near_far_state;
 
@@ -714,6 +776,7 @@ static int32_t stk3013_enable_ps(struct device *dev,
 	}
 #endif /* #ifdef STK_CHK_REG */
 
+<<<<<<< HEAD
 	curr_ps_enable = ps_data->ps_enabled ? 1 : 0;
 	if (curr_ps_enable == enable)
 		return 0;
@@ -724,6 +787,27 @@ static int32_t stk3013_enable_ps(struct device *dev,
 		if (!ps_data->pdata->regulator_divided)
 			proximity_vled_onoff(dev, ON);
 		msleep(20);
+=======
+	// Enable if both prox and prox_alert are OFF
+	// Disable if only one of prox and prox_alert is ON
+	if (enable) {
+		if (ps_data->ps_enabled || ps_data->ps_alert_enabled)
+			return 0;
+	} else {
+		if ((ps_data->ps_enabled && ps_data->ps_alert_enabled) ||
+				(!ps_data->ps_enabled && !ps_data->ps_alert_enabled))
+			return 0;
+	}
+
+	SENSOR_INFO("enable: %d, ps_enabled: %d, ps_alert_enabled: %d", enable,
+					ps_data->ps_enabled, ps_data->ps_alert_enabled);
+
+	if (enable) {
+		/*stk3013_regulator_onoff(dev, ON);*/
+		if(ps_data->pdata->vled_ldo)
+			stk3013_vled_onoff(dev,ON);
+		usleep_range(20000,20000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = stk3013_init_all_setting(ps_data->client,
 							ps_data->pdata);
 		if (ret < 0) {
@@ -755,7 +839,10 @@ static int32_t stk3013_enable_ps(struct device *dev,
 		stk3013_set_ps_offset(ps_data, ps_data->ps_offset);
 #endif
 		enable_irq(ps_data->irq);
+<<<<<<< HEAD
 		ps_data->ps_enabled = true;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef STK_CHK_REG
 		if (!validate_reg) {
 			ps_data->ps_distance_last = 1;
@@ -785,12 +872,18 @@ static int32_t stk3013_enable_ps(struct device *dev,
 		}
 	} else {
 		disable_irq(ps_data->irq);
+<<<<<<< HEAD
 		ps_data->ps_enabled = false;
 
 		if (!ps_data->pdata->regulator_divided)
 			proximity_vled_onoff(dev, OFF);
 		if (!ps_data->pdata->vdd_always_on)
 			proximity_vdd_onoff(dev, OFF);
+=======
+		if(ps_data->pdata->vled_ldo)
+			stk3013_vled_onoff(dev,OFF);
+		/*stk3013_regulator_onoff(dev, OFF);*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	return ret;
 }
@@ -1040,7 +1133,11 @@ static void proximity_get_avg_val(struct stk3013_data *ps_data)
 	uint32_t read_value;
 
 	for (i = 0; i < PROX_READ_NUM; i++) {
+<<<<<<< HEAD
 		msleep(40);
+=======
+		usleep_range(40000,40000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		read_value = stk3013_get_ps_reading(ps_data);
 		avg += read_value;
 
@@ -1075,8 +1172,14 @@ static ssize_t proximity_avg_store(struct device *dev,
 	}
 
 	SENSOR_INFO("average enable = %d\n",  new_value);
+<<<<<<< HEAD
 	if (new_value) {
 		if ((ps_data->ps_enabled ? 1 : 0) == OFF) {
+=======
+
+	if (new_value) {
+		if (!ps_data->ps_enabled && !ps_data->ps_alert_enabled) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			mutex_lock(&ps_data->io_lock);
 			stk3013_enable_ps(dev, new_value, 1);
 			mutex_unlock(&ps_data->io_lock);
@@ -1086,7 +1189,11 @@ static ssize_t proximity_avg_store(struct device *dev,
 	} else if (!new_value) {
 		hrtimer_cancel(&ps_data->prox_timer);
 		cancel_work_sync(&ps_data->work_prox);
+<<<<<<< HEAD
 		if ((ps_data->ps_enabled ? 1 : 0) == OFF) {
+=======
+		if (!ps_data->ps_enabled && !ps_data->ps_alert_enabled) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			mutex_lock(&ps_data->io_lock);
 			stk3013_enable_ps(dev, new_value, 0);
 			mutex_unlock(&ps_data->io_lock);
@@ -1124,6 +1231,40 @@ static enum hrtimer_restart stk3013_prox_timer_func(struct hrtimer *timer)
 	return HRTIMER_RESTART;
 }
 
+<<<<<<< HEAD
+=======
+static void stk3013_work_func_prox_alert(struct work_struct *work)
+{
+	struct stk3013_data *ps_data = container_of(work,
+		struct stk3013_data, work_prox_alert);
+	uint32_t prox_adc;
+
+	prox_adc = stk3013_get_ps_reading(ps_data);
+
+	/* FAR(0), CLOSE(1) for IRIS Service */
+	if (prox_adc >= ps_data->ps_alert_thd) {
+		input_report_rel(ps_data->ps_alert_input_dev, REL_MISC, 2);
+		input_sync(ps_data->ps_alert_input_dev);
+		SENSOR_INFO("prox_alert close (%d)\n", prox_adc);
+	} else {
+		input_report_rel(ps_data->ps_alert_input_dev, REL_MISC, 1);
+		input_sync(ps_data->ps_alert_input_dev);
+		SENSOR_INFO("prox_alert far (%d)\n", prox_adc);
+	}
+}
+
+static enum hrtimer_restart stk3013_prox_alert_timer_func(struct hrtimer *timer)
+{
+	struct stk3013_data *ps_data = container_of(timer,
+		struct stk3013_data, prox_alert_timer);
+
+	queue_work(ps_data->prox_alert_wq, &ps_data->work_prox_alert);
+	hrtimer_forward_now(&ps_data->prox_alert_timer, ns_to_ktime(PROX_ALERT_DELAY));
+
+	return HRTIMER_RESTART;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t proximity_thresh_high_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -1226,6 +1367,7 @@ static ssize_t stk3013_name_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%s\n", CHIP_ID);
 }
 
+<<<<<<< HEAD
 #if defined(PROXIMITY_FOR_TEST)
 static ssize_t proximity_register_write_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
@@ -1266,6 +1408,14 @@ static ssize_t proximity_register_read_show(struct device *dev,
 	return offset;
 }
 #endif
+=======
+static ssize_t stk3013_alert_thd_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct stk3013_data *ps_data =  dev_get_drvdata(dev);
+	return scnprintf(buf, PAGE_SIZE, "%d\n", ps_data->ps_alert_thd);
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef PROXIMITY_CALIBRATION
 static DEVICE_ATTR(prox_cal, S_IRUGO | S_IWUSR | S_IWGRP,
@@ -1273,6 +1423,7 @@ static DEVICE_ATTR(prox_cal, S_IRUGO | S_IWUSR | S_IWGRP,
 static DEVICE_ATTR(prox_offset_pass, S_IRUGO, proximity_calibration_pass_show,
 	NULL);
 #endif
+<<<<<<< HEAD
 #if defined(PROXIMITY_FOR_TEST)
 static DEVICE_ATTR(prox_register, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_register_read_show, proximity_register_write_store);
@@ -1280,6 +1431,11 @@ static DEVICE_ATTR(prox_register, S_IRUGO | S_IWUSR | S_IWGRP,
 static DEVICE_ATTR(prox_avg, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_avg_show, proximity_avg_store);
 static DEVICE_ATTR(prox_trim, S_IRUSR | S_IRGRP,
+=======
+static DEVICE_ATTR(prox_avg, S_IRUGO | S_IWUSR | S_IWGRP,
+	proximity_avg_show, proximity_avg_store);
+static DEVICE_ATTR(prox_trim, S_IRUGO,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	proximity_trim_show, NULL);
 static DEVICE_ATTR(thresh_high, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_thresh_high_show, proximity_thresh_high_store);
@@ -1289,15 +1445,22 @@ static DEVICE_ATTR(state, S_IRUGO, proximity_state_show, NULL);
 static DEVICE_ATTR(raw_data, S_IRUGO, proximity_state_show, NULL);
 static DEVICE_ATTR(vendor, S_IRUGO, stk3013_vendor_show, NULL);
 static DEVICE_ATTR(name, S_IRUGO, stk3013_name_show, NULL);
+<<<<<<< HEAD
+=======
+static DEVICE_ATTR(alert_thd, S_IRUGO, stk3013_alert_thd_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct device_attribute *prox_sensor_attrs[] = {
 #ifdef PROXIMITY_CALIBRATION
 	&dev_attr_prox_cal,
 	&dev_attr_prox_offset_pass,
 #endif
+<<<<<<< HEAD
 #if defined(PROXIMITY_FOR_TEST)
 	&dev_attr_prox_register,
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_prox_avg,
 	&dev_attr_prox_trim,
 	&dev_attr_thresh_high,
@@ -1309,6 +1472,15 @@ static struct device_attribute *prox_sensor_attrs[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
+=======
+static struct device_attribute *prox_alert_sensor_attrs[] = {
+	&dev_attr_name,
+	&dev_attr_alert_thd,
+	NULL,
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t proximity_enable_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -1328,6 +1500,12 @@ static ssize_t proximity_enable_store(struct device *dev,
 {
 	struct stk3013_data *ps_data = dev_get_drvdata(dev);
 	uint8_t en;
+<<<<<<< HEAD
+=======
+	int ret = 0;
+	uint32_t prox_adc;
+	uint8_t near_far_state;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (sysfs_streq(buf, "1"))
 		en = 1;
@@ -1337,11 +1515,89 @@ static ssize_t proximity_enable_store(struct device *dev,
 		SENSOR_ERR("invalid value %d\n", *buf);
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 	SENSOR_INFO("Enable PS : %d\n", en);
 	mutex_lock(&ps_data->io_lock);
 	stk3013_enable_ps(dev, en, 1);
 	mutex_unlock(&ps_data->io_lock);
 	return size;
+=======
+
+	SENSOR_INFO("Enable PS en : %d, old_en : %d\n", en, ps_data->ps_enabled);
+
+	if (en == ps_data->ps_enabled)
+		return 0;
+
+	// If prox alert is already ON, report first near/far event for prox sensor
+	if (ps_data->ps_alert_enabled) {
+		prox_adc = stk3013_get_ps_reading(ps_data);
+		near_far_state = (prox_adc >= ps_data->ps_thd_h) ? 0 : 1;
+		input_report_abs(ps_data->ps_input_dev, ABS_DISTANCE, near_far_state);
+		input_sync(ps_data->ps_input_dev);
+	}
+
+	mutex_lock(&ps_data->io_lock);
+
+	ret = stk3013_enable_ps(dev, en, 1);
+	if (ret >= 0)
+		ps_data->ps_enabled = en;
+
+	mutex_unlock(&ps_data->io_lock);
+
+	return ret < 0 ? ret : 0;
+}
+
+static ssize_t proximity_alert_enable_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct stk3013_data *ps_data =  dev_get_drvdata(dev);
+
+	return scnprintf(buf, PAGE_SIZE, "%d\n", ps_data->ps_alert_enabled);
+}
+
+static ssize_t proximity_alert_enable_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t size)
+{
+	struct stk3013_data *ps_data = dev_get_drvdata(dev);
+	uint8_t en;
+	int ret = 0;
+
+	if (sysfs_streq(buf, "1"))
+		en = 1;
+	else if (sysfs_streq(buf, "0"))
+		en = 0;
+	else {
+		SENSOR_ERR("invalid value %d\n", *buf);
+		return -EINVAL;
+	}
+
+	SENSOR_INFO("Enable PS Alert en : %d, old_en : %d\n", en, ps_data->ps_alert_enabled);
+
+	if (en == ps_data->ps_alert_enabled)
+		return 0;
+
+	mutex_lock(&ps_data->io_lock);
+
+	if (en) {
+		ret = stk3013_enable_ps(dev, en, 1);
+		if (ret >= 0) {
+			hrtimer_start(&ps_data->prox_alert_timer,
+				ns_to_ktime(PROX_ALERT_DELAY), HRTIMER_MODE_REL);
+			ps_data->ps_alert_enabled = en;
+		}
+	} else {
+		hrtimer_cancel(&ps_data->prox_alert_timer);
+		cancel_work_sync(&ps_data->work_prox_alert);
+		ret = stk3013_enable_ps(dev, en, 1);
+		if (ret >= 0) {
+			ps_data->ps_alert_enabled = en;
+		}
+	}
+
+	mutex_unlock(&ps_data->io_lock);
+
+	return ret < 0 ? ret : 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static DEVICE_ATTR(enable, S_IRUGO | S_IWUSR | S_IWGRP,
@@ -1356,6 +1612,22 @@ static struct attribute_group proximity_attribute_group = {
 	.attrs = proximity_sysfs_attrs,
 };
 
+<<<<<<< HEAD
+=======
+static struct device_attribute dev_attr_prox_alert_enable =
+	__ATTR(enable, S_IRUGO | S_IWUSR | S_IWGRP,
+	proximity_alert_enable_show, proximity_alert_enable_store);
+
+static struct attribute *proximity_alert_sysfs_attrs[] = {
+	&dev_attr_prox_alert_enable.attr,
+	NULL
+};
+
+static struct attribute_group proximity_alert_attribute_group = {
+	.attrs = proximity_alert_sysfs_attrs,
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void stk_work_func(struct work_struct *work)
 {
 	uint32_t read_value;
@@ -1416,11 +1688,27 @@ static void stk_work_func(struct work_struct *work)
 			goto err_i2c_rw;
 	}
 #endif
+<<<<<<< HEAD
+=======
+
+	// For quick response, report prox alert event upon prox close event
+	if (ps_data->ps_alert_enabled) {
+		if ((near_far_state == 0) && (read_value >= ps_data->ps_alert_thd)) {
+			input_report_rel(ps_data->ps_alert_input_dev, REL_MISC, 2);
+			input_sync(ps_data->ps_alert_input_dev);
+		}
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	usleep_range(1000, 2000);
 	goto exit;
 
 err_i2c_rw:
+<<<<<<< HEAD
 	msleep(30);
+=======
+	usleep_range(30000,30000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 exit:
 	enable_irq(ps_data->irq);
 }
@@ -1452,8 +1740,11 @@ static int32_t stk3013_init_all_setting(struct i2c_client *client,
 	ret = stk3013_init_all_reg(ps_data);
 	if (ret < 0)
 		return ret;
+<<<<<<< HEAD
 	ps_data->ps_enabled = false;
 	ps_data->re_enable_ps = false;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ps_data->ir_code = 0;
 	ps_data->first_boot = true;
 
@@ -1485,7 +1776,10 @@ static int stk3013_setup_irq(struct i2c_client *client)
 	ret = gpio_direction_input(ps_data->int_pin);
 	if (ret < 0) {
 		SENSOR_ERR("gpio_direction_input, err=%d", ret);
+<<<<<<< HEAD
 		gpio_free(ps_data->int_pin);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return ret;
 	}
 
@@ -1528,6 +1822,16 @@ static int stk3013_suspend(struct device *dev)
 			stk3013_enable_ps(ps_data, 1, 0);
 	}
 #endif /* #ifdef STK_CHK_REG */
+<<<<<<< HEAD
+=======
+
+	if (ps_data->ps_alert_enabled) {
+		hrtimer_cancel(&ps_data->prox_alert_timer);
+		cancel_work_sync(&ps_data->work_prox_alert);
+		stk3013_enable_ps(dev, 0, 0);
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ps_data->ps_enabled) {
 		if (device_may_wakeup(&client->dev)) {
 			ret = enable_irq_wake(ps_data->irq);
@@ -1570,6 +1874,17 @@ static int stk3013_resume(struct device *dev)
 						ps_data->irq, ret);
 		}
 	}
+<<<<<<< HEAD
+=======
+	
+	if (ps_data->ps_alert_enabled) {
+		ps_data->ps_alert_enabled = 0; // state check disable
+		stk3013_enable_ps(dev, 1, 0);
+		hrtimer_start(&ps_data->prox_alert_timer,
+			ns_to_ktime(PROX_ALERT_DELAY), HRTIMER_MODE_REL);
+		ps_data->ps_alert_enabled = 1; // state check enable
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mutex_unlock(&ps_data->io_lock);
 
@@ -1580,10 +1895,82 @@ static const struct dev_pm_ops stk3013_pm_ops = {
 	SET_SYSTEM_SLEEP_PM_OPS(stk3013_suspend, stk3013_resume)
 };
 
+<<<<<<< HEAD
+=======
+static int stk3013_regulator_onoff(struct device *dev, bool onoff)
+{
+	struct stk3013_data *ps_data = dev_get_drvdata(dev);
+	int ret;
+
+	SENSOR_INFO("%s\n", (onoff) ? "on" : "off");
+
+	if (!ps_data->vdd || IS_ERR(ps_data->vdd)) {
+		SENSOR_INFO("VDD get regulator\n");
+		ps_data->vdd = devm_regulator_get(dev, "stk,vdd");
+		if (IS_ERR(ps_data->vdd)) {
+			SENSOR_ERR("cannot get vdd\n");
+			return -ENOMEM;
+		}
+		regulator_set_voltage(ps_data->vdd, 2800000,2800000);
+	}
+
+	if (!ps_data->vio || IS_ERR(ps_data->vio)) {
+		SENSOR_INFO("VIO get regulator\n");
+		ps_data->vio = devm_regulator_get(dev, "stk,vio");
+		if (IS_ERR(ps_data->vio)) {
+			SENSOR_ERR("cannot get vio\n");
+			devm_regulator_put(ps_data->vdd);
+			return -ENOMEM;
+		}
+		regulator_set_voltage(ps_data->vio, 1800000, 1800000);
+	}
+
+	if (onoff) {
+		ret = regulator_enable(ps_data->vdd);
+		if (ret)
+			SENSOR_ERR("Failed to enable vdd.\n");
+		usleep_range(20000,20000);
+
+		ret = regulator_enable(ps_data->vio);
+		if (ret)
+			SENSOR_ERR("Failed to enable vio.\n");
+		usleep_range(20000,20000);
+	} else {
+		ret = regulator_disable(ps_data->vdd);
+		if (ret)
+			SENSOR_ERR("Failed to disable vdd.\n");
+		usleep_range(20000,20000);
+
+		ret = regulator_disable(ps_data->vio);
+		if (ret)
+			SENSOR_ERR("Failed to disable vio.\n");
+		usleep_range(20000,20000);
+	}
+	return 0;
+}
+
+static int stk3013_vled_onoff(struct device *dev, bool onoff)
+{
+	struct stk3013_data *ps_data = dev_get_drvdata(dev);
+
+	SENSOR_INFO("stk3013_vled_onoff %s\n",(onoff) ? "on" : "off");
+
+	/* ldo control */
+	if (ps_data->pdata->vled_ldo) {
+		gpio_set_value(ps_data->pdata->vled_ldo, onoff);	
+	}
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int stk3013_parse_dt(struct device *dev,
 			struct stk3013_platform_data *pdata)
 {
 	int rc;
+<<<<<<< HEAD
+=======
+	struct stk3013_data *ps_data = dev_get_drvdata(dev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct device_node *np = dev->of_node;
 	enum of_gpio_flags flags;
 	u32 temp_val;
@@ -1594,15 +1981,34 @@ static int stk3013_parse_dt(struct device *dev,
 	pdata->int_pin = of_get_named_gpio_flags(np, "stk,irq-gpio", 0,
 						&pdata->int_flags);
 	if (pdata->int_pin < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read irq-gpio\n");
 		return pdata->int_pin;
 	}
 
+=======
+		dev_err(dev, "Unable to read irq-gpio\n");
+		return pdata->int_pin;
+	}
+
+	rc = of_property_read_u32(np, "stk,transmittance", &temp_val);
+	if (!rc)
+		pdata->transmittance = temp_val;
+	else {
+		dev_err(dev, "Unable to read transmittance\n");
+		return rc;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	rc = of_property_read_u32(np, "stk,state-reg", &temp_val);
 	if (!rc)
 		pdata->state_reg = temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read state-reg\n");
+=======
+		dev_err(dev, "Unable to read state-reg\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1610,15 +2016,34 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->psctrl_reg = (u8)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read psctrl-reg\n");
 		return rc;
 	}
 
+=======
+		dev_err(dev, "Unable to read psctrl-reg\n");
+		return rc;
+	}
+/*
+	rc = of_property_read_u32(np, "stk,alsctrl-reg", &temp_val);
+	if (!rc)
+		pdata->alsctrl_reg = (u8)temp_val;
+	else {
+		dev_err(dev, "Unable to read alsctrl-reg\n");
+		return rc;
+	}
+*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	rc = of_property_read_u32(np, "stk,ledctrl-reg", &temp_val);
 	if (!rc)
 		pdata->ledctrl_reg = (u8)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ledctrl-reg\n");
+=======
+		dev_err(dev, "Unable to read ledctrl-reg\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1626,7 +2051,11 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->wait_reg = (u8)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read wait-reg\n");
+=======
+		dev_err(dev, "Unable to read wait-reg\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1634,7 +2063,11 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->ps_thd_h = (u16)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ps-thd-h\n");
+=======
+		dev_err(dev, "Unable to read ps-thd-h\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1642,7 +2075,11 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->ps_thd_l = (u16)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ps-thd-l\n");
+=======
+		dev_err(dev, "Unable to read ps-thd-l\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1650,7 +2087,11 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->ps_cancel_thd_h = (u16)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ps-cancel-thd-h\n");
+=======
+		dev_err(dev, "Unable to read ps-cancel-thd-h\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1658,7 +2099,11 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->ps_cancel_thd_l = (u16)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ps-cancel-thd-l\n");
+=======
+		dev_err(dev, "Unable to read ps-cancel-thd-l\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1666,7 +2111,11 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->ps_cal_skip_adc = (u16)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ps-cal-skip-adc\n");
+=======
+		dev_err(dev, "Unable to read ps-cal-skip-adc\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1674,7 +2123,11 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->ps_cal_fail_adc = (u16)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ps-cal-fail-adc\n");
+=======
+		dev_err(dev, "Unable to read ps-cal-fail-adc\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1682,6 +2135,7 @@ static int stk3013_parse_dt(struct device *dev,
 	if (!rc)
 		pdata->ps_default_offset = (u16)temp_val;
 	else {
+<<<<<<< HEAD
 		SENSOR_ERR("Unable to read ps-default-offset\n");
 		return rc;
 	}
@@ -1690,6 +2144,31 @@ static int stk3013_parse_dt(struct device *dev,
 		0, &flags);
 	if (pdata->vled_ldo < 0) {
 		SENSOR_ERR("fail to get vled_ldo: means to use regulator as vLED\n");
+=======
+		dev_err(dev, "Unable to read ps-default-offset\n");
+		return rc;
+	}
+
+	rc = of_property_read_u32(np, "stk,ps-alert-mode-support", &temp_val);
+	if (!rc)
+		ps_data->ps_alert_mode_support = (u8) temp_val;
+	else {
+		dev_err(dev, "Unable to read ps-alert-mode-support\n");
+		ps_data->ps_alert_mode_support = 0;
+	}
+
+	rc = of_property_read_u32(np, "stk,ps-alert-thd", &temp_val);
+	if (!rc)
+		ps_data->ps_alert_thd = (u16) temp_val;
+	else {
+		dev_err(dev, "Unable to read ps-alert-thd\n");
+		ps_data->ps_alert_thd = 0;
+	}
+
+	pdata->vled_ldo = of_get_named_gpio_flags(np, "stk,vled_ldo",0, &flags);
+	if (pdata->vled_ldo < 0) {
+		SENSOR_ERR("fail to get vled_ldo\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->vled_ldo = 0;
 	} else {
 		rc = gpio_request(pdata->vled_ldo, "prox_vled_en");
@@ -1701,6 +2180,7 @@ static int stk3013_parse_dt(struct device *dev,
 		gpio_direction_output(pdata->vled_ldo, 0);
 	}
 
+<<<<<<< HEAD
 	rc = of_property_read_u32(np, "stk,regulator_divided",
 		&pdata->regulator_divided);
 
@@ -1711,6 +2191,8 @@ static int stk3013_parse_dt(struct device *dev,
 		pdata->vdd_always_on, pdata->regulator_divided,
 		pdata->vled_ldo);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -1720,7 +2202,11 @@ static int check_calibration_offset(struct stk3013_data *ps_data)
 	struct file *cal_filp = NULL;
 	mm_segment_t old_fs;
 	uint16_t file_offset_data;
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	old_fs = get_fs();
 	set_fs(KERNEL_DS);
@@ -1742,6 +2228,7 @@ static int check_calibration_offset(struct stk3013_data *ps_data)
 		sizeof(u16), &cal_filp->f_pos);
 	if (ret != sizeof(u16)) {
 		SENSOR_ERR("Can't read the cal data from file\n");
+<<<<<<< HEAD
 
 		filp_close(cal_filp, current->files);
 		set_fs(old_fs);
@@ -1749,6 +2236,12 @@ static int check_calibration_offset(struct stk3013_data *ps_data)
 	}
 
 	if (file_offset_data < ps_data->ps_cal_skip_adc)
+=======
+		ret = -EIO;
+	}
+
+	if(file_offset_data < ps_data->ps_cal_skip_adc)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto exit;
 
 	if (file_offset_data != ps_data->ps_offset)
@@ -1778,6 +2271,79 @@ static int stk3013_set_wq(struct stk3013_data *ps_data)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int stk3013_prox_alert_set_up(struct stk3013_data *ps_data)
+{
+	int ret = 0;
+	struct input_dev *dev;
+
+	dev = input_allocate_device();
+	if (dev == NULL) {
+		SENSOR_ERR("could not allocate ps alert device\n");
+		ret = -ENOMEM;
+		goto err_ps_alert_input_alloc_device;
+	}
+
+	dev->name = MODULE_NAME_PROX_ALERT;
+	input_set_capability(dev, EV_REL, REL_MISC);
+	ret = input_register_device(dev);
+	if (ret < 0) {
+		SENSOR_ERR("can not register ps input device\n");
+		input_free_device(dev);
+		goto err_ps_alert_input_register_device;
+	}
+
+	ret = sensors_create_symlink(&dev->dev.kobj, dev->name);
+	if (ret < 0) {
+		SENSOR_ERR("create_symlink error for ps alert\n");
+		goto err_ps_alert_sensors_create_symlink;
+	}
+
+	ret = sysfs_create_group(&dev->dev.kobj, &proximity_alert_attribute_group);
+	if (ret < 0) {
+		SENSOR_ERR("could not create sysfs group for ps alert\n");
+		goto err_ps_alert_sysfs_create_group;
+	}
+
+	input_set_drvdata(dev, ps_data);
+
+	ps_data->ps_alert_input_dev = dev;
+
+	hrtimer_init(&ps_data->prox_alert_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+	ps_data->prox_alert_timer.function = stk3013_prox_alert_timer_func;
+	ps_data->prox_alert_wq = create_singlethread_workqueue("stk3013_prox_alert_wq");
+	if (!ps_data->prox_alert_wq) {
+		ret = -ENOMEM;
+		SENSOR_ERR("could not create prox alert workqueue\n");
+		goto err_create_prox_alert_workqueue;
+	}
+
+	INIT_WORK(&ps_data->work_prox_alert, stk3013_work_func_prox_alert);
+
+	ret = sensors_register(&ps_data->ps_alert_dev, ps_data,
+				prox_alert_sensor_attrs, MODULE_NAME_PROX_ALERT);
+	if (ret) {
+		SENSOR_ERR("cound not register proximity alert device(%d)\n", ret);
+		goto err_prox_alert_sensor_register_failed;
+	}
+
+	return 0;
+
+err_prox_alert_sensor_register_failed:
+	destroy_workqueue(ps_data->prox_alert_wq);
+err_create_prox_alert_workqueue:
+	sysfs_remove_group(&dev->dev.kobj, &proximity_alert_attribute_group);
+err_ps_alert_sysfs_create_group:
+	sensors_remove_symlink(&dev->dev.kobj, dev->name);
+err_ps_alert_sensors_create_symlink:
+	input_unregister_device(dev);
+err_ps_alert_input_register_device:
+err_ps_alert_input_alloc_device:
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int stk3013_probe(struct i2c_client *client,
 			const struct i2c_device_id *id)
 {
@@ -1804,11 +2370,26 @@ static int stk3013_probe(struct i2c_client *client,
 	wake_lock_init(&ps_data->ps_wakelock, WAKE_LOCK_SUSPEND,
 			"stk_input_wakelock");
 
+<<<<<<< HEAD
+=======
+	ps_data->ps_enabled = 0;
+	ps_data->ps_alert_enabled = 0;
+	ps_data->ps_alert_mode_support = 0;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (client->dev.of_node) {
 		SENSOR_INFO("with device tree\n");
 		plat_data = devm_kzalloc(&client->dev,
 			sizeof(struct stk3013_platform_data), GFP_KERNEL);
+<<<<<<< HEAD
 
+=======
+		if (!plat_data) {
+			dev_err(&client->dev, "Failed to allocate memory\n");
+			ret = -ENOMEM;
+			goto err_als_input_allocate;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = stk3013_parse_dt(&client->dev, plat_data);
 		if (ret) {
 			SENSOR_ERR("stk3013_parse_dt ret=%d\n", ret);
@@ -1822,6 +2403,7 @@ static int stk3013_probe(struct i2c_client *client,
 		SENSOR_ERR("no stk3013 platform data!\n");
 		ret = -ENOMEM;
 		goto err_als_input_allocate;
+<<<<<<< HEAD
 	}
 
 	ps_data->int_pin = plat_data->int_pin;
@@ -1831,6 +2413,17 @@ static int stk3013_probe(struct i2c_client *client,
 	if (!ps_data->pdata->regulator_divided)
 		proximity_vled_onoff(&client->dev, ON);
 
+=======
+	}	
+
+	ps_data->int_pin = plat_data->int_pin;
+	ps_data->pdata = plat_data;
+	
+	stk3013_regulator_onoff(&client->dev, ON);
+	if(ps_data->pdata->vled_ldo)
+		stk3013_vled_onoff(&client->dev,ON);
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	stk3013_set_wq(ps_data);
 	ret = stk3013_init_all_setting(client, plat_data);
 	if (ret < 0)
@@ -1842,7 +2435,11 @@ static int stk3013_probe(struct i2c_client *client,
 		ret = -ENOMEM;
 		goto err_input_alloc_device;
 	}
+<<<<<<< HEAD
 	ps_data->ps_input_dev->name = MODULE_NAME;
+=======
+	ps_data->ps_input_dev->name = MODULE_NAME_PROX;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	set_bit(EV_ABS, ps_data->ps_input_dev->evbit);
 	input_set_capability(ps_data->ps_input_dev, EV_ABS, ABS_DISTANCE);
 	input_set_abs_params(ps_data->ps_input_dev, ABS_DISTANCE, 0, 1, 0, 0);
@@ -1866,12 +2463,19 @@ static int stk3013_probe(struct i2c_client *client,
 		SENSOR_ERR("could not create sysfs group for ps\n");
 		goto err_sysfs_create_group_proximity;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(ps_data->ps_input_dev, ps_data);
 
 	ret = stk3013_setup_irq(client);
 	if (ret < 0)
 		goto err_stk3013_setup_irq;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	device_init_wakeup(&client->dev, true);
 
 	hrtimer_init(&ps_data->prox_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
@@ -1890,13 +2494,18 @@ static int stk3013_probe(struct i2c_client *client,
 	INIT_WORK(&ps_data->work_prox, stk3013_work_func_prox);
 
 	ret = sensors_register(&ps_data->ps_dev, ps_data,
+<<<<<<< HEAD
 				prox_sensor_attrs, MODULE_NAME);
+=======
+				prox_sensor_attrs, MODULE_NAME_PROX);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret) {
 		SENSOR_ERR("cound not register proximity sensor device(%d)\n",
 			ret);
 		goto prox_sensor_register_failed;
 	}
 
+<<<<<<< HEAD
 	if (!ps_data->pdata->regulator_divided)
 		proximity_vled_onoff(&client->dev, OFF);
 	if (!ps_data->pdata->vdd_always_on)
@@ -1913,6 +2522,33 @@ err_create_prox_workqueue:
 err_stk3013_setup_irq:
 	sysfs_remove_group(&ps_data->ps_input_dev->dev.kobj,
 		&proximity_attribute_group);
+=======
+	if (ps_data->ps_alert_mode_support) {
+		ret = stk3013_prox_alert_set_up(ps_data);
+		if (ret < 0) {
+			SENSOR_ERR("cound not set up prox alert device (%d)\n", ret);
+			goto prox_alert_set_up_failed;
+		}
+		SENSOR_INFO("prox alert set up done!");
+	}
+
+	/*stk3013_regulator_onoff(&client->dev, OFF);*/
+	if(ps_data->pdata->vled_ldo)
+		stk3013_vled_onoff(&client->dev,OFF);
+
+	SENSOR_INFO("success\n");
+	return 0;
+	/*device_init_wakeup(&client->dev, false);*/
+
+prox_alert_set_up_failed:
+	sensors_unregister(ps_data->ps_dev, prox_sensor_attrs);
+prox_sensor_register_failed:
+	destroy_workqueue(ps_data->prox_wq);
+err_create_prox_workqueue:
+err_stk3013_setup_irq:
+	free_irq(ps_data->irq, ps_data);
+	gpio_free(ps_data->int_pin);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_sysfs_create_group_proximity:
 	sensors_remove_symlink(&ps_data->ps_input_dev->dev.kobj,
 					ps_data->ps_input_dev->name);
@@ -1922,11 +2558,19 @@ err_input_register_device:
 err_input_alloc_device:
 err_init_all_setting:
 	destroy_workqueue(ps_data->stk_wq);
+<<<<<<< HEAD
 	if (ps_data->pdata->vled_ldo)
 		gpio_free(ps_data->pdata->vled_ldo);
 	if (!ps_data->pdata->regulator_divided)
 		proximity_vled_onoff(&client->dev, OFF);
 	proximity_vdd_onoff(&client->dev, OFF);
+=======
+	/*stk3013_regulator_onoff(&client->dev, OFF);*/
+	if(ps_data->pdata->vled_ldo){
+		stk3013_vled_onoff(&client->dev,OFF);
+		gpio_free(ps_data->pdata->vled_ldo);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_als_input_allocate:
 	wake_lock_destroy(&ps_data->ps_wakelock);
 	mutex_destroy(&ps_data->io_lock);
@@ -1934,11 +2578,22 @@ err_als_input_allocate:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+
+static int stk3013_remove(struct i2c_client *client)
+{
+	SENSOR_INFO("\n");
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void stk3013_shutdown(struct i2c_client *client)
 {
 	struct stk3013_data *ps_data = i2c_get_clientdata(client);
 	struct device *dev = &client->dev;
 
+<<<<<<< HEAD
 	SENSOR_INFO("ps_enabled: %d\n", ps_data->ps_enabled);
 
 	if (ps_data->ps_enabled) {
@@ -1951,6 +2606,23 @@ static int stk3013_remove(struct i2c_client *client)
 {
 	SENSOR_INFO("\n");
 	return 0;
+=======
+	SENSOR_INFO("\n");
+
+	if (ps_data->ps_alert_enabled) {
+		hrtimer_cancel(&ps_data->prox_alert_timer);
+		cancel_work_sync(&ps_data->work_prox_alert);
+		stk3013_enable_ps(dev, 0, 0);
+		ps_data->ps_alert_enabled = 0;
+	}
+
+	if (ps_data->ps_enabled) {
+		stk3013_enable_ps(dev, 0, 0);
+		ps_data->ps_enabled = 0;
+	}
+
+	stk3013_regulator_onoff(dev, OFF);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static const struct i2c_device_id stk_ps_id[] = {

@@ -11,12 +11,15 @@ menuconfig SENSORS
 
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config SENSORS_CORE
 	bool "Sensors Class Support"
 	help
 	  This option enables the sensor sysfs class in /sys/class/sensors.
 	  You'll need this to do anything useful with sensorss. If unsure, say N.
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SENSORS_K2HH
 	depends on I2C
 	tristate "SENSORS_K2HH"
@@ -61,6 +64,7 @@ config SENSORS_LIS2DS_SPI
 	   To compile this driver as a module, choose M here. The module
 	   will be called lis2ds.
 
+<<<<<<< HEAD
 config SENSORS_BMA2X2
 	tristate "BMA255/BMA250E/BMA222E/BMA280 acceleration sensor support"
 	depends on I2C
@@ -102,6 +106,8 @@ config ST_LSM6DS3_SPI
 	  This driver can be built as a module. The module will be called
 	  st-lsm6ds3.	  
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SENSORS_LSM6DSL
 	tristate "STMicroelectronics LSM6DSL sensor"
 	depends on (I2C || SPI) && SYSFS
@@ -123,6 +129,7 @@ config SENSORS_LSM6DSL_SPI
 	help
 	   This driver support the STMicroelectronics LSM6DSL sensor.
 
+<<<<<<< HEAD
 config SENSORS_BMM050
 	tristate "BMM050 Magnetic Sensor Driver"
 	depends on I2C
@@ -173,6 +180,70 @@ config SENSORS_CM3323
 	default n
 	help
 	  This option enables RGB sensors using Capella CM3323 device driver.
+=======
+config SENSORS_PPSX60
+	tristate "PARTRON & TI PPSX60 HRM Sensor"
+	default n
+	depends on I2C
+	help
+	  If you say yes here you get support for the PPSX60
+	  HRM sensor.
+	  This driver can also be built as a module.  If so, the module
+	  will be called PPSX60.
+
+config SENSORS_BH1733
+	depends on I2C
+	tristate "BH1733 driver"
+	default n
+	help
+	  Say Y here if you use bh1733.
+	  This option enables light sensors using
+	  Rohm bh1733 device driver.
+
+	  Say N here if you do not use bh1733.
+
+config SENSORS_CM3323
+	depends on I2C
+	tristate "CM3323 driver"
+	default n
+	help
+	  Say Y here if you use cm3323.
+	  This option enables RGB sensors using
+	  Capella cm3323 device driver.
+
+	  Say N here if you do not use cm3323.
+
+config SENSORS_VEML3328
+	depends on I2C
+	tristate "VEML3328 driver"
+	default n
+	help
+	  Say Y here if you use veml3328.
+	  This option enables RGB sensors using
+	  Capella veml3328 device driver.
+	  Say N here if you do not use veml3328.
+
+config SENSORS_CM36652
+	depends on I2C
+	tristate "CM36652 driver"
+	default n
+	help
+	  This option enables proximity & light sensors using CM36652 driver.
+
+config SENSORS_CM36652_LEDA_EN_GPIO
+	depends on I2C
+	tristate "CM36652 leda_en controlled by GPIO"
+	default n
+	help
+	  This option enables leda_en controlled by GPIO using CM36652 driver.
+
+config SENSORS_CM36652_SENSOR_EN_GPIO
+	depends on I2C
+	tristate "CM36652 sensor_en controlled by GPIO"
+	default n
+	help
+	  This option enables leda_en controlled by GPIO using CM36652 driver.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config SENSORS_CM36655
 	depends on I2C
@@ -181,6 +252,37 @@ config SENSORS_CM36655
 	help
 	  This option enables proximity & light sensors using CM36655 driver.
 
+<<<<<<< HEAD
+=======
+config SENSORS_CM36655_LEDA_EN_GPIO
+	depends on I2C
+	tristate "CM36655 leda_en controlled by GPIO"
+	default n
+	help
+	  This option enables leda_en controlled by GPIO using CM36655 driver.
+
+config SENSORS_CM36655_SENSOR_EN_GPIO
+	depends on I2C
+	tristate "CM36655 sensor_en controlled by GPIO"
+	default n
+	help
+	  This option enables leda_en controlled by GPIO using CM36655 driver.
+
+config SENSORS_CM36672P
+	depends on I2C
+	tristate "CM36672P driver"
+	default n
+	help
+	  This option enables proximity sensor using CM36672P driver.
+	  
+config SENSORS_CM36672P_SMART_PERS
+	depends on SENSORS_CM36672P
+	tristate "CM36672P driver"
+	default n
+	help
+	  This option enables smart persistence option using CM36672P driver.
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SENSORS_CM36686
 	depends on I2C
 	tristate "CM36686 driver"
@@ -188,6 +290,16 @@ config SENSORS_CM36686
 	help
 	  This option enables proximity & light sensors using CM36686 driver.
 
+<<<<<<< HEAD
+=======
+config SENSORS_TCS3490
+	depends on I2C
+	tristate "TCS3490 driver"
+	default n
+	help
+	  This option enables light sensor using TCS3490 driver.
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SENSORS_TMD3782
 	depends on I2C
 	tristate "TMD3782 driver"
@@ -209,6 +321,7 @@ config SENSORS_TMD3700
 	help
 	   This option enables proximity & light sensors using TMD3700 driver.
 
+<<<<<<< HEAD
 config SENSORS_CM36672P
 	depends on I2C
 	tristate "CM36672P driver"
@@ -222,6 +335,21 @@ config SENSORS_CM36672P_SMART_PERS
 	default n
 	help
 	  This option enables smart persistence option using optical sensor driver.
+=======
+config SENSORS_TMD3725
+	depends on I2C
+	tristate "TMD3725 driver"
+	default n
+	help
+	   This option enables proximity & light sensors using TMD3725 driver.
+
+config SENSORS_TMD3725_RF_NOISE_DEFENCE_CODE
+	depends on SENSORS_TMD3725
+	tristate "TMD3725 driver defence code feature"
+	default n
+	help
+	   This option enables proximity using defence code in TMD3725 driver.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config SENSORS_STK3013
 	depends on I2C
@@ -235,7 +363,18 @@ config SENSORS_GP2AP070S
 	tristate "GP2AP070S driver"
 	default n
 	help
+<<<<<<< HEAD
 	  This option enables proximity sensor using GP2AP070S driver.
+=======
+	  This option enables proximity sensor using GP2AP070S driver
+
+config SENSORS_GP2AP110S
+	depends on I2C
+	tristate "GP2AP110S proximity sensor" 
+	default n
+	help
+	  Say Y here to enable the GP2AP110S
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config SENSORS_SX9306
 	depends on I2C
@@ -244,12 +383,27 @@ config SENSORS_SX9306
 	help
 	 This option enables grip sensors using SemTech sx9306 device driver.
 
+<<<<<<< HEAD
+=======
+config SENSORS_SX9306_SUB
+	depends on I2C
+	tristate "SX9306 sub driver"
+	default n
+	help
+	 This option enables grip sensors using SemTech sx9306 sub device driver.
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SENSORS_SX9306_WIFI
 	depends on I2C
 	tristate "SX9306 wifi driver"
 	default n
 	help
+<<<<<<< HEAD
 	  This option enables grip sensors using SemTech sx9306 wifi device driver.
+=======
+	  This option enables wifi grip sensors using
+	  SemTech sx9306 wifi device driver.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config SENSORS_SX9310
 	depends on I2C
@@ -257,8 +411,67 @@ config SENSORS_SX9310
 	default n
 	help
 	  Say Y here if you use sx9310.
+<<<<<<< HEAD
 	  This option enables grip sensors using SemTech sx9310 device driver.
 	  
+=======
+	  This option enables grip sensors using
+	  SemTech sx9310 device driver.
+
+	  Say N here if you do not use sx9310.
+
+config SENSORS_SX9310_INIT_TOUCH_THRESHOLD
+	int "SX9310 Grip sensor threshold for init touch"
+	depends on SENSORS_SX9310
+	default "3000"
+	help
+	  This value is the standard of init touch using
+	  SemTech sx9310 device driver.
+
+config SENSORS_SX9310_NORMAL_TOUCH_THRESHOLD
+	int "SX9310 Grip sensor threshold for normal touch"
+	depends on SENSORS_SX9310
+	default "193"
+	help
+	  This value is the standard of normal touch using
+	  SemTech sx9310 device driver.
+
+config SENSORS_SX9310_KEYSTRING_SKIPDATA
+	depends on SENSORS_SX9310
+	tristate "SX9310 Grip sensor support keystring skipdata"
+	default n
+	help
+	  This option enables support of keystring
+	  the grip sensor power skipdata.
+
+config SENSORS_SX9310_WIFI
+	depends on I2C
+	tristate "SX9310 driver"
+	default n
+	help
+	  Say Y here if you use sx9310.
+	  This option enables grip sensors using
+	  SemTech sx9310 device driver.
+
+	  Say N here if you do not use sx9310.
+
+config SENSORS_SX9310_WIFI_INIT_TOUCH_THRESHOLD
+	int "SX9310 Grip sensor threshold for init touch"
+	depends on SENSORS_SX9310_WIFI
+	default "3000"
+	help
+	  This value is the standard of init touch using
+	  SemTech sx9310 device driver.
+
+config SENSORS_SX9310_WIFI_NORMAL_TOUCH_THRESHOLD
+	int "SX9310 Grip sensor threshold for normal touch"
+	depends on SENSORS_SX9310_WIFI
+	default "17"
+	help
+	  This value is the standard of normal touch using
+	  SemTech sx9310 device driver.
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SENSORS_SX9320
 	depends on I2C
 	tristate "SX9320 driver"
@@ -268,6 +481,7 @@ config SENSORS_SX9320
 	  This option enables grip sensors using
 	  SemTech sx9320 device driver.
 
+<<<<<<< HEAD
 config SENSORS_GRIP_KEYSTRING_SKIPDATA
 	depends on I2C
 	tristate "Grip sensor support keystring skipdata"
@@ -275,6 +489,111 @@ config SENSORS_GRIP_KEYSTRING_SKIPDATA
 	help
 	  This option enables support of keystring the grip sensor power skipdata.
 
+=======
+	  Say N here if you do not use sx9320.
+	  
+config SENSORS_SX9320_WIFI
+	depends on I2C
+	tristate "SX9320 wifi driver"
+	default n
+	help
+	  Say Y here if you use sx9320.
+	  This option enables wifi grip sensors using
+	  SemTech sx9320 wifi device driver.
+
+	  Say N here if you do not use sx9320.
+
+config SENSORS_SX9500
+	depends on I2C
+	tristate "SX9500 driver"
+	default n
+	help
+	  Say Y here if you use sx9500.
+	  This option enables grip sensors using
+	  SemTech sx9500 device driver.
+
+	  Say N here if you do not use sx9500.
+
+config SENSORS_SX9500_INIT_TOUCH_THRESHOLD
+	int "SX9500 Grip sensor threshold for init touch"
+	depends on SENSORS_SX9500
+	default "3000"
+	help
+	  This value is the standard of init touch using
+	  SemTech sx9500 device driver.
+
+config SENSORS_SX9500_NORMAL_TOUCH_THRESHOLD
+	int "SX9500 Grip sensor threshold for normal touch"
+	depends on SENSORS_SX9500
+	default "17"
+	help
+	  This value is the standard of normal touch using
+	  SemTech sx9500 device driver.
+
+config SENSORS_SX9500_TEMPERATURE_COMPENSATION
+	depends on SENSORS_SX9500
+	tristate "SX9500 Grip sensor temperature compensation"
+	default n
+	help
+	  Say Y here if you use temperature compensation code.
+	  This option enables grip sensors using
+	  temperature compensation code.
+
+config SENSORS_SX9500_REGULATOR_ONOFF
+	depends on SENSORS_SX9500
+	tristate "SX9500 Grip sensor Regulator"
+	default n
+	help
+	  Say Y here if you use regulator for grip sensor.
+	  This option enables regulator for grip sensor using
+	  SemTech sx9500 device driver.
+
+config SENSORS_SX9500_WIFI
+	depends on I2C
+	tristate "SX9500 driver for wifi"
+	default n
+	help
+	  Say Y here if you use sx9500 for wifi.
+	  This option enables grip sensors using
+	  SemTech sx9500 device driver for wifi.
+
+	  Say N here if you do not use sx9500 for wifi.
+
+config SENSORS_SX9500_WIFI_INIT_TOUCH_THRESHOLD
+	int "SX9500 Grip sensor threshold for init touch for wifi"
+	depends on SENSORS_SX9500_WIFI
+	default "3000"
+	help
+	  This value is the standard of init touch using
+	  SemTech sx9500 device driver for wifi.
+
+config SENSORS_SX9500_WIFI_NORMAL_TOUCH_THRESHOLD
+	int "SX9500 Grip sensor threshold for normal touch for wifi"
+	depends on SENSORS_SX9500_WIFI
+	default "17"
+	help
+	  This value is the standard of normal touch using
+	  SemTech sx9500 device driver for wifi.
+
+config SENSORS_SX9500_WIFI_TEMPERATURE_COMPENSATION
+	depends on SENSORS_SX9500_WIFI
+	tristate "SX9500 Grip sensor temperature compensation for wifi"
+	default n
+	help
+	  Say Y here if you use temperature compensation code.
+	  This option enables grip sensors using
+	  temperature compensation code.
+
+config SENSORS_SX9500_WIFI_REGULATOR_ONOFF
+	depends on SENSORS_SX9500_WIFI
+	tristate "SX9500 Grip sensor Regulator for WIFI"
+	default n
+	help
+	  Say Y here if you use regulator for grip sensor for WIFI.
+	  This option enables regulator for grip sensor using
+	  SemTech sx9500 device driver for WIFI.
+	  
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SENSORS_GRIP_CHK_HALLIC
 	depends on I2C
 	tristate "grip sensor check to hallic"
@@ -282,6 +601,7 @@ config SENSORS_GRIP_CHK_HALLIC
 	help
 	 This option enables grip sensors checking hall ic status.
 
+<<<<<<< HEAD
 config SENSORS_A96T3X6_WIFI
 	depends on I2C
 	tristate "A96T3X6 driver for grip wifi"
@@ -331,6 +651,179 @@ config SENSORS_TC350K
 	  This option enables grip sensors using
 	  Above TC350K device driver for grip Sensor.
 	  Say N here if you do not use TC350K for grip Sensor.
+=======
+config SENSORS_ABOV_A96T316
+	depends on I2C
+	tristate "A96T316 driver for grip"
+	default n
+	help
+	  Say Y here if you use A96T316 for grip.
+	  This option enables grip sensors using
+	  Above A96T316 device driver for grip.
+
+	  Say N here if you do not use A96T316 for grip.
+
+config TOUCHKEY_GRIP
+	tristate "touch grip for sar"
+	depends on I2C
+	help
+	  Say Y here if you want to use touch grip.
+
+config SENSORS_A96T3X6
+	depends on I2C
+	tristate "A96T3X6 touchkey"
+	default n
+	help
+	  Say Y here if you use A96T3X6 for grip.
+	  This option enables grip sensors using
+	  Above A96T3X6 device driver for grip.
+
+	  Say N here if you do not use A96T3X6 for grip.
+
+config SENSORS_A96T3X6_J8
+	depends on I2C
+	tristate "A96T3X6 touchkey"
+	default n
+	help
+	  Say Y here if you use A96T3X6 for grip.
+	  This option enables grip sensors using
+	  Above A96T3X6 device driver for grip.
+
+	  Say N here if you do not use A96T3X6 for grip.
+
+config SENSORS_A96T3X6_J6
+	depends on I2C
+	tristate "A96T3X6 touchkey"
+	default n
+	help
+	  Say Y here if you use A96T3X6 for grip.
+	  This option enables grip sensors using
+	  Above A96T3X6 device driver for grip.
+
+	  Say N here if you do not use A96T3X6 for grip.
+
+config SENSORS_A96T3X6_J6KOR
+	depends on I2C
+	tristate "A96T3X6 touchkey"
+	default n
+	help
+	  Say Y here if you use A96T3X6 for grip.
+	  This option enables grip sensors using
+	  Above A96T3X6 device driver for grip.
+
+	  Say N here if you do not use A96T3X6 for grip.
+
+config SENSORS_A96T3X6_A6
+	depends on I2C
+	tristate "A96T3X6 touchkey"
+	default n
+	help
+	  Say Y here if you use A96T3X6 for grip.
+	  This option enables grip sensors using
+	  Above A96T3X6 device driver for grip.
+
+	  Say N here if you do not use A96T3X6 for grip.
+
+config SENSORS_A96T3X6_A2CORE
+	depends on I2C
+	tristate "A96T3X6 touchkey"
+	default n
+	help
+	  Say Y here if you use A96T3X6 for grip.
+	  This option enables grip sensors using
+	  Above A96T3X6 device driver for grip.
+
+	  Say N here if you do not use A96T3X6 for grip.
+
+config SENSORS_TC3XXK_M10
+	depends on I2C
+	tristate "TC3XXK driver for grip Sensor"
+	default n
+	help
+	  Say Y here if you use TC3XXK IC for grip Sensor.
+	  This option enables grip sensors using
+	  Coreriver TC3XXK device driver for grip Sensor.
+
+	  Say N here if you do not use TC3XXK for grip Sensor
+
+config SENSORS_MAX86900
+	tristate "MAXIM MAX86900 HRM Sensor"
+	default n
+	depends on I2C
+	help
+	  If you say yes here you get support for the MAX86900
+	  HRM sensor.
+	  This driver can also be built as a module.  If so, the module
+	  will be called max86900.
+
+config SENSORS_MAX86902
+	tristate "MAXIM MAX86902 HRM & UV Sensor"
+	default n
+	depends on I2C
+	help
+	  If you say yes here you get support for the MAX86902
+	  HRM & UV sensor.
+	  This driver can also be built as a module.	If so, the module
+	  will be called max86902.
+
+config SENSORS_BMA2X2
+	tristate "BMA255/BMA250E/BMA222E/BMA280 acceleration sensor support"
+	depends on I2C
+	help
+	  If you say yes here you get support for Bosch Sensortec's
+	  acceleration sensors BMA255/BMA250E/BMA222E/BMA280.
+
+config SENSORS_BMA2X2_ENABLE_INT1
+	tristate "BMA2X2 acceleration sensor interrupt INT1 support"
+	depends on SENSORS_BMA2X2
+	help
+	 If you say yes here, you get INT1 support for Bosch Sensortec
+	 acceleration sensors BMA255/BMA254/BMA355/BMA250E/BMA222E/BMA280.
+
+config INPUT_BMA2x2_ACC_ALERT_INT
+	tristate "BMA255/BMA250E/BMA222E/BMA280 acceleration sensor support"
+	depends on I2C=y
+	help
+	  If you say yes here you get support for Bosch Sensortec's
+	  acceleration sensors BMA255/BMA250E/BMA222E/BMA280.
+
+config SENSORS_BMM050
+	tristate "BMM050 Magnetic Sensor Driver"
+	depends on I2C
+	help
+	 BMM050 Magnetic Sensor Driver implemented by Bosch-Sensortec.
+
+config SENSORS_AK09916C
+	tristate "AK09916C compass support"
+	default n
+	depends on I2C
+	help
+	  If you say yes here you get support for Asahi Kasei's
+	  orientation sensor AK09916C.
+
+config SENSORS_YAS537
+	tristate "YAS537 Sensor Driver"
+	depends on I2C
+	default n
+	help
+	  If you say yes here you get support for YAMAHA
+	  YAS537 Geomagnitor Sensor.
+
+config SENSORS_YAS539
+	tristate "YAS539 Sensor Driver"
+	depends on I2C
+	default n
+	help
+	  If you say yes here you get support for YAMAHA
+	  YAS539 Geomagnitor Sensor.
+
+config SENSORS_YAS539_DEFAULT_MATRIX
+	depends on SENSORS_YAS539
+	tristate "The default conpensation matrix for YAS539 softiron"
+	default n
+	help
+	  This option is enables the default matrix for YAS539.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config SENSORS_BHA250_DEFENCE_SW_RESET
 	tristate "SENSOR SW RESET support"
@@ -340,3 +833,33 @@ config SENSORS_BHA250_DEFENCE_SW_RESET
 	  If you say yes here you get support for SENSOR SW RESET.
 	  This supports avoiding from sensors malfunctioning
 	   in case that BHA works wrong.
+<<<<<<< HEAD
+=======
+
+config ST_LSM6DS3
+	tristate "STMicroelectronics LSM6DS3 sensor"
+	depends on (I2C || SPI) && SYSFS
+	help
+	  This driver supports the STMicroelectronics LSM6DS3 sensor.
+	  It is a gyroscope/accelerometer combo device.
+	  This driver can be built as a module. The module will be called
+	  st-lsm6ds3.
+
+config ST_LSM6DS3_I2C
+	tristate "STMicroelectronics LSM6DS3 sensor"
+	depends on (I2C || SPI) && SYSFS
+	help
+	  This driver supports the STMicroelectronics LSM6DS3 sensor.
+	  It is a gyroscope/accelerometer combo device.
+	  This driver can be built as a module. The module will be called
+	  st-lsm6ds3.
+
+config ST_LSM6DS3_SPI
+	tristate "STMicroelectronics LSM6DS3 sensor"
+	depends on (I2C || SPI) && SYSFS
+	help
+	  This driver supports the STMicroelectronics LSM6DS3 sensor.
+	  It is a gyroscope/accelerometer combo device.
+	  This driver can be built as a module. The module will be called
+	  st-lsm6ds3.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

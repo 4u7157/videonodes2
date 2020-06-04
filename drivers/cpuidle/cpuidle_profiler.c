@@ -135,7 +135,11 @@ void __cpuidle_profile_start(int cpu, int state, int substate)
 				info = &lpm_info;
 				enter_idle_state(info, LPM_SICD, now);
 				break;
+<<<<<<< HEAD
 #if defined(CONFIG_SOC_EXYNOS8890)
+=======
+#if !defined(CONFIG_SOC_EXYNOS7870)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			case C2_SICD_CPD:
 				info = &cpd_info[to_cluster(cpu)];
 				enter_idle_state(info, 0, now);
@@ -243,6 +247,7 @@ static ktime_t profile_start_time;
 static ktime_t profile_finish_time;
 static s64 profile_time;
 
+<<<<<<< HEAD
 #if defined(CONFIG_SOC_EXYNOS7570)
 static char * sys_powerdown_str[NUM_SYS_POWERDOWN] = {
 	"SICD",
@@ -267,6 +272,24 @@ static char * sys_powerdown_str[NUM_SYS_POWERDOWN] = {
 	"SLEEP"
 };
 #endif
+=======
+static char * sys_powerdown_str[NUM_SYS_POWERDOWN] = {
+	"SICD",
+#if !defined(CONFIG_SOC_EXYNOS7870)
+	"SICD_CPD",
+#endif
+	"AFTR",
+	"STOP",
+#if !defined(CONFIG_SOC_EXYNOS7870)
+        "DSTOP",
+#endif
+	"LPD",
+#if !defined(CONFIG_SOC_EXYNOS7870)
+	"ALPA",
+#endif
+	"SLEEP"
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define get_sys_powerdown_str(mode)	sys_powerdown_str[mode]
 

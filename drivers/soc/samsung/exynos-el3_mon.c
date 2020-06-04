@@ -14,6 +14,7 @@
 #include <linux/smc.h>
 #include <asm/cacheflush.h>
 
+<<<<<<< HEAD
 #define EXYNOS_EXCEPTION_FROM_SHIFT			(63)
 
 #define EXYNOS_EXCEPTION_FROM_EL3			(1)
@@ -22,6 +23,8 @@
 #define EXYNOS_EXCEPTION_ETYPE_MAX_NUM			(6)
 #define EXYNOS_EXCEPTION_ETYPE_MASK			(0x7)
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static char *smc_lockup;
 
 static int  __init exynos_set_debug_mem(void)
@@ -42,7 +45,11 @@ static int  __init exynos_set_debug_mem(void)
 	__dma_flush_range(smc_debug_mem, smc_debug_mem+PAGE_SIZE);
 
 	phys = (char *)virt_to_phys(smc_debug_mem);
+<<<<<<< HEAD
 	pr_err("%s: alloc kmem for smc_dbg virt: 0x%p phys: 0x%p size: %ld.\n",
+=======
+	pr_info("%s: alloc kmem for smc_dbg virt: 0x%p phys: 0x%p size: %ld.\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__, smc_debug_mem, phys, PAGE_SIZE);
 	ret = exynos_smc(SMC_CMD_SET_DEBUG_MEM, (u64)phys, (u64)PAGE_SIZE, 0);
 
@@ -88,7 +95,11 @@ static const char *ename[] = {
 	"irq",
 	"fiq",
 	"async",
+<<<<<<< HEAD
 	"stack corruption",
+=======
+	"stack corruption"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	"unknown"
 };
 
@@ -97,6 +108,14 @@ static const char *el_mode[] = {
 	"el3 mode"
 };
 
+<<<<<<< HEAD
+=======
+#define EXYNOS_EXCEPTION_FROM_SHIFT			(63)
+
+#define EXYNOS_EXCEPTION_FROM_EL3			(1)
+#define EXYNOS_EXCEPTION_FROM_EL1			(0)
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int exynos_parse_reason(struct __lockup_info *ptr)
 {
@@ -116,8 +135,12 @@ static int exynos_parse_reason(struct __lockup_info *ptr)
 		count++;
 
 		/* parsing the information */
+<<<<<<< HEAD
 		ekind = (etype & EXYNOS_EXCEPTION_ETYPE_MASK) > EXYNOS_EXCEPTION_ETYPE_MAX_NUM	\
 			? EXYNOS_EXCEPTION_ETYPE_MAX_NUM : (etype & EXYNOS_EXCEPTION_ETYPE_MASK) - 1;
+=======
+		ekind = (etype & 0xf) > 6 ? 6 : (etype & 0xf) - 1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		efrom = (etype >> EXYNOS_EXCEPTION_FROM_SHIFT) & 0x1;
 		elr_el3 = lockup_info->exception_info[i].elr_el3;
 		sp_el1 = lockup_info->exception_info[i].sp_el1;
@@ -145,8 +168,12 @@ int exynos_check_hardlockup_reason(void)
 	if (!smc_lockup) {
 		pr_err("%s: fail to alloc memory for storing lockup info.\n",
 			__func__);
+<<<<<<< HEAD
 		ret = -EINVAL;
 		goto check_exit;
+=======
+		return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* to map & flush memory */

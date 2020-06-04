@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2015 Samsung Electronics Co. Ltd.
+=======
+ * Copyright (C) 2015-2017 Samsung Electronics Co. Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7,16 +11,25 @@
  * (at your option) any later version.
  */
 
+<<<<<<< HEAD
   /* usb notify layer v2.0 */
+=======
+  /* usb notify layer v3.0 */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifndef __LINUX_USB_NOTIFY_SYSFS_H__
 #define __LINUX_USB_NOTIFY_SYSFS_H__
 
 #define MAX_DISABLE_STR_LEN 32
+<<<<<<< HEAD
 #define MAX_HWPARAM_STR_LEN 1024
 #define MAX_HWPARAM_STRING 10
 #if defined(CONFIG_USB_OTG_WHITELIST_FOR_MDM)
 
+=======
+#if defined(CONFIG_USB_OTG_WHITELIST_FOR_MDM)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum u_interface_class_type {
 	U_CLASS_PER_INTERFACE = 1,
 	U_CLASS_AUDIO,

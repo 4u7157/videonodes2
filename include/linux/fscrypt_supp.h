@@ -28,7 +28,11 @@ struct fscrypt_operations {
 	int (*set_context)(struct inode *, const void *, size_t, void *);
 	bool (*dummy_context)(struct inode *);
 	bool (*empty_dir)(struct inode *);
+<<<<<<< HEAD
 	unsigned (*max_namelen)(struct inode *);
+=======
+	unsigned int max_namelen;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct fscrypt_ctx {
@@ -74,6 +78,7 @@ static inline struct page *fscrypt_control_page(struct page *page)
 
 extern void fscrypt_restore_control_page(struct page *);
 
+<<<<<<< HEAD
 extern const struct dentry_operations fscrypt_d_ops;
 
 static inline void fscrypt_set_d_op(struct dentry *dentry)
@@ -88,6 +93,8 @@ static inline void fscrypt_set_encrypted_dentry(struct dentry *dentry)
 	spin_unlock(&dentry->d_lock);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* policy.c */
 extern int fscrypt_ioctl_set_policy(struct file *, const void __user *);
 extern int fscrypt_ioctl_get_policy(struct file *, void __user *);

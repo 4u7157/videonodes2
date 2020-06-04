@@ -122,6 +122,7 @@ static int s2mu004_read_reg(struct i2c_client *client, int reg, u8 *buf)
 
 static void s2mu004_fg_test_read(struct i2c_client *client)
 {
+<<<<<<< HEAD
 	u8 data;
 	char str[1016] = {0,};
 	int i;
@@ -139,6 +140,22 @@ static void s2mu004_fg_test_read(struct i2c_client *client)
 	/* address 0x27 */
 	s2mu004_read_reg_byte(client, 0x27, &data);
 	sprintf(str+strlen(str),"0x27:0x%02x, ",data);
+=======
+	static int reg_list[] = {
+		0x03, 0x0E, 0x0F, 0x10, 0x11, 0x1E, 0x1F, 0x21, 0x24, 0x25,
+		0x26, 0x27, 0x44, 0x45, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D,
+		0x4E, 0x4F, 0x54, 0x55, 0x56, 0x57
+	};
+	u8 data;
+	char str[1016] = {0,};
+	int i = 0, reg_list_size = 0;
+
+	reg_list_size = ARRAY_SIZE(reg_list);
+	for (i = 0; i < reg_list_size; i++) {
+		s2mu004_read_reg_byte(client, reg_list[i], &data);
+		sprintf(str+strlen(str), "0x%02x:0x%02x, ", reg_list[i], data);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* print buffer */
 	pr_info("[FG]%s: %s\n", __func__, str);
@@ -214,7 +231,11 @@ static void WA_0_issue_at_init(struct s2mu004_fuelgauge_data *fuelgauge)
 	/* limit upper/lower offset */
 	if (a > 2490)
 		a = 2490;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (a < (-2490))
 		a = -2490;
 
@@ -321,12 +342,15 @@ static void WA_0_issue_at_init1(struct s2mu004_fuelgauge_data *fuelgauge, int ta
 	u8 v_40 = 0;
 	u8 temp_REG26 = 0, temp_REG27 = 0, temp = 0;
 
+<<<<<<< HEAD
 	if ((fuelgauge->temperature <= (int)fuelgauge->low_temp_limit) && (!(fuelgauge->info.soc <= 500))) {
 		pr_info("%s : Skip F/G reset in low temperatures\n", __func__);
 		fuelgauge->vbatl_mode = VBATL_MODE_SW_VALERT;
 		return;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_lock(&fuelgauge->fg_lock);
 
 	/* Step 1: [Surge test]  get UI voltage (0.1mV)*/
@@ -344,7 +368,11 @@ static void WA_0_issue_at_init1(struct s2mu004_fuelgauge_data *fuelgauge, int ta
 
 	s2mu004_read_reg_byte(fuelgauge->i2c, 0x26, &temp_REG26);
 	s2mu004_write_reg_byte(fuelgauge->i2c, 0x26, 0xFF);
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	s2mu004_write_reg_byte(fuelgauge->i2c, 0x1E, 0x0F);
 	msleep(50);
 
@@ -377,7 +405,11 @@ static void WA_0_issue_at_init1(struct s2mu004_fuelgauge_data *fuelgauge, int ta
 	/* limit upper/lower offset */
 	if (a > 2490)
 		a = 2490;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (a < (-2490))
 		a = -2490;
 
@@ -434,6 +466,7 @@ static void s2mu004_reset_fg(struct s2mu004_fuelgauge_data *fuelgauge)
 #endif
 	/* step 0: [Surge test] initialize register of FG */
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
+<<<<<<< HEAD
 	s2mu004_write_reg_byte(fuelgauge->i2c, 0x0E,
 		fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[0]);
 	s2mu004_write_reg_byte(fuelgauge->i2c, 0x0F,
@@ -450,6 +483,18 @@ static void s2mu004_reset_fg(struct s2mu004_fuelgauge_data *fuelgauge)
 	for(i = 0xea; i <= 0xff; i++) {
 		s2mu004_write_reg_byte(fuelgauge->i2c, i,
 			fuelgauge->age_data_info[fuelgauge->fg_age_step].battery_table4[i - 0xea]);
+=======
+	s2mu004_write_reg_byte(fuelgauge->i2c, 0x0E, fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[0]);
+	s2mu004_write_reg_byte(fuelgauge->i2c, 0x0F, fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[1]);
+	s2mu004_write_reg_byte(fuelgauge->i2c, 0x10, fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[2]);
+	s2mu004_write_reg_byte(fuelgauge->i2c, 0x11, fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[3]);
+
+	for(i = 0x92; i <= 0xe9; i++) {
+		s2mu004_write_reg_byte(fuelgauge->i2c, i, fuelgauge->age_data_info[fuelgauge->fg_age_step].battery_table3[i - 0x92]);
+	}
+	for(i = 0xea; i <= 0xff; i++) {
+		s2mu004_write_reg_byte(fuelgauge->i2c, i, fuelgauge->age_data_info[fuelgauge->fg_age_step].battery_table4[i - 0xea]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 #else
 	s2mu004_write_reg_byte(fuelgauge->i2c, 0x0E, fuelgauge->info.batcap[0]);
@@ -473,8 +518,12 @@ static void s2mu004_reset_fg(struct s2mu004_fuelgauge_data *fuelgauge)
 	temp &= 0xF0;
 	temp |= fuelgauge->age_data_info[fuelgauge->fg_age_step].accum[0];
 	s2mu004_write_reg_byte(fuelgauge->i2c, 0x45, temp);
+<<<<<<< HEAD
 	s2mu004_write_reg_byte(fuelgauge->i2c, 0x44,
 		fuelgauge->age_data_info[fuelgauge->fg_age_step].accum[1]);
+=======
+	s2mu004_write_reg_byte(fuelgauge->i2c, 0x44, fuelgauge->age_data_info[fuelgauge->fg_age_step].accum[1]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 	s2mu004_read_reg_byte(fuelgauge->i2c, 0x45, &temp);
 	temp &= 0xF0;
@@ -512,6 +561,19 @@ static void s2mu004_reset_fg(struct s2mu004_fuelgauge_data *fuelgauge)
 #endif
 
 	WA_0_issue_at_init(fuelgauge);
+<<<<<<< HEAD
+=======
+
+	/*After FG reset current battery data version get reset to default value 1, causing mismatch in bootloader and kernel FG data verion.
+	 Below code restores the FG data version in 0x48 register to it's initalized value.*/
+	pr_info("%s: FG data version %02x\n", __func__, fuelgauge->info.data_ver);
+
+	s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_FG_ID, &temp);
+	temp &= 0xF0;
+	temp |= fuelgauge->info.data_ver;
+	s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_FG_ID, temp);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_err("%s: Reset FG completed\n", __func__);
 }
 
@@ -524,9 +586,13 @@ static void s2mu004_restart_gauging(struct s2mu004_fuelgauge_data *fuelgauge)
 
 	mutex_lock(&fuelgauge->fg_lock);
 
+<<<<<<< HEAD
 	if (s2mu004_read_reg(fuelgauge->i2c, S2MU004_REG_IRQ, data) < 0)
 		pr_err("%s: Read Fail\n", __func__);
 
+=======
+	s2mu004_read_reg(fuelgauge->i2c, S2MU004_REG_IRQ, data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_info("%s: irq_reg data (%02x%02x)  \n",__func__, data[1], data[0]);
 
 	/* store data for interrupt mask */
@@ -678,7 +744,10 @@ static int s2mu004_get_rawsoc(struct s2mu004_fuelgauge_data *fuelgauge)
 	int fg_reset = 0;
 	bool charging_enabled = false;
 	union power_supply_propval value;
+<<<<<<< HEAD
 	int force_power_off_voltage = 0;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int rbat = 0;
 
 	int avg_current = 0, avg_vbat = 0, vbat = 0, curr = 0, avg_monout_vbat = 0;
@@ -690,7 +759,11 @@ static int s2mu004_get_rawsoc(struct s2mu004_fuelgauge_data *fuelgauge)
 	u8 mount_data[2];
 	u32 mount_compliment;
 	int rvmsoc;
+<<<<<<< HEAD
 #if !defined(CONFIG_SEC_FACTORY)
+=======
+#if !defined(CONFIG_SEC_FACTORY)	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int info_soc;
 #endif
 
@@ -708,7 +781,11 @@ static int s2mu004_get_rawsoc(struct s2mu004_fuelgauge_data *fuelgauge)
 #endif
 	   (fuelgauge->probe_done == true &&
 		(fuelgauge->reg_OTP_4E != reg_OTP_4E || fuelgauge->reg_OTP_4F != reg_OTP_4F))) {
+<<<<<<< HEAD
 
+=======
+		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* check charging enable */
 		psy_do_property("s2mu004-charger", get, POWER_SUPPLY_PROP_CHARGING_ENABLED, value);
 		charging_enabled = value.intval;
@@ -766,11 +843,18 @@ static int s2mu004_get_rawsoc(struct s2mu004_fuelgauge_data *fuelgauge)
 	s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_MONOUT_SEL, &r_monoutsel);
 	s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_MONOUT_SEL, 0x02);
 	mdelay(10);
+<<<<<<< HEAD
 	if (s2mu004_read_reg(fuelgauge->i2c, S2MU004_REG_MONOUT, mount_data) < 0)
 		return -EINVAL;
 
 	s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_MONOUT_SEL, r_monoutsel);
 
+=======
+	s2mu004_read_reg(fuelgauge->i2c, S2MU004_REG_MONOUT, mount_data);
+
+	s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_MONOUT_SEL, r_monoutsel);
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&fuelgauge->fg_lock);
 
 	/* SOC VM Monitoring For debugging SOC error */
@@ -807,14 +891,22 @@ static int s2mu004_get_rawsoc(struct s2mu004_fuelgauge_data *fuelgauge)
 
 	avg_current = s2mu004_get_avgcurrent(fuelgauge);
 	avg_monout_vbat =  s2mu004_get_monout_avgvbat(fuelgauge);
+<<<<<<< HEAD
 	ocv_pwr_voltagemode = avg_monout_vbat - avg_current * 30 /100;
+=======
+	ocv_pwr_voltagemode = avg_monout_vbat - avg_current*30 /100;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if(avg_current < (-500))
 		rbat = 10;
 	else
 		rbat = 30;
 
+<<<<<<< HEAD
 	ocv_pwr_voltagemode = avg_monout_vbat - avg_current * rbat /100;
+=======
+	ocv_pwr_voltagemode = avg_monout_vbat - avg_current*rbat /100;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* switch to voltage mocd for accuracy */
 	if ((fuelgauge->info.soc <= 300) || ((ocv_pwr_voltagemode <= 3600) && (avg_current < 10))) {
@@ -858,13 +950,17 @@ static int s2mu004_get_rawsoc(struct s2mu004_fuelgauge_data *fuelgauge)
 		}
 	}
 
+<<<<<<< HEAD
 	psy_do_property("battery", get, POWER_SUPPLY_PROP_TEMP, value);
 	fuelgauge->temperature = value.intval;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	avg_vbat =  s2mu004_get_avgvbat(fuelgauge);
 	vbat = s2mu004_get_vbat(fuelgauge);
 	curr = s2mu004_get_current(fuelgauge);
 
+<<<<<<< HEAD
 	if (fuelgauge->temperature <= (-150))
 		force_power_off_voltage = 3550;
 	else
@@ -876,19 +972,33 @@ static int s2mu004_get_rawsoc(struct s2mu004_fuelgauge_data *fuelgauge)
 
 	if (((avg_current < (-17)) && (curr < (-17))) &&
 		((avg_monout_vbat - avg_current * rbat / 100) <= 3500) && (fuelgauge->info.soc > 100)) {
+=======
+	if (((avg_current < (-17)) && (curr < (-17))) &&
+		((avg_monout_vbat - avg_current*rbat /100) <= 3500) && (fuelgauge->info.soc > 100)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ocv_pwroff = 3300;
 		target_soc = s2mu004_get_soc_from_ocv(fuelgauge, ocv_pwroff);
 		pr_info("%s : F/G reset Start - current flunctuation\n", __func__);
 		WA_0_issue_at_init1(fuelgauge, ocv_pwroff);
+<<<<<<< HEAD
 	} else if (avg_current < (-60) && avg_vbat <= force_power_off_voltage) {
+=======
+	} else if (avg_current < (-60) && avg_vbat <= 3300) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (fuelgauge->mode == CURRENT_MODE) {
 			if (abs(avg_vbat - vbat) <= 20 && abs(avg_current - curr) <= 30) {
 				ocv_pwroff = avg_vbat - avg_current * 15 / 100;
 				target_soc = s2mu004_get_soc_from_ocv(fuelgauge, ocv_pwroff);
 				if (abs(target_soc - fuelgauge->info.soc) > 300) {
+<<<<<<< HEAD
 					pr_info("%s : F/G reset Start - current mode: %d\n",
 						__func__, target_soc);
 					WA_0_issue_at_init1(fuelgauge, ocv_pwroff);
+=======
+					pr_info("%s : F/G reset Start - current mode: %d\n", __func__, target_soc);
+					WA_0_issue_at_init1(fuelgauge, ocv_pwroff);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				}
 			}
 		} else {
@@ -1047,7 +1157,11 @@ static int s2mu004_maintain_avgcurrent(
 	int curr = 0;
 
 	curr = s2mu004_get_avgcurrent(fuelgauge);
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	vcell = s2mu004_get_vbat(fuelgauge);
 	if ((cnt < 10) && (curr < 0) && (fuelgauge->is_charging) &&
 		(vcell < 3500)) {
@@ -1129,6 +1243,7 @@ static int s2mu004_get_avgvbat(struct s2mu004_fuelgauge_data *fuelgauge)
 
 	dev_info(&fuelgauge->i2c->dev, "%s: avgvbat (%d)\n", __func__, old_vbat);
 
+<<<<<<< HEAD
 	if ((fuelgauge->vbatl_mode == VBATL_MODE_SW_VALERT) &&
 		(fuelgauge->temperature > (int)fuelgauge->low_temp_limit) &&
 		(old_vbat >= fuelgauge->sw_vbat_l_recovery_vol)) {
@@ -1136,6 +1251,8 @@ static int s2mu004_get_avgvbat(struct s2mu004_fuelgauge_data *fuelgauge)
 		pr_info("%s : Recover from VBAT_L Activation\n", __func__);
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return old_vbat;
 }
 
@@ -1161,7 +1278,11 @@ static void s2mu004_fg_get_atomic_capacity(
 		union power_supply_propval *val)
 {
 	if (fuelgauge->pdata->capacity_calculation_type &
+<<<<<<< HEAD
 		SEC_FUELGAUGE_CAPACITY_TYPE_ATOMIC) {
+=======
+			SEC_FUELGAUGE_CAPACITY_TYPE_ATOMIC) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (fuelgauge->capacity_old < val->intval)
 			val->intval = fuelgauge->capacity_old + 1;
 		else if (fuelgauge->capacity_old > val->intval)
@@ -1170,7 +1291,11 @@ static void s2mu004_fg_get_atomic_capacity(
 
 	/* keep SOC stable in abnormal status */
 	if (fuelgauge->pdata->capacity_calculation_type &
+<<<<<<< HEAD
 		SEC_FUELGAUGE_CAPACITY_TYPE_SKIP_ABNORMAL) {
+=======
+			SEC_FUELGAUGE_CAPACITY_TYPE_SKIP_ABNORMAL) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!fuelgauge->is_charging &&
 				fuelgauge->capacity_old < val->intval) {
 			dev_err(&fuelgauge->i2c->dev,
@@ -1286,7 +1411,11 @@ static void s2mu004_fg_reset_capacity_by_jig_connection(struct s2mu004_fuelgauge
 
 	s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_FG_ID, &data);
 	data &= 0xF0;
+<<<<<<< HEAD
 	data |= 0x0F; //set model data version 0xF for next boot up initializing fuelgague
+=======
+	data |= 0x0F; //set model data version 0xF for next boot up initializing fuelgague	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_FG_ID, data);
 
 	pr_info("%s: set Model data version (0x%x)\n", __func__, data & 0x0F);
@@ -1313,12 +1442,21 @@ static int s2mu004_fg_aging_check(
 		fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[0],
 		fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[1],
 		fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[2],
+<<<<<<< HEAD
 		fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[3]);
 
 	if ((batcap0 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[0]) ||
 		(batcap1 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[1]) ||
 		(batcap2 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[2]) ||
 		(batcap3 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[3])) {
+=======
+		fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[3] );
+
+	if ( (batcap0 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[0]) ||
+	     (batcap1 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[1]) ||
+	     (batcap2 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[2]) ||
+	     (batcap3 != fuelgauge->age_data_info[fuelgauge->fg_age_step].batcap[3]) ) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		pr_info("%s: [Long life] reset gauge for age forecast , step[%d] \n", __func__, fuelgauge->fg_age_step);
 
@@ -1330,15 +1468,21 @@ static int s2mu004_fg_aging_check(
 		psy_do_property("s2mu004-charger", get, POWER_SUPPLY_PROP_CHARGING_ENABLED, value);
 		charging_enabled = value.intval;
 
+<<<<<<< HEAD
 		if (charging_enabled == true) {
 			pr_info("%s: [Long life] disable charger for reset gauge age forecast \n",
 				__func__);
+=======
+		if(charging_enabled == true) {
+			pr_info("%s: [Long life] disable charger for reset gauge age forecast \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			value.intval = SEC_BAT_CHG_MODE_CHARGING_OFF;
 			psy_do_property("s2mu004-charger", set, POWER_SUPPLY_PROP_CHARGING_ENABLED, value);
 		}
 
 		s2mu004_reset_fg(fuelgauge);
 
+<<<<<<< HEAD
 		if (charging_enabled == true) {
 			psy_do_property("battery", get, POWER_SUPPLY_PROP_STATUS, value);
 			charging_enabled = value.intval;
@@ -1349,6 +1493,16 @@ static int s2mu004_fg_aging_check(
 				value.intval = SEC_BAT_CHG_MODE_CHARGING;
 				psy_do_property("s2mu004-charger",
 					set, POWER_SUPPLY_PROP_CHARGING_ENABLED, value);
+=======
+		if(charging_enabled == true ) {
+			psy_do_property("battery", get, POWER_SUPPLY_PROP_STATUS, value);
+			charging_enabled = value.intval;
+		
+			if(charging_enabled == 1 ) { /* POWER_SUPPLY_STATUS_CHARGING 1 */
+				pr_info("%s: [Long life] enable charger for reset gauge age forecast \n", __func__);
+				value.intval = SEC_BAT_CHG_MODE_CHARGING;
+				psy_do_property("s2mu004-charger", set, POWER_SUPPLY_PROP_CHARGING_ENABLED, value);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 		}
 
@@ -1366,7 +1520,12 @@ static int s2mu004_fg_get_property(struct power_supply *psy,
 		enum power_supply_property psp,
 		union power_supply_propval *val)
 {
+<<<<<<< HEAD
 	struct s2mu004_fuelgauge_data *fuelgauge =  power_supply_get_drvdata(psy);
+=======
+	struct s2mu004_fuelgauge_data *fuelgauge =
+		container_of(psy, struct s2mu004_fuelgauge_data, psy_fg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	switch (psp) {
 	case POWER_SUPPLY_PROP_STATUS:
@@ -1448,6 +1607,7 @@ static int s2mu004_fg_get_property(struct power_supply *psy,
 			/* get only integer part */
 			val->intval /= 10;
 
+<<<<<<< HEAD
 			if (!fuelgauge->is_charging &&
 			    fuelgauge->vbatl_mode == VBATL_MODE_SW_VALERT && !lpcharge) {
 				pr_info("%s : VBAT_L (low voltage). Decrease SOC\n", __func__);
@@ -1457,6 +1617,8 @@ static int s2mu004_fg_get_property(struct power_supply *psy,
 				fuelgauge->vbatl_mode =  VBATL_MODE_NORMAL;
 			}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			/* check whether doing the wake_unlock */
 			if ((val->intval > fuelgauge->pdata->fuel_alert_soc) &&
 					fuelgauge->is_fuel_alerted) {
@@ -1472,8 +1634,12 @@ static int s2mu004_fg_get_property(struct power_supply *psy,
 			 * should update capacity_old
 			 * by val->intval in booting or resume.
 			 */
+<<<<<<< HEAD
 			if ((fuelgauge->initial_update_of_soc) &&
 			    (fuelgauge->vbatl_mode != VBATL_MODE_SW_VALERT)) {
+=======
+			if (fuelgauge->initial_update_of_soc) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				/* updated old capacity */
 				fuelgauge->capacity_old = val->intval;
 				fuelgauge->initial_update_of_soc = false;
@@ -1482,11 +1648,15 @@ static int s2mu004_fg_get_property(struct power_supply *psy,
 
 			if (fuelgauge->sleep_initial_update_of_soc) {
 				/* updated old capacity in case of resume */
+<<<<<<< HEAD
 				if (fuelgauge->is_charging) {
 					fuelgauge->capacity_old = val->intval;
 					fuelgauge->sleep_initial_update_of_soc = false;
 					break;
 				} else if ((fuelgauge->vbatl_mode != VBATL_MODE_SW_VALERT) &&
+=======
+				if(fuelgauge->is_charging ||
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					((!fuelgauge->is_charging) && (fuelgauge->capacity_old >= val->intval))) {
 					fuelgauge->capacity_old = val->intval;
 					fuelgauge->sleep_initial_update_of_soc = false;
@@ -1505,6 +1675,30 @@ static int s2mu004_fg_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
 		val->intval = s2mu004_get_temperature(fuelgauge);
 		break;
+<<<<<<< HEAD
+=======
+	case POWER_SUPPLY_PROP_ENERGY_FULL:
+#if defined(CONFIG_FUELGAUGE_ASOC_FROM_CYCLES)
+		{
+			int calc_step = 0;
+
+			if (!(fuelgauge->pdata->fixed_asoc_levels <= 0 || val->intval < 0)) {
+				for (calc_step = fuelgauge->pdata->fixed_asoc_levels - 1; calc_step >= 0; calc_step--) {
+					if (fuelgauge->pdata->cycles_to_asoc[calc_step].cycle <= val->intval)
+						break;
+				}
+
+				dev_info(fuelgauge->dev, "%s: Battery Cycles = %d, ASOC step = %d\n",
+					__func__, val->intval, calc_step);
+
+				val->intval = fuelgauge->pdata->cycles_to_asoc[calc_step].asoc;
+			}
+		}
+#else
+		return -1;
+#endif
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN:
 		val->intval = fuelgauge->capacity_max;
 		break;
@@ -1522,7 +1716,12 @@ static int s2mu004_fg_set_property(struct power_supply *psy,
                             enum power_supply_property psp,
                             const union power_supply_propval *val)
 {
+<<<<<<< HEAD
 	struct s2mu004_fuelgauge_data *fuelgauge = power_supply_get_drvdata(psy);
+=======
+	struct s2mu004_fuelgauge_data *fuelgauge =
+		container_of(psy, struct s2mu004_fuelgauge_data, psy_fg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enum power_supply_ext_property ext_psp = psp;
 	u8 temp = 0;
 
@@ -1537,12 +1736,15 @@ static int s2mu004_fg_set_property(struct power_supply *psy,
 			break;
 		case POWER_SUPPLY_PROP_ONLINE:
 			fuelgauge->cable_type = val->intval;
+<<<<<<< HEAD
 			if (!(val->intval == SEC_BATTERY_CABLE_NONE)) {
 				if (fuelgauge->vbatl_mode >= VBATL_MODE_SW_VALERT) {
 					fuelgauge->vbatl_mode = VBATL_MODE_NORMAL;
 					fuelgauge->initial_update_of_soc = true;
 				}
 			}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			break;
 		case POWER_SUPPLY_PROP_CHARGING_ENABLED:
 			if (val->intval)
@@ -1552,8 +1754,13 @@ static int s2mu004_fg_set_property(struct power_supply *psy,
 			break;
 		case POWER_SUPPLY_PROP_CAPACITY:
 			if (val->intval == SEC_FUELGAUGE_CAPACITY_TYPE_RESET) {
+<<<<<<< HEAD
 				s2mu004_restart_gauging(fuelgauge);
 				fuelgauge->initial_update_of_soc = true;
+=======
+				fuelgauge->initial_update_of_soc = true;
+				s2mu004_restart_gauging(fuelgauge);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 			break;
 		case POWER_SUPPLY_PROP_TEMP:
@@ -1581,6 +1788,17 @@ static int s2mu004_fg_set_property(struct power_supply *psy,
 			else
 				s2mu004_write_reg_byte(fuelgauge->i2c, 0x41, 0x04); /* charger end */
 			break;
+<<<<<<< HEAD
+=======
+		case POWER_SUPPLY_PROP_FUELGAUGE_FACTORY:
+			pr_info("%s:[DEBUG_FAC]  fuelgauge \n", __func__);
+			s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_CTRL0, &temp);
+			temp &= 0xCF;
+			temp |= 0x30;
+			s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_CTRL0, temp);
+			s2mu004_fg_reset_capacity_by_jig_connection(fuelgauge);
+			break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		case POWER_SUPPLY_PROP_MAX ... POWER_SUPPLY_EXT_PROP_MAX:
 			switch (ext_psp) {
 			case POWER_SUPPLY_EXT_PROP_INBAT_VOLTAGE_FGSRC_SWITCHING:
@@ -1596,11 +1814,15 @@ static int s2mu004_fg_set_property(struct power_supply *psy,
 				} else if (val->intval == SEC_BAT_INBAT_FGSRC_SWITCHING_OFF) {
 					s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_CTRL0, &temp);
 					temp &= 0xCF;
+<<<<<<< HEAD
 					/* factory_mode ? Get SYS voltage : Get Battery voltage (by I2C control) */
 					if (factory_mode)
 						temp |= 0x30;
 					else
 						temp |= 0x10;
+=======
+					temp |= 0x30;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_CTRL0, temp);
 					mdelay(1000);
 					s2mu004_restart_gauging(fuelgauge);
@@ -1608,6 +1830,7 @@ static int s2mu004_fg_set_property(struct power_supply *psy,
 				s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_CTRL0, &temp);
 				pr_info("%s: [%d] Internal switch 0x%X\n", __func__, val->intval, (temp & 0x30) >> 4);
 				break;
+<<<<<<< HEAD
 			case POWER_SUPPLY_EXT_PROP_FUELGAUGE_FACTORY:
 				pr_info("%s:[DEBUG_FAC]  fuelgauge \n", __func__);
 				s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_CTRL0, &temp);
@@ -1616,6 +1839,8 @@ static int s2mu004_fg_set_property(struct power_supply *psy,
 				s2mu004_write_reg_byte(fuelgauge->i2c, S2MU004_REG_CTRL0, temp);
 				s2mu004_fg_reset_capacity_by_jig_connection(fuelgauge);
 				break;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
 			case POWER_SUPPLY_EXT_PROP_UPDATE_BATTERY_DATA:
 				s2mu004_fg_aging_check(fuelgauge, val->intval);
@@ -1644,12 +1869,20 @@ static void s2mu004_fg_isr_work(struct work_struct *work)
 
 	fg_alert_status &= 0x03;
 	if (fg_alert_status & 0x01) {
+<<<<<<< HEAD
 		pr_info("%s : Battery Level(SOC) is very Low!\n", __func__);
+=======
+		pr_info("%s : Battery Level is very Low!\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	if (fg_alert_status & 0x02) {
 		int voltage = s2mu004_get_vbat(fuelgauge);
+<<<<<<< HEAD
 		pr_info("%s : Battery Voltage is very Low! (%dmV)\n",
+=======
+		pr_info("%s : Battery Votage is very Low! (%dmV)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__, voltage);
 	}
 
@@ -1687,6 +1920,12 @@ static int s2mu004_fuelgauge_parse_dt(struct s2mu004_fuelgauge_data *fuelgauge)
 	int ret;
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
 	int len, i;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_FUELGAUGE_ASOC_FROM_CYCLES)
+	const u32 *p;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	/* reset, irq gpio info */
@@ -1741,6 +1980,7 @@ static int s2mu004_fuelgauge_parse_dt(struct s2mu004_fuelgauge_data *fuelgauge)
 		if (ret < 0)
 			pr_err("%s error reading pdata->fuel_alert_vol %d\n",
 					__func__, ret);
+<<<<<<< HEAD
 
 		fuelgauge->pdata->repeated_fuelalert = of_property_read_bool(np,
 				"fuelgauge,repeated_fuelalert");
@@ -1766,6 +2006,12 @@ static int s2mu004_fuelgauge_parse_dt(struct s2mu004_fuelgauge_data *fuelgauge)
 		pr_info("%s : SW VBAT_L recovery (%d)mV\n",
 			__func__, fuelgauge->sw_vbat_l_recovery_vol);
 
+=======
+		
+		fuelgauge->pdata->repeated_fuelalert = of_property_read_bool(np,
+				"fuelgauge,repeated_fuelalert");
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* get battery_params node */
 		np = of_find_node_by_name(NULL, "battery_params");
 		if (!np) {
@@ -1809,8 +2055,12 @@ static int s2mu004_fuelgauge_parse_dt(struct s2mu004_fuelgauge_data *fuelgauge)
 			ret = of_property_read_u32_array(np, "battery,battery_data",
 					(int *)fuelgauge->age_data_info, len/sizeof(int));
 
+<<<<<<< HEAD
 			pr_err("%s: [Long life] fuelgauge->fg_num_age_step %d \n",
 				__func__,fuelgauge->fg_num_age_step);
+=======
+			pr_err("%s: [Long life] fuelgauge->fg_num_age_step %d \n", __func__,fuelgauge->fg_num_age_step);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			for(i=0 ; i < fuelgauge->fg_num_age_step ; i++){
 				pr_err("%s: [Long life] age_step = %d, table3[0] %d, table4[0] %d, batcap[0] %02x, accum[0] %02x, soc_arr[0] %d, ocv_arr[0] %d \n",
@@ -1822,6 +2072,36 @@ static int s2mu004_fuelgauge_parse_dt(struct s2mu004_fuelgauge_data *fuelgauge)
 					fuelgauge->age_data_info[i].soc_arr_val[0],
 					fuelgauge->age_data_info[i].ocv_arr_val[0]);
 			}
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_FUELGAUGE_ASOC_FROM_CYCLES)
+			p = of_get_property(np, "battery,cycles_to_asoc_mapping", &len);
+			if (p) {
+				fuelgauge->pdata->fixed_asoc_levels = len / sizeof(sec_cycles_to_asoc_t);
+				fuelgauge->pdata->cycles_to_asoc = kzalloc(len, GFP_KERNEL);
+				ret = of_property_read_u32_array(np, "battery,cycles_to_asoc_mapping",
+						 (u32 *)fuelgauge->pdata->cycles_to_asoc, len/sizeof(u32));
+				if (ret) {
+					pr_err("%s: failed to read fuelgauge->pdata->cycles_to_asoc: %d\n",
+							__func__, ret);
+					kfree(fuelgauge->pdata->cycles_to_asoc);
+					fuelgauge->pdata->cycles_to_asoc = NULL;
+					fuelgauge->pdata->fixed_asoc_levels = 0;
+				}
+				pr_err("%s: fixed_asoc_levels : %d\n", __func__, fuelgauge->pdata->fixed_asoc_levels);
+				for (len = 0; len < fuelgauge->pdata->fixed_asoc_levels; ++len) {
+					pr_err("[%d/%d]cycle:%d, asoc:%d\n",
+						len, fuelgauge->pdata->fixed_asoc_levels-1,
+						fuelgauge->pdata->cycles_to_asoc[len].cycle,
+						fuelgauge->pdata->cycles_to_asoc[len].asoc);
+				}
+
+			} else {
+				fuelgauge->pdata->fixed_asoc_levels = 0;
+				pr_err("%s: Cycles to ASOC mapping not defined\n", __func__);
+			}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 		}
 	}
@@ -1842,6 +2122,7 @@ static int s2mu004_fuelgauge_parse_dt(struct s2mu004_fuelgauge_data *fuelgauge)
 #define s2mu004_fuelgauge_match_table NULL
 #endif /* CONFIG_OF */
 
+<<<<<<< HEAD
 static const struct power_supply_desc s2mu004_fuelgauge_power_supply_desc = {
 	.name          = "s2mu004-fuelgauge",
 	.type          = POWER_SUPPLY_TYPE_UNKNOWN,
@@ -1851,14 +2132,19 @@ static const struct power_supply_desc s2mu004_fuelgauge_power_supply_desc = {
 	.num_properties = ARRAY_SIZE(s2mu004_fuelgauge_props),
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int s2mu004_fuelgauge_probe(struct i2c_client *client,
 				const struct i2c_device_id *id)
 {
 	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
 	struct s2mu004_fuelgauge_data *fuelgauge;
 	union power_supply_propval raw_soc_val;
+<<<<<<< HEAD
 	struct power_supply_config psy_cfg = {};
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret = 0;
 	u8 temp = 0;
 
@@ -1892,6 +2178,22 @@ static int s2mu004_fuelgauge_probe(struct i2c_client *client,
 
 	i2c_set_clientdata(client, fuelgauge);
 
+<<<<<<< HEAD
+=======
+	fuelgauge->psy_fg.name          = "s2mu004-fuelgauge";
+	fuelgauge->psy_fg.type          = POWER_SUPPLY_TYPE_UNKNOWN;
+	fuelgauge->psy_fg.get_property  = s2mu004_fg_get_property;
+	fuelgauge->psy_fg.set_property  = s2mu004_fg_set_property;
+	fuelgauge->psy_fg.properties    = s2mu004_fuelgauge_props;
+	fuelgauge->psy_fg.num_properties =
+			ARRAY_SIZE(s2mu004_fuelgauge_props);
+
+	if (!fuelgauge->info.data_ver) {
+		s2mu004_read_reg_byte(fuelgauge->i2c, S2MU004_REG_FG_ID, &temp);
+		fuelgauge->info.data_ver = (temp & 0x0F);
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* 0x48[7:4]=0010 : EVT2 */
 	fuelgauge->revision = 0;
 	s2mu004_read_reg_byte(fuelgauge->i2c, 0x48, &temp);
@@ -1911,8 +2213,12 @@ static int s2mu004_fuelgauge_probe(struct i2c_client *client,
 
 	s2mu004_init_regs(fuelgauge);
 
+<<<<<<< HEAD
 	psy_cfg.drv_data = fuelgauge;
 	fuelgauge->psy_fg = power_supply_register(&client->dev, &s2mu004_fuelgauge_power_supply_desc, &psy_cfg);
+=======
+	ret = power_supply_register(&client->dev, &fuelgauge->psy_fg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret) {
 		pr_err("%s: Failed to Register psy_fg\n", __func__);
 		goto err_data_free;
@@ -1966,7 +2272,11 @@ static int s2mu004_fuelgauge_probe(struct i2c_client *client,
 	return 0;
 
 err_supply_unreg:
+<<<<<<< HEAD
 	power_supply_unregister(fuelgauge->psy_fg);
+=======
+	power_supply_unregister(&fuelgauge->psy_fg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_data_free:
 	if (client->dev.of_node)
 		kfree(fuelgauge->pdata);

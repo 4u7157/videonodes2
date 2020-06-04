@@ -91,21 +91,79 @@ static unsigned int *pmu_cpuoption_sfrlist[] = {
 	PMU_CPUCL1_CPU3_OPTION,
 };
 
+<<<<<<< HEAD
+=======
+static unsigned int *pmu_cpuduration_sfrlist[] = {
+	PMU_CPUCL0_CPU0_DURATION0,
+	PMU_CPUCL0_CPU1_DURATION0,
+	PMU_CPUCL0_CPU2_DURATION0,
+	PMU_CPUCL0_CPU3_DURATION0,
+	PMU_CPUCL1_CPU0_DURATION0,
+	PMU_CPUCL1_CPU1_DURATION0,
+	PMU_CPUCL1_CPU2_DURATION0,
+	PMU_CPUCL1_CPU3_DURATION0,
+};
+
+static unsigned int *pmu_noncpuoption_sfrlist[] = {
+	PMU_CPUCL0_NONCPU_OPTION,
+	PMU_CPUCL1_NONCPU_OPTION,
+};
+
+static unsigned int *pmu_noncpuduration_sfrlist[] = {
+	PMU_CPUCL0_NONCPU_DURATION0,
+	PMU_CPUCL1_NONCPU_DURATION0,
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void init_pmu_cpu_option(void)
 {
 	int cpu;
 	unsigned int tmp;
 
+<<<<<<< HEAD
 	/* enable to wait for low SMP-bit at sys power down */
 	for (cpu = 0; cpu < sizeof(pmu_cpuoption_sfrlist) / sizeof(pmu_cpuoption_sfrlist[0]); cpu++) {
 		tmp = pwrcal_readl(pmu_cpuoption_sfrlist[cpu]);
 		tmp |= USE_SC_FEEDBACK;
+=======
+	/* Joshua use sc_counter */
+	/* enable to wait for low SMP-bit at sys power down */
+	for (cpu = 0; cpu < sizeof(pmu_cpuoption_sfrlist) / sizeof(pmu_cpuoption_sfrlist[0]); cpu++) {
+		tmp = pwrcal_readl(pmu_cpuoption_sfrlist[cpu]);
+		tmp |= USE_SC_COUNTER;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		tmp |= USE_SMPEN;
 		tmp |= USE_STANDBYWFI;
 		tmp |= USE_MEMPWRDOWN_FEEDBACK;
 		tmp &= ~USE_STANDBYWFE;
+<<<<<<< HEAD
 		tmp &= ~USE_SC_COUNTER;
 		pwrcal_writel(pmu_cpuoption_sfrlist[cpu], tmp);
+=======
+		tmp &= ~USE_SC_FEEDBACK;
+		pwrcal_writel(pmu_cpuoption_sfrlist[cpu], tmp);
+
+		pwrcal_setf(pmu_cpuduration_sfrlist[cpu], 0x8, 0xf, 0x3);
+		pwrcal_setf(pmu_cpuduration_sfrlist[cpu], 0x4, 0xf, 0x3);
+	}
+}
+
+static void init_pmu_noncpu_option(void)
+{
+
+	int i;
+	unsigned int tmp;
+
+	/* Joshua use sc_counter */
+	for (i = 0; i < sizeof(pmu_noncpuoption_sfrlist) / sizeof(pmu_noncpuoption_sfrlist[0]); i++) {
+		tmp = pwrcal_readl(pmu_noncpuoption_sfrlist[i]);
+		tmp |= USE_SC_COUNTER;
+		tmp &= ~USE_SC_FEEDBACK;
+		pwrcal_writel(pmu_noncpuoption_sfrlist[i], tmp);
+
+		pwrcal_setf(pmu_noncpuduration_sfrlist[i], 0x8, 0xf, 0x3);
+		pwrcal_setf(pmu_noncpuduration_sfrlist[i], 0x4, 0xf, 0x3);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 
@@ -148,8 +206,11 @@ static void init_pmu_up_scheduler(void)
 
 /* init_pmu_feedback */
 static unsigned int *pmu_feedback_sfrlist[] = {
+<<<<<<< HEAD
 	PMU_CPUCL0_NONCPU_OPTION,
 	PMU_CPUCL1_NONCPU_OPTION,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	PMU_TOP_PWR_OPTION,
 	PMU_TOP_PWR_MIF_OPTION,
 	PMU_DISPAUD_OPTION,
@@ -212,6 +273,10 @@ static void syspwr_init(void)
 	init_pmu_feedback();
 	init_pmu_l2_option();
 	init_pmu_cpu_option();
+<<<<<<< HEAD
+=======
+	init_pmu_noncpu_option();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	init_pmu_up_scheduler();
 	init_set_duration();
 	init_ps_hold_setting();
@@ -1016,6 +1081,13 @@ static void syspwr_prepare(int mode)
 		break;
 	case SYS_SLEEP:
 		set_pmu_central_seq_mif(true);
+<<<<<<< HEAD
+=======
+		pwrcal_mux_set_src(CLK(MIF_MUX_BUS_PLL), 0);
+		pwrcal_pll_disable(CLK(BUS_PLL));
+		pwrcal_div_set_ratio(CLK(MIF_DIV_CLKCMU_FSYS_BUS), 1);
+		pwrcal_mux_set_src(CLK(MIF_MUX_CLKCMU_DISPAUD_DECON_INT_VCLK), 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	default:
 		break;
@@ -1025,6 +1097,10 @@ static void syspwr_prepare(int mode)
 
 static void set_pmu_pad_retention_release(void)
 {
+<<<<<<< HEAD
+=======
+	pwrcal_writel(PMU_PAD_RETENTION_BOOTLDO_OPTION, PAD_INITIATE_WAKEUP);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pwrcal_writel(PMU_PAD_RETENTION_AUD_OPTION, PAD_INITIATE_WAKEUP);
 	pwrcal_writel(PMU_PAD_RETENTION_TOP_OPTION, PAD_INITIATE_WAKEUP);
 	pwrcal_writel(PMU_PAD_RETENTION_UART_OPTION, PAD_INITIATE_WAKEUP);
@@ -1054,10 +1130,25 @@ static void syspwr_post(int mode)
 
 static void syspwr_earlywakeup(int mode)
 {
+<<<<<<< HEAD
+=======
+	if (mode == SYS_SLEEP)
+	{
+		pwrcal_mux_set_src(CLK(MIF_MUX_CLKCMU_DISPAUD_DECON_INT_VCLK), 1);
+		pwrcal_div_set_ratio(CLK(MIF_DIV_CLKCMU_FSYS_BUS), 6);
+		pwrcal_pll_enable(CLK(BUS_PLL));
+		pwrcal_mux_set_src(CLK(MIF_MUX_BUS_PLL), 1);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	set_pmu_central_seq(false);
 	set_pmu_central_seq_mif(false);
 
 	enable_armidleclockdown();
+<<<<<<< HEAD
+=======
+	if (mode == SYS_LPD)
+		restore_lpd();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pwrcal_writel(PMU_TOP_BUS_MIF_OPTION, 0);
 	pwrcal_setbit(PMU_WAKEUP_MASK, 30, 0);

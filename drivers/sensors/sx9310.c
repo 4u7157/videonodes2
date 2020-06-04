@@ -64,7 +64,11 @@
 
 /* CS0, CS1, CS2, CS3 */
 #ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
+<<<<<<< HEAD
 #define ENABLE_CSX               ((1 << MAIN_SENSOR) | (1 << CH2_SENSOR))
+=======
+#define ENABLE_CSX               ((1 << MAIN_SENSOR)| (1 << CH2_SENSOR))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define ENABLE_CSX               (1 << MAIN_SENSOR)
 #endif
@@ -90,7 +94,10 @@ struct sx9310_p {
 	struct delayed_work debug_work;
 	struct wake_lock grip_wake_lock;
 	struct mutex read_mutex;
+<<<<<<< HEAD
 	struct regulator *reg_vdd;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_MUIC_NOTIFIER)
 	struct notifier_block cpuidle_muic_nb;
 #endif
@@ -137,11 +144,18 @@ struct sx9310_p {
 };
 
 #ifdef CONFIG_SENSORS_SX9310_KEYSTRING_SKIPDATA
+<<<<<<< HEAD
 static bool gsp_backoff; /* default off */
 static int __init set_gsp_backoff(char *str)
 {
 	int mode;
 
+=======
+static bool gsp_backoff = false; /* default off */
+static int __init set_gsp_backoff(char *str)
+{
+	int mode;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	get_option(&str, &mode);
 	mode &= 0x000000FF;
 
@@ -188,7 +202,11 @@ static int check_hallic_state(char *file_path, unsigned char hall_ic_status[])
 	filp_close(filep, current->files);
 	set_fs(old_fs);
 
+<<<<<<< HEAD
 exit:
+=======
+	exit:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return iRet;
 }
 
@@ -321,6 +339,7 @@ static void send_event(struct sx9310_p *data, u8 state)
 	if (state == ACTIVE) {
 		data->state = ACTIVE;
 #if (MAIN_SENSOR == 1)
+<<<<<<< HEAD
 		sx9310_i2c_write(data,
 				SX9310_CPS_CTRL9_REG, data->normal_th);
 #ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
@@ -330,11 +349,20 @@ static void send_event(struct sx9310_p *data, u8 state)
 #else
 		sx9310_i2c_write(data,
 				SX9310_CPS_CTRL8_REG, data->normal_th);
+=======
+		sx9310_i2c_write(data, SX9310_CPS_CTRL9_REG, data->normal_th);
+#ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
+		sx9310_i2c_write(data, SX9310_CPS_CTRL8_REG, data->normal_th_ch2);
+#endif
+#else
+		sx9310_i2c_write(data, SX9310_CPS_CTRL8_REG, data->normal_th);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 		SENSOR_INFO("button touched\n");
 	} else {
 		data->state = IDLE;
 #if (MAIN_SENSOR == 1)
+<<<<<<< HEAD
 		sx9310_i2c_write(data,
 				SX9310_CPS_CTRL9_REG, data->normal_th);
 #ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
@@ -344,6 +372,14 @@ static void send_event(struct sx9310_p *data, u8 state)
 #else
 		sx9310_i2c_write(data,
 				SX9310_CPS_CTRL8_REG, data->normal_th);
+=======
+		sx9310_i2c_write(data, SX9310_CPS_CTRL9_REG, data->normal_th);
+#ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
+		sx9310_i2c_write(data, SX9310_CPS_CTRL8_REG, data->normal_th_ch2);
+#endif
+#else
+		sx9310_i2c_write(data, SX9310_CPS_CTRL8_REG, data->normal_th);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 		SENSOR_INFO("button released\n");
 	}
@@ -391,7 +427,11 @@ static void sx9310_get_data(struct sx9310_p *data)
 #else
 	s32 gain = 1 << (setup_reg[5].val & 0x03);
 #ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
+<<<<<<< HEAD
 	s32 gain2 = 1 << ((setup_reg[5].val >> 2) & 0x03);
+=======
+	s32 gain2= 1 << ((setup_reg[5].val >> 2) & 0x03);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 
@@ -466,12 +506,23 @@ static int sx9310_set_mode(struct sx9310_p *data, unsigned char mode)
 static void sx9310_ch_interrupt_read(struct sx9310_p *data, u8 status)
 {
 	if (status & (CSX_STATUS_REG << MAIN_SENSOR)) {
+<<<<<<< HEAD
 		if (status & (BODY_STATUS_REG << (MAIN_SENSOR+1)))
 			data->ch1_state = BODY_STATE;
 		else
 			data->ch1_state = TOUCH_STATE;
 	} else
 		data->ch1_state = IDLE_STATE;
+=======
+		if (status & (BODY_STATUS_REG << (MAIN_SENSOR+1))) {
+			data->ch1_state = BODY_STATE;
+		} else {
+			data->ch1_state = TOUCH_STATE;
+		}
+	} else {
+		data->ch1_state = IDLE_STATE;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_SENSORS_SX9310_USE_2ND_CH
 	if (status & (CSX_STATUS_REG << CH2_SENSOR))
@@ -579,7 +630,11 @@ static ssize_t sx9310_register_write_store(struct device *dev,
 	int regist = 0, val = 0;
 	struct sx9310_p *data = dev_get_drvdata(dev);
 
+<<<<<<< HEAD
 	if (sscanf(buf, "%2x,%2x", &regist, &val) != 2) {
+=======
+	if (sscanf(buf, "%x,%x", &regist, &val) != 2) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("The number of data are wrong\n");
 		return -EINVAL;
 	}
@@ -949,6 +1004,10 @@ static ssize_t sx9310_raw_data_ch2_show(struct device *dev,
 	static int sum;
 	struct sx9310_p *data = dev_get_drvdata(dev);
 
+<<<<<<< HEAD
+=======
+//	sx9310_get_data(data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->diff_cnt_ch2 == 0)
 		sum = data->diff_ch2;
 	else
@@ -1277,13 +1336,22 @@ static void sx9310_init_work_func(struct work_struct *work)
 #else
 	sx9310_i2c_write(data, SX9310_CPS_CTRL8_REG, data->normal_th);
 #endif
+<<<<<<< HEAD
 	/* disable interrupt */
 	sx9310_i2c_write(data, SX9310_IRQ_ENABLE_REG, 0x00);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sx9310_set_mode(data, SX9310_MODE_NORMAL);
 	/* make sure no interrupts are pending since enabling irq
 	 * will only work on next falling edge */
 	sx9310_read_irqstate(data);
+<<<<<<< HEAD
+=======
+
+	/* disable interrupt */
+	sx9310_i2c_write(data, SX9310_IRQ_ENABLE_REG, 0x00);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void sx9310_irq_work_func(struct work_struct *work)
@@ -1291,8 +1359,11 @@ static void sx9310_irq_work_func(struct work_struct *work)
 	struct sx9310_p *data = container_of((struct delayed_work *)work,
 		struct sx9310_p, irq_work);
 
+<<<<<<< HEAD
 	SENSOR_ERR("sx9310_irq_work_func %d\n", sx9310_get_nirq_state(data));
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (sx9310_get_nirq_state(data) == 0)
 		sx9310_process_interrupt(data);
 	else
@@ -1490,12 +1561,20 @@ static int sx9310_parse_dt(struct sx9310_p *data, struct device *dev)
 	if (!ret) {
 		data->normal_th = (u8)temp_val;
 		data->normal_th_buf = data->normal_th;
+<<<<<<< HEAD
 		SENSOR_INFO("Normal Touch Threshold : %u\n",
 				data->normal_th);
 	} else {
 		data->normal_th = data->normal_th_buf  = 168;
 		SENSOR_INFO("Can't get normal_th: default is %d\n",
 				data->normal_th);
+=======
+		SENSOR_INFO("Normal Touch Threshold : %u\n", data->normal_th);
+	}
+	else {
+		data->normal_th = data->normal_th_buf  = 168;
+		SENSOR_INFO("Can't get normal_th: default is %d\n", data->normal_th);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return ret;
 	}
 
@@ -1504,12 +1583,20 @@ static int sx9310_parse_dt(struct sx9310_p *data, struct device *dev)
 	if (!ret) {
 		data->normal_th_ch2 = (u8)temp_val;
 		data->normal_th_buf_ch2 = data->normal_th_ch2;
+<<<<<<< HEAD
 		SENSOR_INFO("Normal Touch Threshold ch2 : %u\n",
 				data->normal_th_ch2);
 	} else {
 		data->normal_th_ch2 = data->normal_th_buf_ch2  = 168;
 		SENSOR_INFO("Can't get normal_th_ch2: default is %d\n",
 				data->normal_th_ch2);
+=======
+		SENSOR_INFO("Normal Touch Threshold ch2 : %u\n", data->normal_th_ch2);
+	}
+	else {
+		data->normal_th_ch2 = data->normal_th_buf_ch2  = 168;
+		SENSOR_INFO("Can't get normal_th_ch2: default is %d\n", data->normal_th_ch2);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return ret;
 	}
 #endif
@@ -1552,6 +1639,7 @@ static int sx9310_cpuidle_muic_notifier(struct notifier_block *nb,
 }
 #endif
 
+<<<<<<< HEAD
 static int sx9310_regulator_onoff(struct sx9310_p *data, bool onoff)
 {
 	int ret = 0;
@@ -1590,6 +1678,8 @@ err_vdd:
 	return ret;
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9310_probe(struct i2c_client *client,
 		const struct i2c_device_id *id)
 {
@@ -1629,12 +1719,15 @@ static int sx9310_probe(struct i2c_client *client,
 		goto exit_of_node;
 	}
 
+<<<<<<< HEAD
 	ret = sx9310_regulator_onoff(data, true);
 	if (ret < 0) {
 		SENSOR_ERR("No regulator\n");
 		goto exit_no_regulator;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = sx9310_setup_pin(data);
 	if (ret) {
 		SENSOR_ERR("could not setup pin\n");
@@ -1653,10 +1746,13 @@ static int sx9310_probe(struct i2c_client *client,
 	if (ret < 0) {
 		SENSOR_ERR("chip id check failed %d\n", ret);
 		goto exit_chip_reset;
+<<<<<<< HEAD
 	} else {
 		u8 flag = 0;
 		flag = sx9310_read_irqstate(data);
 		SENSOR_ERR("clear irq register %d\n", flag);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	sx9310_initialize_variable(data);
@@ -1699,7 +1795,10 @@ exit_request_threaded_irq:
 exit_chip_reset:
 	gpio_free(data->gpio_nirq);
 exit_setup_pin:
+<<<<<<< HEAD
 exit_no_regulator:
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 exit_of_node:
 	mutex_destroy(&data->read_mutex);
 	wake_lock_destroy(&data->grip_wake_lock);

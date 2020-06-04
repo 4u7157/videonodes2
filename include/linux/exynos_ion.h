@@ -60,6 +60,10 @@ enum {
 	ION_EXYNOS_HEAP_ID_VIDEO_NFW		= 7,
 	ION_EXYNOS_HEAP_ID_GPU_CRC		= 8,
 	ION_EXYNOS_HEAP_ID_GPU_BUFFER		= 9,
+<<<<<<< HEAD
+=======
+	ION_EXYNOS_HEAP_ID_SECURE_CAMERA	= 11,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #define EXYNOS_ION_HEAP_CRYPTO_MASK		(1 << ION_EXYNOS_HEAP_ID_CRYPTO)
@@ -70,6 +74,10 @@ enum {
 #define EXYNOS_ION_HEAP_VIDEO_NFW_MASK		(1 << ION_EXYNOS_HEAP_ID_VIDEO_NFW)
 #define EXYNOS_ION_HEAP_GPU_CRC			(1 << ION_EXYNOS_HEAP_ID_GPU_CRC)
 #define EXYNOS_ION_HEAP_GPU_BUFFER		(1 << ION_EXYNOS_HEAP_ID_GPU_BUFFER)
+<<<<<<< HEAD
+=======
+#define EXYNOS_ION_HEAP_SECURE_CAMERA		(1 << ION_EXYNOS_HEAP_ID_SECURE_CAMERA)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifndef BITS_PER_BYTE
 #define BITS_PER_BYTE 8

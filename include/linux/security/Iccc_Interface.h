@@ -87,11 +87,16 @@ typedef struct {
 #define ICCC_SECURE_PARAMETERS_READING_LENGTH	((uint32_t)0x4)
 
 /* ICCC section types are defined */
+<<<<<<< HEAD
 #if defined(CONFIG_TZDEV)	/* CONFIG_TZDEV will be defined when using Blowfish */
 #define ICCC_BL_SECURE_PARAMETERS_OFFSET		((uint32_t)0x400)
 #else
 #define ICCC_BL_SECURE_PARAMETERS_OFFSET		((uint32_t)0x164)
 #endif
+=======
+
+#define ICCC_BL_SECURE_PARAMETERS_OFFSET		((uint32_t)0x164)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define BL_ICCC_TYPE_START		0xFFF00000
 #define TA_ICCC_TYPE_START		0xFF000000
@@ -155,4 +160,8 @@ uint32_t Iccc_SaveData_Kernel(uint32_t type, uint32_t value);
 uint32_t Iccc_ReadData_Kernel(uint32_t type, uint32_t *value);
 
 #endif
+<<<<<<< HEAD
 /*  struct for TLC&TA communication */
+=======
+/*  struct for TLC&TA communication */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

@@ -37,6 +37,7 @@ config ECT_DUMP
 	default n
 	depends on ECT
 
+<<<<<<< HEAD
 config ECT_HEADER_IN_KERNEL
 	bool "Enable Exynos Characteristic Table File by using kernel header"
 	help
@@ -44,12 +45,15 @@ config ECT_HEADER_IN_KERNEL
 	default n
 	depends on ECT
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config EXYNOS_CONTENT_PATH_PROTECTION
 	bool "Exynos Content Path Protection"
 	default y
 	help
 	  Enable content path protection of EXYNOS.
 
+<<<<<<< HEAD
 config EXYNOS_SEC_LOGGER
 	bool "Exynos Secure Logger Support"
 	default y
@@ -59,6 +63,17 @@ config EXYNOS_SEC_LOGGER
 config EXYNOS_HOTPLUG_GOVERNOR
 	bool "Enable Exynos dynamic hotplug governor"
 	depends on HOTPLUG_CPU
+=======
+config SCHED_AVG_NR_RUNNING
+	bool "Enable to use average nr_running"
+	default n
+	help
+	  Enable to use average nr_running in scheduler
+
+config EXYNOS_HOTPLUG_GOVERNOR
+	bool "Enable Exynos dynamic hotplug governor"
+	select SCHED_AVG_NR_RUNNING
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config EXYNOS_MCINFO
 	bool "Exynos memory controller information"
@@ -69,6 +84,7 @@ config MCINFO_SYSFS
 	depends on EXYNOS_MCINFO
 	default	y if SYSFS
 
+<<<<<<< HEAD
 menuconfig EXYNOS_BCM
 	bool "EXYNOS_BCM driver support"
 	help
@@ -94,10 +110,16 @@ config EXYNOS_RGT
 
 source "drivers/soc/samsung/acpm/Kconfig"
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 endif #SOC_SAMSUNG
 
 config SEC_INCELL
 	bool "Incell data & function for Samsung"
 	default n
 	help
+<<<<<<< HEAD
 	  say y to enable incell data & function for Samsung.
+=======
+	  say y to enable incell data & function for Samsung.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

@@ -58,6 +58,7 @@ struct mtp_event {
  */
 #define MTP_SEND_FILE_WITH_HEADER  _IOW('M', 4, struct mtp_file_range)
 
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 struct mtp_file_range_32 {
 	/* file descriptor for file to transfer */
@@ -97,4 +98,6 @@ struct mtp_event_32 {
 #define MTP_SEND_FILE_WITH_HEADER_32  _IOW('M', 4, struct mtp_file_range_32)
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* _UAPI_LINUX_USB_F_MTP_H */

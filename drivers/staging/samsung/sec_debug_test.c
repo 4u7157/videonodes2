@@ -49,6 +49,7 @@ static void simulate_WRITE_RO(char *arg);
 static void simulate_OVERFLOW(char *arg);
 
 enum {
+<<<<<<< HEAD
 	FORCE_KERNEL_PANIC = 0,      /* KP */
 	FORCE_WATCHDOG,              /* DP */
 	FORCE_WARM_RESET,            /* WP */
@@ -73,6 +74,32 @@ enum {
 	FORCE_UNALIGNED,	     /* UNALIGNED WRITE */
 	FORCE_WRITE_RO,		     /* WRITE RODATA */
 	FORCE_OVERFLOW, 	     /* STACK OVERFLOW */
+=======
+	FORCE_KERNEL_PANIC = 0,		/* KP */
+	FORCE_WATCHDOG,			/* DP */
+	FORCE_WARM_RESET,		/* WP */
+	FORCE_HW_TRIPPING,		/* TP */
+	FORCE_PANIC,			/* PANIC */
+	FORCE_BUG,			/* BUG */
+	FORCE_WARN,			/* WARN */
+	FORCE_DATA_ABORT,		/* DABRT */
+	FORCE_PREFETCH_ABORT,		/* PABRT */
+	FORCE_UNDEFINED_INSTRUCTION,	/* UNDEF */
+	FORCE_DOUBLE_FREE,		/* DFREE */
+	FORCE_DANGLING_REFERENCE,	/* DREF */
+	FORCE_MEMORY_CORRUPTION,	/* MCRPT */
+	FORCE_LOW_MEMEMORY,		/* LOMEM */
+	FORCE_SOFT_LOCKUP,		/* SOFT LOCKUP */
+	FORCE_HARD_LOCKUP,		/* HARD LOCKUP */
+	FORCE_SPIN_LOCKUP,		/* SPIN LOCKUP */
+	FORCE_PC_ABORT,			/* PC ABORT */
+	FORCE_SP_ABORT,			/* SP ABORT */
+	FORCE_JUMP_ZERO,		/* JUMP TO ZERO */
+	FORCE_BUSMON_ERROR,		/* BUSMON ERROR */
+	FORCE_UNALIGNED,		/* UNALIGNED WRITE */
+	FORCE_WRITE_RO,			/* WRITE RODATA */
+	FORCE_OVERFLOW,			/* STACK OVERFLOW */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NR_FORCE_ERROR,
 };
 
@@ -87,6 +114,7 @@ struct force_error {
 
 struct force_error force_error_vector = {
 	.item = {
+<<<<<<< HEAD
 		{"KP",          &simulate_KP},
 		{"DP",          &simulate_DP},
 		{"WP",          &simulate_WP},
@@ -103,6 +131,24 @@ struct force_error force_error_vector = {
 		{"lowmem",      &simulate_LOMEM},
 		{"softlockup",	&simulate_SOFT_LOCKUP},
 		{"hardlockup",  &simulate_HARD_LOCKUP},
+=======
+		{"KP",		&simulate_KP},
+		{"DP",		&simulate_DP},
+		{"WP",		&simulate_WP},
+		{"TP",		&simulate_TP},
+		{"panic",	&simulate_PANIC},
+		{"bug",		&simulate_BUG},
+		{"warn",	&simulate_WARN},
+		{"dabrt",	&simulate_DABRT},
+		{"pabrt",	&simulate_PABRT},
+		{"undef",	&simulate_UNDEF},
+		{"dfree",	&simulate_DFREE},
+		{"danglingref",	&simulate_DREF},
+		{"memcorrupt",	&simulate_MCRPT},
+		{"lowmem",	&simulate_LOMEM},
+		{"softlockup",	&simulate_SOFT_LOCKUP},
+		{"hardlockup",	&simulate_HARD_LOCKUP},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		{"spinlockup",	&simulate_SPIN_LOCKUP},
 		{"pcabort",	&simulate_PC_ABORT},
 		{"spabort",	&simulate_SP_ABORT},

@@ -1,5 +1,6 @@
 /*
  * sec_cisd.h
+<<<<<<< HEAD
  * Samsung Mobile CISD Header
  *
  * Copyright (C) 2017 Samsung Electronics, Inc.
@@ -8,15 +9,28 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+=======
+ * Samsung Mobile Charger Header
+ *
+ * Copyright (C) 2015 Samsung Electronics, Inc.
+ *
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
+<<<<<<< HEAD
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 #ifndef __SEC_CISD_H
 #define __SEC_CISD_H __FILE__
@@ -36,6 +50,7 @@
 #define CISD_STATE_LEAK_G		0x800
 
 #define is_cisd_check_type(cable_type) ( \
+<<<<<<< HEAD
 	cable_type == SEC_BATTERY_CABLE_TA || \
 	cable_type == SEC_BATTERY_CABLE_9V_TA || \
 	cable_type == SEC_BATTERY_CABLE_9V_UNKNOWN || \
@@ -43,6 +58,14 @@
 	cable_type == SEC_BATTERY_CABLE_PDIC)
 
 #if 0
+=======
+	cable_type == POWER_SUPPLY_TYPE_MAINS || \
+	cable_type == POWER_SUPPLY_TYPE_HV_MAINS || \
+	cable_type == POWER_SUPPLY_TYPE_HV_ERR || \
+	cable_type == POWER_SUPPLY_TYPE_HV_WIRELESS || \
+	cable_type == POWER_SUPPLY_TYPE_WIRELESS_HV_STAND)
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum cisd_data {
 	CISD_DATA_FULL_COUNT = 0,
 	CISD_DATA_CAP_MAX,
@@ -90,6 +113,7 @@ enum cisd_data {
 
 	CISD_DATA_MAX,
 };
+<<<<<<< HEAD
 #endif
 
 enum cisd_data {
@@ -226,6 +250,8 @@ enum {
 extern const char *cisd_data_str[];
 extern const char *cisd_wc_data_str[];
 extern const char *cisd_data_str_d[];
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct cisd {
 	unsigned int cisd_alg_index;
@@ -265,9 +291,14 @@ struct cisd {
 	unsigned int max_voltage_thr;
 
 	/* Big Data Field */
+<<<<<<< HEAD
 	int data[CISD_DATA_MAX_PER_DAY];
 	int wc_data[WC_DATA_MAX];
 	int capacity_now;
+=======
+	int capacity_now;
+	int data[CISD_DATA_MAX];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #endif /* __SEC_CISD_H */

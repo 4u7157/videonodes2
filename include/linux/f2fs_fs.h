@@ -1,12 +1,9 @@
+// SPDX-License-Identifier: GPL-2.0
 /**
  * include/linux/f2fs_fs.h
  *
  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
  *             http://www.samsung.com/
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
  */
 #ifndef _LINUX_F2FS_FS_H
 #define _LINUX_F2FS_FS_H
@@ -47,7 +44,10 @@
 
 /* This flag is used by node and meta inodes, and by recovery */
 #define GFP_F2FS_ZERO		(GFP_NOFS | __GFP_ZERO)
+<<<<<<< HEAD
 #define GFP_F2FS_HIGH_ZERO	(GFP_NOFS | __GFP_ZERO | __GFP_HIGHMEM)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /*
  * For further optimization on multi-head logs, on-disk layout supports maximum
@@ -113,12 +113,22 @@ struct f2fs_super_block {
 	struct f2fs_device devs[MAX_DEVICES];	/* device list */
 	__le32 qf_ino[F2FS_MAX_QUOTAS];	/* quota inode numbers */
 	__u8 hot_ext_count;		/* # of hot file extension */
+<<<<<<< HEAD
 	__u8 reserved[314];		/* valid reserved region */
+=======
+	__u8 reserved[310];		/* valid reserved region */
+	__le32 crc;			/* checksum of superblock */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 } __packed;
 
 /*
  * For checkpoint
  */
+<<<<<<< HEAD
+=======
+#define CP_DISABLED_FLAG		0x00001000
+#define CP_QUOTA_NEED_FSCK_FLAG		0x00000800
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define CP_LARGE_NAT_BITMAP_FLAG	0x00000400
 #define CP_NOCRC_RECOVERY_FLAG	0x00000200
 #define CP_TRIMMED_FLAG		0x00000100
@@ -305,11 +315,14 @@ struct f2fs_node {
  * For NAT entries
  */
 #define NAT_ENTRY_PER_BLOCK (PAGE_SIZE / sizeof(struct f2fs_nat_entry))
+<<<<<<< HEAD
 #define NAT_ENTRY_BITMAP_SIZE	((NAT_ENTRY_PER_BLOCK + 7) / 8)
 #define NAT_ENTRY_BITMAP_SIZE_ALIGNED				\
 	((NAT_ENTRY_BITMAP_SIZE + BITS_PER_LONG - 1) /		\
 	BITS_PER_LONG * BITS_PER_LONG)
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct f2fs_nat_entry {
 	__u8 version;		/* latest version of cached nat entry */

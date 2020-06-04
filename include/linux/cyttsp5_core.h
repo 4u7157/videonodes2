@@ -1,5 +1,6 @@
 /*
  * cyttsp5_core.h
+<<<<<<< HEAD
  * Parade TrueTouch(TM) Standard Product V5 Core Module.
  * For use with Parade touchscreen controllers.
  * Supported parts include:
@@ -11,6 +12,14 @@
  *
  * Copyright (C) 2015 Parade Technologies
  * Copyright (C) 2012-2015 Cypress Semiconductor
+=======
+ * Cypress TrueTouch(TM) Standard Product V5 Core Module.
+ * For use with Cypress Txx5xx parts.
+ * Supported parts include:
+ * TMA5XX
+ *
+ * Copyright (C) 2012-2013 Cypress Semiconductor
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,7 +31,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
+<<<<<<< HEAD
  * Contact Parade Technologies at www.paradetech.com <ttdrivers@paradetech.com>
+=======
+ * Contact Cypress Semiconductor at www.cypress.com <ttdrivers@cypress.com>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  */
 
@@ -41,9 +54,15 @@
 
 #define CY_DRIVER_NAME TTDA
 #define CY_DRIVER_MAJOR 03
+<<<<<<< HEAD
 #define CY_DRIVER_MINOR 07
 
 #define CY_DRIVER_REVCTRL 844339
+=======
+#define CY_DRIVER_MINOR 02
+
+#define CY_DRIVER_REVCTRL 000005
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define CY_DRIVER_VERSION		    \
 __stringify(CY_DRIVER_NAME)		    \
@@ -51,6 +70,7 @@ __stringify(CY_DRIVER_NAME)		    \
 "." __stringify(CY_DRIVER_MINOR)	    \
 "." __stringify(CY_DRIVER_REVCTRL)
 
+<<<<<<< HEAD
 #define CY_DRIVER_DATE "20150715"	/* YYYYMMDD */
 
 /* abs settings */
@@ -68,19 +88,37 @@ enum cyttsp5_core_platform_easy_wakeup_gesture {
 	CY_CORE_EWG_TWO_FINGER_SLIDE,
 	CY_CORE_EWG_RESERVED,
 	CY_CORE_EWG_WAKE_ON_INT_FROM_HOST = 0xFF,
+=======
+#define CY_DRIVER_DATE "20140917"	/* YYYYMMDD */
+
+/* abs settings */
+#define CY_IGNORE_VALUE             0xFFFF
+
+enum cyttsp5_core_platform_flags {
+	CY_CORE_FLAG_NONE,
+	CY_CORE_FLAG_WAKE_ON_GESTURE,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 enum cyttsp5_loader_platform_flags {
 	CY_LOADER_FLAG_NONE,
 	CY_LOADER_FLAG_CALIBRATE_AFTER_FW_UPGRADE,
+<<<<<<< HEAD
 	/* Use CONFIG_VER field in TT_CFG to decide TT_CFG update */
 	CY_LOADER_FLAG_CHECK_TTCONFIG_VERSION,
 	CY_LOADER_FLAG_CALIBRATE_AFTER_TTCONFIG_UPGRADE,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct touch_settings {
 	const uint8_t   *data;
 	uint32_t         size;
+<<<<<<< HEAD
+=======
+	const uint8_t   *ver;
+	uint32_t         vsize;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	uint8_t         tag;
 };
 
@@ -89,20 +127,35 @@ struct cyttsp5_touch_firmware {
 	uint32_t size;
 	const uint8_t *ver;
 	uint8_t vsize;
+<<<<<<< HEAD
 	uint8_t panel_id;
 };
 
+=======
+};
+
+struct cyttsp_samsung_fw_file_ver {
+	u8 hw_ver;
+	u8 fw_ver[2];
+	u8 cfg_ver;
+} __packed;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct cyttsp5_touch_config {
 	struct touch_settings *param_regs;
 	struct touch_settings *param_size;
 	const uint8_t *fw_ver;
 	uint8_t fw_vsize;
+<<<<<<< HEAD
 	uint8_t panel_id;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct cyttsp5_loader_platform_data {
 	struct cyttsp5_touch_firmware *fw;
 	struct cyttsp5_touch_config *ttconfig;
+<<<<<<< HEAD
 	struct cyttsp5_touch_firmware **fws;
 	struct cyttsp5_touch_config **ttconfigs;
 	u32 flags;
@@ -110,22 +163,39 @@ struct cyttsp5_loader_platform_data {
 
 typedef int (*cyttsp5_platform_read) (struct device *dev, void *buf, int size);
 
+=======
+	u32 flags;
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define CY_TOUCH_SETTINGS_MAX 32
 
 struct cyttsp5_core_platform_data {
 	int irq_gpio;
+<<<<<<< HEAD
 	int rst_gpio;
 	int level_irq_udelay;
 	u16 hid_desc_register;
 	u16 vendor_id;
 	u16 product_id;
 
+=======
+	int ta_gpio;
+	int rst_gpio;
+	int level_irq_udelay;
+	const char *regulator_dvdd;
+	const char *regulator_avdd;	
+	u16 hid_desc_register;
+	u16 vendor_id;
+	u16 product_id;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int (*xres)(struct cyttsp5_core_platform_data *pdata,
 		struct device *dev);
 	int (*init)(struct cyttsp5_core_platform_data *pdata,
 		int on, struct device *dev);
 	int (*power)(struct cyttsp5_core_platform_data *pdata,
 		int on, struct device *dev, atomic_t *ignore_irq);
+<<<<<<< HEAD
 	int (*detect)(struct cyttsp5_core_platform_data *pdata,
 		struct device *dev, cyttsp5_platform_read read);
 	int (*irq_stat)(struct cyttsp5_core_platform_data *pdata,
@@ -137,6 +207,18 @@ struct cyttsp5_core_platform_data {
 
 struct touch_framework {
 	const int16_t  *abs;
+=======
+	int (*irq_stat)(struct cyttsp5_core_platform_data *pdata,
+		struct device *dev);
+	void (*register_cb) (void *);
+	struct touch_settings *sett[CY_TOUCH_SETTINGS_MAX];
+	u32 flags;
+	struct mutex poweronoff_lock;
+};
+
+struct touch_framework {
+	const uint16_t  *abs;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	uint8_t         size;
 	uint8_t         enable_vkeys;
 } __packed;
@@ -170,10 +252,21 @@ struct cyttsp5_proximity_platform_data {
 
 struct cyttsp5_platform_data {
 	struct cyttsp5_core_platform_data *core_pdata;
+<<<<<<< HEAD
 	struct cyttsp5_mt_platform_data *mt_pdata;
 	struct cyttsp5_btn_platform_data *btn_pdata;
 	struct cyttsp5_proximity_platform_data *prox_pdata;
 	struct cyttsp5_loader_platform_data *loader_pdata;
 };
 
+=======
+	struct cyttsp5_loader_platform_data *loader_pdata;
+	struct cyttsp5_mt_platform_data *mt_pdata;
+	struct cyttsp5_btn_platform_data *btn_pdata;
+	struct cyttsp5_proximity_platform_data *prox_pdata;
+};
+
+void tsp_charger_inform(bool en);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* _LINUX_CYTTSP5_CORE_H */

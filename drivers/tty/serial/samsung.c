@@ -48,6 +48,11 @@
 #include <soc/samsung/exynos-pmu.h>
 #include <soc/samsung/pmu-cp.h>
 
+<<<<<<< HEAD
+=======
+#include <linux/sched.h>
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SND_SAMSUNG_AUDSS
 #include <sound/exynos.h>
 #endif
@@ -98,7 +103,11 @@ static void dbg(const char *fmt, ...)
 #ifndef CONFIG_SAMSUNG_PRODUCT_SHIP
 #define SERIAL_UART_TRACE 1
 #define PROC_SERIAL_DIR	"serial/uart"
+<<<<<<< HEAD
 #define SERIAL_UART_PORT_LINE 2
+=======
+#define SERIAL_UART_PORT_LINE 0
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 /* Baudrate definition*/
@@ -219,6 +228,10 @@ uart_dbg_store(struct device *dev, struct device_attribute *attr,
 
 static DEVICE_ATTR(uart_dbg, 0640, uart_dbg_show, uart_dbg_store);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct proc_dir_entry *serial_dir, *serial_log_dir;
 
 static void uart_copy_to_local_buf(int dir, struct uart_local_buf* local_buf,
@@ -241,6 +254,7 @@ static void uart_copy_to_local_buf(int dir, struct uart_local_buf* local_buf,
 				"[%5lu.%06lu] ",
 				(unsigned long)time, rem_nsec / NSEC_PER_USEC);
 
+<<<<<<< HEAD
 	if (dir == 1)
 		local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
 					local_buf->size - local_buf->index, "[RX] ");
@@ -252,11 +266,58 @@ static void uart_copy_to_local_buf(int dir, struct uart_local_buf* local_buf,
 		local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
 					local_buf->size - local_buf->index,
 					"%02X ", trace_buf[i]);
+=======
+	if (dir == 2) {
+		local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
+                local_buf->size - local_buf->index, "[reg] ");
+
+		local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
+					local_buf->size - local_buf->index,
+					"%s", trace_buf);
+	} else {
+		if (dir == 1) {
+			local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
+					local_buf->size - local_buf->index, "[RX] ");
+		} else {
+			local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
+					local_buf->size - local_buf->index, "[TX] ");
+		}
+		for (i = 0; i < len; i++) {
+			local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
+					local_buf->size - local_buf->index,
+					"%02X ", trace_buf[i]);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	local_buf->index += scnprintf(local_buf->buffer + local_buf->index,
 					local_buf->size - local_buf->index, "\n");
 }
+<<<<<<< HEAD
+=======
+
+static ssize_t
+uart_error_cnt_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	int ret=0;
+	struct s3c24xx_uart_port *ourport;
+	sprintf(buf, "000 000 000 000\n");//init buf : overrun parity frame break count
+
+	list_for_each_entry(ourport, &drvdata_list, node){ 
+	struct uart_port *port = &ourport->port;
+	
+	if (&ourport->pdev->dev != dev)
+		continue;
+
+	ret = sprintf(buf, "%03x %03x %03x %03x\n", port->icount.overrun, 0, port->icount.frame, port->icount.brk);
+
+	}
+	return ret;
+}
+
+static DEVICE_ATTR(error_cnt, 0664, uart_error_cnt_show, NULL);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void s3c24xx_serial_resetport(struct uart_port *port,
 				   struct s3c2410_uartcfg *cfg);
 static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
@@ -539,6 +600,10 @@ s3c24xx_serial_rx_chars(int irq, void *dev_id)
  ignore_char:
 		continue;
 	}
+	wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
+
+	if (ourport->uart_logging && trace_cnt)
+		uart_copy_to_local_buf(1, &ourport->uart_local_buf, trace_buf, trace_cnt);
 
 	if (ourport->uart_logging && trace_cnt)
 		uart_copy_to_local_buf(1, &ourport->uart_local_buf, trace_buf, trace_cnt);
@@ -606,11 +671,18 @@ static irqreturn_t s3c24xx_serial_tx_chars(int irq, void *id)
 		s3c24xx_serial_stop_tx(port);
 
 out:
+<<<<<<< HEAD
 	wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
 
 	if (ourport->uart_logging && trace_cnt)
 		uart_copy_to_local_buf(0, &ourport->uart_local_buf, trace_buf, trace_cnt);
 
+=======
+	if (ourport->uart_logging && trace_cnt)
+		uart_copy_to_local_buf(0, &ourport->uart_local_buf, trace_buf, trace_cnt);
+
+	wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spin_unlock_irqrestore(&port->lock, flags);
 	return IRQ_HANDLED;
 }
@@ -654,7 +726,10 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
 
 	if (rd_regl(port, S3C64XX_UINTP) & S3C64XX_UINTM_TXD_MSK)
 		ret = s3c24xx_serial_tx_chars(irq, id);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -873,6 +948,7 @@ err_no_pinctrl:
 #endif
 	dev_err(dev, "failed to configure gpio for audio\n");
 }
+<<<<<<< HEAD
 
 void aud_uart_gpio_idle(struct device *dev)
 {
@@ -880,6 +956,15 @@ void aud_uart_gpio_idle(struct device *dev)
 	aud_uart_gpio_cfg(dev, S3C24XX_UART_PORT_SUSPEND);
 }
 
+=======
+
+void aud_uart_gpio_idle(struct device *dev)
+{
+	/* set aud uart gpio for idle */
+	aud_uart_gpio_cfg(dev, S3C24XX_UART_PORT_SUSPEND);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* power power management control */
 static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
 			      unsigned int old)
@@ -896,6 +981,22 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
 
 		if (ourport->domain == DOMAIN_AUD)
 			aud_uart_gpio_cfg(&ourport->pdev->dev, level);
+<<<<<<< HEAD
+=======
+
+		if (ourport->use_alive_io == 1) {
+			unsigned int uart_ctrl;
+			exynos_pmu_read(EXYNOS_PMU_UART_IO_SHARE_CTRL, &uart_ctrl);
+			if (!(uart_ctrl & SEL_CP_UART_DBG)) {
+				struct pinctrl *uart_sleep_pinctrl;
+				uart_sleep_pinctrl =
+					devm_pinctrl_get_select(port->dev, "uart_sleep");
+				if (IS_ERR(uart_sleep_pinctrl))
+					dev_err(port->dev,
+						"failed to set uart pin for sleep\n");
+			}
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		uart_clock_disable(ourport);
 		break;
@@ -905,6 +1006,18 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
 
 		if (ourport->domain == DOMAIN_AUD)
 			aud_uart_gpio_cfg(&ourport->pdev->dev, level);
+<<<<<<< HEAD
+=======
+
+		if (ourport->use_alive_io == 1) {
+			struct pinctrl *uart_default_pinctrl;
+			uart_default_pinctrl =
+				devm_pinctrl_get_select(port->dev, "default");
+			if (IS_ERR(uart_default_pinctrl))
+					dev_err(port->dev,
+						"failed to set uart pin for default\n");
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		s3c24xx_serial_resetport(port, s3c24xx_port_to_cfg(port));
 		break;
@@ -1424,7 +1537,10 @@ static void s3c24xx_serial_resetport(struct uart_port *port,
 
 	/* some delay is required after fifo reset */
 	udelay(1);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wr_regl(port, S3C2410_UCON,  ucon | cfg->ucon);
 }
 
@@ -1604,7 +1720,11 @@ void s3c24xx_serial_fifo_wait(void)
 	unsigned long wait_time;
 
 	list_for_each_entry(ourport, &drvdata_list, node) {
+<<<<<<< HEAD
 		if (!uart_console(&ourport->port))
+=======
+		if (ourport->port.line != CONFIG_S3C_LOWLEVEL_UART_PORT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			continue;
 
 		wait_time = jiffies + HZ / 4;
@@ -1665,6 +1785,7 @@ static ssize_t s3c24xx_serial_log(struct file *file, char __user *userbuf, size_
 			s3c24xx_print_reg_status(ourport);
 		return 0;
 	}
+<<<<<<< HEAD
 
 	if (copied_bytes + bytes < LOG_BUFFER_SIZE) {
 		ret = copy_to_user(userbuf, ourport->uart_local_buf.buffer+copied_bytes, bytes);
@@ -1759,6 +1880,101 @@ static int s3c24xx_serial_notifier(struct notifier_block *self,
 		break;
 	}
 
+=======
+
+	if (copied_bytes + bytes < LOG_BUFFER_SIZE) {
+		ret = copy_to_user(userbuf, ourport->uart_local_buf.buffer+copied_bytes, bytes);
+		if (ret) {
+			pr_err("Failed to s3c24xx_serial_serial_log : %d\n", (int)ret);
+			return ret;
+		}
+		copied_bytes += bytes;
+		return bytes;
+	} else {
+		int byte_to_read = LOG_BUFFER_SIZE-copied_bytes;
+
+		ret = copy_to_user(userbuf, ourport->uart_local_buf.buffer+copied_bytes, byte_to_read);
+		if (ret) {
+			pr_err("Failed to s3c24xx_serial_log : %d\n", (int)ret);
+			return ret;
+		}
+		copied_bytes += byte_to_read;
+		return byte_to_read;
+	}
+
+	return 0;
+}
+static const struct file_operations proc_fops_serial_log = {
+	.owner = THIS_MODULE,
+	.read = s3c24xx_serial_log,
+};
+#endif
+
+
+#ifdef CONFIG_CPU_IDLE
+static int s3c24xx_serial_notifier(struct notifier_block *self,
+				unsigned long cmd, void *v)
+{
+	struct s3c24xx_uart_port *ourport;
+	struct uart_port *port;
+	unsigned long flags;
+	unsigned int umcon;
+
+	switch (cmd) {
+	case LPA_ENTER:
+		s3c24xx_serial_fifo_wait();
+		break;
+
+	case SICD_ENTER:
+	case SICD_AUD_ENTER:
+		list_for_each_entry(ourport, &drvdata_list, node) {
+			if (ourport->port.line == CONFIG_S3C_LOWLEVEL_UART_PORT)
+				continue;
+
+			port = &ourport->port;
+
+			if (port->state->pm_state == UART_PM_STATE_OFF)
+				continue;
+
+			spin_lock_irqsave(&port->lock, flags);
+
+			/* disable auto flow control & set nRTS for High */
+			umcon = rd_regl(port, S3C2410_UMCON);
+			umcon &= ~(S3C2410_UMCOM_AFC | S3C2410_UMCOM_RTS_LOW);
+			wr_regl(port, S3C2410_UMCON, umcon);
+
+			spin_unlock_irqrestore(&port->lock, flags);
+		}
+		break;
+
+	case SICD_EXIT:
+	case SICD_AUD_EXIT:
+		list_for_each_entry(ourport, &drvdata_list, node) {
+			if (ourport->port.line == CONFIG_S3C_LOWLEVEL_UART_PORT)
+				continue;
+
+			port = &ourport->port;
+
+			if (port->state->pm_state == UART_PM_STATE_OFF)
+				continue;
+
+			spin_lock_irqsave(&port->lock, flags);
+
+			/* enable auto flow control */
+			umcon = rd_regl(port, S3C2410_UMCON);
+			umcon |= S3C2410_UMCOM_AFC;
+			wr_regl(port, S3C2410_UMCON, umcon);
+
+			spin_unlock_irqrestore(&port->lock, flags);
+		}
+		s3c24xx_serial_fifo_wait();
+		break;
+
+	default:
+		break;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return NOTIFY_DONE;
 }
 
@@ -1867,11 +2083,20 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 		ourport->use_alive_io = 0;
 
 #ifdef SERIAL_UART_TRACE
+<<<<<<< HEAD
 	if (of_get_property(pdev->dev.of_node, "samsung,uart-logging", NULL))
 		ourport->uart_logging = 1;
 	else
 		ourport->uart_logging = 0;
 #endif
+=======
+        if (of_get_property(pdev->dev.of_node, "samsung,uart-logging", NULL))
+            ourport->uart_logging = 1;
+        else
+            ourport->uart_logging = 0;
+#endif
+            pr_err("uart logging %d, index %d\n",ourport->uart_logging,port_index);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = s3c24xx_serial_init_port(ourport, pdev);
 	if (ret < 0)
@@ -1887,6 +2112,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
             ourport->uart_local_buf.size = LOG_BUFFER_SIZE;
             ourport->uart_local_buf.index = 0;
 #ifdef SERIAL_UART_TRACE
+<<<<<<< HEAD
             if (port_index == SERIAL_UART_PORT_LINE) {
                 struct proc_dir_entry *ent;
     
@@ -1908,6 +2134,29 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
                     return -ENOMEM;
                 }
             }
+=======
+                    if (port_index == SERIAL_UART_PORT_LINE) {
+                        struct proc_dir_entry *ent;
+            
+                        serial_dir = proc_mkdir("serial", NULL);
+                        if (serial_dir == NULL) {
+                            pr_err("Unable to create /proc/serial directory\n");
+                            return -ENOMEM;
+                        }
+            
+                        serial_log_dir = proc_mkdir("uart", serial_dir);
+                        if (serial_log_dir == NULL) {
+                            pr_err("Unable to create /proc/serial/uart directory\n");
+                            return -ENOMEM;
+                        }
+                    
+                        ent = proc_create("log", 0444, serial_log_dir, &proc_fops_serial_log);
+                        if (ent == NULL) {
+                            pr_err("Unable to create /proc/%s/log entry\n", PROC_SERIAL_DIR);
+                            return -ENOMEM;
+                        }
+                    }
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
         }
 
@@ -1957,6 +2206,13 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
 	list_add_tail(&ourport->node, &drvdata_list);
 
 	ret = device_create_file(&pdev->dev, &dev_attr_uart_dbg);
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		dev_err(&pdev->dev, "failed to create sysfs file.\n");
+
+	ret = device_create_file(&pdev->dev, &dev_attr_error_cnt);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		dev_err(&pdev->dev, "failed to create sysfs file.\n");
 
@@ -1980,6 +2236,12 @@ static int s3c24xx_serial_remove(struct platform_device *dev)
 #endif
 
 	if (port) {
+<<<<<<< HEAD
+=======
+
+        device_remove_file(&dev->dev, &dev_attr_error_cnt);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SAMSUNG_CLOCK
 		device_remove_file(&dev->dev, &dev_attr_clock_source);
 #endif
@@ -2003,6 +2265,9 @@ static int s3c24xx_serial_suspend(struct device *dev)
 
 	if (port) {
 		uart_suspend_port(&s3c24xx_uart_drv, port);
+		if (ourport->dbg_mode & UART_DBG_MODE)
+			dev_err(dev, "UART suspend notification for tty framework.\n");
+	}
 
 		if (ourport->use_alive_io == 1) {
 			unsigned int uart_ctrl;
@@ -2030,6 +2295,7 @@ static int s3c24xx_serial_resume(struct device *dev)
 	struct s3c24xx_uart_port *ourport = to_ourport(port);
 
 	if (port) {
+<<<<<<< HEAD
 
 		uart_resume_port(&s3c24xx_uart_drv, port);
 
@@ -2042,6 +2308,9 @@ static int s3c24xx_serial_resume(struct device *dev)
 						"failed to set uart pin for default\n");
 		}
 
+=======
+		uart_resume_port(&s3c24xx_uart_drv, port);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ourport->dbg_mode & UART_DBG_MODE)
 			dev_err(dev, "UART resume notification for tty framework.\n");
 	}

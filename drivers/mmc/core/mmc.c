@@ -422,6 +422,38 @@ static unsigned long long mmc_merge_ext_csd(u8 *ext_csd, bool continuous, int co
 /* Minimum partition switch timeout in milliseconds */
 #define MMC_MIN_PART_SWITCH_TIME	300
 
+/* eMMC 5.0 or later only */
+/*
+ * mmc_merge_ext_csd - merge some ext_csd field to a variable.
+ * @ext_csd : pointer of ext_csd.(1 Byte/field)
+ * @continuous : if you want to merge continuous field, set true.
+ * @count : a number of ext_csd field to merge(=< 8)
+ * @args : list of ext_csd index or first index.
+ */
+static unsigned long long mmc_merge_ext_csd(u8 *ext_csd, bool continuous, int count, ...)
+{
+	unsigned long long merge_ext_csd = 0;
+	va_list args;
+	int i = 0;
+	int index;
+
+	va_start(args, count);
+
+	index = va_arg(args, int);
+	for (i = 0; i < count; i++) {
+		if (continuous) {
+			merge_ext_csd = merge_ext_csd << 8 | ext_csd[index + count - 1 - i];
+		} else {
+			merge_ext_csd = merge_ext_csd << 8 | ext_csd[index];
+			index = va_arg(args, int);
+		}
+	}
+	va_end(args);
+
+	return merge_ext_csd;
+}
+
+
 /*
  * Decode extended CSD.
  */
@@ -665,6 +697,52 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
 			ext_csd[EXT_CSD_MAX_PACKED_READS];
 	} else {
 		card->ext_csd.data_sector_size = 512;
+	}
+	/* eMMC v5.0 or later */
+	if (card->ext_csd.rev >= 7) {
+		for (idx = 0; idx < MMC_FIRMWARE_LEN ; idx++) {
+			card->ext_csd.fwrev[idx] =
+				ext_csd[EXT_CSD_FIRMWARE_VERSION + MMC_FIRMWARE_LEN - 1 - idx];
+		}
+		if (card->cid.manfid == 0x15 &&
+				ext_csd[EXT_CSD_PRE_EOL_INFO] == 0x0 &&
+				ext_csd[EXT_CSD_DEVICE_VERSION] == 0x0) {
+			/* eMMC : moviNAND VMX device Only */
+			card->ext_csd.smart_info = mmc_merge_ext_csd(ext_csd, false, 8,
+					EXT_CSD_PREv5_LIFE_TIME_EST,
+					EXT_CSD_PREv5_LIFE_TIME_EST,
+					EXT_CSD_PREv5_PRE_EOL_INFO,
+					EXT_CSD_PREv5_OPT_ERASE_SIZE,
+					EXT_CSD_PREv5_OPT_WRITE_SIZE,
+					EXT_CSD_PREv5_CTRL_VERSION,
+					EXT_CSD_HC_ERASE_GRP_SIZE,
+					EXT_CSD_HC_WP_GRP_SIZE);
+			card->ext_csd.fwdate = mmc_merge_ext_csd(ext_csd, false, 1,
+					EXT_CSD_PREv5_FIRMWARE_VERSION);
+		} else {
+			card->ext_csd.smart_info = mmc_merge_ext_csd(ext_csd, false, 8,
+					EXT_CSD_DEVICE_LIFE_TIME_EST_TYPE_B,
+					EXT_CSD_DEVICE_LIFE_TIME_EST_TYPE_A,
+					EXT_CSD_PRE_EOL_INFO,
+					EXT_CSD_OPTIMAL_TRIM_UNIT_SIZE,
+					EXT_CSD_DEVICE_VERSION + 1,
+					EXT_CSD_DEVICE_VERSION,
+					EXT_CSD_HC_ERASE_GRP_SIZE,
+					EXT_CSD_HC_WP_GRP_SIZE);
+			card->ext_csd.fwdate = mmc_merge_ext_csd(ext_csd, true, 8,
+					EXT_CSD_FIRMWARE_VERSION);
+		}
+
+		card->ext_csd.enhanced_strobe_support =
+			ext_csd[EXT_CSD_STORBE_SUPPORT];
+		card->ext_csd.pre_eol_info = ext_csd[EXT_CSD_PRE_EOL_INFO];
+		card->ext_csd.device_life_time_est_typ_a = 
+			ext_csd[EXT_CSD_DEVICE_LIFE_TIME_EST_TYPE_A];
+		card->ext_csd.device_life_time_est_typ_b =
+			ext_csd[EXT_CSD_DEVICE_LIFE_TIME_EST_TYPE_B];
+	} else {		
+		card->ext_csd.device_life_time_est_typ_a = 0;
+		card->ext_csd.device_life_time_est_typ_b = 0;
 	}
 
 	/* eMMC v5 or later */
@@ -1237,6 +1315,7 @@ static int mmc_select_hs400(struct mmc_card *card)
 			   EXT_CSD_TIMING_HS400 | host->device_drv,
 			   card->ext_csd.generic_cmd6_time,
 			   true, true, true);
+<<<<<<< HEAD
 
 		if (err) {
 			pr_warn("%s: switch to hs400 failed, err:%d\n",
@@ -1261,11 +1340,39 @@ static int mmc_select_hs400(struct mmc_card *card)
 				mmc_hostname(host), err);
 			return err;
 		}
+=======
+		if (err) {
+			pr_warn("%s: switch to hs400 failed, err:%d\n",
+				mmc_hostname(host), err);
+			return err;
+		}
+		mmc_set_timing(host, MMC_TIMING_MMC_HS400_ES);
+	} else {
+		/*
+		 * Before switching to dual data rate operation for HS400,
+		 * it is required to convert from HS200 mode to HS mode.
+		 */
+		err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+				   EXT_CSD_HS_TIMING, EXT_CSD_TIMING_HS,
+				   card->ext_csd.generic_cmd6_time,
+				   true, true, true);
+		if (err) {
+			pr_warn("%s: switch to high-speed from hs200 failed, err:%d\n",
+				mmc_hostname(host), err);
+			return err;
+		}
+		mmc_set_timing(card->host, MMC_TIMING_MMC_HS);
+		mmc_set_bus_speed(card);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
 			 EXT_CSD_BUS_WIDTH,
 			 EXT_CSD_DDR_BUS_WIDTH_8,
 			 card->ext_csd.generic_cmd6_time);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (err) {
 			pr_warn("%s: switch to bus width for hs400 failed, err:%d\n",
 				mmc_hostname(host), err);
@@ -1994,9 +2101,16 @@ static int mmc_shutdown(struct mmc_host *host)
 
 	if (!err) {
 		err = _mmc_suspend(host, false);
+<<<<<<< HEAD
 		if (host->ops->emmc_pwr && (host->caps2 & MMC_CAP2_PWR_SHUT_DOWN))
 			host->ops->emmc_pwr(host, MMC_POWER_OFF);
 	}
+=======
+		if (host->ops->shutdown && !err)
+			host->ops->shutdown(host);
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return err;
 }
 
@@ -2008,9 +2122,12 @@ static int mmc_resume(struct mmc_host *host)
 	int err = 0;
 	u32 status;
 
+<<<<<<< HEAD
 	if (host->ops->emmc_pwr && (host->caps2 & MMC_CAP2_PWR_SUSPEND))
 		host->ops->emmc_pwr(host, MMC_POWER_UP);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (host->pm_caps & MMC_PM_SKIP_MMC_RESUME_INIT) {
 		mmc_claim_host(host);
 		err = mmc_send_status(host->card, &status);
@@ -2022,7 +2139,11 @@ static int mmc_resume(struct mmc_host *host)
 			pr_err("%s: status : 0x%x, err : %d doing resume\n",
 					   mmc_hostname(host), status, err);
 			mmc_power_off(host);
+<<<<<<< HEAD
 			mmc_card_set_suspended(host->card);	
+=======
+			mmc_card_set_suspended(host->card);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			err = _mmc_resume(host);
 			return err;
 		}

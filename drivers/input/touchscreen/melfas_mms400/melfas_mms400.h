@@ -33,10 +33,16 @@
 #include <linux/gpio_event.h>
 #include <linux/wakelock.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
 #include <linux/regulator/consumer.h>
 #include <linux/pinctrl/consumer.h>
 #include <linux/kernel.h>
+=======
+#include <asm/uaccess.h>
+#include <linux/regulator/consumer.h>
+#include <linux/pinctrl/consumer.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "melfas_mms400_reg.h"
 
@@ -55,7 +61,45 @@
 #include <linux/sec_debug.h>
 #endif
 
+<<<<<<< HEAD
 #include <linux/input/sec_cmd.h>
+=======
+#ifdef CONFIG_SEC_DEBUG_TSP_LOG
+#define tsp_debug_dbg(mode, dev, fmt, ...)	\
+({								\
+	if (mode) {					\
+		dev_dbg(dev, fmt, ## __VA_ARGS__);	\
+		sec_debug_tsp_log(fmt, ## __VA_ARGS__);		\
+	}				\
+	else					\
+		dev_dbg(dev, fmt, ## __VA_ARGS__);	\
+})
+
+#define tsp_debug_info(mode, dev, fmt, ...)	\
+({								\
+	if (mode) {							\
+		dev_info(dev, fmt, ## __VA_ARGS__);		\
+		sec_debug_tsp_log(fmt, ## __VA_ARGS__);		\
+	}				\
+	else					\
+		dev_info(dev, fmt, ## __VA_ARGS__);	\
+})
+
+#define tsp_debug_err(mode, dev, fmt, ...)	\
+({								\
+	if (mode) {					\
+		dev_err(dev, fmt, ## __VA_ARGS__);	\
+		sec_debug_tsp_log(fmt, ## __VA_ARGS__);	\
+	}				\
+	else					\
+		dev_err(dev, fmt, ## __VA_ARGS__); \
+})
+#else
+#define tsp_debug_dbg(mode, dev, fmt, ...)	dev_dbg(dev, fmt, ## __VA_ARGS__)
+#define tsp_debug_info(mode, dev, fmt, ...)	dev_info(dev, fmt, ## __VA_ARGS__)
+#define tsp_debug_err(mode, dev, fmt, ...)	dev_err(dev, fmt, ## __VA_ARGS__)
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_OF
 #define MMS_USE_DEVICETREE		1
@@ -140,7 +184,12 @@
 #define INPUT_PALM_MAX			1
 
 //Firmware update
+<<<<<<< HEAD
 #define EXTERNAL_FW_PATH		"/sdcard/Firmware/TSP/melfas.mfsb"
+=======
+#define INTERNAL_FW_PATH		"tsp_melfas/mms449_carmen2.fw"
+#define EXTERNAL_FW_PATH		"/sdcard/melfas.mfsb"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define FFU_FW_PATH	"ffu_tsp.bin"
 #define MMS_USE_AUTO_FW_UPDATE		1
 #define MMS_FW_MAX_SECT_NUM		4
@@ -168,8 +217,13 @@ struct mms_data {
 #endif
 
 /**
+<<<<<<< HEAD
  * LPM status bitmask
  */
+=======
+  * LPM status bitmask
+  */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MMS_LPM_FLAG_SPAY		(1 << 0)
 #define MMS_LPM_FLAG_AOD		(1 << 1)
 
@@ -199,8 +253,11 @@ struct mms_ts_info {
 	struct mutex lock_cmd;
 	struct mutex lock_dev;
 
+<<<<<<< HEAD
 	struct sec_cmd_data sec;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int irq;
 	bool	 enabled;
 	bool init;
@@ -244,6 +301,24 @@ struct mms_ts_info {
 	bool cmd_busy;
 	bool dev_busy;
 
+<<<<<<< HEAD
+=======
+#if MMS_USE_CMD_MODE
+	dev_t cmd_dev_t;
+	struct device *cmd_dev;
+	struct class *cmd_class;
+	struct list_head cmd_list_head;
+	u8 cmd_state;
+	char cmd[CMD_LEN];
+	char *cmd_result;
+	int cmd_param[CMD_PARAM_NUM];
+	int cmd_buffer_size;
+	int item_count;
+	u8 cmd_all_factory_state;
+	char cmd_result_all[CMD_RESULT_STR_LEN];
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if MMS_USE_DEV_MODE
 	struct cdev cdev;
 	u8 *dev_fs_buf;
@@ -279,6 +354,7 @@ struct mms_ts_info {
 	unsigned int scrub_x;
 	unsigned int scrub_y;
 
+<<<<<<< HEAD
 	u8 ito_test[4];
 	u8 check_multi;
 	unsigned int multi_count;
@@ -287,6 +363,14 @@ struct mms_ts_info {
 };
 
 enum IC_STATUS {
+=======
+	u8 check_multi;
+	unsigned int multi_count;
+	unsigned int comm_err_count;
+};
+
+enum IC_STATUS{
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	PWR_ON = 0,
 	PWR_OFF = 1,
 	LPM_RESUME = 2,
@@ -305,7 +389,10 @@ struct mms_devicetree_data {
 	const char *gpio_io_en;
 	int gpio_sda;
 	int gpio_scl;
+<<<<<<< HEAD
 	int tsp_ldo_en;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int panel;
 	int fw_update_skip;
 	struct regulator *vdd_io;
@@ -348,7 +435,11 @@ struct mms_fw_img {
 /**
  * Firmware update error code
  */
+<<<<<<< HEAD
 enum fw_update_errno {
+=======
+enum fw_update_errno{
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	fw_err_file_read = -4,
 	fw_err_file_open = -3,
 	fw_err_file_type = -2,
@@ -376,8 +467,11 @@ int mms_disable_esd_alert(struct mms_ts_info *info);
 int mms_fw_update_from_kernel(struct mms_ts_info *info, bool force);
 int mms_fw_update_from_storage(struct mms_ts_info *info, bool force);
 int mms_fw_update_from_ffu(struct mms_ts_info *info, bool force);
+<<<<<<< HEAD
 int mms_panel_ito_test(void *device_data);
 void mms_read_info_work(struct work_struct *work);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 //mod
 int mms_power_control(struct mms_ts_info *info, int enable);
@@ -411,9 +505,19 @@ void mms_sysfs_remove(struct mms_ts_info *info);
 static const struct attribute_group mms_test_attr_group;
 #endif
 
+<<<<<<< HEAD
 #if MMS_USE_CMD_MODE
 int mms_sysfs_cmd_create(struct mms_ts_info *info);
 void mms_sysfs_cmd_remove(struct mms_ts_info *info);
+=======
+//cmd
+#if MMS_USE_CMD_MODE
+int mms_sysfs_cmd_create(struct mms_ts_info *info);
+void mms_sysfs_cmd_remove(struct mms_ts_info *info);
+extern void sec_cmd_set_cmd_result_all(struct mms_ts_info *data, char *buff, int len, char *item);
+static const struct attribute_group mms_cmd_attr_group;
+extern struct class *sec_class;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifdef USE_TSP_TA_CALLBACKS

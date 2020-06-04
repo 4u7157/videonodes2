@@ -18,8 +18,13 @@ struct incell_driver_data {
 };
 
 extern struct incell_driver_data incell_data;
+<<<<<<< HEAD
 
 /* Defined at kernel/drivers/video/msm/mdss/samsung/ss_dsi_panel_common.h*/
 extern int samsung_display_incell_power(struct incell_driver_data *info);
 
 #endif
+=======
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

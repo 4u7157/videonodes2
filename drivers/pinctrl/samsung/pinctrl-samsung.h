@@ -249,7 +249,10 @@ extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
 extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
 extern struct samsung_pin_ctrl exynos5260_pin_ctrl[];
 extern struct samsung_pin_ctrl exynos5420_pin_ctrl[];
+<<<<<<< HEAD
 extern struct samsung_pin_ctrl exynos7570_pin_ctrl[];
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern struct samsung_pin_ctrl exynos7870_pin_ctrl[];
 extern struct samsung_pin_ctrl exynos8890_pin_ctrl[];
 extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];

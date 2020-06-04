@@ -15,6 +15,7 @@
 /* BLK_ALIVE: CP related SFRs */
 #define EXYNOS_PMU_CP_CTRL_NS			0x0030
 #define EXYNOS_PMU_CP_CTRL_S			0x0034
+<<<<<<< HEAD
 #define EXYNOS_PMU_CP_STAT				0x0038
 #define EXYNOS_PMU_CP_DEBUG				0x003C
 
@@ -31,6 +32,18 @@
 #define EXYNOS_PMU_CP_QOS					0x0078
 #define EXYNOS_PMU_CP2AP_MIF_CONFIG2		0x007C
 #define EXYNOS_PMU_CP2AP_ADDR_RNG			0x0084
+=======
+#define EXYNOS_PMU_CP_STAT			0x0038
+#define EXYNOS_PMU_CP_DEBUG			0x003C
+#define EXYNOS_PMU_CP_DURATION			0x0040
+#define EXYNOS_PMU_CP2AP_MEM_CONFIG		0x0050
+
+#define EXYNOS_PMU_CP_BOOT_TEST_RST_CONFIG	0x0068
+#define EXYNOS_PMU_CP2AP_PERI_ACCESS_WIN	0x006C
+#define EXYNOS_PMU_MODAPIF_CONFIG		0x0070
+#define EXYNOS_PMU_CP_CLK_CTRL			0x0074
+#define EXYNOS_PMU_CP_QOS			0x0078
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define EXYNOS_PMU_CENTRAL_SEQ_CP_CONFIGURATION	0x0280
 #define EXYNOS_PMU_RESET_AHEAD_CP_SYS_PWR_REG	0x1170
@@ -39,6 +52,7 @@
 #define EXYNOS_PMU_TCXO_GATE_SYS_PWR_REG		0x11D4
 #define EXYNOS_PMU_RESET_ASB_CP_SYS_PWR_REG		0x11D8
 
+<<<<<<< HEAD
 
 #if defined(CONFIG_SOC_EXYNOS7870) || defined(CONFIG_SOC_EXYNOS7570)
 #define PMU_USBDEV_PHY_CONTROL			0x0704
@@ -48,10 +62,30 @@
 #define SEL_CP_UART_DBG			BIT(8)
 #define SEL_UART_DBG_GPIO		BIT(4)
 #define FUNC_ISO_EN				BIT(0)
+=======
+#ifdef CONFIG_SOC_EXYNOS8890
+#define EXYNOS_PMU_CP2AP_MIF0_PERI_ACCESS_CON	0x0054
+#define EXYNOS_PMU_CP2AP_MIF1_PERI_ACCESS_CON	0x0058
+#define EXYNOS_PMU_CP2AP_MIF2_PERI_ACCESS_CON	0x005C
+#define EXYNOS_PMU_CP2AP_MIF3_PERI_ACCESS_CON	0x0060
+#define EXYNOS_PMU_CP2AP_CCORE_PERI_ACCESS_CON	0x0064
+
+#define EXYNOS_PMU_ERROR_CODE_DATA		0x007C
+#define EXYNOS_PMU_ERROR_CODE_PERI		0x0080
+#endif
+
+#ifdef CONFIG_SOC_EXYNO7870
+#define EXYNOS_PMU_CP2AP_MEM_CONFIG     0x0050
+#define EXYNOS_PMU_CP2AP_MIF_ACCESS_WIN0    0x0054
+#define EXYNOS_PMU_CP2AP_MIF_ACCESS_WIN1    0x0058
+
+#define EXYNOS_PMU_UART_IO_SHARE_CTRL		0x6200
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 /* CP PMU */
 /* For EXYNOS_PMU_CP_CTRL Register */
+<<<<<<< HEAD
 #define CP_PWRON				BIT(1)
 #define CP_RESET_SET			BIT(2)
 #define CP_START				BIT(3)
@@ -64,6 +98,20 @@
 #define MASK_SLEEP_START_REQ	BIT(12)
 #define SET_SW_SLEEP_START_REQ	BIT(13)
 #define CLEANY_BYPASS_END		BIT(16)
+=======
+#define CP_PWRON                BIT(1)
+#define CP_RESET_SET            BIT(2)
+#define CP_START                BIT(3)
+#define CP_ACTIVE_REQ_EN        BIT(5)
+#define CP_ACTIVE_REQ_CLR       BIT(6)
+#define CP_RESET_REQ_EN         BIT(7)
+#define CP_RESET_REQ_CLR        BIT(8)
+#define MASK_CP_PWRDN_DONE      BIT(9)
+#define RTC_OUT_EN              BIT(10)
+#define MASK_SLEEP_START_REQ    BIT(12)
+#define SET_SW_SLEEP_START_REQ  BIT(13)
+#define CLEANY_BYPASS_END       BIT(16)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define SMC_ID		0x82000700
 #define READ_CTRL	0x3

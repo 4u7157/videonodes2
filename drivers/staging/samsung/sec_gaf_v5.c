@@ -286,12 +286,15 @@ static struct GAForensicINFO {
 	.GAFINFOCheckSum = 0
 };
 
+<<<<<<< HEAD
 const void *sec_gaf_get_addr(void)
 {
 	return &GAFINFO;
 }
 EXPORT_SYMBOL(sec_gaf_get_addr);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void sec_gaf_supply_rqinfo(unsigned short curr_offset, unsigned short rq_offset)
 {
 	const unsigned short size =

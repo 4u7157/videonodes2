@@ -228,6 +228,12 @@ struct dentry_operations {
 #define DCACHE_OP_SELECT_INODE		0x02000000 /* Unioned entry: dcache op selects inode */
 
 #define DCACHE_ENCRYPTED_WITH_KEY	0x04000000 /* dir is encrypted with a valid key */
+<<<<<<< HEAD
+=======
+#define DCACHE_WILL_INVALIDATE		0x80000000 /* will be invalidated */
+
+#define DCACHE_ENCRYPTED_WITH_KEY	0x04000000 /* dir is encrypted with a valid key */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 extern seqlock_t rename_lock;
 

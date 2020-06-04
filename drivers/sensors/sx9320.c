@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -15,6 +16,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA
  */
+=======
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/i2c.h>
@@ -40,6 +47,7 @@
 #if defined(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
 #include <linux/usb/manager/usb_typec_manager_notifier.h>
 #endif
+<<<<<<< HEAD
 #define VENDOR_NAME              "SEMTECH"
 #define MODEL_NAME               "SX9320"
 #define MODULE_NAME              "grip_sensor"
@@ -64,6 +72,41 @@
 #define IDLE_STATE		0
 #define TOUCH_STATE		1
 #define BODY_STATE		2
+=======
+
+#define VENDOR_NAME              "SEMTECH"
+#define MODEL_NAME               "SX9320"
+#define MODULE_NAME              "grip_sensor"
+
+#define I2C_M_WR                 0 /* for i2c Write */
+#define I2c_M_RD                 1 /* for i2c Read */
+
+#define IDLE                     0
+#define ACTIVE                   1
+
+#define SX9320_MODE_SLEEP        0
+#define SX9320_MODE_NORMAL       1
+
+#define MAIN_SENSOR              1
+#define REF_SENSOR               2
+
+#define DIFF_READ_NUM            10
+#define GRIP_LOG_TIME            15 /* 30 sec */
+#define PHX_STATUS_REG           SX9320_STAT0_PROXSTAT_PH0_FLAG
+#define RAW_DATA_BLOCK_SIZE      (SX9320_REGOFFSETLSB - SX9320_REGUSEMSB + 1)
+
+/* CS0, CS1, CS2, CS3 */
+#define TOTAL_BOTTON_COUNT       1
+#define ENABLE_CSX               ((1 << MAIN_SENSOR) | (1 << REF_SENSOR))
+
+#define IRQ_PROCESS_CONDITION   (SX9320_IRQSTAT_TOUCH_FLAG \
+				| SX9320_IRQSTAT_RELEASE_FLAG)
+
+#define NONE_ENABLE		-1
+#define IDLE_STATE		0
+#define TOUCH_STATE		1
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define HALLIC1_PATH		"/sys/class/sec/sec_key/hall_detect"
 
 struct sx9320_p {
@@ -120,6 +163,7 @@ struct sx9320_p {
 	s16 avg;
 	s32 diff;
 	s32 max_diff;
+<<<<<<< HEAD
 	u16 offset;
 	u16 freq;
 	int ch1_state;
@@ -128,6 +172,21 @@ struct sx9320_p {
 	unsigned char hall_ic1[6];
 	unsigned char hall_ic2[6];
 };
+=======
+	s32 max_normal_diff;
+	u16 offset;
+	u16 freq;
+
+	int ch1_state;
+	int ch2_state;
+
+	atomic_t enable;
+
+	unsigned char hall_ic1[6];
+	unsigned char hall_ic2[6];
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_check_hallic_state(char *file_path,
 	unsigned char hall_ic_status[])
 {
@@ -138,27 +197,53 @@ static int sx9320_check_hallic_state(char *file_path,
 
 	old_fs = get_fs();
 	set_fs(KERNEL_DS);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	filep = filp_open(file_path, O_RDONLY, 0666);
 	if (IS_ERR(filep)) {
 		iRet = PTR_ERR(filep);
 		set_fs(old_fs);
 		goto exit;
 	}
+<<<<<<< HEAD
 	iRet = filep->f_op->read(filep, hall_sysfs,
 		sizeof(hall_sysfs), &filep->f_pos);
+=======
+
+	iRet = filep->f_op->read(filep, hall_sysfs,
+		sizeof(hall_sysfs), &filep->f_pos);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (iRet != sizeof(hall_sysfs))
 		iRet = -EIO;
 	else
 		strncpy(hall_ic_status, hall_sysfs, sizeof(hall_sysfs));
+<<<<<<< HEAD
 	filp_close(filep, current->files);
 	set_fs(old_fs);
 exit:
 	return iRet;
 }
+=======
+
+	filp_close(filep, current->files);
+	set_fs(old_fs);
+
+exit:
+	return iRet;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_get_nirq_state(struct sx9320_p *data)
 {
 	return gpio_get_value_cansleep(data->gpio_nirq);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_i2c_write(struct sx9320_p *data, u8 reg_addr, u8 buf)
 {
 	int ret;
@@ -167,16 +252,31 @@ static int sx9320_i2c_write(struct sx9320_p *data, u8 reg_addr, u8 buf)
 
 	w_buf[0] = reg_addr;
 	w_buf[1] = buf;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	msg.addr = data->client->addr;
 	msg.flags = I2C_M_WR;
 	msg.len = 2;
 	msg.buf = (char *)w_buf;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = i2c_transfer(data->client->adapter, &msg, 1);
 	if (ret < 0)
 		pr_err("[SX9320]: %s - i2c write error %d\n",
 			__func__, ret);
+<<<<<<< HEAD
 	return ret;
 }
+=======
+
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_i2c_read(struct sx9320_p *data, u8 reg_addr, u8 *buf)
 {
 	int ret;
@@ -186,16 +286,31 @@ static int sx9320_i2c_read(struct sx9320_p *data, u8 reg_addr, u8 *buf)
 	msg[0].flags = I2C_M_WR;
 	msg[0].len = 1;
 	msg[0].buf = &reg_addr;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	msg[1].addr = data->client->addr;
 	msg[1].flags = I2C_M_RD;
 	msg[1].len = 1;
 	msg[1].buf = buf;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = i2c_transfer(data->client->adapter, msg, 2);
 	if (ret < 0)
 		pr_err("[SX9320]: %s - i2c read error %d\n",
 			__func__, ret);
+<<<<<<< HEAD
 	return ret;
 }
+=======
+
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_get_again(struct sx9320_p *data)
 {
 	switch (data->again) {
@@ -215,14 +330,25 @@ static void sx9320_get_again(struct sx9320_p *data)
 		data->again_ch = 1000;
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static u8 sx9320_read_irqstate(struct sx9320_p *data)
 {
 	u8 val = 0;
 
 	if (sx9320_i2c_read(data, SX9320_IRQSTAT_REG, &val) >= 0)
 		return val;
+<<<<<<< HEAD
 	return 0;
 }
+=======
+
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_initialize_register(struct sx9320_p *data)
 {
 	u8 val = 0;
@@ -232,16 +358,31 @@ static void sx9320_initialize_register(struct sx9320_p *data)
 		sx9320_i2c_write(data, setup_reg[idx].reg, setup_reg[idx].val);
 		pr_info("[SX9320]: %s - Write Reg: 0x%x Value: 0x%x\n",
 			__func__, setup_reg[idx].reg, setup_reg[idx].val);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		sx9320_i2c_read(data, setup_reg[idx].reg, &val);
 		pr_info("[SX9320]: %s - Read Reg: 0x%x Value: 0x%x\n\n",
 			__func__, setup_reg[idx].reg, val);
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->phen < 2)
 		sx9320_i2c_write(data, SX9320_PROXCTRL6_REG, data->normal_th);
 	else
 		sx9320_i2c_write(data, SX9320_PROXCTRL7_REG, data->normal_th);
+<<<<<<< HEAD
 	data->init_done = ON;
 }
+=======
+
+	data->init_done = ON;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_initialize_chip(struct sx9320_p *data)
 {
 	int cnt = 0;
@@ -250,17 +391,34 @@ static void sx9320_initialize_chip(struct sx9320_p *data)
 		sx9320_read_irqstate(data);
 		msleep(20);
 	}
+<<<<<<< HEAD
 	if (cnt >= 10)
 		pr_err("[SX9320]: %s - s/w reset fail(%d)\n", __func__, cnt);
 	sx9320_initialize_register(data);
 }
+=======
+
+	if (cnt >= 10)
+		pr_err("[SX9320]: %s - s/w reset fail(%d)\n", __func__, cnt);
+
+	sx9320_initialize_register(data);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_set_offset_calibration(struct sx9320_p *data)
 {
 	int ret = 0;
 
 	ret = sx9320_i2c_write(data, SX9320_STAT2_REG, 0x0F);
+<<<<<<< HEAD
 	return ret;
 }
+=======
+
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_send_event(struct sx9320_p *data, u8 state)
 {
 	if (state == ACTIVE) {
@@ -280,20 +438,35 @@ static void sx9320_send_event(struct sx9320_p *data, u8 state)
 		input_report_rel(data->input, REL_MISC, 1);
 	else
 		input_report_rel(data->input, REL_MISC, 2);
+<<<<<<< HEAD
 	input_sync(data->input);
 }
+=======
+
+	input_sync(data->input);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_display_data_reg(struct sx9320_p *data)
 {
 	u8 val = 0;
 	int idx;
 
 	sx9320_i2c_write(data, SX9320_REGSENSORSELECT, (u8)data->phen);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	for (idx = 0; idx < (int)(sizeof(setup_reg) >> 1); idx++) {
 		sx9320_i2c_read(data, setup_reg[idx].reg, &val);
 		pr_info("[SX9320]: %s - Read Reg: 0x%x Value: 0x%x\n\n",
 			__func__, setup_reg[idx].reg, val);
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_get_data(struct sx9320_p *data)
 {
 	u8 ms_byte = 0;
@@ -304,14 +477,25 @@ static void sx9320_get_data(struct sx9320_p *data)
 	s32 gain, again;
 
 	mutex_lock(&data->read_mutex);
+<<<<<<< HEAD
 	sx9320_i2c_write(data, SX9320_REGSENSORSELECT, (u8)data->phen);
 	/* useful read */
 	sx9320_i2c_read(data, SX9320_REGUSEMSB, &ms_byte);
 	sx9320_i2c_read(data, SX9320_REGUSELSB, &ls_byte);
+=======
+
+	sx9320_i2c_write(data, SX9320_REGSENSORSELECT, (u8)data->phen);
+
+	/* useful read */
+	sx9320_i2c_read(data, SX9320_REGUSEMSB, &ms_byte);
+	sx9320_i2c_read(data, SX9320_REGUSELSB, &ls_byte);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	useful = (s32)ms_byte;
 	useful = (useful << 8) | ((s32)ls_byte);
 	if (useful > 32767)
 		useful -= 65536;
+<<<<<<< HEAD
 	/* offset read */
 	sx9320_i2c_read(data, SX9320_REGOFFSETMSB, &ms_byte);
 	sx9320_i2c_read(data, SX9320_REGOFFSETLSB, &ls_byte);
@@ -320,6 +504,20 @@ static void sx9320_get_data(struct sx9320_p *data)
 	/* capMain calculate */
 	ms_byte = (u8)((offset >> 7) & 0x7F);
 	ls_byte = (u8)((offset)      & 0x7F);
+=======
+
+	/* offset read */
+	sx9320_i2c_read(data, SX9320_REGOFFSETMSB, &ms_byte);
+	sx9320_i2c_read(data, SX9320_REGOFFSETLSB, &ls_byte);
+
+	offset = (u16)ms_byte;
+	offset = (offset << 8) | ((u16)ls_byte);
+
+	/* capMain calculate */
+	ms_byte = (u8)((offset >> 7) & 0x7F);
+	ls_byte = (u8)((offset)      & 0x7F);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	gain = 1 << (data->gain - 1);
 	again = data->again_ch;
 
@@ -328,24 +526,45 @@ static void sx9320_get_data(struct sx9320_p *data)
 		range = SX9320_LARGE_RANGE_VALUE;
 	else
 		range = SX9320_SMALL_RANGE_VALUE;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	capMain = (((s32)ms_byte * 21234) + ((s32)ls_byte * 496))
 			+ ((useful * range) / ((gain * again * 65536) / 1000));
 
 	/* avg read */
 	sx9320_i2c_read(data, SX9320_REGAVGMSB, &ms_byte);
 	sx9320_i2c_read(data, SX9320_REGAVGLSB, &ls_byte);
+<<<<<<< HEAD
 	avg = (u16)ms_byte;
 	avg = (avg << 8) | ((u16)ls_byte);
+=======
+
+	avg = (u16)ms_byte;
+	avg = (avg << 8) | ((u16)ls_byte);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	data->useful = useful;
 	data->offset = offset;
 	data->capmain = capMain;
 	data->avg = avg;
 	data->diff = useful - avg;
+<<<<<<< HEAD
 	mutex_unlock(&data->read_mutex);
+=======
+
+	mutex_unlock(&data->read_mutex);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_info("[SX9320]: %s - Capmain: %d, Useful: %d, avg: %d, diff: %d, Offset: %u\n",
 		__func__, data->capmain, data->useful, data->avg,
 		data->diff, data->offset);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_set_mode(struct sx9320_p *data, unsigned char mode)
 {
 	int ret = -EINVAL;
@@ -357,6 +576,7 @@ static int sx9320_set_mode(struct sx9320_p *data, unsigned char mode)
 	} else if (mode == SX9320_MODE_NORMAL) {
 		ret = sx9320_i2c_write(data, SX9320_GNRLCTRL1_REG,
 			setup_reg[2].val | (1 << data->phen));
+<<<<<<< HEAD
 		msleep(20);
 		sx9320_set_offset_calibration(data);
 		msleep(400);
@@ -364,21 +584,46 @@ static int sx9320_set_mode(struct sx9320_p *data, unsigned char mode)
 	pr_info("[SX9320]: %s - change the mode : %u\n", __func__, mode);
 	return ret;
 }
+=======
+
+		msleep(20);
+
+		sx9320_set_offset_calibration(data);
+		msleep(400);
+	}
+
+	pr_info("[SX9320]: %s - change the mode : %u\n", __func__, mode);
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_read_ch_interrupt(struct sx9320_p *data, u8 status)
 {
 	if (status & (PHX_STATUS_REG << data->phen))
 		data->ch1_state = TOUCH_STATE;
 	else
 		data->ch1_state = IDLE_STATE;
+<<<<<<< HEAD
 	pr_info("[SX9320]: %s - ch1:%d, ch2:%d\n",
 		__func__, data->ch1_state, data->ch2_state);
 }
+=======
+
+	pr_info("[SX9320]: %s - ch1:%d, ch2:%d\n",
+		__func__, data->ch1_state, data->ch2_state);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_check_status(struct sx9320_p *data, int enable)
 {
 	/* this function has to be modified if chs are over 2 for SAR */
 	u8 status = 0;
 
 	sx9320_i2c_read(data, SX9320_STAT0_REG, &status);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->skip_data == true) {
 		input_report_rel(data->input, REL_MISC, 2);
 		input_sync(data->input);
@@ -388,12 +633,22 @@ static void sx9320_check_status(struct sx9320_p *data, int enable)
 		sx9320_send_event(data, IDLE);
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_set_enable(struct sx9320_p *data, int enable)
 {
 	u8 status = 0;
 
 	pr_info("[SX9320]: %s\n", __func__);
+<<<<<<< HEAD
 	if (enable == ON) {
+=======
+
+	if (enable == ON) {
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_info("[SX9320]: %s - enable(status : 0x%x)\n",
 			__func__, status);
 
@@ -402,6 +657,10 @@ static void sx9320_set_enable(struct sx9320_p *data, int enable)
 		data->useful_avg = 0;
 		sx9320_get_data(data);
 		sx9320_check_status(data, enable);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		msleep(20);
 		/*
 		 * make sure no interrupts are pending since enabling irq
@@ -412,10 +671,18 @@ static void sx9320_set_enable(struct sx9320_p *data, int enable)
 		 * enable interrupt
 		 */
 		sx9320_i2c_write(data, SX9320_IRQ_ENABLE_REG, 0x70);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		enable_irq(data->irq);
 		enable_irq_wake(data->irq);
 	} else {
 		pr_info("[SX9320]: %s - disable\n", __func__);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/*
 		 * disable interrupt
 		 */
@@ -425,6 +692,10 @@ static void sx9320_set_enable(struct sx9320_p *data, int enable)
 		disable_irq_wake(data->irq);
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_set_debug_work(struct sx9320_p *data, u8 enable,
 		unsigned int time_ms)
 {
@@ -436,6 +707,10 @@ static void sx9320_set_debug_work(struct sx9320_p *data, u8 enable,
 		cancel_delayed_work_sync(&data->debug_work);
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_get_offset_calibration_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -443,8 +718,15 @@ static ssize_t sx9320_get_offset_calibration_show(struct device *dev,
 	struct sx9320_p *data = dev_get_drvdata(dev);
 
 	sx9320_i2c_read(data, SX9320_IRQSTAT_REG, &val);
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d\n", val);
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "%d\n", val);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_set_offset_calibration_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -455,8 +737,15 @@ static ssize_t sx9320_set_offset_calibration_store(struct device *dev,
 		pr_err("[SX9320]: %s - Invalid Argument\n", __func__);
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 	if (val)
 		sx9320_set_offset_calibration(data);
+=======
+
+	if (val)
+		sx9320_set_offset_calibration(data);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return count;
 }
 
@@ -471,6 +760,10 @@ static ssize_t sx9320_register_write_store(struct device *dev,
 			__func__);
 		return -EINVAL;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sx9320_i2c_write(data, (unsigned char)regist, (unsigned char)val);
 	pr_info("[SX9320]: %s - Register(0x%2x) data(0x%2x)\n",
 		__func__, regist, val);
@@ -496,14 +789,25 @@ static ssize_t sx9320_register_read_show(struct device *dev,
 
 	return offset;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_read_data_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct sx9320_p *data = dev_get_drvdata(dev);
 
 	sx9320_display_data_reg(data);
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d\n", 0);
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "%d\n", 0);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_sw_reset_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -513,8 +817,15 @@ static ssize_t sx9320_sw_reset_show(struct device *dev,
 	sx9320_set_offset_calibration(data);
 	msleep(400);
 	sx9320_get_data(data);
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d\n", 0);
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "%d\n", 0);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_freq_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -525,35 +836,67 @@ static ssize_t sx9320_freq_store(struct device *dev,
 		pr_err("[SX9320]: %s - Invalid Argument\n", __func__);
 		return count;
 	}
+<<<<<<< HEAD
 	data->freq = (u16)val;
 	val = ((val << 3) | (setup_reg[4].val & 0x07)) & 0xff;
 	sx9320_i2c_write(data, SX9320_AFECTRL4_REG, (u8)val);
 	pr_info("[SX9320]: %s - Freq : 0x%x\n", __func__, data->freq);
 	return count;
 }
+=======
+
+	data->freq = (u16)val;
+	val = ((val << 3) | (setup_reg[4].val & 0x07)) & 0xff;
+	sx9320_i2c_write(data, SX9320_AFECTRL4_REG, (u8)val);
+
+	pr_info("[SX9320]: %s - Freq : 0x%x\n", __func__, data->freq);
+
+	return count;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_freq_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct sx9320_p *data = dev_get_drvdata(dev);
 
 	pr_info("[SX9320]: %s - Freq : 0x%x\n", __func__, data->freq);
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%u\n", data->freq);
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "%u\n", data->freq);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_vendor_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	return snprintf(buf, PAGE_SIZE, "%s\n", VENDOR_NAME);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_name_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	return snprintf(buf, PAGE_SIZE, "%s\n", MODEL_NAME);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_touch_mode_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	return snprintf(buf, PAGE_SIZE, "1\n");
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_raw_data_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -565,25 +908,45 @@ static ssize_t sx9320_raw_data_show(struct device *dev,
 		sum_diff = data->diff;
 	else
 		sum_diff += data->diff;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (++data->diff_cnt >= DIFF_READ_NUM) {
 		data->diff_avg = sum_diff / DIFF_READ_NUM;
 		data->useful_avg = sum_diff / DIFF_READ_NUM;
 		data->diff_cnt = 0;
 	}
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d,%d,%u,%d,%d\n", data->capmain,
 		data->useful, data->offset, data->diff, data->avg);
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "%d,%d,%u,%d,%d\n", data->capmain,
+		data->useful, data->offset, data->diff, data->avg);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_threshold_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	/* It's for init touch */
 	return snprintf(buf, PAGE_SIZE, "0\n");
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_threshold_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
 	return count;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_normal_threshold_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -592,8 +955,14 @@ static ssize_t sx9320_normal_threshold_show(struct device *dev,
 
 	thresh_temp = data->normal_th;
 	thresh_temp = thresh_temp * thresh_temp / 2;
+<<<<<<< HEAD
 	/* AdvCtrl13 */
 	hysteresis = (setup_reg[33].val >> 2) & 0x3;
+=======
+
+	hysteresis = data->hyst;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	switch (hysteresis) {
 	case 0x01: /* 6% */
 		hysteresis = thresh_temp >> 4;
@@ -608,9 +977,17 @@ static ssize_t sx9320_normal_threshold_show(struct device *dev,
 		/* None */
 		break;
 	}
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d,%d\n", thresh_temp + hysteresis,
 			thresh_temp - hysteresis);
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "%d,%d\n", thresh_temp + hysteresis,
+			thresh_temp - hysteresis);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_normal_threshold_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -622,12 +999,25 @@ static ssize_t sx9320_normal_threshold_store(struct device *dev,
 		pr_err("[SX9320]: %s - Invalid Argument\n", __func__);
 		return count;
 	}
+<<<<<<< HEAD
 	sx9320_i2c_write(data, SX9320_PROXCTRL7_REG, val);
 
 	pr_info("[SX9320]: %s - normal threshold %lu\n", __func__, val);
 	data->normal_th_buf = data->normal_th = (u8)(val);
 	return count;
 }
+=======
+
+	sx9320_i2c_write(data, SX9320_PROXCTRL7_REG, val);
+
+	pr_info("[SX9320]: %s - normal threshold %lu\n", __func__, val);
+
+	data->normal_th_buf = data->normal_th = (u8)(val);
+
+	return count;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_onoff_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -635,6 +1025,10 @@ static ssize_t sx9320_onoff_show(struct device *dev,
 
 	return snprintf(buf, PAGE_SIZE, "%u\n", !data->skip_data);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_onoff_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -647,6 +1041,10 @@ static ssize_t sx9320_onoff_store(struct device *dev,
 		pr_err("[SX9320]: %s - Invalid Argument\n", __func__);
 		return count;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (val == 0) {
 		data->skip_data = true;
 		if (atomic_read(&data->enable) == ON) {
@@ -657,19 +1055,35 @@ static ssize_t sx9320_onoff_store(struct device *dev,
 	} else {
 		data->skip_data = false;
 	}
+<<<<<<< HEAD
 	pr_info("[SX9320]: %s -%u\n", __func__, val);
 	return count;
 }
+=======
+
+	pr_info("[SX9320]: %s -%u\n", __func__, val);
+	return count;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_calibration_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	return snprintf(buf, PAGE_SIZE, "2,0,0\n");
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_calibration_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
 	return count;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_gain_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -693,12 +1107,23 @@ static ssize_t sx9320_gain_show(struct device *dev,
 		ret = snprintf(buf, PAGE_SIZE, "Reserved\n");
 		break;
 	}
+<<<<<<< HEAD
 	return ret;
 }
+=======
+
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_range_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	int ret;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct sx9320_p *data = dev_get_drvdata(dev);
 
 	switch (data->range) {
@@ -712,8 +1137,15 @@ static ssize_t sx9320_range_show(struct device *dev,
 		ret = snprintf(buf, PAGE_SIZE, "Small\n");
 		break;
 	}
+<<<<<<< HEAD
 	return ret;
 }
+=======
+
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_diff_avg_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -721,6 +1153,10 @@ static ssize_t sx9320_diff_avg_show(struct device *dev,
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", data->diff_avg);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_useful_avg_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -728,6 +1164,10 @@ static ssize_t sx9320_useful_avg_show(struct device *dev,
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", data->useful_avg);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_ch_state_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -744,6 +1184,7 @@ static ssize_t sx9320_ch_state_show(struct device *dev,
 		ret = snprintf(buf, PAGE_SIZE, "%d,%d\n",
 			NONE_ENABLE, NONE_ENABLE);
 	}
+<<<<<<< HEAD
 	return ret;
 }
 static ssize_t sx9320_body_threshold_show(struct device *dev,
@@ -791,6 +1232,12 @@ static ssize_t sx9320_body_threshold_store(struct device *dev,
 	data->normal_th_buf = data->normal_th = (u8)(val);
 	return count;
 }
+=======
+
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_grip_flush_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -803,11 +1250,21 @@ static ssize_t sx9320_grip_flush_store(struct device *dev,
 		pr_err("%s - kstrtou8 failed.(%d)\n", __func__, ret);
 		return count;
 	}
+<<<<<<< HEAD
 	pr_info("[SX9320]: %s - handle = %d\n", __func__, handle);
+=======
+
+	pr_info("[SX9320]: %s - handle = %d\n", __func__, handle);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_report_rel(data->input, REL_MAX, handle);
 	input_sync(data->input);
 	return count;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_avgnegfilt_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -820,8 +1277,15 @@ static ssize_t sx9320_avgnegfilt_show(struct device *dev,
 		return snprintf(buf, PAGE_SIZE, "1-1/%d\n", 1 << avgnegfilt);
 	else if (avgnegfilt == 0)
 		return snprintf(buf, PAGE_SIZE, "0\n");
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "not set\n");
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "not set\n");
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_avgposfilt_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -849,6 +1313,10 @@ static ssize_t sx9320_avgposfilt_show(struct device *dev,
 	}
 	return snprintf(buf, PAGE_SIZE, "not set\n");
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_avgthresh_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -856,6 +1324,10 @@ static ssize_t sx9320_avgthresh_show(struct device *dev,
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", 512 * data->avgthresh);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_rawfilt_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -866,37 +1338,72 @@ static ssize_t sx9320_rawfilt_show(struct device *dev,
 		return snprintf(buf, PAGE_SIZE, "1-1/%d\n", 1 << rawfilt);
 	else if (rawfilt == 0)
 		return snprintf(buf, PAGE_SIZE, "0\n");
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "not set\n");
 }
+=======
+
+	return snprintf(buf, PAGE_SIZE, "not set\n");
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_sampling_freq_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct sx9320_p *data = dev_get_drvdata(dev);
 	int sampling_freq = data->sampling_freq;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *table[32] = {
 		"250", "200", "166.67", "142.86", "125", "111.11", "100",
 		"90.91", "83.33", "76.92", "71.43", "66.67", "62.50", "58.82",
 		"55.56", "52.63", "50", "45.45", "41.67", "38.46", "35.71",
 		"31.25", "27.78", "25", "20.83", "17.86", "13.89", "11.36",
 		"8.33", "6.58", "5.43", "4.63"};
+<<<<<<< HEAD
 	if (sampling_freq < 0 || sampling_freq > 31)
 		return snprintf(buf, PAGE_SIZE, "not set\n");
 	return snprintf(buf, PAGE_SIZE, "%skHz\n", table[sampling_freq]);
 }
+=======
+
+	if (sampling_freq < 0 || sampling_freq > 31)
+		return snprintf(buf, PAGE_SIZE, "not set\n");
+
+	return snprintf(buf, PAGE_SIZE, "%skHz\n", table[sampling_freq]);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_scan_period_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct sx9320_p *data = dev_get_drvdata(dev);
 	int scan_period = data->scan_period;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *table[30] = {
 		"Min", "2ms", "4ms", "6ms", "8ms", "10ms", "14ms", "18ms",
 		"22ms", "26ms", "30ms", "34ms", "38ms", "42ms", "46ms", "50ms",
 		"56ms", "62ms", "68ms", "74ms", "80ms", "90ms", "100ms",
 		"200ms", "300ms", "400ms", "600ms", "800ms", "1s", "2s"};
+<<<<<<< HEAD
 	if (scan_period < 0 || scan_period > 29)
 		return snprintf(buf, PAGE_SIZE, "not set\n");
 	return snprintf(buf, PAGE_SIZE, "%s\n", table[scan_period]);
 }
+=======
+
+	if (scan_period < 0 || scan_period > 29)
+		return snprintf(buf, PAGE_SIZE, "not set\n");
+
+	return snprintf(buf, PAGE_SIZE, "%s\n", table[scan_period]);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_again_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -915,6 +1422,10 @@ static ssize_t sx9320_again_show(struct device *dev,
 		return snprintf(buf, PAGE_SIZE, "not set\n");
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_phase_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -941,15 +1452,32 @@ static ssize_t sx9320_irq_count_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct sx9320_p *data = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	int result = 0;
 
 	if (data->irq_count)
 		result = -1;
+=======
+
+	int result = 0;
+	s32 max_diff_val = 0;
+
+	if (data->irq_count) {
+		result = -1;
+		max_diff_val = data->max_diff;
+	} else {
+		max_diff_val = data->max_normal_diff;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pr_info("[SX9320]: %s - called\n", __func__);
 
 	return snprintf(buf, PAGE_SIZE, "%d,%d,%d\n",
+<<<<<<< HEAD
 		result, data->irq_count, data->max_diff);
+=======
+		result, data->irq_count, max_diff_val);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static ssize_t sx9320_irq_count_store(struct device *dev,
@@ -974,6 +1502,10 @@ static ssize_t sx9320_irq_count_store(struct device *dev,
 		data->abnormal_mode = ON;
 		data->irq_count = 0;
 		data->max_diff = 0;
+<<<<<<< HEAD
+=======
+		data->max_normal_diff = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		pr_err("[SX9320]: %s - unknown value %d\n", __func__, onoff);
 	}
@@ -984,6 +1516,7 @@ static ssize_t sx9320_irq_count_store(struct device *dev,
 
 	return count;
 }
+<<<<<<< HEAD
 static DEVICE_ATTR(menual_calibrate, S_IRUGO | S_IWUSR | S_IWGRP,
 		sx9320_get_offset_calibration_show,
 		sx9320_set_offset_calibration_store);
@@ -1028,6 +1561,48 @@ static DEVICE_ATTR(irq_count, S_IRUGO | S_IWUSR | S_IWGRP,
 
 static DEVICE_ATTR(grip_flush, S_IWUSR | S_IWGRP, NULL,
 	sx9320_grip_flush_store);
+=======
+
+static DEVICE_ATTR(menual_calibrate, 0664,
+		sx9320_get_offset_calibration_show,
+		sx9320_set_offset_calibration_store);
+static DEVICE_ATTR(register_write, 0220, NULL, sx9320_register_write_store);
+static DEVICE_ATTR(register_read, 0444,	sx9320_register_read_show, NULL);
+static DEVICE_ATTR(readback, 0444, sx9320_read_data_show, NULL);
+static DEVICE_ATTR(reset, 0444, sx9320_sw_reset_show, NULL);
+static DEVICE_ATTR(name, 0444, sx9320_name_show, NULL);
+static DEVICE_ATTR(vendor, 0444, sx9320_vendor_show, NULL);
+static DEVICE_ATTR(mode, 0444, sx9320_touch_mode_show, NULL);
+static DEVICE_ATTR(raw_data, 0444, sx9320_raw_data_show, NULL);
+static DEVICE_ATTR(diff_avg, 0444, sx9320_diff_avg_show, NULL);
+static DEVICE_ATTR(useful_avg, 0444, sx9320_useful_avg_show, NULL);
+static DEVICE_ATTR(calibration, 0664,
+		sx9320_calibration_show, sx9320_calibration_store);
+static DEVICE_ATTR(onoff, 0664,
+		sx9320_onoff_show, sx9320_onoff_store);
+static DEVICE_ATTR(threshold, 0664,
+		sx9320_threshold_show, sx9320_threshold_store);
+static DEVICE_ATTR(normal_threshold, 0664,
+		sx9320_normal_threshold_show, sx9320_normal_threshold_store);
+static DEVICE_ATTR(freq, 0664,
+		sx9320_freq_show, sx9320_freq_store);
+static DEVICE_ATTR(ch_state, 0444, sx9320_ch_state_show, NULL);
+static DEVICE_ATTR(avg_negfilt, 0444, sx9320_avgnegfilt_show, NULL);
+static DEVICE_ATTR(avg_posfilt, 0444, sx9320_avgposfilt_show, NULL);
+static DEVICE_ATTR(avg_thresh, 0444, sx9320_avgthresh_show, NULL);
+static DEVICE_ATTR(rawfilt, 0444, sx9320_rawfilt_show, NULL);
+static DEVICE_ATTR(sampling_freq, 0444, sx9320_sampling_freq_show, NULL);
+static DEVICE_ATTR(scan_period, 0444, sx9320_scan_period_show, NULL);
+static DEVICE_ATTR(gain, 0444, sx9320_gain_show, NULL);
+static DEVICE_ATTR(range, 0444, sx9320_range_show, NULL);
+static DEVICE_ATTR(analog_gain, 0444, sx9320_again_show, NULL);
+static DEVICE_ATTR(phase, 0444, sx9320_phase_show, NULL);
+static DEVICE_ATTR(hysteresis, 0444, sx9320_hysteresis_show, NULL);
+static DEVICE_ATTR(irq_count, 0664,
+		sx9320_irq_count_show, sx9320_irq_count_store);
+
+static DEVICE_ATTR(grip_flush, 0220, NULL, sx9320_grip_flush_store);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct device_attribute *sensor_attrs[] = {
 	&dev_attr_menual_calibrate,
@@ -1047,7 +1622,10 @@ static struct device_attribute *sensor_attrs[] = {
 	&dev_attr_calibration,
 	&dev_attr_freq,
 	&dev_attr_ch_state,
+<<<<<<< HEAD
 	&dev_attr_body_threshold,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_grip_flush,
 	&dev_attr_avg_negfilt,
 	&dev_attr_avg_posfilt,
@@ -1063,6 +1641,10 @@ static struct device_attribute *sensor_attrs[] = {
 	&dev_attr_irq_count,
 	NULL,
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_enable_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t size)
 {
@@ -1076,6 +1658,7 @@ static ssize_t sx9320_enable_store(struct device *dev,
 		pr_err("[SX9320]: %s - Invalid Argument\n", __func__);
 		return ret;
 	}
+<<<<<<< HEAD
 	pr_info("[SX9320]: %s - new_value = %u old_value = %d\n",
 		__func__, enable, pre_enable);
 	if (pre_enable == enable)
@@ -1084,6 +1667,21 @@ static ssize_t sx9320_enable_store(struct device *dev,
 	sx9320_set_enable(data, enable);
 	return size;
 }
+=======
+
+	pr_info("[SX9320]: %s - new_value = %u old_value = %d\n",
+		__func__, enable, pre_enable);
+
+	if (pre_enable == enable)
+		return size;
+
+	atomic_set(&data->enable, enable);
+	sx9320_set_enable(data, enable);
+
+	return size;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_enable_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -1091,6 +1689,10 @@ static ssize_t sx9320_enable_show(struct device *dev,
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", atomic_read(&data->enable));
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t sx9320_flush_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
@@ -1103,31 +1705,61 @@ static ssize_t sx9320_flush_store(struct device *dev,
 		pr_err("[SX9320]: %s - Invalid Argument\n", __func__);
 		return count;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (enable == 1) {
 		input_report_rel(data->input, REL_MAX, 1);
 		input_sync(data->input);
 	}
+<<<<<<< HEAD
 	return count;
 }
 static DEVICE_ATTR(enable, S_IRUGO | S_IWUSR | S_IWGRP,
 		sx9320_enable_show, sx9320_enable_store);
 static DEVICE_ATTR(flush, S_IWUSR | S_IWGRP,
 		NULL, sx9320_flush_store);
+=======
+
+	return count;
+}
+
+static DEVICE_ATTR(enable, 0664,
+		sx9320_enable_show, sx9320_enable_store);
+static DEVICE_ATTR(flush, 0220,
+		NULL, sx9320_flush_store);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct attribute *sx9320_attributes[] = {
 	&dev_attr_enable.attr,
 	&dev_attr_flush.attr,
 	NULL
 };
+<<<<<<< HEAD
 static struct attribute_group sx9320_attribute_group = {
 	.attrs = sx9320_attributes
 };
+=======
+
+static struct attribute_group sx9320_attribute_group = {
+	.attrs = sx9320_attributes
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_touch_process(struct sx9320_p *data, u8 flag)
 {
 	u8 status = 0;
 
 	sx9320_i2c_read(data, SX9320_STAT0_REG, &status);
 	pr_info("[SX9320]: %s - (status: 0x%x)\n", __func__, status);
+<<<<<<< HEAD
 	sx9320_get_data(data);
+=======
+
+	sx9320_get_data(data);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->abnormal_mode) {
 		if (status) {
 			if (data->max_diff < data->diff)
@@ -1152,29 +1784,49 @@ static void sx9320_touch_process(struct sx9320_p *data, u8 flag)
 				__func__);
 	}
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_process_interrupt(struct sx9320_p *data)
 {
 	u8 flag = 0;
 
 	/* since we are not in an interrupt don't need to disable irq. */
 	flag = sx9320_read_irqstate(data);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (flag & IRQ_PROCESS_CONDITION)
 		sx9320_touch_process(data, flag);
 	else
 		pr_info("[SX9320]: %s interrupt generated but skip\n",
 			__func__);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_init_work_func(struct work_struct *work)
 {
 	struct sx9320_p *data = container_of((struct delayed_work *)work,
 		struct sx9320_p, init_work);
 
 	sx9320_initialize_chip(data);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* set the threshold at init. register depends on phase */
 	if (data->phen < 2)
 		sx9320_i2c_write(data, SX9320_PROXCTRL6_REG, data->normal_th);
 	else
 		sx9320_i2c_write(data, SX9320_PROXCTRL7_REG, data->normal_th);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sx9320_set_mode(data, SX9320_MODE_NORMAL);
 	/*
 	 * make sure no interrupts are pending since enabling irq
@@ -1182,6 +1834,10 @@ static void sx9320_init_work_func(struct work_struct *work)
 	 */
 	sx9320_read_irqstate(data);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_irq_work_func(struct work_struct *work)
 {
 	struct sx9320_p *data = container_of((struct delayed_work *)work,
@@ -1193,10 +1849,18 @@ static void sx9320_irq_work_func(struct work_struct *work)
 		pr_err("[SX9320]: %s - nirq read high %d\n",
 			__func__, sx9320_get_nirq_state(data));
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_debug_work_func(struct work_struct *work)
 {
 	struct sx9320_p *data = container_of((struct delayed_work *)work,
 		struct sx9320_p, debug_work);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	static int hall_flag = 1;
 
 	sx9320_check_hallic_state(HALLIC1_PATH, data->hall_ic1);
@@ -1211,6 +1875,7 @@ static void sx9320_debug_work_func(struct work_struct *work)
 		}
 	} else
 		hall_flag = 1;
+<<<<<<< HEAD
 	if (atomic_read(&data->enable) == ON) {
 		if (data->debug_count >= GRIP_LOG_TIME) {
 			sx9320_get_data(data);
@@ -1221,6 +1886,27 @@ static void sx9320_debug_work_func(struct work_struct *work)
 	}
 	schedule_delayed_work_on(1, &data->debug_work, msecs_to_jiffies(2000));
 }
+=======
+
+	if (atomic_read(&data->enable) == ON) {
+		if (data->abnormal_mode) {
+			sx9320_get_data(data);
+			if (data->max_normal_diff < data->diff)
+				data->max_normal_diff = data->diff;
+		} else {
+			if (data->debug_count >= GRIP_LOG_TIME) {
+				sx9320_get_data(data);
+				data->debug_count = 0;
+			} else {
+				data->debug_count++;
+			}
+		}
+	}
+
+	schedule_delayed_work_on(1, &data->debug_work, msecs_to_jiffies(2000));
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static irqreturn_t sx9320_interrupt_thread(int irq, void *pdata)
 {
 	struct sx9320_p *data = pdata;
@@ -1231,12 +1917,20 @@ static irqreturn_t sx9320_interrupt_thread(int irq, void *pdata)
 		wake_lock_timeout(&data->grip_wake_lock, 3 * HZ);
 		schedule_delayed_work(&data->irq_work, msecs_to_jiffies(100));
 	}
+<<<<<<< HEAD
 	return IRQ_HANDLED;
 }
+=======
+
+	return IRQ_HANDLED;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_init_input(struct sx9320_p *data)
 {
 	int ret = 0;
 	struct input_dev *dev = NULL;
+<<<<<<< HEAD
 	/* Create the input device */
 	dev = input_allocate_device();
 	if (!dev)
@@ -1246,26 +1940,62 @@ static int sx9320_init_input(struct sx9320_p *data)
 	input_set_capability(dev, EV_REL, REL_MISC);
 	input_set_capability(dev, EV_REL, REL_MAX);
 	input_set_drvdata(dev, data);
+=======
+
+	/* Create the input device */
+	dev = input_allocate_device();
+
+	if (!dev)
+		return -ENOMEM;
+
+	dev->name = MODULE_NAME;
+	dev->id.bustype = BUS_I2C;
+
+	input_set_capability(dev, EV_REL, REL_MISC);
+	input_set_capability(dev, EV_REL, REL_MAX);
+	input_set_drvdata(dev, data);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = input_register_device(dev);
 	if (ret < 0) {
 		input_free_device(dev);
 		return ret;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = sensors_create_symlink(&dev->dev.kobj, dev->name);
 	if (ret < 0) {
 		input_unregister_device(dev);
 		return ret;
 	}
+<<<<<<< HEAD
 	ret = sysfs_create_group(&dev->dev.kobj, &sx9320_attribute_group);
+=======
+
+	ret = sysfs_create_group(&dev->dev.kobj,
+		&sx9320_attribute_group);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		sensors_remove_symlink(&dev->dev.kobj, dev->name);
 		input_unregister_device(dev);
 		return ret;
 	}
+<<<<<<< HEAD
 	/* save the input pointer and finish initialization */
 	data->input = dev;
 	return 0;
 }
+=======
+
+	/* save the input pointer and finish initialization */
+	data->input = dev;
+
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_setup_pin(struct sx9320_p *data)
 {
 	int ret;
@@ -1276,6 +2006,10 @@ static int sx9320_setup_pin(struct sx9320_p *data)
 			__func__, data->gpio_nirq, ret);
 		return ret;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = gpio_direction_input(data->gpio_nirq);
 	if (ret < 0) {
 		pr_err("[SX9320]: %s - failed to set gpio %d(%d)\n",
@@ -1283,8 +2017,15 @@ static int sx9320_setup_pin(struct sx9320_p *data)
 		gpio_free(data->gpio_nirq);
 		return ret;
 	}
+<<<<<<< HEAD
 	return 0;
 }
+=======
+
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_set_specific_register(int regi_num, int end, int start,
 		u8 val)
 {
@@ -1292,10 +2033,21 @@ static void sx9320_set_specific_register(int regi_num, int end, int start,
 	unsigned char temp_val;
 
 	temp_val = setup_reg[regi_num].val;
+<<<<<<< HEAD
 	clear_bit = ~((1 << (end + 1)) - (1 << start));
 	temp_val = (temp_val & clear_bit) | (val << start);
 	setup_reg[regi_num].val = temp_val;
 }
+=======
+
+	clear_bit = ~((1 << (end + 1)) - (1 << start));
+
+	temp_val = (temp_val & clear_bit) | (val << start);
+
+	setup_reg[regi_num].val = temp_val;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_initialize_variable(struct sx9320_p *data)
 {
 	data->state = IDLE;
@@ -1305,7 +2057,13 @@ static void sx9320_initialize_variable(struct sx9320_p *data)
 	data->normal_th_buf = data->normal_th;
 	data->ch1_state = IDLE;
 	data->init_done = OFF;
+<<<<<<< HEAD
 	atomic_set(&data->enable, OFF);
+=======
+
+	atomic_set(&data->enable, OFF);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* sampling freq, rawfilt, gain, hyst are depends on phase */
 	if (data->phen < 2) {
 		/* regi_num, end bit, start bit, val */
@@ -1337,16 +2095,30 @@ static void sx9320_initialize_variable(struct sx9320_p *data)
 static int sx9320_read_setupreg(struct device_node *dnode, char *str, u8 *val)
 {
 	u32 temp_val;
+<<<<<<< HEAD
 	int ret = 0;
 
 	ret = of_property_read_u32(dnode, str, &temp_val);
+=======
+	int ret;
+
+	ret = of_property_read_u32(dnode, str, &temp_val);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!ret)
 		*val = (u8)temp_val;
 	else
 		pr_err("[SX9320]: %s - %s: property read err 0x%2x (%d)\n",
 			__func__, str, temp_val, ret);
+<<<<<<< HEAD
 	return ret;
 }
+=======
+
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_parse_dt(struct sx9320_p *data, struct device *dev)
 {
 	struct device_node *node = dev->of_node;
@@ -1354,12 +2126,20 @@ static int sx9320_parse_dt(struct sx9320_p *data, struct device *dev)
 
 	if (node == NULL)
 		return -ENODEV;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	data->gpio_nirq = of_get_named_gpio_flags(node,
 		"sx9320,nirq-gpio", 0, &flags);
 	if (data->gpio_nirq < 0) {
 		pr_err("[SX9320]: %s - get gpio_nirq error\n", __func__);
 		return -ENODEV;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sx9320_read_setupreg(node, SX9320_PHEN, &data->phen);
 	sx9320_read_setupreg(node, SX9320_GAIN, &data->gain);
 	sx9320_read_setupreg(node, SX9320_AGAIN, &data->again);
@@ -1384,7 +2164,10 @@ static int sx9320_parse_dt(struct sx9320_p *data, struct device *dev)
 		data->afeph2 = setup_reg[10].val;
 	if (sx9320_read_setupreg(node, SX9320_AFEPH3, &data->afeph3))
 		data->afeph3 = setup_reg[11].val;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->normal_th_ta == 0) {
 		pr_info("[SX9320]: %s - dt has no TA thd\n", __func__);
 		data->normal_th_ta = data->normal_th;
@@ -1395,6 +2178,10 @@ static int sx9320_parse_dt(struct sx9320_p *data, struct device *dev)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_CCIC_NOTIFIER) && defined(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
 static int sx9320_ccic_handle_notification(struct notifier_block *nb,
 		unsigned long action, void *data)
@@ -1451,6 +2238,10 @@ static int sx9320_cpuidle_muic_notifier(struct notifier_block *nb,
 				unsigned long action, void *data)
 {
 	struct sx9320_p *grip_data;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	muic_attached_dev_t attached_dev = *(muic_attached_dev_t *)data;
 
 	grip_data = container_of(nb, struct sx9320_p, cpuidle_muic_nb);
@@ -1483,13 +2274,45 @@ static int sx9320_cpuidle_muic_notifier(struct notifier_block *nb,
 	else
 		sx9320_i2c_write(grip_data, SX9320_PROXCTRL7_REG,
 				grip_data->normal_th);
+<<<<<<< HEAD
 	
 	pr_info("[SX9320]: %s dev=%d, action=%lu\n",
 		__func__, attached_dev, action);
+=======
+
+	pr_info("[SX9320]: %s dev=%d, action=%lu\n",
+		__func__, attached_dev, action);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return NOTIFY_DONE;
 }
 #endif
 
+<<<<<<< HEAD
+=======
+static int sx9320_check_chip_id(struct sx9320_p *data)
+{
+	int ret;
+	unsigned char value = 0;
+
+	ret = sx9320_i2c_read(data, SX9320_WHOAMI_REG, &value);
+	if (ret < 0) {
+		pr_err("[SX9320]: whoami[0x%x] read failed %d\n", value, ret);
+		return ret;
+	}
+
+	switch (value) {
+	case 0x20:
+		return 0;
+	case 0x21:
+		return 0;
+	default:
+		pr_err("[SX9320]: invalid whoami(%x)\n", value);
+		return -1;
+	}
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_probe(struct i2c_client *client,
 		const struct i2c_device_id *id)
 {
@@ -1497,12 +2320,16 @@ static int sx9320_probe(struct i2c_client *client,
 	struct sx9320_p *data = NULL;
 
 	pr_info("[SX9320]: %s - Probe Start!\n", __func__);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
 		pr_err("[SX9320]: %s - i2c_check_functionality error\n",
 			__func__);
 		goto exit;
 	}
+<<<<<<< HEAD
 	/* create memory for main struct */
 	data = kzalloc(sizeof(struct sx9320_p), GFP_KERNEL);
 	if (data == NULL) {
@@ -1510,6 +2337,12 @@ static int sx9320_probe(struct i2c_client *client,
 		ret = -ENOMEM;
 		goto exit_kzalloc;
 	}
+=======
+
+	/* create memory for main struct */
+	data = kzalloc(sizeof(struct sx9320_p), GFP_KERNEL);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	i2c_set_clientdata(client, data);
 	data->client = client;
 	data->factory_device = &client->dev;
@@ -1517,9 +2350,17 @@ static int sx9320_probe(struct i2c_client *client,
 	ret = sx9320_init_input(data);
 	if (ret < 0)
 		goto exit_input_init;
+<<<<<<< HEAD
 	wake_lock_init(&data->grip_wake_lock,
 		WAKE_LOCK_SUSPEND, "grip_wake_lock");
 	mutex_init(&data->read_mutex);
+=======
+
+	wake_lock_init(&data->grip_wake_lock,
+		WAKE_LOCK_SUSPEND, "grip_wake_lock");
+	mutex_init(&data->read_mutex);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = sx9320_parse_dt(data, &client->dev);
 	if (ret < 0) {
 		pr_err("[SX9320]: %s - of_node error\n", __func__);
@@ -1533,6 +2374,16 @@ static int sx9320_probe(struct i2c_client *client,
 		goto exit_setup_pin;
 	}
 
+<<<<<<< HEAD
+=======
+	/* read chip id */
+	ret = sx9320_check_chip_id(data);
+	if (ret < 0) {
+		pr_err("[SX9320]: %s - chip id check failed %d\n", __func__, ret);
+		goto exit_chip_reset;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = sx9320_i2c_write(data, SX9320_SOFTRESET_REG, SX9320_SOFTRESET);
 	if (ret < 0) {
 		pr_err("[SX9320]: %s - reset failed %d\n", __func__, ret);
@@ -1543,6 +2394,10 @@ static int sx9320_probe(struct i2c_client *client,
 	INIT_DELAYED_WORK(&data->init_work, sx9320_init_work_func);
 	INIT_DELAYED_WORK(&data->irq_work, sx9320_irq_work_func);
 	INIT_DELAYED_WORK(&data->debug_work, sx9320_debug_work_func);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	data->irq = gpio_to_irq(data->gpio_nirq);
 	ret = request_threaded_irq(data->irq, NULL, sx9320_interrupt_thread,
 			IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
@@ -1553,6 +2408,10 @@ static int sx9320_probe(struct i2c_client *client,
 		goto exit_request_threaded_irq;
 	}
 	disable_irq(data->irq);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = sensors_register(&data->factory_device,
 		data, sensor_attrs, MODULE_NAME);
 	if (ret) {
@@ -1560,8 +2419,15 @@ static int sx9320_probe(struct i2c_client *client,
 			__func__, ret);
 		goto grip_sensor_register_failed;
 	}
+<<<<<<< HEAD
 	schedule_delayed_work(&data->init_work, msecs_to_jiffies(300));
 	sx9320_set_debug_work(data, ON, 20000);
+=======
+
+	schedule_delayed_work(&data->init_work, msecs_to_jiffies(300));
+	sx9320_set_debug_work(data, ON, 20000);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_CCIC_NOTIFIER) && defined(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
 	manager_notifier_register(&data->cpuidle_ccic_nb,
 					sx9320_ccic_handle_notification,
@@ -1570,8 +2436,16 @@ static int sx9320_probe(struct i2c_client *client,
 	muic_notifier_register(&data->cpuidle_muic_nb,
 		sx9320_cpuidle_muic_notifier, MUIC_NOTIFY_DEV_CPUIDLE);
 #endif
+<<<<<<< HEAD
 	pr_info("[SX9320]: %s - Probe done!\n", __func__);
 	return 0;
+=======
+
+	pr_info("[SX9320]: %s - Probe done!\n", __func__);
+
+	return 0;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 grip_sensor_register_failed:
 	free_irq(data->irq, data);
 exit_request_threaded_irq:
@@ -1586,32 +2460,58 @@ exit_of_node:
 	input_unregister_device(data->input);
 exit_input_init:
 	kfree(data);
+<<<<<<< HEAD
 exit_kzalloc:
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 exit:
 	pr_err("[SX9320]: %s - Probe fail!\n", __func__);
 	return ret;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_remove(struct i2c_client *client)
 {
 	struct sx9320_p *data = (struct sx9320_p *)i2c_get_clientdata(client);
 
 	if (atomic_read(&data->enable) == ON)
 		sx9320_set_enable(data, OFF);
+<<<<<<< HEAD
 	sx9320_set_mode(data, SX9320_MODE_SLEEP);
+=======
+
+	sx9320_set_mode(data, SX9320_MODE_SLEEP);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cancel_delayed_work_sync(&data->init_work);
 	cancel_delayed_work_sync(&data->irq_work);
 	cancel_delayed_work_sync(&data->debug_work);
 	free_irq(data->irq, data);
 	gpio_free(data->gpio_nirq);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wake_lock_destroy(&data->grip_wake_lock);
 	sensors_unregister(data->factory_device, sensor_attrs);
 	sensors_remove_symlink(&data->input->dev.kobj, data->input->name);
 	sysfs_remove_group(&data->input->dev.kobj, &sx9320_attribute_group);
 	input_unregister_device(data->input);
 	mutex_destroy(&data->read_mutex);
+<<<<<<< HEAD
 	kfree(data);
 	return 0;
 }
+=======
+
+	kfree(data);
+
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_suspend(struct device *dev)
 {
 	struct sx9320_p *data = dev_get_drvdata(dev);
@@ -1627,16 +2527,30 @@ static int sx9320_suspend(struct device *dev)
 		pr_err("[SX9320]: %s - s/w reset fail(%d)\n", __func__, cnt);
 
 	sx9320_set_debug_work(data, OFF, 1000);
+<<<<<<< HEAD
 	return 0;
 }
+=======
+
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sx9320_resume(struct device *dev)
 {
 	struct sx9320_p *data = dev_get_drvdata(dev);
 
 	pr_info("[SX9320]: %s\n", __func__);
 	sx9320_set_debug_work(data, ON, 1000);
+<<<<<<< HEAD
 	return 0;
 }
+=======
+
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sx9320_shutdown(struct i2c_client *client)
 {
 	struct sx9320_p *data = i2c_get_clientdata(client);
@@ -1647,18 +2561,34 @@ static void sx9320_shutdown(struct i2c_client *client)
 		sx9320_set_enable(data, OFF);
 	sx9320_set_mode(data, SX9320_MODE_SLEEP);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const struct of_device_id sx9320_match_table[] = {
 	{ .compatible = "sx9320",},
 	{},
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const struct i2c_device_id sx9320_id[] = {
 	{ "sx9320_match_table", 0 },
 	{ }
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const struct dev_pm_ops sx9320_pm_ops = {
 	.suspend = sx9320_suspend,
 	.resume = sx9320_resume,
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct i2c_driver sx9320_driver = {
 	.driver = {
 		.name	= MODEL_NAME,
@@ -1671,17 +2601,35 @@ static struct i2c_driver sx9320_driver = {
 	.shutdown	= sx9320_shutdown,
 	.id_table	= sx9320_id,
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int __init sx9320_init(void)
 {
 	return i2c_add_driver(&sx9320_driver);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void __exit sx9320_exit(void)
 {
 	i2c_del_driver(&sx9320_driver);
 }
+<<<<<<< HEAD
 module_init(sx9320_init);
 module_exit(sx9320_exit);
 MODULE_DESCRIPTION("Semtech Corp. SX9320 Capacitive Touch Controller Driver");
 MODULE_AUTHOR("Samsung Electronics");
 MODULE_LICENSE("GPL");
 
+=======
+
+module_init(sx9320_init);
+module_exit(sx9320_exit);
+
+MODULE_DESCRIPTION("Semtech Corp. SX9320 Capacitive Touch Controller Driver");
+MODULE_AUTHOR("Samsung Electronics");
+MODULE_LICENSE("GPL");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

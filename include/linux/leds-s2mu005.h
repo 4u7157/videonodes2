@@ -24,6 +24,7 @@
 #define S2MU005_FLASH_IOUT_MASK 0x1F
 #define S2MU005_TORCH_IOUT_MASK 0x0F
 
+<<<<<<< HEAD
 #define S2MU005_FLASH_ON_I2C 0xC0
 #define S2MU005_TORCH_ON_I2C 0x30
 
@@ -32,6 +33,22 @@
 
 #define S2MU005_FLASH_ENABLE_MASK 0xC0
 #define S2MU005_TORCH_ENABLE_MASK 0x30
+=======
+#define S2MU005_CH1_FLASH_ON_I2C 0xC0
+#define S2MU005_CH1_TORCH_ON_I2C 0x30
+#define S2MU005_CH2_FLASH_ON_I2C 0x0C
+#define S2MU005_CH2_TORCH_ON_I2C 0x03
+
+#define S2MU005_CH1_FLASH_ON_GPIO 0x40
+#define S2MU005_CH1_TORCH_ON_GPIO 0x20
+#define S2MU005_CH2_FLASH_ON_GPIO 0x04
+#define S2MU005_CH2_TORCH_ON_GPIO 0x02
+
+#define S2MU005_CH1_FLASH_ENABLE_MASK 0xC0
+#define S2MU005_CH1_TORCH_ENABLE_MASK 0x30
+#define S2MU005_CH2_FLASH_ENABLE_MASK 0x0C
+#define S2MU005_CH2_TORCH_ENABLE_MASK 0x03
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define S2MU005_FLASH_TORCH_OFF 0x00
 #define S2MU005_FLASH_BOOST_EN_MASK 0x40
@@ -143,12 +160,25 @@ enum s2mu005_fled_mode {
 	S2MU005_FLED_MODE_MOVIE,
 };
 
+<<<<<<< HEAD
+=======
+enum s2mu005_fled_select {
+	S2MU005_FLED_OFF = 0,
+	S2MU005_FLED_CH1,	/* FLED1 */
+	S2MU005_FLED_CH2,	/* FLED2 */
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define S2MU005_FLASH_BRIGHTNESS(mA) mA<=400?(((mA-25)/25) & 0x1f):(((((mA-400)/50)+0x0F)) & 0x1f)
 #define S2MU005_TORCH_BRIGHTNESS(mA) (((mA - 25) /25) & 0x0f)
 
 struct s2mu005_led {
 	const char *name;
+<<<<<<< HEAD
 	int id;
+=======
+	u32 id;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int brightness;
 	int timeout;
 	int max_brightness;
@@ -159,6 +189,24 @@ struct s2mu005_fled_platform_data {
 	struct s2mu005_led leds[S2MU005_LED_MAX];
 	int torch_pin;
 	int flash_pin;
+<<<<<<< HEAD
 };
 
+=======
+	unsigned int flash_brightness;
+	unsigned int preflash_brightness;
+	unsigned int movie_brightness;
+	unsigned int torch_brightness;
+	unsigned int factory_brightness;
+#if defined(CONFIG_LEDS_SUPPORT_FRONT_FLASH)
+	unsigned int front_brightness;
+#endif
+};
+int s2mu005_led_dump_reg(void);
+#ifdef CONFIG_LEDS_SUPPORT_FRONT_FLASH
+int s2mu005_led_select_ctrl(int ch);
+int s2mu005_led_set_front_flash_brightness(int brightness);	// For control brightness of front flash led
+#endif
+int s2mu005_led_mode_ctrl(int mode);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif

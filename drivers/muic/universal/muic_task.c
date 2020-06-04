@@ -36,6 +36,13 @@
 #include <linux/muic/muic_notifier.h>
 #endif /* CONFIG_MUIC_NOTIFIER */
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_VBUS_NOTIFIER)
+#include <linux/vbus_notifier.h>
+#endif /* CONFIG_VBUS_NOTIFIER */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_OF)
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
@@ -50,6 +57,14 @@
 #include "muic_debug.h"
 #include "muic_dt.h"
 #include "muic_regmap.h"
+<<<<<<< HEAD
+=======
+#include "muic_state.h"
+
+#if defined(CONFIG_MUIC_UNIVERSAL_CCIC)
+#include "muic_ccic.h"
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define MUIC_INT_DETACH_MASK	(0x1 << 1)
 #define MUIC_INT_ATTACH_MASK	(0x1 << 0)
@@ -71,6 +86,10 @@
 #define MUIC_REG_INT2	0x04
 #define MUIC_REG_INT3	0x05
 
+<<<<<<< HEAD
+=======
+static muic_data_t *tmp_pmuic;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern struct muic_platform_data muic_pdata;
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5705_AFC)
 /* SM5705 Interrupt 3  AFC register */
@@ -121,7 +140,10 @@ static int muic_irq_handler_afc(muic_data_t *pmuic, int irq)
 	}
 	if (intr1 & MUIC_INT_DETACH_MASK) {
 		cancel_delayed_work(&pmuic->afc_retry_work);
+<<<<<<< HEAD
 		cancel_delayed_work(&pmuic->afc_restart_work);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	pr_info("%s:%s intr[1:0x%x, 2:0x%x, 3:0x%x]\n", pmuic->chip_name, __func__,
@@ -186,10 +208,38 @@ static int muic_irq_handler_afc(muic_data_t *pmuic, int irq)
 	return INT_REQ_DONE;
 }
 #else
+<<<<<<< HEAD
 static int muic_irq_handler(muic_data_t *pmuic, int irq)
 {
 	struct i2c_client *i2c = pmuic->i2c;
 	int intr1, intr2, ctrl = 0;
+=======
+#if defined(CONFIG_VBUS_NOTIFIER)
+static void muic_handle_vbus(muic_data_t *pmuic)
+{
+	vbus_status_t status;
+
+	status = pmuic->vps.s.vbvolt ? STATUS_VBUS_HIGH: STATUS_VBUS_LOW;
+
+	pr_info("%s:%s <%d>\n", MUIC_DEV_NAME, __func__, status);
+
+	vbus_notifier_handle(status);
+
+	return;
+}
+#else
+static void muic_handle_vbus(muic_data_t *pmuic)
+{
+	pr_info("%s:%s <%d> Not implemented.\n", MUIC_DEV_NAME,
+			__func__, pmuic->vps.t.vbvolt);
+}
+#endif
+
+static int muic_irq_handler(muic_data_t *pmuic, int irq)
+{
+	struct i2c_client *i2c = pmuic->i2c;
+	int intr1, intr2, intr3, ctrl = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pr_info("%s:%s irq(%d)\n", pmuic->chip_name, __func__, irq);
 
@@ -201,6 +251,10 @@ static int muic_irq_handler(muic_data_t *pmuic, int irq)
 	/* read and clear interrupt status bits */
 	intr1 = muic_i2c_read_byte(i2c, MUIC_REG_INT1);
 	intr2 = muic_i2c_read_byte(i2c, MUIC_REG_INT2);
+<<<<<<< HEAD
+=======
+	intr3 = muic_i2c_read_byte(i2c, MUIC_REG_INT3);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if ((intr1 < 0) || (intr2 < 0)) {
 		pr_err("%s: err read interrupt status [1:0x%x, 2:0x%x]\n",
@@ -219,8 +273,13 @@ static int muic_irq_handler(muic_data_t *pmuic, int irq)
 		intr1 |= intr_tmp;
 	}
 
+<<<<<<< HEAD
 	pr_info("%s:%s intr[1:0x%x, 2:0x%x]\n", pmuic->chip_name, __func__,
 			intr1, intr2);
+=======
+	pr_info("%s:%s intr[1:0x%x, 2:0x%x, 3:0x%x]\n", pmuic->chip_name, __func__,
+			intr1, intr2, intr3);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ctrl = muic_i2c_read_byte(i2c, MUIC_REG_CTRL);
 
@@ -246,6 +305,10 @@ static int muic_irq_handler(muic_data_t *pmuic, int irq)
 
 	pmuic->intr.intr1 = intr1;
 	pmuic->intr.intr2 = intr2;
+<<<<<<< HEAD
+=======
+	pmuic->intr.intr3 = intr3;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return INT_REQ_DONE;
 }
@@ -306,15 +369,29 @@ static irqreturn_t muic_irq_thread(int irq, void *data)
 	mutex_lock(&pmuic->muic_mutex);
 	pmuic->irq_n = irq;
 	if (pmuic->vps_table == VPS_TYPE_TABLE) {
+<<<<<<< HEAD
 		if (max77849_muic_irq_handler(pmuic, irq) & INT_REQ_DONE)
 			muic_detect_dev(pmuic);
+=======
+		if (max77849_muic_irq_handler(pmuic, irq) & INT_REQ_DONE) {
+			muic_detect_dev(pmuic);
+			muic_handle_vbus(pmuic);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else{
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5705_AFC)
 		if (muic_irq_handler_afc(pmuic, irq) & INT_REQ_DONE)
 			muic_detect_dev(pmuic);
 #else
+<<<<<<< HEAD
 		if (muic_irq_handler(pmuic, irq) & INT_REQ_DONE)
 			muic_detect_dev(pmuic);
+=======
+		if (muic_irq_handler(pmuic, irq) & INT_REQ_DONE) {
+			muic_detect_dev(pmuic);
+			muic_handle_vbus(pmuic);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	}
 
@@ -372,6 +449,7 @@ static int muic_irq_init(muic_data_t *pmuic)
 	return ret;
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5504)
 static void muic_lanhub_work(struct work_struct *work)
 {
@@ -387,6 +465,8 @@ static void muic_lanhub_work(struct work_struct *work)
 }
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int muic_probe(struct i2c_client *i2c,
 				const struct i2c_device_id *id)
 {
@@ -444,16 +524,25 @@ static int muic_probe(struct i2c_client *i2c,
 
 	mutex_init(&pmuic->muic_mutex);
 
+<<<<<<< HEAD
+=======
+	tmp_pmuic = pmuic;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pmuic->pdata = pdata;
 	pmuic->i2c = i2c;
 	pmuic->is_factory_start = false;
 	pmuic->is_otg_test = false;
 	pmuic->attached_dev = ATTACHED_DEV_UNKNOWN_MUIC;
 	pmuic->is_usb_ready = false;
+<<<<<<< HEAD
 #ifdef CONFIG_UART_SEL
 	pmuic->pdata->muic_set_path = java_muic_set_path;
 #endif
 
+=======
+	pmuic->is_dcdtmr_intr = false;
+	pmuic->is_rescanned = false;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!strcmp(pmuic->chip_name, "max,max77849"))
 		pmuic->vps_table = VPS_TYPE_TABLE;
 	else
@@ -470,10 +559,17 @@ static int muic_probe(struct i2c_client *i2c,
 	}
 
 	if (pmuic->pdata->init_gpio_cb) {
+<<<<<<< HEAD
 		ret = pmuic->pdata->init_gpio_cb();
 		if (ret) {
 			pr_err("%s: failed to init gpio(%d)\n", __func__, ret);
 			goto fail_init_gpio;
+=======
+		ret = pmuic->pdata->init_gpio_cb(get_switch_sel());
+		if (ret) {
+			pr_err("%s: failed to init gpio(%d)\n", __func__, ret);
+		goto fail_init_gpio;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -494,6 +590,15 @@ static int muic_probe(struct i2c_client *i2c,
 	pops = pdesc->regmapops;
 	pmuic->regmapdesc = pdesc;
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_MUIC_UNIVERSAL_CCIC)
+	pmuic->rprd = false;
+
+	pmuic->opmode = get_ccic_info() & 0x0F;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* set switch device's driver_data */
 	dev_set_drvdata(switch_device, pmuic);
 
@@ -537,10 +642,23 @@ static int muic_probe(struct i2c_client *i2c,
 	INIT_DELAYED_WORK(&pmuic->usb_work, muic_show_debug_info);
 	schedule_delayed_work(&pmuic->usb_work, msecs_to_jiffies(10000));
 #endif
+<<<<<<< HEAD
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5504)
 	pmuic->is_lanhub_work = false;
 	INIT_DELAYED_WORK(&pmuic->lanhub_work, muic_lanhub_work);
 #endif
+=======
+
+#if defined(CONFIG_MUIC_UNIVERSAL_CCIC)
+	muic_is_ccic_supported_jig(pmuic, pmuic->attached_dev);
+
+	if (pmuic->opmode & OPMODE_CCIC)
+		muic_register_ccic_notifier(pmuic);
+	else
+		pr_info("%s: OPMODE_MUIC. CCIC is not used.\n", __func__);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 
 fail_init_irq:
@@ -560,6 +678,26 @@ err_return:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+void muic_detect_dev_for_wcin(void)
+{
+	pr_info("%s:%s wcin irq\n", MUIC_DEV_NAME, __func__);
+	tmp_pmuic->is_dcdtmr_intr = false;
+	tmp_pmuic->is_rescanned = false;
+	muic_detect_dev(tmp_pmuic);
+}
+
+void muic_detect_dev_for_nobat(void)
+{
+	pr_info("%s:%s nobat irq\n", MUIC_DEV_NAME, __func__);
+	tmp_pmuic->attached_dev = ATTACHED_DEV_NONE_MUIC;
+	detach_ta(tmp_pmuic);
+	muic_notifier_detach_attached_dev(tmp_pmuic->attached_dev);
+	muic_detect_dev(tmp_pmuic);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int muic_remove(struct i2c_client *i2c)
 {
 	muic_data_t *pmuic = i2c_get_clientdata(i2c);
@@ -570,9 +708,12 @@ static int muic_remove(struct i2c_client *i2c)
 		pr_info("%s:%s\n", pmuic->chip_name, __func__);
 		cancel_delayed_work(&pmuic->init_work);
 		cancel_delayed_work(&pmuic->usb_work);
+<<<<<<< HEAD
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5504)
 		cancel_delayed_work(&pmuic->lanhub_work);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		disable_irq_wake(pmuic->i2c->irq);
 		free_irq(pmuic->i2c->irq, pmuic);
 
@@ -623,15 +764,23 @@ static void muic_shutdown(struct i2c_client *i2c)
 
 	pr_info("%s:%s -\n", MUIC_DEV_NAME, __func__);
 }
+<<<<<<< HEAD
 
 #if defined(CONFIG_PM)
+=======
+#if defined(CONFIG_PM)
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int muic_suspend(struct device *dev)
 {
 	muic_data_t *pmuic = dev_get_drvdata(dev);
 	struct i2c_client *i2c = pmuic->i2c;
 
+<<<<<<< HEAD
 	cancel_delayed_work(&pmuic->usb_work);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	disable_irq_nosync(i2c->irq);
 
 	return 0;
@@ -642,8 +791,11 @@ static int muic_resume(struct device *dev)
 	muic_data_t *pmuic = dev_get_drvdata(dev);
 	struct i2c_client *i2c = pmuic->i2c;
 
+<<<<<<< HEAD
 	schedule_delayed_work(&pmuic->usb_work, msecs_to_jiffies(1000));
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enable_irq(i2c->irq);
 
 	return 0;

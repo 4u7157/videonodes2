@@ -26,7 +26,10 @@
 #include <asm/tlbflush.h>
 #include <asm/psci.h>
 #include <asm/cpuidle.h>
+<<<<<<< HEAD
 #include <asm/topology.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <soc/samsung/exynos-powermode.h>
 
@@ -90,7 +93,11 @@ module_param_named(log_en, log_en, uint, 0644);
  * IDLE_C2 : Local CPU power gating
  * IDLE_LPM : Low Power Mode, specified by platform
  */
+<<<<<<< HEAD
 enum {
+=======
+enum idle_state {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	IDLE_C1 = 0,
 	IDLE_C2,
 	IDLE_LPM,
@@ -154,6 +161,10 @@ static int exynos_enter_c2(struct cpuidle_device *dev,
 	if (unlikely(log_en & ENABLE_C2))
 		pr_info("+++c2\n");
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	prepare_idle(dev->cpu);
 
 	entry_index = enter_c2(dev->cpu, index);
@@ -190,7 +201,11 @@ static int exynos_enter_lpm(struct cpuidle_device *dev,
 #endif
 	prepare_idle(dev->cpu);
 
+<<<<<<< HEAD
 	exynos_prepare_sys_powerdown(mode, false);
+=======
+	exynos_prepare_sys_powerdown(mode);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	cpuidle_profile_start(dev->cpu, index, mode);
 
@@ -232,7 +247,10 @@ static int exynos_enter_idle_state(struct cpuidle_device *dev,
 		break;
 	}
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	switch (index) {
 	case IDLE_C1:
 		func = exynos_enter_idle;
@@ -263,6 +281,7 @@ static int exynos_enter_idle_state(struct cpuidle_device *dev,
 /***************************************************************************
  *                            Define notifier call                         *
  ***************************************************************************/
+<<<<<<< HEAD
 static int exynos_cpuidle_notifier_event(struct notifier_block *this,
 					  unsigned long event,
 					  void *ptr)
@@ -284,13 +303,19 @@ static struct notifier_block exynos_cpuidle_notifier = {
 	.notifier_call = exynos_cpuidle_notifier_event,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int exynos_cpuidle_reboot_notifier(struct notifier_block *this,
 				unsigned long event, void *_cmd)
 {
 	switch (event) {
 	case SYSTEM_POWER_OFF:
 	case SYS_RESTART:
+<<<<<<< HEAD
 		cpu_idle_poll_ctrl(true);
+=======
+		cpuidle_pause();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	}
 
@@ -304,6 +329,7 @@ static struct notifier_block exynos_cpuidle_reboot_nb = {
 /***************************************************************************
  *                         Initialize cpuidle driver                       *
  ***************************************************************************/
+<<<<<<< HEAD
 #define exynos_idle_wfi_state(state)					\
 	do {								\
 		state.enter = exynos_enter_idle;			\
@@ -316,6 +342,32 @@ static struct notifier_block exynos_cpuidle_reboot_nb = {
 	} while (0)
 
 static struct cpuidle_driver exynos_idle_driver[NR_CPUS];
+=======
+#define EXYNOS_CPUIDLE_WFI_STATE {\
+	.enter                  = exynos_enter_idle,\
+	.exit_latency           = 1,\
+	.target_residency       = 1,\
+	.power_usage		= UINT_MAX,\
+	.flags                  = CPUIDLE_FLAG_TIME_VALID,\
+	.name                   = "WFI",\
+	.desc                   = "ARM WFI",\
+}
+
+static struct cpuidle_driver exynos_idle_boot_cluster_driver = {
+	.name = "boot_cluster_idle",
+	.owner = THIS_MODULE,
+	.states[0] = EXYNOS_CPUIDLE_WFI_STATE,
+};
+
+static struct cpuidle_driver exynos_idle_nonboot_cluster_driver = {
+	.name = "non-boot_cluster_idle",
+	.owner = THIS_MODULE,
+	.states[0] = EXYNOS_CPUIDLE_WFI_STATE,
+#ifdef CONFIG_CPU_IDLE_GOV_MENU
+	.skip_correction = 0,
+#endif
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static const struct of_device_id exynos_idle_state_match[] __initconst = {
 	{ .compatible = "exynos,idle-state",
@@ -323,6 +375,7 @@ static const struct of_device_id exynos_idle_state_match[] __initconst = {
 	{ },
 };
 
+<<<<<<< HEAD
 static int __init exynos_idle_driver_init(struct cpuidle_driver *drv,
 					   struct cpumask* cpumask)
 {
@@ -397,11 +450,78 @@ static int __init exynos_idle_init(void)
 
 	cpu = cpumask_first(cpu_possible_mask);
 	cpuidle_profile_register(&exynos_idle_driver[cpu]);
+=======
+static void __init exynos_idle_driver_init(struct cpuidle_driver *drv,
+					struct cpumask* cpumask, int part_id)
+{
+	int cpu;
+
+	/* HACK : need to change using part id */
+	for_each_possible_cpu(cpu)
+		if (((cpu & 0x4) >> 2) == part_id)
+			cpumask_set_cpu(cpu, cpumask);
+
+	drv->cpumask = cpumask;
+}
+
+static struct cpumask boot_cluster_cpumask;
+static struct cpumask nonboot_cluster_cpumask;
+
+static int __init exynos_idle_init(void)
+{
+	int ret, cpu;
+
+	exynos_idle_driver_init(&exynos_idle_boot_cluster_driver,
+						&boot_cluster_cpumask, 0);
+	exynos_idle_driver_init(&exynos_idle_nonboot_cluster_driver,
+						&nonboot_cluster_cpumask, 1);
+
+	/*
+	 * Initialize idle states data, starting at index 1.
+	 * This driver is DT only, if no DT idle states are detected (ret == 0)
+	 * let the driver initialization fail accordingly since there is no
+	 * reason to initialize the idle driver if only wfi is supported.
+	 */
+	ret = dt_init_idle_driver(&exynos_idle_boot_cluster_driver,
+					exynos_idle_state_match, 1);
+	if (ret < 0)
+		return ret;
+
+	ret = dt_init_idle_driver(&exynos_idle_nonboot_cluster_driver,
+					exynos_idle_state_match, 1);
+	if (ret < 0)
+		return ret;
+
+	/*
+	 * Call arch CPU operations in order to initialize
+	 * idle states suspend back-end specific data
+	 */
+	for_each_possible_cpu(cpu) {
+		ret = cpu_init_idle(cpu);
+		if (ret) {
+			pr_err("CPU %d failed to init idle CPU ops\n", cpu);
+			return ret;
+		}
+	}
+
+	ret = cpuidle_register(&exynos_idle_boot_cluster_driver, NULL);
+	if (ret)
+		return ret;
+
+	ret = cpuidle_register(&exynos_idle_nonboot_cluster_driver, NULL);
+	if (ret)
+		goto out_unregister_boot_cluster;
+
+	register_reboot_notifier(&exynos_cpuidle_reboot_nb);
+
+	cpuidle_profile_register(&exynos_idle_boot_cluster_driver);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pr_info("Exynos cpuidle driver Initialized\n");
 
 	return 0;
 
+<<<<<<< HEAD
 out_cpuidle_unregister:
 	for (i = cpu; i > 0; i--)
 		cpuidle_unregister(&exynos_idle_driver[i-1]);
@@ -409,6 +529,11 @@ err_exynos_idle_init:
 err_exynos_idle_first:
 	for (i = cpu; i > 0; i--)
 		kfree(exynos_idle_driver[i-1].name);
+=======
+out_unregister_boot_cluster:
+	cpuidle_unregister(&exynos_idle_boot_cluster_driver);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 device_initcall(exynos_idle_init);

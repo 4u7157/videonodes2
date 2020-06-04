@@ -754,6 +754,7 @@ struct dwc3 {
 	struct usb_ctrlrequest	*ctrl_req;
 	struct dwc3_trb		*ep0_trb;
 	void			*ep0_bounce;
+	void            *zlp_buf;
 	void			*scratchbuf;
 	void			*zlp_buf;	
 	u8			*setup_buf;
@@ -870,10 +871,16 @@ struct dwc3 {
 	unsigned		adj_sof_accuracy:1;
 	unsigned		is_not_vbus_pad:1;
 	unsigned		sparse_transfer_control:1;
+<<<<<<< HEAD
 #ifdef CONFIG_BATTERY_SAMSUNG_V2
 	struct			work_struct      set_vbus_current_work;
 	int				vbus_current; /* 100mA,  500mA,  900mA */
 #endif	
+=======
+#ifdef CONFIG_ARGOS
+	u32			irq_affinity_cpu_mask;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /* -------------------------------------------------------------------------- */

@@ -68,7 +68,11 @@ enum exynos_usbphy_utmi {
 struct exynos_usbphy_hs_tune {
 	u8 tx_vref;
 	u8 tx_pre_emp;
+<<<<<<< HEAD
 	u8 tx_pre_emp_puls;
+=======
+	u8 tx_pre_emp_plus;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u8 tx_res;
 	u8 tx_rise;
 	u8 tx_hsxv;
@@ -76,9 +80,15 @@ struct exynos_usbphy_hs_tune {
 	u8 rx_sqrx;
 	u8 compdis;
 	u8 otg;
+<<<<<<< HEAD
 	bool enable_user_imp;
 	u8 user_imp_value;
 	enum exynos_usbphy_utmi utmi_clk;
+=======
+	bool enalbe_user_imp;
+	u8 user_imp_value;
+	enum exynos_usbphy_utmi utim_clk;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /* SS PHY tune parameter */

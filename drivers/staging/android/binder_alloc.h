@@ -186,3 +186,7 @@ binder_alloc_get_user_buffer_offset(struct binder_alloc *alloc)
 }
 
 #endif /* _LINUX_BINDER_ALLOC_H */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

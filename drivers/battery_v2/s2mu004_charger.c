@@ -14,7 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+=======
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #include <linux/mfd/samsung/s2mu004.h>
@@ -32,8 +37,13 @@
 #define EN_MIVR_SW_REGULATION 0
 #define EN_BST_IRQ 0
 #define EN_BAT_DET_IRQ 0
+<<<<<<< HEAD
 #define EN_IVR_IRQ 1
 #define MINVAL(a, b) ((a <= b) ? a : b)
+=======
+#define MINVAL(a, b) ((a <= b) ? a : b)
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define EOC_DEBOUNCE_CNT 2
 #define HEALTH_DEBOUNCE_CNT 1
 #define DEFAULT_CHARGING_CURRENT 500
@@ -51,10 +61,13 @@ static struct device_attribute s2mu004_charger_attrs[] = {
 	S2MU004_CHARGER_ATTR(chip_id),
 };
 
+<<<<<<< HEAD
 static char *s2mu004_supplied_to[] = {
 	"s2mu004-charger",
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static enum power_supply_property s2mu004_charger_props[] = {
 };
 
@@ -63,6 +76,7 @@ static enum power_supply_property s2mu004_otg_props[] = {
 };
 
 static int s2mu004_get_charging_health(struct s2mu004_charger_data *charger);
+<<<<<<< HEAD
 static int s2mu004_get_input_current_limit(struct s2mu004_charger_data *charger);
 #if EN_IVR_IRQ
 static void s2mu004_enable_ivr_irq(struct s2mu004_charger_data *charger);
@@ -83,21 +97,51 @@ static void s2mu004_test_read(struct i2c_client *i2c)
 	pr_err("%s: %s0x33:0x%02x\n", __func__, str, data);
 	s2mu004_read_reg(i2c, 0x03, &data);
 	pr_err("%s: %s0x03:0x%02x\n", __func__, str, data);
+=======
+
+static void s2mu004_test_read(struct i2c_client *i2c)
+{
+	static int reg_list[] = {
+		0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13,
+		0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D,
+		0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x33, 0x03, 0x71,
+		0x74, 0x91, 0x96, 0xA5
+	};
+	u8 data;
+	char str[1016] = {0,};
+	int i = 0, reg_list_size = 0;
+
+	reg_list_size = ARRAY_SIZE(reg_list);
+	for (i = 0; i < reg_list_size; i++) {
+		s2mu004_read_reg(i2c, reg_list[i], &data);
+		sprintf(str+strlen(str), "0x%02x:0x%02x, ", reg_list[i], data);
+	}
+
+	pr_info("[DEBUG][CHG]%s: %s\n", __func__, str);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int s2mu004_charger_otg_control(
 	struct s2mu004_charger_data *charger, bool enable)
 {
+<<<<<<< HEAD
 	u8 chg_sts2, chg_ctrl0, temp;
 
 	pr_info("%s: called charger otg control : %s\n", __func__,
 			enable ? "ON" : "OFF");
 
 	if (charger->otg_on == enable || lpcharge)
+=======
+	pr_info("%s: called charger otg control : %s\n", __func__,
+			enable ? "ON" : "OFF");
+
+	if (charger->otg_on == enable)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 0;
 
 	mutex_lock(&charger->charger_mutex);
 	if (!enable) {
+<<<<<<< HEAD
 		if (charger->is_charging) {
 			pr_info("%s: Charger is enabled and OTG Disable received. Disable OTG\n", __func__);
 			pr_info("%s: is_charging: %d, otg_on: %d",
@@ -131,12 +175,27 @@ static int s2mu004_charger_otg_control(
 			S2MU004_CHG_CTRL0, OTG_BST_MODE, REG_MODE_MASK);
 		charger->cable_type = SEC_BATTERY_CABLE_OTG;
 #ifndef CONFIG_SEC_FACTORY
+=======
+		s2mu004_update_reg(charger->i2c,
+			S2MU004_CHG_CTRL0, CHG_MODE, REG_MODE_MASK);
+	} else {
+#ifndef CONFIG_SEC_FACTORY
+		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL7, 0x0 << SET_VF_VBYP_SHIFT, SET_VF_VBYP_MASK);
+#endif
+		s2mu004_update_reg(charger->i2c, 0x14, 0x03 << 2, 0x03 << 2);
+		msleep(30);
+		s2mu004_update_reg(charger->i2c,
+			S2MU004_CHG_CTRL0, OTG_BST_MODE, REG_MODE_MASK);
+		charger->cable_type = POWER_SUPPLY_TYPE_OTG;
+#ifndef CONFIG_SEC_FACTORY		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		cancel_delayed_work(&charger->otg_vbus_work);
 		schedule_delayed_work(&charger->otg_vbus_work, msecs_to_jiffies(1500));
 #endif
 	}
 	charger->otg_on = enable;
 	mutex_unlock(&charger->charger_mutex);
+<<<<<<< HEAD
 
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_STATUS2, &chg_sts2);
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_CTRL0, &chg_ctrl0);
@@ -193,15 +252,28 @@ static void reduce_input_current(struct s2mu004_charger_data *charger)
 	charger->ivr_on = true;
 }
 
+=======
+	power_supply_changed(&charger->psy_otg);
+	return enable;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if !defined(CONFIG_SEC_FACTORY)
 static void s2mu004_analog_ivr_switch(
 	struct s2mu004_charger_data *charger, int enable)
 {
 	u8 reg_data = 0;
+<<<<<<< HEAD
 	int cable_type = SEC_BATTERY_CABLE_NONE;
 #if defined(CONFIG_BATTERY_SWELLING)
 	int swelling_mode = 0;
 #endif
+=======
+	int cable_type = POWER_SUPPLY_TYPE_BATTERY;
+#if defined(CONFIG_BATTERY_SWELLING)
+	int swelling_mode = 0;
+#endif	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	union power_supply_propval value;
 
 	if (charger->dev_id >= 0x3) {
@@ -229,10 +301,18 @@ static void s2mu004_analog_ivr_switch(
 		swelling_mode ||
 #endif
 		(is_hv_wire_type(cable_type)) ||
+<<<<<<< HEAD
 		(cable_type == SEC_BATTERY_CABLE_PDIC) ||
 		(cable_type == SEC_BATTERY_CABLE_PREPARE_TA)) {
 		pr_info("[DEBUG]%s(%d): digital IVR\n", __func__, __LINE__);
 		enable = 0;
+=======
+		(cable_type == POWER_SUPPLY_TYPE_PDIC) ||
+		(cable_type == POWER_SUPPLY_TYPE_UARTOFF) ||
+		(cable_type == POWER_SUPPLY_TYPE_HV_PREPARE_MAINS)) {
+			pr_info("[DEBUG]%s(%d): digital IVR \n", __func__, __LINE__);
+			enable = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	s2mu004_read_reg(charger->i2c, 0xB3, &reg_data);
@@ -270,30 +350,53 @@ static void s2mu004_enable_charger_switch(
 
 	if (onoff > 0) {
 		pr_info("[DEBUG]%s: turn on charger\n", __func__);
+<<<<<<< HEAD
 #if !defined(CONFIG_SEC_FACTORY)
 		if (charger->dev_id < 0x3) {
 			int cable_type = SEC_BATTERY_CABLE_NONE;
 #if defined(CONFIG_BATTERY_SWELLING)
 			int swelling_mode = 0;
 #endif
+=======
+ 
+#if !defined(CONFIG_SEC_FACTORY)
+		if (charger->dev_id < 0x3) {
+			int cable_type = POWER_SUPPLY_TYPE_BATTERY;
+#if defined(CONFIG_BATTERY_SWELLING)
+			int swelling_mode = 0;
+#endif			
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			union power_supply_propval value;
 
 #if defined(CONFIG_BATTERY_SWELLING)
 			psy_do_property("battery", get,
 				POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT, value);
 			swelling_mode = value.intval;
+<<<<<<< HEAD
 #endif
+=======
+#endif			
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			psy_do_property("battery", get,
 				POWER_SUPPLY_PROP_ONLINE, value);
 			cable_type = value.intval;
 
 			if ((is_hv_wire_type(cable_type)) ||
+<<<<<<< HEAD
 				(cable_type == SEC_BATTERY_CABLE_PREPARE_TA) ||
 #if defined(CONFIG_BATTERY_SWELLING)
 				swelling_mode ||
 #endif
 				(cable_type == SEC_BATTERY_CABLE_PDIC) ||
 				(cable_type == SEC_BATTERY_CABLE_UARTOFF)) {
+=======
+				(cable_type == POWER_SUPPLY_TYPE_HV_PREPARE_MAINS) ||
+#if defined(CONFIG_BATTERY_SWELLING)
+				swelling_mode ||
+#endif
+				(cable_type == POWER_SUPPLY_TYPE_PDIC) ||
+				(cable_type == POWER_SUPPLY_TYPE_UARTOFF)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				/* Digital IVR */
 				s2mu004_analog_ivr_switch(charger, DISABLE);
 			}
@@ -336,8 +439,13 @@ static void s2mu004_enable_charger_switch(
 	}
 }
 
+<<<<<<< HEAD
 static void s2mu004_set_buck(struct s2mu004_charger_data *charger, int enable)
 {
+=======
+static void s2mu004_set_buck(
+	struct s2mu004_charger_data *charger,int enable) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (enable) {
 		pr_info("[DEBUG]%s: set buck on\n", __func__);
@@ -351,6 +459,10 @@ static void s2mu004_set_buck(struct s2mu004_charger_data *charger, int enable)
 			s2mu004_analog_ivr_switch(charger, DISABLE);
 		}
 #endif
+<<<<<<< HEAD
+=======
+		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL0, CHARGER_OFF_MODE, REG_MODE_MASK);
 
 		/* async on */
@@ -364,7 +476,11 @@ static void s2mu004_set_regulation_vsys(
 {
 	u8 data;
 
+<<<<<<< HEAD
 	pr_info("[DEBUG]%s: VSYS regulation %d\n", __func__, vsys);
+=======
+	pr_info("[DEBUG]%s: VSYS regulation %d \n", __func__, vsys);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (vsys <= 3800)
 		data = 0;
 	else if (vsys > 3800 && vsys <= 4400)
@@ -384,7 +500,11 @@ static void s2mu004_set_regulation_voltage(
 	if (factory_mode)
 		return;
 
+<<<<<<< HEAD
 	pr_info("[DEBUG]%s: float_voltage %d\n", __func__, float_voltage);
+=======
+	pr_info("[DEBUG]%s: float_voltage %d \n", __func__, float_voltage);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (float_voltage <= 3900)
 		data = 0;
 	else if (float_voltage > 3900 && float_voltage <= 4530)
@@ -418,9 +538,14 @@ static void s2mu004_set_input_current_limit(
 	if (factory_mode)
 		return;
 
+<<<<<<< HEAD
 	mutex_lock(&charger->charger_mutex);
 	if (is_wireless_type(charger->cable_type)) {
 		pr_info("[DEBUG]%s: Wireless current limit %d\n",
+=======
+	if (is_wireless_type(charger->cable_type)) {
+		pr_info("[DEBUG]%s: Wireless current limit %d \n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__, charging_current);
 		if (charging_current <= 50)
 			data = 0x02;
@@ -428,11 +553,16 @@ static void s2mu004_set_input_current_limit(
 			/* Need to re-write dts file if we need to use 5 digit current (eg. 1.0125A) */
 			charging_current = charging_current * 10;
 			data = (charging_current - 250) / 125;
+<<<<<<< HEAD
 		} else {
 			pr_err("%s: Invalid WC current limit in register, set setting to maximum\n",
 				__func__);
 			data = 0x62;
 		}
+=======
+		} else
+			data = 0x12;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL3,
 			data << INPUT_CURRENT_LIMIT_SHIFT, INPUT_CURRENT_LIMIT_MASK);
@@ -441,16 +571,24 @@ static void s2mu004_set_input_current_limit(
 			data = 0x02;
 		else if (charging_current > 100 && charging_current <= 2500)
 			data = (charging_current - 50) / 25;
+<<<<<<< HEAD
 		else {
 			pr_err("%s: Invalid current limit in register, set setting to maximum\n",
 				__func__);
 			data = 0x62;
 		}
+=======
+		else
+			data = 0x62;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL2,
 				data << INPUT_CURRENT_LIMIT_SHIFT, INPUT_CURRENT_LIMIT_MASK);
 	}
+<<<<<<< HEAD
 	mutex_unlock(&charger->charger_mutex);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pr_info("[DEBUG]%s: current  %d, 0x%x\n", __func__, charging_current, data);
 
@@ -472,8 +610,12 @@ static int s2mu004_get_input_current_limit(struct s2mu004_charger_data *charger)
 		data = data & INPUT_CURRENT_LIMIT_MASK;
 
 		if (data > 0x62) {
+<<<<<<< HEAD
 			pr_err("%s: Invalid WC current limit in register: 0x%x\n",
 				__func__, data);
+=======
+			pr_err("%s: Invalid WC current limit in register\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			data = 0x62;
 		}
 
@@ -492,8 +634,12 @@ static int s2mu004_get_input_current_limit(struct s2mu004_charger_data *charger)
 		data = data & INPUT_CURRENT_LIMIT_MASK;
 
 		if (data > 0x62) {
+<<<<<<< HEAD
 			pr_err("%s: Invalid current limit in register: 0x%x\n",
 				__func__, data);
+=======
+			pr_err("%s: Invalid current limit in register\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			data = 0x62;
 		}
 		return  data * 25 + 50;
@@ -520,7 +666,11 @@ static void s2mu004_set_fast_charging_current(
 
 	pr_info("[DEBUG]%s: current  %d, 0x%02x\n", __func__, charging_current, data);
 
+<<<<<<< HEAD
 	if (data > 0x11)
+=======
+	if (data > 0x11) 
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		data = 0x11; /* 0x11 : 450mA */
 	s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL8,
 		data << COOL_CHARGING_CURRENT_SHIFT, COOL_CHARGING_CURRENT_MASK);
@@ -554,7 +704,11 @@ static void s2mu004_set_topoff_current(
 {
 	int data;
 
+<<<<<<< HEAD
 	pr_info("[DEBUG]%s: current  %d\n", __func__, current_limit);
+=======
+	pr_info("[DEBUG]%s: current  %d \n", __func__, current_limit);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (current_limit <= 100)
 		data = 0;
 	else if (current_limit > 100 && current_limit <= 475)
@@ -562,7 +716,11 @@ static void s2mu004_set_topoff_current(
 	else
 		data = 0x0F;
 
+<<<<<<< HEAD
 	switch (eoc_1st_2nd) {
+=======
+	switch(eoc_1st_2nd) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case 1:
 		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL11,
 			data << FIRST_TOPOFF_CURRENT_SHIFT, FIRST_TOPOFF_CURRENT_MASK);
@@ -647,12 +805,17 @@ static bool s2mu004_chg_init(struct s2mu004_charger_data *charger)
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_CTRL17, &temp);
 	pr_info("%s : S2MU004_CHG_CTRL17 : 0x%x\n", __func__, temp);
 
+<<<<<<< HEAD
 	/* To prevent entering watchdog issue case we set WDT_CLR to not clear before enabling WDT */
 	s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL14,
 			0x0 << WDT_CLR_SHIFT, WDT_CLR_MASK);
 
 	/* enable Watchdog timer and only Charging off */
 	s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL13,
+=======
+	/* enable Watchdog timer and only Charging off */ 
+	s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL13, 
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ENABLE << SET_EN_WDT_SHIFT | DISABLE << SET_EN_WDT_AP_RESET_SHIFT,
 			SET_EN_WDT_MASK | SET_EN_WDT_AP_RESET_MASK);
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_CTRL13, &temp);
@@ -675,6 +838,7 @@ static bool s2mu004_chg_init(struct s2mu004_charger_data *charger)
 	s2mu004_update_reg(charger->i2c, 0xB2, 0x0, 0xf << 4);
 
 	/* Top off debounce time set 1 sec */
+<<<<<<< HEAD
 	s2mu004_update_reg(charger->i2c, 0xC0, 0x3 << 6, 0x3 << 6);
 
 	/* SC_CTRL21 register Minimum Charging OCP Level set to 6A */
@@ -696,10 +860,29 @@ static bool s2mu004_chg_init(struct s2mu004_charger_data *charger)
 				S2MU004_OSC_BUCK_FRQ_1MHz << SET_OSC_BUCK_3L_SHIFT, SET_OSC_BUCK_3L_MASK);
 			break;
 		}
+=======
+	s2mu004_update_reg(charger->i2c, 0xC0, 0x3 << 6 , 0x3 << 6);
+
+	switch (charger->pdata->chg_switching_freq) {
+	case S2MU004_OSC_BUCK_FRQ_750kHz :
+		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL12,
+			S2MU004_OSC_BUCK_FRQ_750kHz << SET_OSC_BUCK_SHIFT, SET_OSC_BUCK_MASK);
+		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL12,
+			S2MU004_OSC_BUCK_FRQ_750kHz << SET_OSC_BUCK_3L_SHIFT, SET_OSC_BUCK_3L_MASK);
+		break;
+	default :
+		/* Set OSC BUCK/BUCK 3L frequencies to default 1MHz */
+		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL12,
+			S2MU004_OSC_BUCK_FRQ_1MHz << SET_OSC_BUCK_SHIFT, SET_OSC_BUCK_MASK);
+		s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL12,
+			S2MU004_OSC_BUCK_FRQ_1MHz << SET_OSC_BUCK_3L_SHIFT, SET_OSC_BUCK_3L_MASK);
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_CTRL12, &temp);
 	pr_info("%s : S2MU004_CHG_CTRL12 : 0x%x\n", __func__, temp);
 
+<<<<<<< HEAD
 	/*
 	 * Disable auto-restart charging feature.
 	 * Prevent charging restart after top-off timer expires
@@ -708,6 +891,8 @@ static bool s2mu004_chg_init(struct s2mu004_charger_data *charger)
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_CTRL7, &temp);
 	pr_info("%s : S2MU004_CHG_CTRL7 : 0x%x\n", __func__, temp);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return true;
 }
 
@@ -758,11 +943,19 @@ static int s2mu004_get_charge_type(struct s2mu004_charger_data *charger)
 		pr_err("%s fail\n", __func__);
 
 	switch ((ret & BAT_STATUS_MASK) >> BAT_STATUS_SHIFT) {
+<<<<<<< HEAD
 	case 0x4:
 	case 0x5:
 		status = POWER_SUPPLY_CHARGE_TYPE_FAST;
 		break;
 	case 0x2:
+=======
+	case 0x4 :
+	case 0x5 :
+		status = POWER_SUPPLY_CHARGE_TYPE_FAST;
+		break;
+	case 0x2 :
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* pre-charge mode */
 		status = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
 		break;
@@ -785,6 +978,7 @@ static void s2mu004_wdt_clear(struct s2mu004_charger_data *charger)
 {
 	u8 reg_data, chg_fault_status, en_chg;
 
+<<<<<<< HEAD
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_CTRL13, &reg_data);
 	if (!(reg_data & 0x02)) {
 		pr_info("%s : WDT disabled BUT Clear requested!\n", __func__);
@@ -803,6 +997,8 @@ static void s2mu004_wdt_clear(struct s2mu004_charger_data *charger)
 		pr_info("%s : S2MU004_CHG_CTRL13 : 0x%x\n", __func__, reg_data);
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* watchdog kick */
 	s2mu004_update_reg(charger->i2c, S2MU004_CHG_CTRL14,
 			0x1 << WDT_CLR_SHIFT, WDT_CLR_MASK);
@@ -832,6 +1028,10 @@ static int s2mu004_get_charging_health(struct s2mu004_charger_data *charger)
 
 	u8 ret;
 	union power_supply_propval value;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (charger->is_charging)
 		s2mu004_wdt_clear(charger);
 
@@ -866,7 +1066,11 @@ static int s2mu004_get_charging_health(struct s2mu004_charger_data *charger)
 		return POWER_SUPPLY_HEALTH_OVERVOLTAGE;
 
 	psy_do_property("battery", get, POWER_SUPPLY_PROP_ONLINE, value);
+<<<<<<< HEAD
 	if (value.intval == SEC_BATTERY_CABLE_PDIC)
+=======
+	if (value.intval == POWER_SUPPLY_TYPE_PDIC)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return POWER_SUPPLY_HEALTH_UNDERVOLTAGE;
 	else
 		return POWER_SUPPLY_HEALTH_GOOD;
@@ -911,7 +1115,11 @@ ssize_t s2mu004_chg_store_attrs(struct device *dev, struct device_attribute *att
 	const ptrdiff_t offset = attr - s2mu004_charger_attrs;
 	int ret = 0;
 
+<<<<<<< HEAD
 	switch (offset) {
+=======
+	switch(offset) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case CHIP_ID:
 		ret = count;
 		break;
@@ -926,7 +1134,12 @@ static int s2mu004_chg_get_property(struct power_supply *psy,
 		union power_supply_propval *val)
 {
 	int chg_curr, aicr;
+<<<<<<< HEAD
 	struct s2mu004_charger_data *charger = power_supply_get_drvdata(psy);
+=======
+	struct s2mu004_charger_data *charger =
+		container_of(psy, struct s2mu004_charger_data, psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	switch (psp) {
 	case POWER_SUPPLY_PROP_ONLINE:
@@ -961,10 +1174,13 @@ static int s2mu004_chg_get_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_TYPE:
 		val->intval = s2mu004_get_charge_type(charger);
+<<<<<<< HEAD
 		if (charger->slow_charging) {
 			val->intval = POWER_SUPPLY_CHARGE_TYPE_SLOW;
 			pr_info("%s: slow-charging mode\n", __func__);
 		}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 #if defined(CONFIG_BATTERY_SWELLING) || defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING)
 	case POWER_SUPPLY_PROP_VOLTAGE_MAX:
@@ -996,7 +1212,12 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 		enum power_supply_property psp,
 		const union power_supply_propval *val)
 {
+<<<<<<< HEAD
 	struct s2mu004_charger_data *charger = power_supply_get_drvdata(psy);
+=======
+	struct s2mu004_charger_data *charger =
+		container_of(psy, struct s2mu004_charger_data, psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enum power_supply_ext_property ext_psp = psp;
 	int buck_state = ENABLE;
 	union power_supply_propval value;
@@ -1008,11 +1229,18 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 		/* val->intval : type */
 	case POWER_SUPPLY_PROP_ONLINE:
 		charger->cable_type = val->intval;
+<<<<<<< HEAD
 		charger->ivr_on = false;
 		charger->slow_charging = false;
 		if (charger->cable_type != SEC_BATTERY_CABLE_OTG) {
 			if (charger->cable_type == SEC_BATTERY_CABLE_NONE ||
 					charger->cable_type == SEC_BATTERY_CABLE_UNKNOWN) {
+=======
+
+		if (charger->cable_type != POWER_SUPPLY_TYPE_OTG) {
+			if (charger->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
+					charger->cable_type == POWER_SUPPLY_TYPE_UNKNOWN) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				value.intval = 0;
 			} else {
 #if ENABLE_MIVR
@@ -1027,7 +1255,10 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CURRENT_MAX:
 		{
 			int input_current = val->intval;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			s2mu004_set_input_current_limit(charger, input_current);
 			charger->input_current = input_current;
 		}
@@ -1052,7 +1283,12 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 		if (charger->pdata->chg_eoc_dualpath) {
 			s2mu004_set_topoff_current(charger, 1, val->intval);
 			s2mu004_set_topoff_current(charger, 2, 100);
+<<<<<<< HEAD
 		} else
+=======
+		}
+		else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			s2mu004_set_topoff_current(charger, 1, val->intval);
 		break;
 
@@ -1070,7 +1306,11 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CHARGING_ENABLED:
 		charger->charge_mode = val->intval;
 		psy_do_property("battery", get, POWER_SUPPLY_PROP_ONLINE, value);
+<<<<<<< HEAD
 		if (value.intval != SEC_BATTERY_CABLE_OTG) {
+=======
+		if (value.intval != POWER_SUPPLY_TYPE_OTG) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			switch (charger->charge_mode) {
 			case SEC_BAT_CHG_MODE_BUCK_OFF:
 				buck_state = DISABLE;
@@ -1088,7 +1328,11 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 			if (buck_state) {
 				s2mu004_enable_charger_switch(charger, charger->is_charging);
 			} else {
+<<<<<<< HEAD
 				/* set buck off only if SEC_BAT_CHG_MODE_BUCK_OFF */
+=======
+				/* set buck off only if SEC_BAT_CHG_MODE_BUCK_OFF */ 
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				s2mu004_set_buck(charger, buck_state);
 			}
 		} else {
@@ -1100,7 +1344,11 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 #if 0
 		/* Switch-off charger if JIG is connected */
 		if (val->intval && factory_mode) {
+<<<<<<< HEAD
 			pr_info("%s: JIG Connection status: %d\n", __func__, val->intval);
+=======
+			pr_info("%s: JIG Connection status: %d \n", __func__, val->intval);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			s2mu004_enable_charger_switch(charger, false);
 		}
 #endif
@@ -1109,12 +1357,16 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 		if (val->intval) {
 			pr_info("%s: Relieve VBUS2BAT\n", __func__);
 			s2mu004_write_reg(charger->i2c, 0x2F, 0xDD);
+<<<<<<< HEAD
 			s2mu004_update_reg(charger->i2c, 0xDA, 0x10, 0x10);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		break;
 	case POWER_SUPPLY_PROP_AUTHENTIC:
 		if (val->intval) {
 			pr_info("%s: Bypass set\n", __func__);
+<<<<<<< HEAD
 			s2mu004_update_reg(charger->i2c, 0x22, 0xC0, 0xC0);
 			s2mu004_update_reg(charger->i2c, 0x29, 0x01 << 1, 0x01 << 1);
 			s2mu004_update_reg(charger->i2c, 0x9F, 0x0, 0x01 << 7);
@@ -1143,6 +1395,53 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 			break;
 		}
 #endif
+=======
+			s2mu004_update_reg(charger->i2c, 0x22 , 0xC0 , 0xC0 );
+			s2mu004_update_reg(charger->i2c, 0x29 , 0x01 << 1 , 0x01 << 1 );
+			s2mu004_update_reg(charger->i2c, 0x9F , 0x0 , 0x01 << 7 );
+			s2mu004_update_reg(charger->i2c, 0x10 , 0x01 << 5 , 0x01 << 5 );
+			/* USB LDO off */
+			s2mu004_update_reg(charger->i2c, S2MU004_PWRSEL_CTRL0,
+				0 << PWRSEL_CTRL0_SHIFT, PWRSEL_CTRL0_MASK);
+		}
+		break;
+	case POWER_SUPPLY_PROP_CURRENT_MEASURE:
+		if (val->intval) {
+			pr_info("%s: Bypass set for current measure\n", __func__);
+			/*
+			 * Charger/muic interrupt can be occured by entering Bypass mode
+			 * Disable all interrupt mask for testing current measure.
+			 */
+			s2mu004_write_reg(charger->i2c, S2MU004_REG_SC_INT1_MASK, 0xFF);
+			s2mu004_write_reg(charger->i2c, S2MU004_REG_SC_INT2_MASK, 0xFF);
+			s2mu004_write_reg(charger->i2c, S2MU004_REG_AFC_INT_MASK, 0xFF);
+			s2mu004_write_reg(charger->i2c, S2MU004_REG_MUIC_INT1_MASK, 0xFF);
+			s2mu004_write_reg(charger->i2c, S2MU004_REG_MUIC_INT2_MASK, 0xFF);
+
+			/* Enter Bypass mode set for current measure */
+			s2mu004_update_reg(charger->i2c, 0x10 , 0x01 << 4 , 0x01 << 4 );
+			s2mu004_write_reg(charger->i2c, 0x12, 0x7f);
+			s2mu004_write_reg(charger->i2c, 0x2f, 0xdd);
+			msleep(500);
+			s2mu004_update_reg(charger->i2c, 0x22 , 0xc0 , 0xc0 );
+			s2mu004_update_reg(charger->i2c, 0x29 , 0x01 << 1 , 0x01 << 1 );
+			s2mu004_update_reg(charger->i2c, 0x9F , 0x00 , 0x80 );
+			s2mu004_update_reg(charger->i2c, 0x10 , 0x01 << 5 , 0x01 << 5 );
+			/* USB LDO off */
+			s2mu004_update_reg(charger->i2c, S2MU004_PWRSEL_CTRL0,
+				0 << PWRSEL_CTRL0_SHIFT, PWRSEL_CTRL0_MASK);
+			psy_do_property( "s2mu004-fuelgauge", set,
+				POWER_SUPPLY_PROP_FUELGAUGE_FACTORY, value);
+		} else {
+			pr_info("%s: Bypass exit for current measure\n", __func__);
+			s2mu004_update_reg(charger->i2c, 0x29 , 0x0 , 0x01 << 1 );
+			s2mu004_write_reg(charger->i2c, 0x10, 0x00);
+			/* USB LDO on */
+			s2mu004_update_reg(charger->i2c, S2MU004_PWRSEL_CTRL0,
+				1 << PWRSEL_CTRL0_SHIFT, PWRSEL_CTRL0_MASK);
+		}
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_AFC_CHARGER_MODE)
 	case POWER_SUPPLY_PROP_AFC_CHARGER_MODE:
 #if defined(CONFIG_HV_MUIC_S2MU004_AFC)
@@ -1157,7 +1456,11 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 			msleep(1000);
 			s2mu004_write_reg(charger->i2c, 0x6F, 0x04);
 			msleep(50);
+<<<<<<< HEAD
 			pr_info("%s: reset fuelgauge when surge occur!\n", __func__);
+=======
+			pr_info("%s: reset fuelgauge when surge occur! \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			break;
 		case POWER_SUPPLY_EXT_PROP_FACTORY_VOLTAGE_REGULATION:
 			/* enable EN_JIG_AP */
@@ -1173,6 +1476,7 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 			}
 #endif
 			break;
+<<<<<<< HEAD
 		case POWER_SUPPLY_EXT_PROP_CURRENT_MEASURE:
 			if (val->intval) {
 				pr_info("%s: Bypass set for current measure\n", __func__);
@@ -1209,6 +1513,8 @@ static int s2mu004_chg_set_property(struct power_supply *psy,
 					1 << PWRSEL_CTRL0_SHIFT, PWRSEL_CTRL0_MASK);
 			}
 			break;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		default:
 			return -EINVAL;
 		}
@@ -1224,7 +1530,12 @@ static int s2mu004_otg_get_property(struct power_supply *psy,
 				enum power_supply_property psp,
 				union power_supply_propval *val)
 {
+<<<<<<< HEAD
 	struct s2mu004_charger_data *charger = power_supply_get_drvdata(psy);
+=======
+	struct s2mu004_charger_data *charger =
+		container_of(psy, struct s2mu004_charger_data, psy_otg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u8 reg;
 
 	switch (psp) {
@@ -1252,7 +1563,12 @@ static int s2mu004_otg_set_property(struct power_supply *psy,
 				enum power_supply_property psp,
 				const union power_supply_propval *val)
 {
+<<<<<<< HEAD
 	struct s2mu004_charger_data *charger = power_supply_get_drvdata(psy);
+=======
+	struct s2mu004_charger_data *charger =
+		container_of(psy, struct s2mu004_charger_data, psy_otg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	union power_supply_propval value;
 
 	switch (psp) {
@@ -1261,7 +1577,11 @@ static int s2mu004_otg_set_property(struct power_supply *psy,
 		pr_info("%s: OTG %s\n", __func__, value.intval > 0 ? "ON" : "OFF");
 		psy_do_property(charger->pdata->charger_name, set,
 					POWER_SUPPLY_PROP_CHARGE_OTG_CONTROL, value);
+<<<<<<< HEAD
 		power_supply_changed(charger->psy_otg);
+=======
+		power_supply_changed(&charger->psy_otg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	default:
 		return -EINVAL;
@@ -1286,6 +1606,10 @@ static void wpc_detect_work(struct work_struct *work)
 	do {
 		s2mu004_read_reg(charger->i2c,
 			S2MU004_CHG_STATUS0, &reg_data);
+<<<<<<< HEAD
+=======
+		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		reg_data = (reg_data & (WCIN_STATUS_MASK)) >> WCIN_STATUS_SHIFT;
 
 		pr_info("%s S2MU004_CHG_STATUS0: 0x%x\n", __func__, reg_data);
@@ -1295,13 +1619,21 @@ static void wpc_detect_work(struct work_struct *work)
 
 		if (wc_w_state == 0)
 			msleep(50);
+<<<<<<< HEAD
 	} while ((retry_cnt++ < 2) && (wc_w_state == 0));
+=======
+	} while((retry_cnt++ < 2) && (wc_w_state == 0));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if ((charger->wc_w_state == 0) && (wc_w_state == 1)) {
 		value.intval = 1;
 		psy_do_property("wireless", set,
 				POWER_SUPPLY_PROP_ONLINE, value);
+<<<<<<< HEAD
 		value.intval = SEC_BATTERY_CABLE_WIRELESS;
+=======
+		value.intval = POWER_SUPPLY_TYPE_WIRELESS;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_info("%s: wpc activated, set V_INT as PN\n",
 				__func__);
 	} else if ((charger->wc_w_state == 1) && (wc_w_state == 0)) {
@@ -1314,7 +1646,11 @@ static void wpc_detect_work(struct work_struct *work)
 				S2MU004_CHG_STATUS0, &reg_data);
 			reg_data = (reg_data & (WCIN_STATUS_MASK)) >> WCIN_STATUS_SHIFT;
 			msleep(50);
+<<<<<<< HEAD
 		} while ((retry_cnt++ < 2) &&
+=======
+		} while((retry_cnt++ < 2) &&
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			((reg_data != 0x05) || (reg_data != 0x03)));
 		pr_info("%s: reg_data: 0x%x, charging: %d\n", __func__,
 			reg_data, charger->is_charging);
@@ -1328,10 +1664,17 @@ static void wpc_detect_work(struct work_struct *work)
 
 			if ((reg_data == 0x07) || (reg_data == 0x01)) {
 				pr_info(
+<<<<<<< HEAD
 					"%s: Abnormal WPC state, maintain charging: reg_data: 0x%x\n",
 					__func__, reg_data);
 			}
 			queue_delayed_work(charger->charger_wqueue, &charger->wpc_work,
+=======
+					"%s: Abnormal WPC state, maintan charging: reg_data: 0x%x\n",
+					__func__, reg_data);
+			}
+			queue_delayed_work(charger->wqueue, &charger->wpc_work,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					   msecs_to_jiffies(500));
 			return;
 		} else {
@@ -1381,10 +1724,17 @@ static irqreturn_t s2mu004_det_bat_isr(int irq, void *data)
 	u8 val;
 
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_STATUS3, &val);
+<<<<<<< HEAD
 	pr_info("[IRQ] %s, STATUS3 : %02x\n", __func__, val);
 	if ((val & DET_BAT_STATUS_MASK) == 0) {
 		s2mu004_enable_charger_switch(charger, 0);
 		pr_err("charger-off if battery removed\n");
+=======
+	if ((val & DET_BAT_STATUS_MASK) == 0)
+	{
+		s2mu004_enable_charger_switch(charger, 0);
+		pr_err("charger-off if battery removed \n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	return IRQ_HANDLED;
 }
@@ -1396,9 +1746,16 @@ static irqreturn_t s2mu004_done_isr(int irq, void *data)
 	u8 val;
 
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_STATUS1, &val);
+<<<<<<< HEAD
 	pr_info("[IRQ] %s, STATUS1 : %02x\n ", __func__, val);
 	if (val & (DONE_STATUS_MASK)) {
 		pr_err("add self chg done\n");
+=======
+	pr_info("%s , %02x \n " , __func__, val);
+	if ( val & (DONE_STATUS_MASK) )
+	{
+		pr_err("add self chg done \n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* add chg done code here */
 	}
 	return IRQ_HANDLED;
@@ -1411,7 +1768,11 @@ static irqreturn_t s2mu004_chg_isr(int irq, void *data)
 	u8 val;
 
 	s2mu004_read_reg(charger->i2c, S2MU004_CHG_STATUS0, &val);
+<<<<<<< HEAD
 	pr_info("[IRQ] %s, STATUS0 : %02x\n ", __func__, val);
+=======
+	pr_info("%s , %02x\n " , __func__, val);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if EN_OVP_IRQ
 	if ((val & CHGIN_STATUS_MASK) == (2 << CHGIN_STATUS_SHIFT))	{
 		charger->ovp = true;
@@ -1422,7 +1783,11 @@ static irqreturn_t s2mu004_chg_isr(int irq, void *data)
 			POWER_SUPPLY_PROP_HEALTH, value);
 	} else if ((val & CHGIN_STATUS_MASK) == (3 << CHGIN_STATUS_SHIFT) ||
 			(val & CHGIN_STATUS_MASK) == (5 << CHGIN_STATUS_SHIFT)) {
+<<<<<<< HEAD
 		pr_info("%s: Vbus status 0x%x\n ", __func__, val);
+=======
+		pr_info("%s: Vbus status 0x%x \n " , __func__, val);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		charger->unhealth_cnt = HEALTH_DEBOUNCE_CNT;
 		if (charger->ovp == true)
 			pr_info("%s: recover from OVP\n", __func__);
@@ -1439,6 +1804,7 @@ static irqreturn_t s2mu004_chg_isr(int irq, void *data)
 
 static irqreturn_t s2mu004_event_isr(int irq, void *data)
 {
+<<<<<<< HEAD
 	struct s2mu004_charger_data *charger = data;
 	u8 val0, val1, val2, val3;
 
@@ -1451,6 +1817,10 @@ static irqreturn_t s2mu004_event_isr(int irq, void *data)
 	return IRQ_HANDLED;
 }
 
+=======
+	return IRQ_HANDLED;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static irqreturn_t s2mu004_ovp_isr(int irq, void *data)
 {
 	pr_info("%s ovp!\n", __func__);
@@ -1458,6 +1828,7 @@ static irqreturn_t s2mu004_ovp_isr(int irq, void *data)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 #if EN_IVR_IRQ
 static void s2mu004_ivr_irq_work(struct work_struct *work)
 {
@@ -1550,6 +1921,8 @@ static void s2mu004_enable_ivr_irq(struct s2mu004_charger_data *charger)
 }
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_S2MU004_WIRELESS_CHARGER)
 static irqreturn_t s2mu004_chg_wpcin_isr(int irq, void *data)
 {
@@ -1571,13 +1944,21 @@ static irqreturn_t s2mu004_chg_wpcin_isr(int irq, void *data)
 	pr_info("IRQ=%d delay = %ld\n", irq, delay);
 
 	wake_lock(&charger->wpc_wake_lock);
+<<<<<<< HEAD
 	queue_delayed_work(charger->charger_wqueue, &charger->wpc_work, delay);
+=======
+	queue_delayed_work(charger->wqueue, &charger->wpc_work, delay);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return IRQ_HANDLED;
 }
 #endif
 
+<<<<<<< HEAD
 static int s2mu004_charger_parse_dt(struct device *dev,
+=======
+static int s2mu004_charger_parse_dt(struct device *dev,	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct s2mu004_charger_platform_data *pdata)
 {
 	struct device_node *np = of_find_node_by_name(NULL, "s2mu004-charger");
@@ -1586,15 +1967,21 @@ static int s2mu004_charger_parse_dt(struct device *dev,
 	if (!np) {
 		pr_err("%s np NULL(s2mu004-charger)\n", __func__);
 	} else {
+<<<<<<< HEAD
 		pdata->chg_freq_ctrl = of_property_read_bool(np,
 			"battery,chg_freq_ctrl");
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = of_property_read_u32(np, "battery,chg_switching_freq",
 			&pdata->chg_switching_freq);
 		if (ret < 0) {
 			pr_info("%s: Charger switching FRQ is Empty\n", __func__);
+<<<<<<< HEAD
 		} else {
 			pr_info("%s: Charger switching is: 0x%x\n", __func__,
 				pdata->chg_switching_freq);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -1602,6 +1989,13 @@ static int s2mu004_charger_parse_dt(struct device *dev,
 	if (!np) {
 		pr_err("%s np NULL\n", __func__);
 	} else {
+<<<<<<< HEAD
+=======
+		int len;
+		unsigned int i;
+		const u32 *p;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = of_property_read_string(np,
 			"battery,fuelgauge_name",
 			(char const **)&pdata->fuelgauge_name);
@@ -1617,8 +2011,58 @@ static int s2mu004_charger_parse_dt(struct device *dev,
 		pr_info("%s: battery,chg_float_voltage is %d\n",
 			__func__, pdata->chg_float_voltage);
 
+<<<<<<< HEAD
 		pdata->chg_eoc_dualpath = of_property_read_bool(np,
 				"battery,chg_eoc_dualpath");
+=======
+		ret = of_property_read_u32(np, "battery,full_check_type_2nd",
+				&pdata->full_check_type_2nd);
+		if (ret)
+			pr_info("%s : Full check type 2nd is Empty\n", __func__);
+
+		pdata->chg_eoc_dualpath = of_property_read_bool(np,
+				"battery,chg_eoc_dualpath");
+
+		p = of_get_property(np, "battery,input_current_limit", &len);
+		if (!p)
+			return 1;
+
+		len = len / sizeof(u32);
+
+		pdata->charging_current = 
+			kzalloc(sizeof(sec_charging_current_t) * len,
+				GFP_KERNEL);
+
+		for (i = 0; i < len; i++) {
+			ret = of_property_read_u32_index(np,
+					"battery,input_current_limit", i,
+					&pdata->charging_current[i].input_current_limit);
+			if (ret)
+				pr_info("%s : Input_current_limit is Empty\n",
+					__func__);
+
+			ret = of_property_read_u32_index(np,
+					"battery,fast_charging_current", i,
+					&pdata->charging_current[i].fast_charging_current);
+			if (ret)
+				pr_info("%s : Fast charging current is Empty\n",
+					__func__);
+
+			ret = of_property_read_u32_index(np,
+					"battery,full_check_current_1st", i,
+					&pdata->charging_current[i].full_check_current_1st);
+			if (ret)
+				pr_info("%s : Full check current 1st is Empty\n",
+					__func__);
+
+			ret = of_property_read_u32_index(np,
+					"battery,full_check_current_2nd", i,
+					&pdata->charging_current[i].full_check_current_2nd);
+			if (ret)
+				pr_info("%s : Full check current 2nd is Empty\n",
+					__func__);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	np = of_find_node_by_name(NULL, "sec-multi-charger");
@@ -1632,7 +2076,11 @@ static int s2mu004_charger_parse_dt(struct device *dev,
 			pr_info("%s: Charger name is Empty\n", __func__);
 	}
 
+<<<<<<< HEAD
 	pr_info("%s DT file parsed successfully, %d\n", __func__, ret);
+=======
+	pr_info("%s DT file parsed succesfully, %d\n", __func__, ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -1642,6 +2090,7 @@ static struct of_device_id s2mu004_charger_match_table[] = {
 	{},
 };
 
+<<<<<<< HEAD
 static const struct power_supply_desc s2mu004_charger_power_supply_desc = {
 	.name           = "s2mu004-charger",
 	.type           = POWER_SUPPLY_TYPE_UNKNOWN,
@@ -1660,13 +2109,18 @@ static const struct power_supply_desc otg_power_supply_desc = {
 	.num_properties	= ARRAY_SIZE(s2mu004_otg_props),
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int s2mu004_charger_probe(struct platform_device *pdev)
 {
 	struct s2mu004_dev *s2mu004 = dev_get_drvdata(pdev->dev.parent);
 	struct s2mu004_platform_data *pdata = dev_get_platdata(s2mu004->dev);
 	struct s2mu004_charger_data *charger;
+<<<<<<< HEAD
 	struct power_supply_config psy_cfg = {};
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret = 0;
 
 	pr_info("%s:[BATT] S2MU004 Charger driver probe\n", __func__);
@@ -1676,8 +2130,11 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 
 	mutex_init(&charger->charger_mutex);
 	charger->otg_on = false;
+<<<<<<< HEAD
 	charger->ivr_on = false;
 	charger->slow_charging = false;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	charger->dev = &pdev->dev;
 	charger->i2c = s2mu004->i2c;
@@ -1700,20 +2157,44 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 	if (charger->pdata->fuelgauge_name == NULL)
 		charger->pdata->fuelgauge_name = "s2mu004-fuelgauge";
 
+<<<<<<< HEAD
+=======
+	charger->psy_chg.name           = "s2mu004-charger";
+	charger->psy_chg.type           = POWER_SUPPLY_TYPE_UNKNOWN;
+	charger->psy_chg.get_property   = s2mu004_chg_get_property;
+	charger->psy_chg.set_property   = s2mu004_chg_set_property;
+	charger->psy_chg.properties     = s2mu004_charger_props;
+	charger->psy_chg.num_properties = ARRAY_SIZE(s2mu004_charger_props);
+	charger->psy_otg.name			= "otg";
+	charger->psy_otg.type			= POWER_SUPPLY_TYPE_OTG;
+	charger->psy_otg.get_property	= s2mu004_otg_get_property;
+	charger->psy_otg.set_property	= s2mu004_otg_set_property;
+	charger->psy_otg.properties		= s2mu004_otg_props;
+	charger->psy_otg.num_properties	= ARRAY_SIZE(s2mu004_otg_props);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	s2mu004_chg_init(charger);
 	charger->input_current = s2mu004_get_input_current_limit(charger);
 	charger->charging_current = s2mu004_get_fast_charging_current(charger);
 
+<<<<<<< HEAD
 	psy_cfg.drv_data = charger;
 	psy_cfg.supplied_to = s2mu004_supplied_to;
 	psy_cfg.num_supplicants = ARRAY_SIZE(s2mu004_supplied_to),
 
 	charger->psy_chg = power_supply_register(&pdev->dev, &s2mu004_charger_power_supply_desc, &psy_cfg);
+=======
+	ret = power_supply_register(&pdev->dev, &charger->psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret) {
 		goto err_power_supply_register;
 	}
 
+<<<<<<< HEAD
 	charger->psy_otg = power_supply_register(&pdev->dev, &otg_power_supply_desc, &psy_cfg);
+=======
+	ret = power_supply_register(&pdev->dev, &charger->psy_otg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret) {
 		goto err_power_supply_register_otg;
 	}
@@ -1725,6 +2206,7 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 		goto err_create_wq;
 	}
 
+<<<<<<< HEAD
 #if EN_IVR_IRQ
 	wake_lock_init(&charger->ivr_wake_lock, WAKE_LOCK_SUSPEND,
 		"charger-ivr");
@@ -1738,6 +2220,15 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 	charger->irq_sys = pdata->irq_base + S2MU004_CHG1_IRQ_SYS;
 	ret = request_threaded_irq(charger->irq_sys, NULL,
 			s2mu004_ovp_isr, 0, "sys-irq", charger);
+=======
+	/*
+	 * irq request
+	 * if you need to add irq , please refer below code.
+	 */
+	charger->irq_sys = pdata->irq_base + S2MU004_CHG1_IRQ_SYS;
+	ret = request_threaded_irq(charger->irq_sys, NULL,
+			s2mu004_ovp_isr, 0 , "sys-irq", charger);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		dev_err(s2mu004->dev, "%s: Fail to request SYS in IRQ: %d: %d\n",
 					__func__, charger->irq_sys, ret);
@@ -1747,16 +2238,27 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 #if EN_BAT_DET_IRQ
 	charger->irq_det_bat = pdata->irq_base + S2MU004_CHG2_IRQ_DET_BAT;
 	ret = request_threaded_irq(charger->irq_det_bat, NULL,
+<<<<<<< HEAD
 			s2mu004_det_bat_isr, 0, "det_bat-irq", charger);
+=======
+			s2mu004_det_bat_isr, 0 , "det_bat-irq", charger);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		dev_err(s2mu004->dev, "%s: Fail to request DET_BAT in IRQ: %d: %d\n",
 					__func__, charger->irq_det_bat, ret);
 		goto err_reg_irq;
 	}
 #endif
+<<<<<<< HEAD
 	charger->irq_chgin = pdata->irq_base + S2MU004_CHG1_IRQ_CHGIN;
 	ret = request_threaded_irq(charger->irq_chgin, NULL,
 			s2mu004_chg_isr, 0, "chgin-irq", charger);
+=======
+
+	charger->irq_chgin = pdata->irq_base + S2MU004_CHG1_IRQ_CHGIN;
+	ret = request_threaded_irq(charger->irq_chgin, NULL,
+			s2mu004_chg_isr, 0 , "chgin-irq", charger);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		dev_err(s2mu004->dev, "%s: Fail to request CHGIN in IRQ: %d: %d\n",
 					__func__, charger->irq_chgin, ret);
@@ -1765,7 +2267,11 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 
 	charger->irq_rst = pdata->irq_base + S2MU004_CHG1_IRQ_CHG_RSTART;
 	ret = request_threaded_irq(charger->irq_rst, NULL,
+<<<<<<< HEAD
 			s2mu004_chg_isr, 0, "restart-irq", charger);
+=======
+			s2mu004_chg_isr, 0 , "restart-irq", charger);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		dev_err(s2mu004->dev, "%s: Fail to request CHG_Restart in IRQ: %d: %d\n",
 					__func__, charger->irq_rst, ret);
@@ -1774,7 +2280,11 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 
 	charger->irq_done = pdata->irq_base + S2MU004_CHG1_IRQ_DONE;
 	ret = request_threaded_irq(charger->irq_done, NULL,
+<<<<<<< HEAD
 			s2mu004_done_isr, 0, "done-irq", charger);
+=======
+			s2mu004_done_isr, 0 , "done-irq", charger);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		dev_err(s2mu004->dev, "%s: Fail to request DONE in IRQ: %d: %d\n",
 					__func__, charger->irq_done, ret);
@@ -1783,13 +2293,18 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 
 	charger->irq_chg_fault = pdata->irq_base + S2MU004_CHG1_IRQ_CHG_Fault;
 	ret = request_threaded_irq(charger->irq_chg_fault, NULL,
+<<<<<<< HEAD
 			s2mu004_event_isr, 0, "chg_fault-irq", charger);
+=======
+			s2mu004_event_isr, 0 , "chg_fault-irq", charger);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		dev_err(s2mu004->dev, "%s: Fail to request CHG_Fault in IRQ: %d: %d\n",
 					__func__, charger->irq_chg_fault, ret);
 		goto err_reg_irq;
 	}
 
+<<<<<<< HEAD
 	charger->irq_bat = pdata->irq_base + S2MU004_CHG2_IRQ_BAT;
 	ret = request_threaded_irq(charger->irq_bat, NULL,
 			s2mu004_event_isr, 0, "bat-irq", charger);
@@ -1804,11 +2319,17 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 #endif
 
 	ret = s2mu004_chg_create_attrs(&charger->psy_chg->dev);
+=======
+	ret = s2mu004_chg_create_attrs(charger->psy_chg.dev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret) {
 		dev_err(charger->dev,"%s : Failed to create_attrs\n", __func__);
 		goto err_reg_irq;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifndef CONFIG_SEC_FACTORY
 	INIT_DELAYED_WORK(&charger->otg_vbus_work, s2mu004_charger_otg_vbus_work);
 #endif
@@ -1819,12 +2340,21 @@ static int s2mu004_charger_probe(struct platform_device *pdev)
 
 	return 0;
 
+<<<<<<< HEAD
 err_reg_irq:
 	destroy_workqueue(charger->charger_wqueue);
 	power_supply_unregister(charger->psy_otg);
 err_create_wq:
 err_power_supply_register_otg:
 	power_supply_unregister(charger->psy_chg);
+=======
+err_create_wq:
+	destroy_workqueue(charger->charger_wqueue);
+err_reg_irq:
+	power_supply_unregister(&charger->psy_otg);
+err_power_supply_register_otg:
+	power_supply_unregister(&charger->psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_power_supply_register:
 err_parse_dt:
 err_parse_dt_nomem:
@@ -1838,7 +2368,11 @@ static int s2mu004_charger_remove(struct platform_device *pdev)
 	struct s2mu004_charger_data *charger =
 		platform_get_drvdata(pdev);
 
+<<<<<<< HEAD
 	power_supply_unregister(charger->psy_chg);
+=======
+	power_supply_unregister(&charger->psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_destroy(&charger->charger_mutex);
 	kfree(charger);
 	return 0;

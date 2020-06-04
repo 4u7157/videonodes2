@@ -503,8 +503,11 @@ static void lsm6dsl_irq_management(struct work_struct *data_work)
 	cdata = container_of((struct work_struct *)data_work,
 			     struct lsm6dsl_data, data_work);
 
+<<<<<<< HEAD
 	msleep(20);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cdata->tf->read(cdata, LSM6DSL_SRC_FUNC_ADDR, 1, &src_value, true);
 	cdata->tf->read(cdata, LSM6DSL_SRC_WAKE_UP_REG, 1, &src_wake_up, true);
 	cdata->tf->read(cdata, LSM6DSL_FIFO_STATUS2_ADDR, 1, &fifo_status2, true);
@@ -619,6 +622,12 @@ static void lsm6dsl_acc_work_func(struct work_struct *work)
 	struct lsm6dsl_data *cdata =
 		container_of(work, struct lsm6dsl_data, acc_work);
 
+<<<<<<< HEAD
+=======
+	struct timespec ts = ktime_to_timespec(ktime_get_boottime());
+	u64 timestamp_new = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+	int time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int n;
 	int err;
 	u8 data[6];
@@ -657,9 +666,20 @@ static void lsm6dsl_acc_work_func(struct work_struct *work)
 	cdata->accel_data[1] = tmp_data[1] - cdata->accel_cal_data[1];
 	cdata->accel_data[2] = tmp_data[2] - cdata->accel_cal_data[2];
 
+<<<<<<< HEAD
 	input_report_rel(cdata->acc_input, REL_X, cdata->accel_data[0]);
 	input_report_rel(cdata->acc_input, REL_Y, cdata->accel_data[1]);
 	input_report_rel(cdata->acc_input, REL_Z, cdata->accel_data[2]);
+=======
+	time_hi = (int)((timestamp_new & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp_new & TIME_LO_MASK);
+
+	input_report_rel(cdata->acc_input, REL_X, cdata->accel_data[0]);
+	input_report_rel(cdata->acc_input, REL_Y, cdata->accel_data[1]);
+	input_report_rel(cdata->acc_input, REL_Z, cdata->accel_data[2]);
+	input_report_rel(cdata->acc_input, REL_DIAL, time_hi);
+	input_report_rel(cdata->acc_input, REL_MISC, time_lo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_sync(cdata->acc_input);
 
 exit:
@@ -679,6 +699,12 @@ static void lsm6dsl_gyro_work_func(struct work_struct *work)
 	struct lsm6dsl_data *cdata =
 		container_of(work, struct lsm6dsl_data, gyro_work);
 
+<<<<<<< HEAD
+=======
+	struct timespec ts = ktime_to_timespec(ktime_get_boottime());
+	u64 timestamp_new = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+	int time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int n;
 	int err;
 	u8 data[6];
@@ -718,9 +744,20 @@ static void lsm6dsl_gyro_work_func(struct work_struct *work)
 	cdata->gyro_data[1] = tmp_data[1];
 	cdata->gyro_data[2] = tmp_data[2];
 
+<<<<<<< HEAD
 	input_report_rel(cdata->gyro_input, REL_RX, cdata->gyro_data[0]);
 	input_report_rel(cdata->gyro_input, REL_RY, cdata->gyro_data[1]);
 	input_report_rel(cdata->gyro_input, REL_RZ, cdata->gyro_data[2]);
+=======
+	time_hi = (int)((timestamp_new & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp_new & TIME_LO_MASK);
+
+	input_report_rel(cdata->gyro_input, REL_RX, cdata->gyro_data[0]);
+	input_report_rel(cdata->gyro_input, REL_RY, cdata->gyro_data[1]);
+	input_report_rel(cdata->gyro_input, REL_RZ, cdata->gyro_data[2]);
+	input_report_rel(cdata->gyro_input, REL_X, time_hi);
+	input_report_rel(cdata->gyro_input, REL_Y, time_lo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_sync(cdata->gyro_input);
 
 exit:
@@ -1923,6 +1960,10 @@ static ssize_t lsm6dsl_smart_alert_store(struct device *dev,
 		return size;
 	}
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&cdata->mutex_enable);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((enable == 1) && (cdata->sa_flag == 0)) {
 		cdata->sa_irq_state = 0;
 		cdata->sa_flag = 1;
@@ -1931,7 +1972,11 @@ static ssize_t lsm6dsl_smart_alert_store(struct device *dev,
 					   LSM6DSL_ACCEL_ODR_ADDR,
 					   LSM6DSL_ACCEL_ODR_MASK,
 					   LSM6DSL_ACCEL_ODR_POWER_DOWN, true);
+<<<<<<< HEAD
 		mdelay(100);
+=======
+		mdelay(50);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (factory_mode == 1) {
 			threshold = 0;
@@ -1952,6 +1997,10 @@ static ssize_t lsm6dsl_smart_alert_store(struct device *dev,
 				fs = 16000;
 				break;
 			default:
+<<<<<<< HEAD
+=======
+				mutex_unlock(&cdata->mutex_enable);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				return size;
 			}
 
@@ -1989,7 +2038,11 @@ static ssize_t lsm6dsl_smart_alert_store(struct device *dev,
 					   LSM6DSL_ACCEL_ODR_ADDR,
 					   LSM6DSL_ACCEL_ODR_MASK,
 					   odr, true);
+<<<<<<< HEAD
 		mdelay(100);
+=======
+		mdelay(50);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		lsm6dsl_set_irq(cdata, 1);
 		SENSOR_INFO("smart alert is on!\n");
@@ -2027,6 +2080,10 @@ static ssize_t lsm6dsl_smart_alert_store(struct device *dev,
 		SENSOR_INFO("smart alert is off! irq = %d, odr 0x%x\n",
 						cdata->sa_irq_state, odr);
 	}
+<<<<<<< HEAD
+=======
+	mutex_unlock(&cdata->mutex_enable);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return size;
 }
@@ -2779,7 +2836,11 @@ static int lsm6dsl_selftest_run(struct lsm6dsl_data *cdata,
 		hw_st_ret = lsm6dsl_acc_hw_selftest(cdata, NOST,
 						ST, N_ST, DIFF_ST, N_DIFF_ST);
 
+<<<<<<< HEAD
 		for (i = 0; i < 3; i++) {
+=======
+		for(i = 0; i < 3; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			DIFF_ST[i] = LSM6DSL_ACC_LSB_TO_MG(DIFF_ST[i]);
 			N_DIFF_ST[i] = LSM6DSL_ACC_LSB_TO_MG(N_DIFF_ST[i]);
 		}
@@ -2813,12 +2874,20 @@ static int lsm6dsl_selftest_run(struct lsm6dsl_data *cdata,
 
 		hw_st_ret = lsm6dsl_gyro_hw_selftest(cdata, NOST, ST, DIFF_ST);
 
+<<<<<<< HEAD
 		if ((LSM6DSL_GYR_MIN_ZRL <= NOST[0]) && (NOST[0] <= LSM6DSL_GYR_MAX_ZRL)
+=======
+		if((LSM6DSL_GYR_MIN_ZRL <= NOST[0]) && (NOST[0] <= LSM6DSL_GYR_MAX_ZRL)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		&& (LSM6DSL_GYR_MIN_ZRL <= NOST[1]) && (NOST[1] <= LSM6DSL_GYR_MAX_ZRL)
 		&& (LSM6DSL_GYR_MIN_ZRL <= NOST[2]) && (NOST[2] <= LSM6DSL_GYR_MAX_ZRL))
 			self_test_zro_ret = PASS;
 
+<<<<<<< HEAD
 		for (i = 0; i < 3; i++) {
+=======
+		for(i = 0; i < 3; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			zero_rate_data[i] = LSM6DSL_GYR_LSB_TO_DPS(zero_rate_data[i]);
 			NOST[i] = LSM6DSL_GYR_LSB_TO_DPS(NOST[i]);
 			ST[i] = LSM6DSL_GYR_LSB_TO_DPS(ST[i]);
@@ -2880,7 +2949,11 @@ restore_exit:
 				NOST[0], NOST[1], NOST[2],
 				DIFF_ST[0], DIFF_ST[1], DIFF_ST[2],
 				self_test_ret, self_test_zro_ret);
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return snprintf(out_str, PAGE_SIZE,
 				"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
 				zero_rate_data[0], zero_rate_data[1],
@@ -2928,7 +3001,11 @@ static ssize_t lsm6dsl_write_register_store(struct device *dev,
 	int ret;
 	struct lsm6dsl_data *cdata = dev_get_drvdata(dev);
 
+<<<<<<< HEAD
 	if (sscanf(buf, "%4x,%4x", &reg, &val) != 2) {
+=======
+	if (sscanf(buf, "%2x,%2x", &reg, &val) != 2) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("invalid value\n");
 		return count;
 	}
@@ -2967,7 +3044,11 @@ static DEVICE_ATTR(acc_register, S_IRUGO | S_IWUSR | S_IWGRP,
 	lsm6dsl_read_register_show, lsm6dsl_write_register_store);
 static DEVICE_ATTR(vendor, S_IRUGO, lsm6dsl_vendor_show, NULL);
 static DEVICE_ATTR(name, S_IRUGO, lsm6dsl_name_show, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(selftest_revised, S_IRUGO, selftest_revised_show, NULL);
+=======
+static DEVICE_ATTR(selftest_revised, 0444, selftest_revised_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(dhr_sensor_info, S_IRUGO, lsm6dsl_accel_dhr_sensor_info_show, NULL);
 static DEVICE_ATTR(temperature, S_IRUGO, lsm6dsl_temperature_show, NULL);
 static DEVICE_ATTR(calibration, S_IRUGO | S_IWUSR | S_IWGRP,
@@ -3008,7 +3089,11 @@ static struct device_attribute *acc_sensor_attrs[] = {
 static struct device_attribute *gyro_sensor_attrs[] = {
 	&dev_attr_vendor,
 	&dev_attr_name,
+<<<<<<< HEAD
 	&dev_attr_selftest_revised,
+=======
+	&dev_attr_selftest_revised,	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_temperature,
 	&dev_attr_gyro_raw_data,
 	&dev_attr_gyro_self_test,
@@ -3055,6 +3140,11 @@ static int lsm6dsl_acc_input_init(struct lsm6dsl_data *cdata)
 	input_set_capability(dev, EV_REL, REL_X);
 	input_set_capability(dev, EV_REL, REL_Y);
 	input_set_capability(dev, EV_REL, REL_Z);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_DIAL);
+	input_set_capability(dev, EV_REL, REL_MISC);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(dev, cdata);
 
 	ret = input_register_device(dev);
@@ -3100,6 +3190,11 @@ static int lsm6dsl_gyro_input_init(struct lsm6dsl_data *cdata)
 	input_set_capability(dev, EV_REL, REL_RX);
 	input_set_capability(dev, EV_REL, REL_RY);
 	input_set_capability(dev, EV_REL, REL_RZ);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_X);
+	input_set_capability(dev, EV_REL, REL_Y);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(dev, cdata);
 
 	ret = input_register_device(dev);
@@ -3567,6 +3662,10 @@ int lsm6dsl_common_probe(struct lsm6dsl_data *cdata, int irq, u16 bustype)
 	if (retry < 0)
 		goto exit_err_chip_id_or_i2c_error;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* input device init */
 	err = lsm6dsl_acc_input_init(cdata);
 	if (err < 0)

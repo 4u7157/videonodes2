@@ -21,6 +21,7 @@
 
 /* #define CONFIG_USB_NCM_ACCUMULATE_MULTPKT */
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_RNDIS_MULTIPACKET
 #define QMULT_DEFAULT 10
 #else
@@ -36,6 +37,17 @@
 #endif
 #endif
 
+=======
+#ifdef CONFIG_USB_NCM_ACCUMULATE_MULTPKT
+/* #define DEBUG_USB_NCM */
+#ifdef DEBUG_USB_NCM
+#define DEBUG_NCM(fmt, args...) printk(fmt, ##args)
+#else
+#define DEBUG_NCM(fmt, args...) do {} while (0)
+#endif
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "gadget_chips.h"
 
 struct eth_dev;

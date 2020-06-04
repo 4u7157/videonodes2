@@ -45,7 +45,10 @@ enum {
 	AUD_PWR_AFTR,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_SCHED_HMP
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define USE_EXYNOS_AUD_SCHED
 enum {
 	AUD_MODE_DEFAULT = 0,
@@ -54,7 +57,10 @@ enum {
 };
 
 extern void lpass_set_sched(pid_t pid, int mode);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_SCHED_HMP) && defined(CONFIG_EXYNOS5_DYNAMIC_CPU_HOTPLUG)
 #define USE_EXYNOS_AUD_CPU_HOTPLUG
@@ -83,4 +89,12 @@ extern void lpass_dma_enable(bool on);
 extern void lpass_reset(int ip, int op);
 extern void lpass_reset_toggle(int ip);
 
+<<<<<<< HEAD
+=======
+extern void lpass_set_ip_idle(bool value);
+extern void lpass_set_fm_bt_mux(int is_fm);
+
+
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* __SOUND_EXYNOS_H */

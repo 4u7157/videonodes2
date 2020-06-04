@@ -36,6 +36,10 @@ typedef enum {
 typedef enum {
 	VBUS_NOTIFY_DEV_USB,
 	VBUS_NOTIFY_DEV_CHARGER,
+<<<<<<< HEAD
+=======
+	VBUS_NOTIFY_DEV_MANAGER,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 } vbus_notifier_device_t;
 
 typedef enum {

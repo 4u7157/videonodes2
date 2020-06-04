@@ -25,10 +25,17 @@
 
 #include "yas_cfg.h"
 
+<<<<<<< HEAD
 #define YAS_VERSION	"12.0.0"	/*!< MS-x Driver Version */
 #define DEV_NAME			"yas539"
 #define VENDOR_NAME			"YAMAHA"
 #define MODULE_NAME_MAG			"magnetic_sensor"
+=======
+#define YAS_VERSION		"12.0.0"	/*!< MS-x Driver Version */
+#define DEV_NAME		"yas539"
+#define VENDOR_NAME		"YAMAHA"
+#define MODULE_NAME_MAG		"magnetic_sensor"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* ----------------------------------------------------------------------------
  *                             Typedef definition

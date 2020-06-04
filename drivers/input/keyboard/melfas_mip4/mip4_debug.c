@@ -1,11 +1,19 @@
 /*
  * MELFAS MIP4 Touchkey
  *
+<<<<<<< HEAD
  * Copyright (C) 2015 MELFAS Inc.
  *
  * mip4_debug.c : Debug functions (Optional)
  *
  * Version : 2016.03.15
+=======
+ * Copyright (C) 2016 MELFAS Inc.
+ *
+ * mip4_debug.c : Debug functions (Optional)
+ *
+ * Version : 2016.06.30
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #include "mip4.h"
@@ -430,6 +438,13 @@ int mip4_tk_run_test(struct mip4_tk_info *info, u8 test_type)
 		//printk("=== Cp Test ===\n");
 		sprintf(info->print_buf, "\n=== Cp Test ===\n\n");
 		break;
+<<<<<<< HEAD
+=======
+	case MIP_TEST_TYPE_CP_JITTER:
+		//printk("=== Cp Jitter Test ===\n");
+		sprintf(info->print_buf, "\n=== Cp Jitter Test ===\n\n");
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown test type\n", __func__);
 		sprintf(info->print_buf, "\nERROR : Unknown test type\n\n");
@@ -653,6 +668,13 @@ int mip4_tk_get_image(struct mip4_tk_info *info, u8 image_type)
 		input_dbg(true, &info->client->dev, "=== Self Intensity Image ===\n");
 		sprintf(info->print_buf, "\n=== Self Intensity Image ===\n\n");
 		break;
+<<<<<<< HEAD
+=======
+	case MIP_IMG_TYPE_BASELINE:
+		input_dbg(true, &info->client->dev, "=== Baseline Image ===\n");
+		sprintf(info->print_buf, "\n=== Baseline Image ===\n\n");
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown image type\n", __func__);
 		sprintf(info->print_buf, "\nERROR : Unknown image type\n\n");
@@ -909,6 +931,14 @@ static ssize_t mip4_tk_sys_info(struct device *dev, struct device_attribute *att
 	sprintf(data, "Key Num : %d\n", rbuf[0]);
 	strcat(info->print_buf, data);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TOUCHKEY_GRIP
+	sprintf(data, "Grip Num : %d\n", info->grip_ch);
+	strcat(info->print_buf, data);
+#endif	
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wbuf[0] = MIP_R0_LED;
 	wbuf[1] = MIP_R1_LED_NUM;
 	mip4_tk_i2c_read(info, wbuf, 2, rbuf, 2);
@@ -1014,6 +1044,11 @@ static ssize_t mip4_tk_sys_mode_store(struct device *dev, struct device_attribut
 		wbuf[1] = MIP_R1_CTRL_HIGH_SENS_MODE;
 	} else if (!strcmp(attr->attr.name, "mode_charger")) {
 		wbuf[1] = MIP_R1_CTRL_CHARGER_MODE;
+<<<<<<< HEAD
+=======
+	} else if (!strcmp(attr->attr.name, "mode_power")) {
+		wbuf[1] = MIP_R1_CTRL_POWER_STATE;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown mode [%s]\n", __func__, attr->attr.name);
 		goto error;
@@ -1065,6 +1100,11 @@ static ssize_t mip4_tk_sys_mode_show(struct device *dev, struct device_attribute
 		wbuf[1] = MIP_R1_CTRL_HIGH_SENS_MODE;
 	} else if (!strcmp(attr->attr.name, "mode_charger")) {
 		wbuf[1] = MIP_R1_CTRL_CHARGER_MODE;
+<<<<<<< HEAD
+=======
+	} else if (!strcmp(attr->attr.name, "mode_power")) {
+		wbuf[1] = MIP_R1_CTRL_POWER_STATE;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown mode [%s]\n", __func__, attr->attr.name);
 		sprintf(data, "%s : Unknown Mode\n", attr->attr.name);
@@ -1351,9 +1391,17 @@ static ssize_t mip4_tk_sys_image(struct device *dev, struct device_attribute *at
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (!strcmp(attr->attr.name, "image_intensity")) {
+<<<<<<< HEAD
 		type = MIP_IMG_TYPE_SELF_INTENSITY;
 	} else if (!strcmp(attr->attr.name, "image_rawdata")) {
 		type = MIP_IMG_TYPE_SELF_RAWDATA;
+=======
+		type = MIP_IMG_TYPE_INTENSITY;
+	} else if (!strcmp(attr->attr.name, "image_rawdata")) {
+		type = MIP_IMG_TYPE_RAWDATA;
+	} else if (!strcmp(attr->attr.name, "image_baseline")) {
+		type = MIP_IMG_TYPE_BASELINE;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown image [%s]\n", __func__, attr->attr.name);
 		ret = snprintf(buf, PAGE_SIZE, "%s\n", "ERROR : Unknown image type");
@@ -1389,6 +1437,11 @@ static ssize_t __maybe_unused mip4_tk_sys_test(struct device *dev, struct device
 
 	if (!strcmp(attr->attr.name, "test_cp")) {
 		test_type = MIP_TEST_TYPE_CP;
+<<<<<<< HEAD
+=======
+	} else if (!strcmp(attr->attr.name, "test_cp_jitter")) {
+		test_type = MIP_TEST_TYPE_CP_JITTER;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown test [%s]\n", __func__, attr->attr.name);
 		ret = snprintf(buf, PAGE_SIZE, "%s\n", "ERROR : Unknown test type");
@@ -1411,7 +1464,305 @@ error:
 	return ret;
 }
 
+<<<<<<< HEAD
 /**
+=======
+/*
+* Print threshold
+*/
+static ssize_t mip4_tk_sys_threshold(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct mip4_tk_info *info = dev_get_drvdata(dev);
+	u8 data[255];
+	int ret;
+	u8 wbuf[8];
+	u8 rbuf[4];
+	u8 thd_contact = 0;
+	u8 thd_release = 0;
+	u8 thd_baseline = 0;
+	
+	memset(info->print_buf, 0, PAGE_SIZE);
+
+	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+
+	wbuf[0] = MIP_R0_INFO;
+
+	if (!strcmp(attr->attr.name, "threshold_key")) {
+		wbuf[1] = MIP_R1_INFO_THD_CONTACT_KEY;
+	} 
+#ifdef CONFIG_TOUCHKEY_GRIP	
+	else if (!strcmp(attr->attr.name, "threshold_grip")) {
+		wbuf[1] = MIP_R1_INFO_THD_CONTACT_GRIP;
+	} 
+#endif	
+	else {
+		input_err(true,&info->client->dev, "%s [ERROR] Unknown name [%s]\n", __func__, attr->attr.name);
+		sprintf(data, "%s : Unknown Name\n", attr->attr.name);
+		goto exit;
+	}
+
+	if (mip4_tk_i2c_read(info, wbuf, 2, rbuf, 1)) {
+		input_err(true,&info->client->dev, "%s [ERROR] mip4_tk_i2c_read\n", __func__);
+		sprintf(data, "%s : ERROR\n", attr->attr.name);
+		goto exit;
+	} else {
+		input_info(true,&info->client->dev, "%s - addr[0x%02X%02X] value[%d]\n", __func__, wbuf[0], wbuf[1], rbuf[0]);
+		thd_contact = rbuf[0];
+	}
+
+
+	/* Release */
+	if (!strcmp(attr->attr.name, "threshold_key")) {
+		wbuf[1] = MIP_R1_INFO_THD_RELEASE_KEY;
+	}
+#ifdef CONFIG_TOUCHKEY_GRIP		
+	else if (!strcmp(attr->attr.name, "threshold_grip")) {
+		wbuf[1] = MIP_R1_INFO_THD_RELEASE_GRIP;
+	}
+#endif	
+	else {
+		input_err(true,&info->client->dev, "%s [ERROR] Unknown name [%s]\n", __func__, attr->attr.name);
+		sprintf(data, "%s : Unknown name\n", attr->attr.name);
+		goto exit;
+	}
+
+	if (mip4_tk_i2c_read(info, wbuf, 2, rbuf, 1)) {
+		input_err(true,&info->client->dev, "%s [ERROR] mip4_tk_i2c_read\n", __func__);
+		sprintf(data, "%s : ERROR\n", attr->attr.name);
+		goto exit;
+	} else {
+		input_dbg(true, &info->client->dev, "%s - addr[0x%02X%02X] value[%d]\n", __func__, wbuf[0], wbuf[1], rbuf[0]);
+		thd_release = rbuf[0];
+	}
+
+	/* Baseline */
+	if (!strcmp(attr->attr.name, "threshold_key")) {
+		wbuf[1] = MIP_R1_INFO_THD_BASELINE_KEY;
+	} else if (!strcmp(attr->attr.name, "threshold_grip")) {
+		wbuf[1] = MIP_R1_INFO_THD_BASELINE_GRIP;
+	} else {
+		dev_err(&info->client->dev, "%s [ERROR] Unknown name [%s]\n", __func__, attr->attr.name);
+		sprintf(data, "%s : Unknown name\n", attr->attr.name);
+		goto exit;
+	}
+
+	if (mip4_tk_i2c_read(info, wbuf, 2, rbuf, 1)) {
+		input_err(true,&info->client->dev, "%s [ERROR] mip4_tk_i2c_read\n", __func__);
+		sprintf(data, "%s : ERROR\n", attr->attr.name);
+		goto exit;
+	} else {
+		input_dbg(true,&info->client->dev, "%s - addr[0x%02X%02X] value[%d]\n", __func__, wbuf[0], wbuf[1], rbuf[0]);
+		thd_baseline = rbuf[0];
+	}
+
+	sprintf(data, "%s : Contact [%u], Release [%u], Baseline [%u]\n", attr->attr.name, thd_contact, thd_release, thd_baseline);
+
+	input_dbg(true,&info->client->dev, "%s [DONE]\n", __func__);
+
+exit:
+	strcat(info->print_buf, data);
+	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
+	return ret;
+}
+
+/*
+* Set recal
+*/
+static ssize_t mip4_tk_sys_recal(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct mip4_tk_info *info = dev_get_drvdata(dev);
+	u8 wbuf[8];
+	u8 value = 0;
+
+	input_dbg(true,&info->client->dev, "%s [START] \n", __func__);
+
+	wbuf[0] = MIP_R0_CTRL;
+
+	if (!strcmp(attr->attr.name, "recal_key")) {
+		wbuf[1] = MIP_R1_CTRL_REBASELINE_KEY;
+	} 
+#ifdef CONFIG_TOUCHKEY_GRIP		
+	else if (!strcmp(attr->attr.name, "recal_grip")) {
+		wbuf[1] = MIP_R1_CTRL_REBASELINE_GRIP;
+	} 
+#endif	
+	else {
+		input_err(true,&info->client->dev, "%s [ERROR] Unknown name [%s]\n", __func__, attr->attr.name);
+		goto error;
+	}
+
+	if (buf[0] == 48) {
+		value = 0;
+	} else if (buf[0] == 49) {
+		value = 1;
+	} else {
+		input_err(true,&info->client->dev, "%s [ERROR] Unknown value [%c]\n", __func__, buf[0]);
+		goto exit;
+	}
+	wbuf[2] = value;
+
+	if (mip4_tk_i2c_write(info, wbuf, 3)) {
+		input_err(true,&info->client->dev, "%s [ERROR] mip4_tk_i2c_write\n", __func__);
+	} else {
+		input_info(true,&info->client->dev, "%s - addr[0x%02X%02X] value[%d]\n", __func__, wbuf[0], wbuf[1], value);
+	}
+
+exit:
+	input_dbg(true,&info->client->dev, "%s [DONE] \n", __func__);
+	return count;
+
+error:
+	input_err(true,&info->client->dev, "%s [ERROR] \n", __func__);
+	return count;
+}
+
+/*
+* Set enable
+*/
+static ssize_t mip4_tk_sys_enable_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	struct mip4_tk_info *info = dev_get_drvdata(dev);
+	u8 wbuf[8];
+	u8 value = 0;
+
+	input_dbg(true,&info->client->dev, "%s [START] \n", __func__);
+
+	wbuf[0] = MIP_R0_CTRL;
+
+	if (!strcmp(attr->attr.name, "enable_key")) {
+		wbuf[1] = MIP_R1_CTRL_ENABLE_KEY;
+	} 
+#ifdef CONFIG_TOUCHKEY_GRIP		
+	else if (!strcmp(attr->attr.name, "enable_grip")) {
+		wbuf[1] = MIP_R1_CTRL_ENABLE_GRIP;
+	}
+#endif
+	else {
+		input_err(true,&info->client->dev, "%s [ERROR] Unknown name [%s]\n", __func__, attr->attr.name);
+		goto error;
+	}
+
+	if (buf[0] == 48) {
+		value = 0;
+	} else if (buf[0] == 49) {
+		value = 1;
+	} else {
+		dev_err(&info->client->dev, "%s [ERROR] Unknown value [%c]\n", __func__, buf[0]);
+		goto exit;
+	}
+	wbuf[2] = value;
+
+	if (mip4_tk_i2c_write(info, wbuf, 3)) {
+		input_err(true,&info->client->dev, "%s [ERROR] mip4_tk_i2c_write\n", __func__);
+	} else {
+		input_info(true,&info->client->dev, "%s - addr[0x%02X%02X] value[%d]\n", __func__, wbuf[0], wbuf[1], value);
+	}
+
+exit:
+	input_dbg(true,&info->client->dev, "%s [DONE] \n", __func__);
+	return count;
+
+error:
+	input_err(true,&info->client->dev, "%s [ERROR] \n", __func__);
+	return count;
+}
+
+/*
+* Print enable
+*/
+static ssize_t mip4_tk_sys_enable_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct mip4_tk_info *info = dev_get_drvdata(dev);
+	u8 data[255];
+	int ret;
+	u8 wbuf[8];
+	u8 rbuf[4];
+
+	memset(info->print_buf, 0, PAGE_SIZE);
+
+	input_dbg(true,&info->client->dev, "%s [START]\n", __func__);
+
+	wbuf[0] = MIP_R0_CTRL;
+
+	if (!strcmp(attr->attr.name, "enable_key")) {
+		wbuf[1] = MIP_R1_CTRL_ENABLE_KEY;
+	} 
+#ifdef CONFIG_TOUCHKEY_GRIP		
+	else if (!strcmp(attr->attr.name, "enable_grip")) {
+		wbuf[1] = MIP_R1_CTRL_ENABLE_GRIP;
+	}
+#endif
+	else {
+		input_err(true,&info->client->dev, "%s [ERROR] Unknown name [%s]\n", __func__, attr->attr.name);
+		sprintf(data, "%s : Unknown Name\n", attr->attr.name);
+		goto exit;
+	}
+
+	if (mip4_tk_i2c_read(info, wbuf, 2, rbuf, 1)) {
+		input_err(true,&info->client->dev, "%s [ERROR] mip4_tk_i2c_read\n", __func__);
+		sprintf(data, "%s : ERROR\n", attr->attr.name);
+	} else {
+		input_info(true,&info->client->dev, "%s - addr[0x%02X%02X] value[%d]\n", __func__, wbuf[0], wbuf[1], rbuf[0]);
+		sprintf(data, "%s : %d\n", attr->attr.name, rbuf[0]);
+	}
+
+	input_dbg(true,&info->client->dev, "%s [DONE]\n", __func__);
+
+exit:
+	strcat(info->print_buf, data);
+	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
+	return ret;
+}
+
+#ifdef CONFIG_TOUCHKEY_GRIP
+/*
+* Print capacitance
+*/
+static ssize_t mip4_tk_sys_capacitance(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	struct mip4_tk_info *info = dev_get_drvdata(dev);
+	u8 data[255];
+	int ret;
+	u8 wbuf[8];
+	u8 rbuf[4];
+	int cap = 0;
+
+	memset(info->print_buf, 0, PAGE_SIZE);
+
+	input_dbg(true,&info->client->dev, "%s [START]\n", __func__);
+
+	wbuf[0] = MIP_R0_INFO;
+
+	if (!strcmp(attr->attr.name, "capacitance_grip")) {
+		wbuf[1] = MIP_R1_INFO_CAPACITANCE_GRIP;
+	} else {
+		input_err(true,&info->client->dev, "%s [ERROR] Unknown name [%s]\n", __func__, attr->attr.name);
+		sprintf(data, "%s : Unknown name\n", attr->attr.name);
+		goto exit;
+	}
+
+	if (mip4_tk_i2c_read(info, wbuf, 2, rbuf, 2)) {
+		input_err(true,&info->client->dev, "%s [ERROR] mip4_tk_i2c_read\n", __func__);
+		sprintf(data, "%s : ERROR\n", attr->attr.name);
+		goto exit;
+	} else {
+		input_dbg(true,&info->client->dev, "%s - addr[0x%02X%02X] value[%d][%d]\n", __func__, wbuf[0], wbuf[1], rbuf[0], rbuf[1]);
+		cap = rbuf[0] | (rbuf[1] << 8);
+		sprintf(data, "%s : %d\n", attr->attr.name, cap);
+	}
+
+	input_dbg(true,&info->client->dev, "%s [DONE]\n", __func__);
+
+exit:
+	strcat(info->print_buf, data);
+	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
+	return ret;
+}
+#endif
+
+
+/*
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 * Sysfs functions
 */
 static DEVICE_ATTR(fw_version, S_IRUGO, mip4_tk_sys_fw_version, NULL);
@@ -1420,11 +1771,30 @@ static DEVICE_ATTR(fw_path, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_fw_path_sho
 static DEVICE_ATTR(info, S_IRUGO, mip4_tk_sys_info, NULL);
 static DEVICE_ATTR(mode_glove, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_mode_show, mip4_tk_sys_mode_store);
 static DEVICE_ATTR(mode_charger, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_mode_show, mip4_tk_sys_mode_store);
+<<<<<<< HEAD
+=======
+static DEVICE_ATTR(mode_power, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_mode_show, mip4_tk_sys_mode_store);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(led_onoff, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_led_onoff_show, mip4_tk_sys_led_onoff_store);
 static DEVICE_ATTR(led_brightness, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_led_brightness_show, mip4_tk_sys_led_brightness_store);
 static DEVICE_ATTR(led_max_brightness, S_IRUGO, mip4_tk_sys_led_max_brightness, NULL);
 static DEVICE_ATTR(image_intensity, S_IRUGO, mip4_tk_sys_image, NULL);
 static DEVICE_ATTR(image_rawdata, S_IRUGO, mip4_tk_sys_image, NULL);
+<<<<<<< HEAD
+=======
+static DEVICE_ATTR(image_baseline, S_IRUGO, mip4_tk_sys_image, NULL);
+static DEVICE_ATTR(test_cp, S_IRUGO, mip4_tk_sys_test, NULL);
+static DEVICE_ATTR(test_cp_jitter, S_IRUGO, mip4_tk_sys_test, NULL);
+static DEVICE_ATTR(threshold_key, S_IRUGO, mip4_tk_sys_threshold, NULL);
+static DEVICE_ATTR(recal_key, S_IWUSR | S_IWGRP, NULL, mip4_tk_sys_recal);
+static DEVICE_ATTR(enable_key, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_enable_show, mip4_tk_sys_enable_store);
+#ifdef CONFIG_TOUCHKEY_GRIP
+static DEVICE_ATTR(threshold_grip, S_IRUGO, mip4_tk_sys_threshold, NULL);
+static DEVICE_ATTR(recal_grip, S_IWUSR | S_IWGRP, NULL, mip4_tk_sys_recal);
+static DEVICE_ATTR(enable_grip, S_IRUGO | S_IWUSR | S_IWGRP, mip4_tk_sys_enable_show, mip4_tk_sys_enable_store);
+static DEVICE_ATTR(capacitance_grip, S_IRUGO, mip4_tk_sys_capacitance, NULL);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef DEBUG
 static DEVICE_ATTR(power_on, S_IRUGO, mip4_tk_sys_power_on, NULL);
 static DEVICE_ATTR(power_off, S_IRUGO, mip4_tk_sys_power_off, NULL);
@@ -1441,11 +1811,30 @@ static struct attribute *mip4_tk_sys_attr[] = {
 	&dev_attr_info.attr,
 	&dev_attr_mode_glove.attr,
 	&dev_attr_mode_charger.attr,
+<<<<<<< HEAD
+=======
+	&dev_attr_mode_power.attr,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_led_onoff.attr,
 	&dev_attr_led_brightness.attr,
 	&dev_attr_led_max_brightness.attr,
 	&dev_attr_image_intensity.attr,
 	&dev_attr_image_rawdata.attr,
+<<<<<<< HEAD
+=======
+	&dev_attr_image_baseline.attr,
+	&dev_attr_test_cp.attr,
+	&dev_attr_test_cp_jitter.attr,
+	&dev_attr_threshold_key.attr,
+	&dev_attr_recal_key.attr,
+	&dev_attr_enable_key.attr,	
+#ifdef CONFIG_TOUCHKEY_GRIP	
+	&dev_attr_threshold_grip.attr,
+	&dev_attr_recal_grip.attr,
+	&dev_attr_enable_grip.attr,
+	&dev_attr_capacitance_grip.attr,	
+#endif	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef DEBUG
 	&dev_attr_power_on.attr,
 	&dev_attr_power_off.attr,

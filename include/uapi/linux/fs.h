@@ -199,6 +199,11 @@ struct ci_lookup_data {
 #define FS_ENCRYPTION_MODE_AES_256_CTS		4
 #define FS_ENCRYPTION_MODE_AES_128_CBC		5
 #define FS_ENCRYPTION_MODE_AES_128_CTS		6
+<<<<<<< HEAD
+=======
+#define FS_ENCRYPTION_MODE_SPECK128_256_XTS	7
+#define FS_ENCRYPTION_MODE_SPECK128_256_CTS	8
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 
 struct fscrypt_policy {

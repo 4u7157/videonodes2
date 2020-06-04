@@ -55,16 +55,28 @@
 #if defined(CONFIG_ARCH_EXYNOS) //______________________________________________________________________________
 #define SET_BOOSTER  { \
 	set_hmp(_this->param[_this->index].hmp_boost); \
+<<<<<<< HEAD
 	set_qos(&_this->kfc_qos, /*PM_QOS_KFC_FREQ_MIN*/PM_QOS_CLUSTER0_FREQ_MIN, _this->param[_this->index].kfc_freq);  \
 	set_qos(&_this->mif_qos, PM_QOS_BUS_THROUGHPUT, _this->param[_this->index].mif_freq);  \
 	set_qos(&_this->cpu_qos, /*PM_QOS_CPU_FREQ_MIN*/PM_QOS_CLUSTER1_FREQ_MIN, _this->param[_this->index].cpu_freq);  \
+=======
+	set_qos(&_this->cpu_qos, PM_QOS_CLUSTER1_FREQ_MIN/*PM_QOS_CPU_FREQ_MIN*/, _this->param[_this->index].cpu_freq);  \
+	set_qos(&_this->kfc_qos, PM_QOS_CLUSTER0_FREQ_MIN/*PM_QOS_KFC_FREQ_MIN*/, _this->param[_this->index].kfc_freq);  \
+	set_qos(&_this->mif_qos, PM_QOS_BUS_THROUGHPUT, _this->param[_this->index].mif_freq);  \
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	set_qos(&_this->int_qos, PM_QOS_DEVICE_THROUGHPUT, _this->param[_this->index].int_freq);  \
 }
 #define REMOVE_BOOSTER  { \
 	set_hmp(0);  \
+<<<<<<< HEAD
 	remove_qos(&_this->kfc_qos);  \
 	remove_qos(&_this->mif_qos);  \
 	remove_qos(&_this->cpu_qos);  \
+=======
+	remove_qos(&_this->cpu_qos);  \
+	remove_qos(&_this->kfc_qos);  \
+	remove_qos(&_this->mif_qos);  \
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	remove_qos(&_this->int_qos);  \
 }
 #define PROPERTY_BOOSTER(_device_param_, _dt_param_, _time_)  { \

@@ -59,6 +59,10 @@ struct dw_mci_exynos_priv_data {
 	u32			ignore_phase;
 	u32			selclk_drv;
 	u32			voltage_int_extra;
+<<<<<<< HEAD
+=======
+	int			xbootldo_gpio;		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define DW_MMC_EXYNOS_USE_FINE_TUNING		BIT(0)
 #define DW_MMC_EXYNOS_BYPASS_FOR_ALL_PASS	BIT(1)
@@ -229,9 +233,27 @@ extern void dw_mci_reg_dump(struct dw_mci *host);
 #define DWMCI_MPSECURITY_DESCTYPE(type) 	((type & 0x3) << 19)
 
 /* FMP configuration */
+<<<<<<< HEAD
 #define DW_MMC_BYPASS_SECTOR_BEGIN		0x0
 #define DW_MMC_ENCRYPTION_SECTOR_BEGIN		0x0000FFFF
 #define DW_MMC_FILE_ENCRYPTION_SECTOR_BEGIN	0xFFFF0000
+=======
+#if defined(CONFIG_SOC_EXYNOS5433)
+#define DW_MMC_BYPASS_SECTOR_BEGIN		0x80000000
+#define DW_MMC_BYPASS_SECTOR_END		0xFFFFFFFF
+#define DW_MMC_ENCRYPTION_SECTOR_BEGIN		0
+#define DW_MMC_ENCRYPTION_SECTOR_END		0x7FFFFFFF
+#elif defined(CONFIG_SOC_EXYNOS7420) || defined(CONFIG_SOC_EXYNOS8890) || defined(CONFIG_SOC_EXYNOS7870)
+#define DW_MMC_BYPASS_SECTOR_BEGIN		0x0
+#define DW_MMC_ENCRYPTION_SECTOR_BEGIN		0x0000FFFF
+#define DW_MMC_FILE_ENCRYPTION_SECTOR_BEGIN	0xFFFF0000
+#else
+#define DW_MMC_BYPASS_SECTOR_BEGIN		0
+#define DW_MMC_BYPASS_SECTOR_END		0
+#define DW_MMC_ENCRYPTION_SECTOR_BEGIN		1
+#define DW_MMC_ENCRYPTION_SECTOR_END		0xFFFFFFFF
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* FMP logical unit number */
 #define DW_MMC_LUN_BEGIN			0

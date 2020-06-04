@@ -492,7 +492,13 @@ static void yas_work_func(struct work_struct *work)
 	struct yas_data mag[1];
 	struct yas_state *data = container_of(work,
 			struct yas_state, mag_work);
+<<<<<<< HEAD
 	int ret, i;
+=======
+	struct timespec ts = ktime_to_timespec(ktime_get_boottime());
+	u64 timestamp = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+	int ret, i, time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mutex_lock(&data->lock);
 
@@ -507,6 +513,11 @@ static void yas_work_func(struct work_struct *work)
 
 	mutex_unlock(&data->lock);
 
+<<<<<<< HEAD
+=======
+	time_hi = (int)((timestamp & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp & TIME_LO_MASK);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_report_rel(data->input, REL_X, data->compass_data[0]);
 	input_report_rel(data->input, REL_Y, data->compass_data[1]);
 	input_report_rel(data->input, REL_Z, data->compass_data[2]);
@@ -515,6 +526,11 @@ static void yas_work_func(struct work_struct *work)
 		input_report_rel(data->input, REL_RZ, data->reset_flag);
 		data->reset_flag = 0;
 	}
+<<<<<<< HEAD
+=======
+	input_report_rel(data->input, REL_RX, time_hi);
+	input_report_rel(data->input, REL_RY, time_lo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_sync(data->input);
 
 exit:
@@ -543,6 +559,11 @@ static int yas_input_init(struct yas_state *data)
 	input_set_capability(dev, EV_REL, REL_X);
 	input_set_capability(dev, EV_REL, REL_Y);
 	input_set_capability(dev, EV_REL, REL_Z);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_RX);
+	input_set_capability(dev, EV_REL, REL_RY);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_capability(dev, EV_REL, REL_RZ);
 	input_set_drvdata(dev, data);
 

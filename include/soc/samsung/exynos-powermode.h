@@ -12,6 +12,7 @@
 #ifndef __EXYNOS_POWERMODE_H
 #define __EXYNOS_POWERMODE_H __FILE__
 
+<<<<<<< HEAD
 #if defined(CONFIG_PMUCAL_MOD)
 #include "../../../drivers/soc/samsung/pwrcal/pmucal_mod/pmucal_system.h"
 #endif
@@ -33,6 +34,11 @@ enum sys_powerdown {
 	NUM_SYS_POWERDOWN,
 };
 #else
+=======
+/**
+ * System power down mode
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum sys_powerdown {
         SYS_SICD,
 #if !defined(CONFIG_SOC_EXYNOS7870)
@@ -50,12 +56,21 @@ enum sys_powerdown {
         SYS_SLEEP,
         NUM_SYS_POWERDOWN,
 };
+<<<<<<< HEAD
 #endif
 #endif
 
 extern void exynos_prepare_sys_powerdown(enum sys_powerdown mode, bool is_suspend);
 extern void exynos_wakeup_sys_powerdown(enum sys_powerdown mode, bool early_wakeup);
 extern int determine_lpm(void);
+=======
+
+extern void exynos_prepare_sys_powerdown(enum sys_powerdown mode);
+extern void exynos_wakeup_sys_powerdown(enum sys_powerdown mode, bool early_wakeup);
+extern int determine_lpm(void);
+extern void exynos_prepare_cp_call(void);
+extern void exynos_wakeup_cp_call(bool early_wakeup);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /**
  * Functions for cpuidle driver

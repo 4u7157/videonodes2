@@ -22,18 +22,34 @@
 #include <linux/i2c.h>
 #include <linux/init.h>
 #include <linux/input.h>
+<<<<<<< HEAD
+=======
+#include <linux/input/mt.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/wakelock.h>
 #include <linux/workqueue.h>
 #include <linux/uaccess.h>
 #include <linux/regulator/consumer.h>
 #include <linux/sec_sysfs.h>
 #include <linux/sensor/sensors_core.h>
+=======
+#include <asm/unaligned.h>
+#include <linux/wakelock.h>
+#include <linux/workqueue.h>
+#include <linux/uaccess.h>
+#include <linux/io.h>
+#include <linux/regulator/consumer.h>
+#include <linux/sec_sysfs.h>
+#include <linux/sensor/sensors_core.h>
+#include <linux/pinctrl/consumer.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_BATTERY_SAMSUNG
 #include <linux/sec_batt.h>
 #endif
@@ -50,12 +66,16 @@
 #define ACTIVE                   1
 
 /* registers */
+<<<<<<< HEAD
 #define TC300K_KEYCODE		0x00
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define TC300K_FWVER		0x01
 #define TC300K_MDVER		0x02
 #define TC300K_MODE			0x03
 #define TC300K_CHECKS_H		0x04
 #define TC300K_CHECKS_L		0x05
+<<<<<<< HEAD
 #define TC300K_THRES_H		0x06
 #define TC300K_THRES_L		0x07
 #define TC300K_1KEY_DATA	0x08
@@ -77,6 +97,8 @@
 #define TC350K_2KEY		0x18	// back inner
 #define TC350K_3KEY		0x20	// recent outer
 #define TC350K_4KEY		0x28	// back outer
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* registers for grip sensor */
 #define TC305K_GRIPCODE			0x0F
@@ -95,21 +117,27 @@
 #define TC305K_3GRIP			0x50
 #define TC305K_4GRIP			0x60
 
+<<<<<<< HEAD
 #define TC350K_THRES_DATA_OFFSET	0x00
 #define TC350K_CH_PER_DATA_OFFSET	0x02
 #define TC350K_CH_DIFF_DATA_OFFSET	0x04
 #define TC350K_CH_RAW_DATA_OFFSET	0x06
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define TC350K_DATA_SIZE		0x02
 #define TC350K_DATA_H_OFFSET	0x00
 #define TC350K_DATA_L_OFFSET	0x01
 
 /* command */
 #define TC300K_CMD_ADDR			0x00
+<<<<<<< HEAD
 #define TC300K_CMD_LED_ON		0x10
 #define TC300K_CMD_LED_OFF		0x20
 #define TC300K_CMD_GLOVE_ON		0x30
 #define TC300K_CMD_GLOVE_OFF	0x40
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define TC300K_CMD_TA_ON		0x50
 #define TC300K_CMD_TA_OFF		0x60
 #define TC300K_CMD_CAL_CHECKSUM	0x70
@@ -117,13 +145,17 @@
 #define TC300K_CMD_NORMAL_MODE		0x91
 #define TC300K_CMD_SAR_DISABLE		0xA0
 #define TC300K_CMD_SAR_ENABLE		0xA1
+<<<<<<< HEAD
 #define TC300K_CMD_FLIP_OFF		0xB0
 #define TC300K_CMD_FLIP_ON		0xB1
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define TC300K_CMD_GRIP_BASELINE_CAL	0xC0
 #define TC300K_CMD_WAKE_UP		0xF0
 #define TC300K_CMD_DELAY		50
 
 /* mode status bit */
+<<<<<<< HEAD
 #define TC300K_MODE_TA_CONNECTED	(1 << 0)
 #define TC300K_MODE_RUN			(1 << 1)
 #define TC300K_MODE_SAR			(1 << 2)
@@ -136,6 +168,15 @@
 
 /* firmware */
 #define TC300K_FW_PATH_SDCARD	"/sdcard/tc3xxk.bin"
+=======
+#define TC300K_MODE_RUN			(1 << 1)
+#define TC300K_MODE_SAR			(1 << 2)
+
+/* firmware */
+#define TC300K_FW_PATH_SDCARD	"/sdcard/tc3xxk.bin"
+#define HALL_PATH				"/sys/class/sec/sec_key/hall_detect"
+#define HALL_CLOSE_STATE		1
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define TK_UPDATE_PASS		0
 #define TK_UPDATE_DOWN		1
@@ -187,6 +228,7 @@ struct fw_image {
 	u8 data[0];
 } __attribute__ ((packed));
 
+<<<<<<< HEAD
 #define TSK_RELEASE			0x00
 #define TSK_PRESS			0x01
 #define GRIP_RELEASE			0x00
@@ -203,16 +245,31 @@ struct grip_event_val {
 	u16 grip_bitmap;
 	u8 grip_status;
 	int grip_code;
+=======
+#define GRIP_RELEASE		0x00
+#define GRIP_PRESS			0x01
+
+struct grip_event_val {
+	u16 grip_bitmap;
+	u8 grip_status;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	char* grip_name;
 };
 
 
 struct grip_event_val grip_ev[4] =
 {
+<<<<<<< HEAD
 	{0x01 << 0, GRIP_PRESS, KEY_CP_GRIP, "grip1"},
 	{0x01 << 1, GRIP_PRESS, KEY_CP_GRIP, "grip2"},
 	{0x01 << 4, GRIP_RELEASE, KEY_CP_GRIP, "grip1"},
 	{0x01 << 5, GRIP_RELEASE, KEY_CP_GRIP, "grip2"},
+=======
+	{0x01 << 0, GRIP_PRESS, "grip1"},
+	{0x01 << 1, GRIP_PRESS, "grip2"},
+	{0x01 << 4, GRIP_RELEASE, "grip1"},
+	{0x01 << 5, GRIP_RELEASE, "grip2"},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct tc3xxk_data {
@@ -220,12 +277,21 @@ struct tc3xxk_data {
 	struct i2c_client *client;
 	struct input_dev *input_dev;
 	struct tc3xxk_platform_data *pdata;
+<<<<<<< HEAD
 	struct mutex lock;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct mutex lock_fac;
 	struct fw_image *fw_img;
 	const struct firmware *fw;
 	char phys[32];
 	int irq;
+<<<<<<< HEAD
+=======
+	bool irq_check;
+	bool earjack;
+	int curr_state;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u16 checksum;
 	u16 threhold;
 	int mode;
@@ -236,7 +302,11 @@ struct tc3xxk_data {
 	u8 md_ver_bin;
 	u8 fw_update_status;
 	bool enabled;
+<<<<<<< HEAD
 	bool fw_downloding;
+=======
+	bool fw_downloading;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	struct pinctrl *pinctrl_i2c;
 	struct pinctrl *pinctrl_irq;
@@ -252,15 +322,28 @@ struct tc3xxk_data {
 	u16 grip_raw1;
 	u16 grip_raw2;
 	u16 grip_event;
+<<<<<<< HEAD
 	bool sar_mode;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	bool sar_enable;
 	bool sar_enable_off;
 	int grip_num;
 	struct grip_event_val *grip_ev_val;
+<<<<<<< HEAD
+=======
+	struct delayed_work debug_work;
+
+#ifdef CONFIG_SEC_FACTORY
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int irq_count;
 	int abnormal_mode;
 	s32 diff;
 	s32 max_diff;
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined (CONFIG_VBUS_NOTIFIER)
 	struct notifier_block vbus_nb;
@@ -283,8 +366,71 @@ const char *regulator_ic;
 static int tc3xxk_pinctrl_init(struct tc3xxk_data *data);
 static void tc3xxk_config_gpio_i2c(struct tc3xxk_data *data, int onoff);
 static int tc3xxk_pinctrl(struct tc3xxk_data *data, int status);
+<<<<<<< HEAD
 static int read_tc350k_register_data(struct tc3xxk_data *data, int read_key_num, int read_offset);
 static int tc3xxk_mode_enable(struct i2c_client *client, u8 cmd);
+=======
+static int read_tc3xxk_register_data(struct tc3xxk_data *data, int read_key_num, int read_offset);
+static int tc3xxk_mode_enable(struct i2c_client *client, u8 cmd);
+static void tc3xxk_grip_cal_reset(struct tc3xxk_data *data);
+
+static int tc3xxk_get_hallic_state(struct tc3xxk_data *data)
+{
+	char hall_buf[6];
+	int ret = -ENODEV;
+	int hall_state = -1;
+	mm_segment_t old_fs;
+	struct file *filep;
+
+	memset(hall_buf, 0, sizeof(hall_buf));
+	old_fs = get_fs();
+	set_fs(KERNEL_DS);
+
+	filep = filp_open(HALL_PATH, O_RDONLY, 0666);
+	if (IS_ERR(filep)) {
+		set_fs(old_fs);
+		return hall_state;
+	}
+
+	ret = filep->f_op->read(filep, hall_buf,
+		sizeof(hall_buf) - 1, &filep->f_pos);
+	if (ret != sizeof(hall_buf) - 1)
+		goto exit;
+
+	if (strcmp(hall_buf, "CLOSE") == 0)
+		hall_state = HALL_CLOSE_STATE;
+
+exit:
+	filp_close(filep, current->files);
+	set_fs(old_fs);
+
+	return hall_state;
+}
+
+static void tc3xxk_debug_work_func(struct work_struct *work)
+{
+	struct tc3xxk_data *data = container_of((struct delayed_work *)work,
+		struct tc3xxk_data, debug_work);
+	static int hall_prev_state;
+	int hall_state;
+
+	hall_state = tc3xxk_get_hallic_state(data);
+	if (hall_state == HALL_CLOSE_STATE && hall_prev_state != hall_state) {
+		SENSOR_INFO("%s - hall is closed\n", __func__);
+		tc3xxk_grip_cal_reset(data);
+	}
+	hall_prev_state = hall_state;
+
+#ifdef CONFIG_SEC_FACTORY
+	if (data->abnormal_mode) {
+		data->diff = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_DIFF_DATA);
+		if (data->max_diff < data->diff)
+			data->max_diff = data->diff;
+	}
+#endif
+	schedule_delayed_work(&data->debug_work, msecs_to_jiffies(2000));
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int tc3xxk_mode_check(struct i2c_client *client)
 {
@@ -303,11 +449,16 @@ static int tc3xxk_wake_up(struct i2c_client *client, u8 cmd)
 	int ret;
 	SENSOR_INFO("Send WAKE UP cmd: 0x%02x \n", cmd);
 	ret = i2c_smbus_write_byte_data(client, TC300K_CMD_ADDR, TC300K_CMD_WAKE_UP);
+<<<<<<< HEAD
 	msleep(10);
+=======
+	usleep_range(10000, 10000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static void tc3xxk_stop_mode(struct tc3xxk_data *data, bool on)
 {
 	struct i2c_client *client = data->client;
@@ -379,13 +530,136 @@ sar_mode:
 	}
 
 	data->sar_mode = mode;
+=======
+static void tc3xxk_set_enable(struct tc3xxk_data *data, int buff, int force)
+{
+	/*	sar enable param
+	buff:
+	* 0	off
+	* 1	on
+	* 2	force off
+	* 3	force off -> on
+	*/
+
+	bool on;
+	int cmd;
+	int ret;
+
+	if (data->sar_enable && buff == 1 && force == 0) {
+		SENSOR_INFO("Grip sensor already ON\n");
+		return;
+	} else if (!data->sar_enable && buff == 0 && force == 0) {
+		SENSOR_INFO("Grip sensor already OFF\n");
+		return;
+	}
+
+	if (buff == 3) {
+		data->sar_enable_off = 0;
+		SENSOR_INFO("Power back off _ force off -> on (%d)\n", 
+			data->sar_enable);
+		if (!data->sar_enable)
+			buff = 1;
+		else
+			return;
+	}
+
+	if (data->sar_enable_off) {
+		if (buff == 1)
+			data->sar_enable = true;
+		else
+			data->sar_enable = false;
+		SENSOR_INFO("skip, Power back off _ force off mode (%d)\n", 
+			data->sar_enable);
+		return;
+	}
+
+	if (buff == 1) {
+		on = true;
+		
+		if (!data->irq_check) {
+			data->irq_check = true;
+			enable_irq(data->client->irq);
+			enable_irq_wake(data->client->irq);
+		}
+		
+		cmd = TC300K_CMD_SAR_ENABLE;
+	} else if (buff == 2) {
+		on = false;
+		data->sar_enable_off = 1;
+		
+		if (data->irq_check) {
+			data->irq_check = false;
+			disable_irq_wake(data->client->irq);
+			disable_irq(data->client->irq);
+		}
+		
+		cmd = TC300K_CMD_SAR_DISABLE;
+	} else {
+		on = false;
+		
+		if (data->irq_check) {
+			data->irq_check = false;
+			disable_irq_wake(data->client->irq);
+			disable_irq(data->client->irq);
+		}
+		
+		cmd = TC300K_CMD_SAR_DISABLE;
+	}
+
+	ret = tc3xxk_wake_up(data->client, TC300K_CMD_WAKE_UP);
+	ret = tc3xxk_mode_enable(data->client, cmd);
+	if (ret < 0) {
+		SENSOR_ERR("fail(%d)\n", ret);
+		return;
+	}
+
+	if (buff == 1) {
+		data->sar_enable = true;
+	} else {
+		input_report_rel(data->input_dev, REL_MISC, 2);
+		input_sync(data->input_dev);
+		data->grip_event = 0;
+		data->sar_enable = false;
+	}
+
+	SENSOR_INFO("data:%d on:%d\n", buff, on);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void grip_sar_sensing(struct tc3xxk_data *data, bool on)
 {
 	/* enable/disable sar sensing
+<<<<<<< HEAD
 	  * need to disable when earjack is connected (FM radio can't work normally)
 	  */
+=======
+	* need to disable when earjack is connected (FM radio can't work normally)
+	*/
+
+	if (on) {
+		data->earjack = true;
+
+		if (data->irq_check) {
+			data->irq_check = false;
+			disable_irq_nosync(data->client->irq);
+		}
+		data->pdata->power(data, false);
+		msleep(50);
+
+		input_report_rel(data->input_dev, REL_MISC, 2);
+		input_sync(data->input_dev);
+		data->grip_event = 0;
+		data->sar_enable = false;
+	} else {
+		data->pdata->power(data, true);
+		msleep(200);
+
+		tc3xxk_set_enable(data, data->curr_state, 1);
+		data->earjack = false;
+	}
+
+	SENSOR_INFO("earjack was %s\n", (on) ? "inserted" : "removed");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void tc3xxk_grip_cal_reset(struct tc3xxk_data *data)
@@ -402,6 +676,14 @@ static void tc3xxk_reset(struct tc3xxk_data *data)
 {
 	SENSOR_INFO("\n");
 
+<<<<<<< HEAD
+=======
+	if (data->earjack) {
+		SENSOR_INFO("Earjack inserted, do not reset\n");
+		return;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	disable_irq_nosync(data->client->irq);
 
 	data->pdata->power(data, false);
@@ -433,7 +715,11 @@ int tc3xxk_get_fw_version(struct tc3xxk_data *data, bool probe)
 	int retry = 3;
 	int buf;
 
+<<<<<<< HEAD
 	if ((!data->enabled) || data->fw_downloding) {
+=======
+	if ((!data->enabled) || data->fw_downloading) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("can't excute\n");
 		return -1;
 	}
@@ -468,7 +754,11 @@ int tc3xxk_get_md_version(struct tc3xxk_data *data, bool probe)
 	int retry = 3;
 	int buf;
 
+<<<<<<< HEAD
 	if ((!data->enabled) || data->fw_downloding) {
+=======
+	if ((!data->enabled) || data->fw_downloading) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("can't excute\n");
 		return -1;
 	}
@@ -527,6 +817,11 @@ static int tc3xxk_parse_dt(struct device *dev,
 			struct tc3xxk_platform_data *pdata)
 {
 	struct device_node *np = dev->of_node;
+<<<<<<< HEAD
+=======
+	int ret;
+	enum of_gpio_flags flags;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	of_property_read_u32(np, "coreriver,use_bitmap", &pdata->use_bitmap);
 
@@ -536,16 +831,40 @@ static int tc3xxk_parse_dt(struct device *dev,
 	pdata->gpio_scl = of_get_named_gpio_flags(np, "coreriver,scl-gpio", 0, &pdata->scl_gpio_flags);
 	pdata->gpio_sda = of_get_named_gpio_flags(np, "coreriver,sda-gpio", 0, &pdata->sda_gpio_flags);
 	pdata->gpio_int = of_get_named_gpio_flags(np, "coreriver,irq-gpio", 0, &pdata->irq_gpio_flags);
+<<<<<<< HEAD
+=======
+	
+	pdata->ldo_en = of_get_named_gpio_flags(np, "coreriver,ldo_en", 0, &flags);
+	if (pdata->ldo_en < 0) {
+		SENSOR_ERR("fail to get ldo_en\n");
+		pdata->ldo_en = 0;
+        if (of_property_read_string(np, "coreriver,regulator_ic", &pdata->regulator_ic)) {
+            SENSOR_ERR("Failed to get regulator_ic name property\n");
+            return -EINVAL;
+        }
+        regulator_ic = pdata->regulator_ic;
+	} else {
+		ret = gpio_request(pdata->ldo_en, "grip_ldo_en");
+		if (ret < 0) {
+			SENSOR_ERR("gpio %d request failed %d\n", pdata->ldo_en, ret);
+			return ret;
+		}
+		gpio_direction_output(pdata->ldo_en, 0);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pdata->boot_on_ldo = of_property_read_bool(np, "coreriver,boot-on-ldo");
 
 	pdata->i2c_gpio = of_property_read_bool(np, "coreriver,i2c-gpio");
+<<<<<<< HEAD
 	
 	if (of_property_read_string(np, "coreriver,regulator_ic", &pdata->regulator_ic)) {
 		input_err(true, dev, "%s Failed to get regulator_ic name property\n",__func__);
 		return -EINVAL;
 	}
 	regulator_ic = pdata->regulator_ic;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (of_property_read_string(np, "coreriver,fw_name", &pdata->fw_name)) {
 		SENSOR_ERR("Failed to get fw_name property\n");
@@ -554,6 +873,7 @@ static int tc3xxk_parse_dt(struct device *dev,
 		SENSOR_INFO("fw_name %s\n", pdata->fw_name);
 	}
 
+<<<<<<< HEAD
 	if (of_property_read_u32(np, "coreriver,sensing_ch_num", &pdata->sensing_ch_num) < 0){
 		SENSOR_ERR("Failed to get sensing_ch_num property\n");
 		return -EINVAL;
@@ -568,15 +888,30 @@ static int tc3xxk_parse_dt(struct device *dev,
 			SENSOR_ERR("TSK IC is unknown![%d]\n", pdata->tsk_ic_num);
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pdata->bringup = of_property_read_bool(np, "coreriver,bringup");
 	if (pdata->bringup  < 0)
 		pdata->bringup = 0;
 
+<<<<<<< HEAD
+=======
+	ret = of_property_read_u32(np, "coreriver,earjack_concept", &pdata->earjack_concept);
+	if (ret < 0)
+		pdata->earjack_concept = 0;
+
+	SENSOR_INFO("grip_int:%d, ldo_en:%d\n", pdata->gpio_int, pdata->ldo_en);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
 int tc3xxk_grip_power(void *info, bool on)
 {
+<<<<<<< HEAD
+=======
+	struct tc3xxk_data *data = (struct tc3xxk_data *)info;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct regulator *regulator;
 	int ret = 0;
 
@@ -584,7 +919,20 @@ int tc3xxk_grip_power(void *info, bool on)
 		return 0;
 
 	SENSOR_INFO("%s\n", on ? "on" : "off");
+<<<<<<< HEAD
 
+=======
+	
+    /* ldo control*/
+	if (data->pdata->ldo_en) {
+		gpio_set_value(data->pdata->ldo_en, on);
+		SENSOR_INFO("ldo_en power %d\n", on);
+        tc3xxk_power_enabled = on;
+        return 0;
+	}
+
+    /*regulator control*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	regulator = regulator_get(NULL, regulator_ic);
 	if (IS_ERR(regulator)){
 		SENSOR_ERR("regulator_ic get failed\n");
@@ -627,7 +975,11 @@ static irqreturn_t tc3xxk_interrupt(int irq, void *dev_id)
 
 	SENSOR_INFO("\n");
 
+<<<<<<< HEAD
 	if ((!data->enabled) || data->fw_downloding) {
+=======
+	if ((!data->enabled) || data->fw_downloading) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("can't excute\n");
 		
 		wake_unlock(&data->grip_wake_lock);
@@ -635,10 +987,15 @@ static irqreturn_t tc3xxk_interrupt(int irq, void *dev_id)
 		return IRQ_HANDLED;
 	}
 
+<<<<<<< HEAD
 	// if sar_mode is on => must send wake-up command
 	if (data->sar_mode) {
 		ret = tc3xxk_wake_up(client, TC300K_CMD_WAKE_UP);
 	}
+=======
+	ret = tc3xxk_wake_up(client, TC300K_CMD_WAKE_UP);
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = i2c_smbus_read_byte_data(client, TC305K_GRIPCODE);
 	if (ret < 0) {
 		retry = 3;
@@ -657,17 +1014,24 @@ static irqreturn_t tc3xxk_interrupt(int irq, void *dev_id)
 	}
 	grip_val = (u8)ret;
 	
+<<<<<<< HEAD
 	for (i = 0 ; i < data->grip_num * 2 ; i++){
+=======
+	for (i = 0 ; i < data->grip_num * 2 ; i++){		//use 2 grip chanel
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (data->pdata->use_bitmap)
 			grip_handle_flag = (grip_val & data->grip_ev_val[i].grip_bitmap);
 		else
 			grip_handle_flag = (grip_val == data->grip_ev_val[i].grip_bitmap);
 
 		if (grip_handle_flag){
+<<<<<<< HEAD
 			//need to check when using 2 grip channel
 			//data->grip_event = data->tsk_ev_val[i].tsk_status;   //TSN :: Need to check Why?
 			//input_report_key(data->input_dev,
 			//	data->grip_ev_val[i].grip_code, data->grip_ev_val[i].grip_status);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if(data->grip_ev_val[i].grip_status == ACTIVE){
 				data->grip_event = ACTIVE;
 				input_report_rel(data->input_dev, REL_MISC, 1);
@@ -683,9 +1047,15 @@ static irqreturn_t tc3xxk_interrupt(int irq, void *dev_id)
 				data->fw_ver);
 
 #ifdef CONFIG_SEC_FACTORY
+<<<<<<< HEAD
 			data->diff = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_DIFF_DATA); 
 			if (data->abnormal_mode) { 
 				/* if (data->grip_event) */ {  //TSN : Need to check why?
+=======
+			data->diff = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_DIFF_DATA); 
+			if (data->abnormal_mode) { 
+				if (data->grip_event) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					if (data->max_diff < data->diff) 
 						data->max_diff = data->diff; 
 					data->irq_count++; 
@@ -700,6 +1070,7 @@ static irqreturn_t tc3xxk_interrupt(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static ssize_t keycode_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -1029,6 +1400,106 @@ static inline int getscl(struct tc3xxk_data *data)
 static void send_9bit(struct tc3xxk_data *data, u8 buff)
 {
 	int i;
+=======
+static int load_fw_in_kernel(struct tc3xxk_data *data)
+{
+	struct i2c_client *client = data->client;
+	int ret;
+
+	ret = request_firmware(&data->fw, data->pdata->fw_name, &client->dev);
+	if (ret) {
+		SENSOR_ERR("fail(%d)\n", ret);
+		return -1;
+	}
+	data->fw_img = (struct fw_image *)data->fw->data;
+
+	SENSOR_INFO( "0x%x 0x%x firm (size=%d)\n",
+		data->fw_img->first_fw_ver, data->fw_img->second_fw_ver, data->fw_img->fw_len);
+	SENSOR_INFO("done\n");
+
+	return 0;
+}
+
+static int load_fw_sdcard(struct tc3xxk_data *data)
+{
+	struct file *fp;
+	mm_segment_t old_fs;
+	long fsize, nread;
+	int ret = 0;
+
+	old_fs = get_fs();
+	set_fs(get_ds());
+	fp = filp_open(TC300K_FW_PATH_SDCARD, O_RDONLY, S_IRUSR);
+	if (IS_ERR(fp)) {
+		SENSOR_ERR("%s open error\n", TC300K_FW_PATH_SDCARD);
+		ret = -ENOENT;
+		goto fail_sdcard_open;
+	}
+
+	fsize = fp->f_path.dentry->d_inode->i_size;
+
+	data->fw_img = kzalloc((size_t)fsize, GFP_KERNEL);
+	if (!data->fw_img) {
+		SENSOR_ERR("fail to kzalloc for fw\n");
+		filp_close(fp, current->files);
+		ret = -ENOMEM;
+		goto fail_sdcard_kzalloc;
+	}
+
+	nread = vfs_read(fp, (char __user *)data->fw_img, fsize, &fp->f_pos);
+	if (nread != fsize) {
+		SENSOR_ERR("fail to vfs_read file\n");
+		ret = -EINVAL;
+		goto fail_sdcard_size;
+	}
+	filp_close(fp, current->files);
+	set_fs(old_fs);
+
+	SENSOR_INFO("fw_size : %lu\n", nread);
+	SENSOR_INFO("done\n");
+
+	return ret;
+
+fail_sdcard_size:
+	kfree(&data->fw_img);
+fail_sdcard_kzalloc:
+	filp_close(fp, current->files);
+fail_sdcard_open:
+	set_fs(old_fs);
+
+	return ret;
+}
+
+static inline void setsda(struct tc3xxk_data *data, int state)
+{
+	if (state)
+		gpio_direction_output(data->pdata->gpio_sda, 1);
+	else
+		gpio_direction_output(data->pdata->gpio_sda, 0);
+}
+
+static inline void setscl(struct tc3xxk_data *data, int state)
+{
+	if (state)
+		gpio_direction_output(data->pdata->gpio_scl, 1);
+	else
+		gpio_direction_output(data->pdata->gpio_scl, 0);
+}
+
+static inline int getsda(struct tc3xxk_data *data)
+{
+	return gpio_get_value(data->pdata->gpio_sda);
+}
+
+static inline int getscl(struct tc3xxk_data *data)
+{
+	return gpio_get_value(data->pdata->gpio_scl);
+}
+
+static void send_9bit(struct tc3xxk_data *data, u8 buff)
+{
+	int i;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	setscl(data, 1);
 	ndelay(20);
@@ -1300,7 +1771,11 @@ static int tc3xxk_crc_check(struct tc3xxk_data *data)
 	u8 cmd;
 	u8 checksum_h, checksum_l;
 
+<<<<<<< HEAD
 	if ((!data->enabled) || data->fw_downloding) {
+=======
+	if ((!data->enabled) || data->fw_downloading) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("can't excute\n");
 		return -1;
 	}
@@ -1379,9 +1854,15 @@ static int tc3xxk_fw_update(struct tc3xxk_data *data, u8 fw_path, bool force)
 	}
 
 	while (retry--) {
+<<<<<<< HEAD
 		data->fw_downloding = true;
 		ret = tc3xxk_flash_fw(data, fw_path);
 		data->fw_downloding = false;
+=======
+		data->fw_downloading = true;
+		ret = tc3xxk_flash_fw(data, fw_path);
+		data->fw_downloading = false;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret) {
 			SENSOR_ERR("tc3xxk_flash_fw fail (%d)\n", retry);
 			continue;
@@ -1489,6 +1970,7 @@ static ssize_t tc3xxk_firm_status_show(struct device *dev,
 	else
 		ret = sprintf(buf, "NG\n");
 
+<<<<<<< HEAD
 	return ret;
 }
 
@@ -2131,6 +2613,86 @@ static ssize_t recent_threshold_outer(struct device *dev,
 	value = read_tc350k_register_data(data, TC350K_3KEY, TC350K_THRES_DATA_OFFSET);
 
 	return sprintf(buf, "%d\n", value);
+=======
+	return ret;
+}
+
+static ssize_t tc3xxk_firm_version_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct tc3xxk_data *data = dev_get_drvdata(dev);
+
+	return sprintf(buf, "0x%02x%02x\n", data->md_ver_bin, data->fw_ver_bin);
+}
+
+static ssize_t tc3xxk_md_version_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct tc3xxk_data *data = dev_get_drvdata(dev);
+
+	return sprintf(buf, "0x%02x\n", data->md_ver_bin);
+}
+
+static ssize_t tc3xxk_firm_version_read_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct tc3xxk_data *data = dev_get_drvdata(dev);
+	int ret;
+
+	if (data->earjack)	/* fix crash app keystring *#435517# */
+		return sprintf(buf, "0x%02x%02x\n", 0, 0);
+
+	ret = tc3xxk_get_fw_version(data, false);
+	if (ret < 0)
+		SENSOR_ERR("failed to read firmware version (%d)\n", ret);
+
+	ret = tc3xxk_get_md_version(data, false);
+	if (ret < 0)
+		SENSOR_ERR("failed to read md version (%d)\n", ret);
+
+	return sprintf(buf, "0x%02x%02x\n", data->md_ver, data->fw_ver);
+}
+
+static ssize_t tc3xxk_md_version_read_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct tc3xxk_data *data = dev_get_drvdata(dev);
+	int ret;
+
+	ret = tc3xxk_get_md_version(data, false);
+	if (ret < 0)
+		SENSOR_ERR("failed to read md version (%d)\n", ret);
+
+	return sprintf(buf, "0x%02x\n", data->md_ver);
+}
+
+static int read_tc3xxk_register_data(struct tc3xxk_data *data, int read_key_num, int read_offset)
+{
+	struct i2c_client *client = data->client;
+	int ret;
+	u8 buff[2];
+	int value;
+
+	if (data->earjack) /* fix crash app keystring *#435517# */
+		return 0;
+
+	mutex_lock(&data->lock_fac);
+	ret = i2c_smbus_read_i2c_block_data(client, read_key_num + read_offset, TC350K_DATA_SIZE, buff);
+	if (ret != TC350K_DATA_SIZE) {
+		SENSOR_ERR("read fail(%d)\n", ret);
+		value = 0;
+		goto exit;
+	}
+	value = (buff[TC350K_DATA_H_OFFSET] << 8) | buff[TC350K_DATA_L_OFFSET];
+
+
+	SENSOR_INFO("read key num/offset = [0x%X/0x%X], value : [%d]\n",
+								read_key_num, read_offset, value);
+
+exit:
+	mutex_unlock(&data->lock_fac);
+	return value;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int tc3xxk_mode_enable(struct i2c_client *client, u8 cmd)
@@ -2138,12 +2700,20 @@ static int tc3xxk_mode_enable(struct i2c_client *client, u8 cmd)
 	int ret;
 
 	ret = i2c_smbus_write_byte_data(client, TC300K_CMD_ADDR, cmd);
+<<<<<<< HEAD
 	msleep(30);
+=======
+	msleep(15);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static ssize_t grip_sar_enable_show(struct device *dev,
+=======
+static ssize_t tc3xxk_sar_enable_show(struct device *dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			struct device_attribute *attr, char *buf)
 {
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
@@ -2151,15 +2721,22 @@ static ssize_t grip_sar_enable_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%u\n", !data->sar_enable_off);
 }
 
+<<<<<<< HEAD
 static ssize_t grip_sar_enable(struct device *dev,
+=======
+static ssize_t tc3xxk_sar_enable_store(struct device *dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		 struct device_attribute *attr, const char *buf,
 		 size_t count)
 {
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int buff;
 	int ret;
+<<<<<<< HEAD
 	bool on;
 	int cmd;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = sscanf(buf, "%d", &buff);
 	if (ret != 1) {
@@ -2168,13 +2745,17 @@ static ssize_t grip_sar_enable(struct device *dev,
 	}
 
 	SENSOR_INFO(" (%d) \n", buff);
+<<<<<<< HEAD
 //return count;	//temp
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!(buff >= 0 && buff <= 3)) {
 		SENSOR_ERR("wrong command(%d)\n", buff);
 		return count;
 	}
 
+<<<<<<< HEAD
 	/*	sar enable param
 	  *	0	off
 	  *	1	on
@@ -2235,6 +2816,15 @@ static ssize_t grip_sar_enable(struct device *dev,
 	}
 
 	SENSOR_INFO("data:%d on:%d\n", buff, on);
+=======
+	if (data->earjack) {
+		data->curr_state = buff;
+		SENSOR_INFO("Earjack inserted, skip exception case\n");
+		return count;
+	}
+
+	tc3xxk_set_enable(data, buff, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return count;
 }
 
@@ -2244,7 +2834,11 @@ static ssize_t tc3xxk_grip1_threshold_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_THD_PRESS);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_THD_PRESS);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail to read press thd(%d)\n", ret);
 		data->grip_p_thd = 0;
@@ -2252,7 +2846,11 @@ static ssize_t tc3xxk_grip1_threshold_show(struct device *dev,
 	}
 	data->grip_p_thd = ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_THD_RELEASE);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_THD_RELEASE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail to read release thd(%d)\n", ret);
 		data->grip_r_thd = 0;
@@ -2261,7 +2859,11 @@ static ssize_t tc3xxk_grip1_threshold_show(struct device *dev,
 
 	data->grip_r_thd = ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_THD_NOISE);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_THD_NOISE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail to read noise thd(%d)\n", ret);
 		data->grip_n_thd = 0;
@@ -2279,7 +2881,11 @@ static ssize_t tc3xxk_grip2_threshold_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_2GRIP, TC305K_GRIP_THD_PRESS);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_2GRIP, TC305K_GRIP_THD_PRESS);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail to read press thd(%d)\n", ret);
 		data->grip_p_thd = 0;
@@ -2287,7 +2893,11 @@ static ssize_t tc3xxk_grip2_threshold_show(struct device *dev,
 	}
 	data->grip_p_thd = ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_2GRIP, TC305K_GRIP_THD_RELEASE);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_2GRIP, TC305K_GRIP_THD_RELEASE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail to read release thd(%d)\n", ret);
 		data->grip_r_thd = 0;
@@ -2296,7 +2906,11 @@ static ssize_t tc3xxk_grip2_threshold_show(struct device *dev,
 
 	data->grip_r_thd = ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_2GRIP, TC305K_GRIP_THD_NOISE);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_2GRIP, TC305K_GRIP_THD_NOISE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail to read noise thd(%d)\n", ret);
 		data->grip_n_thd = 0;
@@ -2315,6 +2929,12 @@ static ssize_t tc3xxk_total_cap1_show(struct device *dev,
 	struct i2c_client *client = data->client;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	if (data->earjack) /* fix crash app keystring *#435517# */
+		return sprintf(buf, "%d\n", 0);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = i2c_smbus_read_byte_data(client, TC305K_1GRIP + TC305K_GRIP_TOTAL_CAP);
 	if (ret < 0) {
 		SENSOR_ERR("fail(%d)\n", ret);
@@ -2362,7 +2982,11 @@ static ssize_t tc3xxk_grip1_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_DIFF_DATA);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_DIFF_DATA);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail(%d)\n", ret);
 		data->grip_s1 = 0;
@@ -2379,7 +3003,11 @@ static ssize_t tc3xxk_grip2_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_2GRIP, TC305K_GRIP_DIFF_DATA);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_2GRIP, TC305K_GRIP_DIFF_DATA);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail(%d)\n", ret);
 		data->grip_s1 = 0;
@@ -2396,7 +3024,11 @@ static ssize_t tc3xxk_grip1_baseline_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_BASELINE);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_BASELINE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail(%d)\n", ret);
 		data->grip_baseline = 0;
@@ -2413,7 +3045,11 @@ static ssize_t tc3xxk_grip2_baseline_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_2GRIP, TC305K_GRIP_BASELINE);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_2GRIP, TC305K_GRIP_BASELINE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail(%d)\n", ret);
 		data->grip_baseline = 0;
@@ -2430,7 +3066,11 @@ static ssize_t tc3xxk_grip1_raw_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_RAW_DATA);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_1GRIP, TC305K_GRIP_RAW_DATA);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail(%d)\n", ret);
 		data->grip_raw1 = 0;
@@ -2449,7 +3089,11 @@ static ssize_t tc3xxk_grip2_raw_show(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	ret = read_tc350k_register_data(data, TC305K_2GRIP, TC305K_GRIP_RAW_DATA);
+=======
+	ret = read_tc3xxk_register_data(data, TC305K_2GRIP, TC305K_GRIP_RAW_DATA);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail(%d)\n", ret);
 		data->grip_raw1 = 0;
@@ -2513,6 +3157,7 @@ static ssize_t grip_sensing_change(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret, buff;
 
+<<<<<<< HEAD
 	ret = sscanf(buf, "%d", &buff);
 	if (ret != 1) {
 		SENSOR_ERR("cmd read err\n");
@@ -2539,6 +3184,13 @@ static ssize_t grip_mode_change(struct device *dev,
 	struct tc3xxk_data *data = dev_get_drvdata(dev);
 	int ret, buff;
 
+=======
+	if (!data->pdata->earjack_concept) {
+		SENSOR_INFO("earjack concept is disabled\n");
+		return count;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = sscanf(buf, "%d", &buff);
 	if (ret != 1) {
 		SENSOR_ERR("cmd read err\n");
@@ -2550,6 +3202,7 @@ static ssize_t grip_mode_change(struct device *dev,
 		return count;
 	}
 
+<<<<<<< HEAD
 	SENSOR_INFO("data(%d)\n", buff);
 
 	tc3xxk_stop_mode(data, buff);
@@ -2557,6 +3210,14 @@ static ssize_t grip_mode_change(struct device *dev,
 	return count;
 }
 #endif
+=======
+	grip_sar_sensing(data, buff);
+
+	SENSOR_INFO("earjack (%d)\n", buff);
+
+	return count;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_SEC_FACTORY
 static ssize_t tc3xxk_grip_irq_count_show(struct device *dev,
@@ -2609,6 +3270,7 @@ static ssize_t tc3xxk_grip_irq_count_store(struct device *dev,
 }
 #endif //#ifdef CONFIG_SEC_FACTORY
 
+<<<<<<< HEAD
 static ssize_t tc3xxk_modecheck_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -2639,6 +3301,8 @@ static ssize_t tc3xxk_modecheck_show(struct device *dev,
 			mode, glove, run, sar, ta);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t grip_chip_name(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
@@ -2662,6 +3326,7 @@ static ssize_t grip_crc_check_show(struct device *dev,
 	return sprintf(buf, (ret == 0) ? "OK,%x\n" : "NG,%x\n", data->checksum);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(touchkey_threshold, S_IRUGO, tc3xxk_threshold_show, NULL);
 static DEVICE_ATTR(grip_firm_update, S_IRUGO | S_IWUSR | S_IWGRP,
 		NULL, tc3xxk_update_store);
@@ -2761,12 +3426,53 @@ static DEVICE_ATTR(grip_crc_check, S_IRUGO, grip_crc_check_show, NULL);
 
 static struct device_attribute *sec_grip_attributes[] = {
 	&dev_attr_touchkey_threshold,
+=======
+static ssize_t tc3xxk_enable_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct tc3xxk_data *data = dev_get_drvdata(dev);
+
+	return snprintf(buf, PAGE_SIZE, "%d\n", data->sar_enable);
+}
+
+static DEVICE_ATTR(grip_firm_update, 0220, NULL, tc3xxk_update_store);
+static DEVICE_ATTR(grip_firm_update_status, 0444, tc3xxk_firm_status_show, NULL);
+static DEVICE_ATTR(grip_firm_version_phone, 0444, tc3xxk_firm_version_show, NULL);
+static DEVICE_ATTR(grip_firm_version_panel, 0444, tc3xxk_firm_version_read_show, NULL);
+static DEVICE_ATTR(grip_md_version_phone, 0444, tc3xxk_md_version_show, NULL);
+static DEVICE_ATTR(grip_md_version_panel, 0444, tc3xxk_md_version_read_show, NULL);
+static DEVICE_ATTR(grip_threshold, 0444, tc3xxk_grip1_threshold_show, NULL);
+static DEVICE_ATTR(grip2ch_threshold, 0444, tc3xxk_grip2_threshold_show, NULL);
+static DEVICE_ATTR(grip_total_cap, 0444, tc3xxk_total_cap1_show, NULL);
+static DEVICE_ATTR(grip_total_cap2ch, 0444, tc3xxk_total_cap2_show, NULL);
+static DEVICE_ATTR(grip_sar_enable, 0664, tc3xxk_sar_enable_show, tc3xxk_sar_enable_store);
+static DEVICE_ATTR(grip_sw_reset, 0220, NULL, tc3xxk_grip_sw_reset);
+static DEVICE_ATTR(grip_earjack, 0220, NULL, grip_sensing_change);
+static DEVICE_ATTR(grip, 0444, tc3xxk_grip1_show, NULL);
+static DEVICE_ATTR(grip2ch, 0444, tc3xxk_grip2_show, NULL);
+static DEVICE_ATTR(grip_baseline, 0444, tc3xxk_grip1_baseline_show, NULL);
+static DEVICE_ATTR(grip2ch_baseline, 0444, tc3xxk_grip2_baseline_show, NULL);
+static DEVICE_ATTR(grip_raw, 0444, tc3xxk_grip1_raw_show, NULL);
+static DEVICE_ATTR(grip2ch_raw, 0444, tc3xxk_grip2_raw_show, NULL);
+static DEVICE_ATTR(grip_gain, 0444, tc3xxk_grip_gain_show, NULL);
+static DEVICE_ATTR(grip_check, 0444, tc3xxk_grip_check_show, NULL);
+#ifdef CONFIG_SEC_FACTORY
+static DEVICE_ATTR(grip_irq_count, 0664, tc3xxk_grip_irq_count_show, tc3xxk_grip_irq_count_store);
+#endif
+static DEVICE_ATTR(grip_ref_cap, 0444, grip_ref_cap_show, NULL);
+static DEVICE_ATTR(name, 0444, grip_chip_name, NULL);
+static DEVICE_ATTR(vendor, 0444, grip_vendor_show, NULL);
+static DEVICE_ATTR(grip_crc_check, 0444, grip_crc_check_show, NULL);
+
+static struct device_attribute *sec_grip_attributes[] = {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_grip_firm_update,
 	&dev_attr_grip_firm_update_status,
 	&dev_attr_grip_firm_version_phone,
 	&dev_attr_grip_firm_version_panel,
 	&dev_attr_grip_md_version_phone,
 	&dev_attr_grip_md_version_panel,
+<<<<<<< HEAD
 	&dev_attr_grip_recent,
 	&dev_attr_grip_recent_ref,
 	&dev_attr_grip_back,
@@ -2791,6 +3497,9 @@ static struct device_attribute *sec_grip_attributes[] = {
 	&dev_attr_grip_debug2,
 	&dev_attr_grip_debug3,
 	
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_grip_threshold,
 	&dev_attr_grip2ch_threshold,
 	&dev_attr_grip_total_cap,
@@ -2806,21 +3515,31 @@ static struct device_attribute *sec_grip_attributes[] = {
 	&dev_attr_grip2ch_raw,
 	&dev_attr_grip_gain,
 	&dev_attr_grip_check,
+<<<<<<< HEAD
 #ifndef CONFIG_SAMSUNG_PRODUCT_SHIP
 	&dev_attr_grip_sar_only_mode,
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SEC_FACTORY	
 	&dev_attr_grip_irq_count,
 #endif	
 	&dev_attr_grip_ref_cap,
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_name,
 	&dev_attr_vendor,
 	&dev_attr_grip_crc_check,
 	NULL,
 };
 
+<<<<<<< HEAD
 static DEVICE_ATTR(enable, 0664, grip_sar_enable_show, grip_sar_enable);
+=======
+static DEVICE_ATTR(enable, 0664, tc3xxk_enable_show, tc3xxk_sar_enable_store);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct attribute *tc3xxk_attributes[] = {
 	&dev_attr_enable.attr,
@@ -2831,6 +3550,7 @@ static struct attribute_group tc3xxk_attribute_group = {
 	.attrs = tc3xxk_attributes
 };
 
+<<<<<<< HEAD
 static struct device_attribute *sec_grip_attributes_350k[] = {
 	&dev_attr_grip_firm_update,
 	&dev_attr_grip_firm_update_status,
@@ -2910,6 +3630,10 @@ static struct device_attribute *sec_grip_attributes_350k[] = {
 
 #if defined (CONFIG_VBUS_NOTIFIER)
 static int grip_vbus_notification(struct notifier_block *nb,
+=======
+#if defined (CONFIG_VBUS_NOTIFIER)
+static int tc3xxk_vbus_notification(struct notifier_block *nb,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		unsigned long cmd, void *data)
 {
 	struct tc3xxk_data *tkey_data = container_of(nb, struct tc3xxk_data, vbus_nb);
@@ -2922,20 +3646,28 @@ static int grip_vbus_notification(struct notifier_block *nb,
 	switch (vbus_type) {
 	case STATUS_VBUS_HIGH:
 		SENSOR_INFO("attach\n");
+<<<<<<< HEAD
 		// if sar_mode is on => must send wake-up command
 		if (tkey_data->sar_mode)
 			ret = tc3xxk_wake_up(client, TC300K_CMD_WAKE_UP);
 
+=======
+		ret = tc3xxk_wake_up(client, TC300K_CMD_WAKE_UP);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = tc3xxk_mode_enable(client, TC300K_CMD_TA_ON);
 		if (ret < 0)
 			SENSOR_ERR("TA mode ON fail(%d)\n", ret);
 		break;
 	case STATUS_VBUS_LOW:
 		SENSOR_INFO("detach\n");
+<<<<<<< HEAD
 		// if sar_mode is on => must send wake-up command
 		if (tkey_data->sar_mode)
 			ret = tc3xxk_wake_up(client, TC300K_CMD_WAKE_UP);
 
+=======
+		ret = tc3xxk_wake_up(client, TC300K_CMD_WAKE_UP);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = tc3xxk_mode_enable(client, TC300K_CMD_TA_OFF);
 		if (ret < 0)
 			SENSOR_ERR("TA mode OFF fail(%d)\n", ret);
@@ -2964,8 +3696,13 @@ static int tc3xxk_fw_check(struct tc3xxk_data *data)
 	if (ret < 0) {
 		SENSOR_ERR("i2c fail...[%d], addr[%d]\n",
 			ret, data->client->addr);
+<<<<<<< HEAD
 		SENSOR_ERR("grip driver unload\n");
 		return ret;
+=======
+		data->fw_ver = 0xFF;
+        SENSOR_INFO("firmware is blank or i2c fail, try flash firmware to grip\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	if (data->fw_ver == 0xFF) {
@@ -2995,6 +3732,11 @@ static int tc3xxk_pinctrl_init(struct tc3xxk_data *data)
 		data->pinctrl_irq = NULL;
 		goto i2c_pinctrl_get;
 	}
+<<<<<<< HEAD
+=======
+
+#if 0
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	for (i = 0; i < 2; ++i) {
 		data->pin_state[i] = pinctrl_lookup_state(data->pinctrl_irq, str_states[i]);
 		if (IS_ERR(data->pin_state[i])) {
@@ -3004,6 +3746,10 @@ static int tc3xxk_pinctrl_init(struct tc3xxk_data *data)
 			goto i2c_pinctrl_get;
 		}
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 i2c_pinctrl_get:
 	/* for h/w i2c */
@@ -3066,13 +3812,21 @@ static void tc3xxk_config_gpio_i2c(struct tc3xxk_data *data, int onoff)
 	mdelay(100);
 }
 
+<<<<<<< HEAD
 static int __devinit tc3xxk_probe(struct i2c_client *client,
+=======
+static int tc3xxk_probe(struct i2c_client *client,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		const struct i2c_device_id *id)
 {
 	struct tc3xxk_platform_data *pdata;
 	struct tc3xxk_data *data;
 	struct input_dev *input_dev;
+<<<<<<< HEAD
 	int ret=0;
+=======
+	int ret = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	
 	SENSOR_INFO("\n");
 
@@ -3094,6 +3848,10 @@ static int __devinit tc3xxk_probe(struct i2c_client *client,
 				GFP_KERNEL);
 		if (!pdata) {
 			SENSOR_ERR("Failed to allocate memory\n");
+<<<<<<< HEAD
+=======
+			ret = -ENOMEM;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			goto err_alloc_data;
 		}
 
@@ -3110,6 +3868,10 @@ static int __devinit tc3xxk_probe(struct i2c_client *client,
 		goto err_alloc_data;
 	}
 
+<<<<<<< HEAD
+=======
+	data->earjack = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	data->pdata = pdata;
 
 	input_dev = input_allocate_device();
@@ -3124,14 +3886,25 @@ static int __devinit tc3xxk_probe(struct i2c_client *client,
 
 	if (data->pdata == NULL) {
 		SENSOR_ERR("failed to get platform data\n");
+<<<<<<< HEAD
+=======
+		input_free_device(input_dev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EINVAL;
 		goto err_platform_data;
 	}
 	data->irq = -1;
+<<<<<<< HEAD
 	mutex_init(&data->lock);
 	mutex_init(&data->lock_fac);
 
 	wake_lock_init(&data->grip_wake_lock, WAKE_LOCK_SUSPEND, "grip wake lock");
+=======
+	mutex_init(&data->lock_fac);
+
+	wake_lock_init(&data->grip_wake_lock, WAKE_LOCK_SUSPEND, "grip wake lock");
+	INIT_DELAYED_WORK(&data->debug_work, tc3xxk_debug_work_func);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pdata->power = tc3xxk_grip_power;
 
@@ -3165,14 +3938,19 @@ static int __devinit tc3xxk_probe(struct i2c_client *client,
 	snprintf(data->phys, sizeof(data->phys),
 		"%s/input0", dev_name(&client->dev));
 	input_dev->name = MODULE_NAME;    // TSN : TRY to parse form Match table
+<<<<<<< HEAD
 	input_dev->phys = data->phys;
 	input_dev->id.bustype = BUS_I2C;
 	input_dev->dev.parent = &client->dev;
+=======
+	input_dev->id.bustype = BUS_I2C;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	data->grip_ev_val = grip_ev;
 	data->grip_num = ARRAY_SIZE(grip_ev)/2;
 	SENSOR_INFO( "number of grips = %d\n", data->grip_num);
 
+<<<<<<< HEAD
 #if 0
 	set_bit(EV_KEY, input_dev->evbit);
 	for (i = 0; i < data->grip_num; i++) {
@@ -3185,6 +3963,9 @@ static int __devinit tc3xxk_probe(struct i2c_client *client,
 #else
 	input_set_capability(input_dev, EV_REL, REL_MISC);
 #endif
+=======
+	input_set_capability(input_dev, EV_REL, REL_MISC);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(input_dev, data);
 
 	ret = input_register_device(input_dev);
@@ -3207,6 +3988,7 @@ static int __devinit tc3xxk_probe(struct i2c_client *client,
 		goto err_sysfs_group;
 	}
 	
+<<<<<<< HEAD
 	if (data->pdata->tsk_ic_num == TC350K_TSK_IC) {
 		ret = sensors_register(&data->dev, data, 
 				sec_grip_attributes_350k, MODULE_NAME);
@@ -3214,38 +3996,74 @@ static int __devinit tc3xxk_probe(struct i2c_client *client,
 		ret = sensors_register(&data->dev, data, sec_grip_attributes,
 				MODULE_NAME);
 	}
+=======
+	ret = sensors_register(&data->dev, data, sec_grip_attributes, MODULE_NAME);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret) {
 		SENSOR_ERR("could not register grip_sensor(%d)\n", ret);
 		goto err_sensor_register;
 	}
+<<<<<<< HEAD
 	dev_set_drvdata(data->dev, data);
 
 #if defined (CONFIG_VBUS_NOTIFIER)
 	vbus_notifier_register(&data->vbus_nb, grip_vbus_notification,
+=======
+	data->dev = &client->dev;	
+
+#if defined (CONFIG_VBUS_NOTIFIER)
+	vbus_notifier_register(&data->vbus_nb, tc3xxk_vbus_notification,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			       VBUS_NOTIFY_DEV_CHARGER);
 #endif
 
 	ret = request_threaded_irq(client->irq, NULL, tc3xxk_interrupt,
+<<<<<<< HEAD
 				IRQF_DISABLED | IRQF_TRIGGER_FALLING |
 				IRQF_ONESHOT, MODEL_NAME, data);
+=======
+		IRQF_TRIGGER_FALLING | IRQF_ONESHOT, MODEL_NAME, data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		SENSOR_ERR("fail to request irq (%d).\n",
 			pdata->gpio_int);
 		goto err_request_irq;
 	}
+<<<<<<< HEAD
 	data->irq = pdata->gpio_int;
+=======
+	disable_irq(client->irq);
+	
+	data->irq = pdata->gpio_int;
+	data->irq_check = false;
+	
+	// default working on stop mode
+	ret = tc3xxk_wake_up(data->client, TC300K_CMD_WAKE_UP);
+	ret = tc3xxk_mode_enable(data->client, TC300K_CMD_SAR_DISABLE);
+	if (ret < 0) {
+		SENSOR_ERR("Change mode fail(%d)\n", ret);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = tc3xxk_mode_check(client);
 	if (ret >= 0) {
 		data->sar_enable = !!(ret & TC300K_MODE_SAR);
 		SENSOR_INFO("mode %d, sar %d\n", ret, data->sar_enable);
 	}
+<<<<<<< HEAD
 	device_init_wakeup(&client->dev, true);
+=======
+	data->curr_state = data->sar_enable;
+
+	device_init_wakeup(&client->dev, true);
+	schedule_delayed_work(&data->debug_work, msecs_to_jiffies(20000));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	SENSOR_INFO("done\n");
 	return 0;
 
 err_request_irq:
+<<<<<<< HEAD
 err_sysfs_group:
 	if (data->pdata->tsk_ic_num == TC350K_TSK_IC) {
 		sensors_unregister(data->dev, sec_grip_attributes_350k);
@@ -3253,6 +4071,13 @@ err_sysfs_group:
 		sensors_unregister(data->dev, sec_grip_attributes);
 	}
 err_sensor_register:
+=======
+
+	sensors_unregister(data->dev, sec_grip_attributes);
+err_sensor_register:
+	sysfs_remove_group(&input_dev->dev.kobj, &tc3xxk_attribute_group);
+err_sysfs_group:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sensors_remove_symlink(&data->input_dev->dev.kobj, input_dev->name);
 err_sysfs_symlink:
 	input_unregister_device(input_dev);
@@ -3261,6 +4086,7 @@ err_register_input_dev:
 err_fw_check:
 	data->pdata->power(data, false);
 err_pinctrl_init:
+<<<<<<< HEAD
 	mutex_destroy(&data->lock);
 	mutex_destroy(&data->lock_fac);
 	wake_lock_destroy(&data->grip_wake_lock);
@@ -3273,6 +4099,19 @@ err_alloc_data:
 }
 
 static int __devexit tc3xxk_remove(struct i2c_client *client)
+=======
+	mutex_destroy(&data->lock_fac);
+	wake_lock_destroy(&data->grip_wake_lock);
+err_platform_data:
+err_alloc_input:
+	kfree(data);
+err_alloc_data:
+	SENSOR_ERR("failed\n");
+	return ret;
+}
+
+static int tc3xxk_remove(struct i2c_client *client)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct tc3xxk_data *data = i2c_get_clientdata(client);
 
@@ -3280,7 +4119,10 @@ static int __devexit tc3xxk_remove(struct i2c_client *client)
 	wake_lock_destroy(&data->grip_wake_lock);
 	free_irq(client->irq, data);
 	input_unregister_device(data->input_dev);
+<<<<<<< HEAD
 	mutex_destroy(&data->lock);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_destroy(&data->lock_fac);
 	data->pdata->power(data, false);
 	gpio_free(data->pdata->gpio_int);
@@ -3297,6 +4139,10 @@ static void tc3xxk_shutdown(struct i2c_client *client)
 
 	SENSOR_INFO("\n");
 
+<<<<<<< HEAD
+=======
+	cancel_delayed_work_sync(&data->debug_work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	device_init_wakeup(&client->dev, false);
 	wake_lock_destroy(&data->grip_wake_lock);
 	disable_irq(client->irq);
@@ -3309,6 +4155,7 @@ static int tc3xxk_suspend(struct device *dev)
 	struct tc3xxk_data *data = i2c_get_clientdata(client);
 
 	SENSOR_INFO("sar_enable(%d)\n", data->sar_enable);
+<<<<<<< HEAD
 	
 	mutex_lock(&data->lock);
 	
@@ -3322,6 +4169,9 @@ static int tc3xxk_suspend(struct device *dev)
 	tc3xxk_pinctrl(data, I_STATE_OFF_IRQ);
 
 	mutex_unlock(&data->lock);
+=======
+	cancel_delayed_work_sync(&data->debug_work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -3331,6 +4181,7 @@ static int tc3xxk_resume(struct device *dev)
 	struct i2c_client *client = to_i2c_client(dev);
 	struct tc3xxk_data *data = i2c_get_clientdata(client);
 
+<<<<<<< HEAD
 	mutex_lock(&data->lock);
 
 	SENSOR_INFO("sar_enable(%d)\n", data->sar_enable);
@@ -3344,6 +4195,11 @@ static int tc3xxk_resume(struct device *dev)
 	tc3xxk_stop_mode(data, 0);
 
 	mutex_unlock(&data->lock);
+=======
+	SENSOR_INFO("sar_enable(%d)\n", data->sar_enable);
+	schedule_delayed_work(&data->debug_work, msecs_to_jiffies(1000));
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -3366,19 +4222,46 @@ static const struct dev_pm_ops tc3xxk_pm_ops = {
 
 static struct i2c_driver tc3xxk_driver = {
 	.probe = tc3xxk_probe,
+<<<<<<< HEAD
 	.remove = __devexit_p(tc3xxk_remove),
+=======
+	.remove = tc3xxk_remove,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.shutdown = tc3xxk_shutdown,
 	.driver = {
 		.name = MODEL_NAME,
 		.owner = THIS_MODULE,
 		.pm = &tc3xxk_pm_ops,
+<<<<<<< HEAD
 		.of_match_table = of_match_ptr(coreriver_match_table),
+=======
+		.of_match_table = coreriver_match_table,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	},
 	.id_table = tc3xxk_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tc3xxk_driver);
 
 MODULE_AUTHOR("Samsung Electronics");
 MODULE_DESCRIPTION("Grip Sensor driver for Coreriver TC3XXK");
 MODULE_LICENSE("GPL");
+=======
+static int __init tc3xxk_init(void)
+{
+	return i2c_add_driver(&tc3xxk_driver);
+}
+
+static void __exit tc3xxk_exit(void)
+{
+	i2c_del_driver(&tc3xxk_driver);
+}
+
+module_init(tc3xxk_init);
+module_exit(tc3xxk_exit);
+
+MODULE_AUTHOR("Samsung Electronics");
+MODULE_DESCRIPTION("Grip Sensor driver for Coreriver TC3XXK");
+MODULE_LICENSE("GPL");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

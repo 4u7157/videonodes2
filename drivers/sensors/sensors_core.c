@@ -25,6 +25,12 @@
 #include <linux/input.h>
 #include <linux/sensor/sensors_core.h>
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ADSP_FACTORY
+#include <linux/kernel.h>
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct class *sensors_class;
 struct class *sensors_event_class;
 static struct device *symlink_dev;
@@ -242,6 +248,13 @@ void destroy_sensor_class(void)
 	}
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ADSP_FACTORY
+extern  struct class* get_adsp_sensor_class(void);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int sensors_input_init(void)
 {
 	int ret;
@@ -285,12 +298,22 @@ static int __init sensors_class_init(void)
 {
 	pr_info("[SENSORS CORE] sensors_class_init\n");
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ADSP_FACTORY
+	sensors_class = get_adsp_sensor_class();
+#else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sensors_class = class_create(THIS_MODULE, "sensors");
 	if (IS_ERR(sensors_class)) {
 		pr_err("%s, create sensors_class is failed.(err=%d)\n",
 			__func__, IS_ERR(sensors_class));
 		return PTR_ERR(sensors_class);
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* For flush sysfs */
 	sensor_dev = device_create(sensors_class, NULL, 0, NULL,

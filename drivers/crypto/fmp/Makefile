@@ -6,8 +6,11 @@ obj-$(CONFIG_FIPS_FMP) += hmac-sha256.o
 obj-$(CONFIG_FIPS_FMP) += fmp_mmc_fips.o
 obj-$(CONFIG_FIPS_FMP) += last_file.o
 
+<<<<<<< HEAD
 ifneq (,$(filter $(CONFIG_FMP_ECRYPT_FS) $(CONFIG_FMP_EXT4CRYPT_FS),y))
 obj-y += fmp_derive_iv.o
 endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 ccflags-$(CONFIG_FMP_MMC) += -Idrivers/mmc/host

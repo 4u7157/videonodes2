@@ -22,6 +22,14 @@
 #include <linux/spinlock.h>
 #include <linux/wakelock.h>
 #include <linux/hall.h>
+<<<<<<< HEAD
+=======
+#include <linux/notifier.h>
+
+#if defined(CONFIG_HALL_NOTIFIER)
+#include <linux/hall_notifier.h>
+#endif /*CONFIG_HALL_NOTIFIER*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct device *sec_device_create(void *drvdata, const char *fmt);
 
@@ -32,6 +40,7 @@ struct hall_drvdata {
 	struct work_struct work;
 	struct delayed_work flip_cover_dwork;
 	struct wake_lock flip_wake_lock;
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 	struct mutex irq_lock;
 	bool gsm_area;
@@ -39,10 +48,13 @@ struct hall_drvdata {
 	bool cover_state;
 	bool wa_enable;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static bool flip_cover = 1;
 
+<<<<<<< HEAD
 /* WorkAround for K3G Hall IRQ Problem */
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 struct hall_drvdata *g_drvdata;
@@ -137,6 +149,47 @@ static struct attribute *hall_attrs[] = {
 /* WorkAround for K3G Hall IRQ Problem */
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 	&dev_attr_hall_irq_ctrl.attr,
+=======
+static ssize_t hall_detect_show(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	if (flip_cover) {
+		sprintf(buf, "OPEN\n");
+	} else {
+		sprintf(buf, "CLOSE\n");
+	}
+
+	return strlen(buf);
+}
+static DEVICE_ATTR(hall_detect, 0664, hall_detect_show, NULL);
+
+#if defined(CONFIG_CHECK_BOOKCOVER_HALL)
+
+static int gpio_check_bookcover;
+static int enable_check_bookcover;
+static ssize_t check_bookcover_detect_show(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+    if(enable_check_bookcover)
+    {
+	    if (gpio_get_value(gpio_check_bookcover)) {
+		    sprintf(buf, "OPEN\n");
+	    } else {
+		    sprintf(buf, "CLOSE\n");
+	    }
+    } else {
+        sprintf(buf, "OPEN\n");
+    }
+	return strlen(buf);
+}
+static DEVICE_ATTR(check_bookcover_detect, 0664, check_bookcover_detect_show, NULL);
+#endif
+
+static struct attribute *hall_attrs[] = {
+	&dev_attr_hall_detect.attr,
+#if defined(CONFIG_CHECK_BOOKCOVER_HALL)
+    &dev_attr_check_bookcover_detect.attr,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	NULL,
 };
@@ -145,7 +198,11 @@ static struct attribute_group hall_attr_group = {
 	.attrs = hall_attrs,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_SEC_FACTORY
+=======
+#if defined(CONFIG_SEC_FACTORY) || defined(CONFIG_SEC_FLIP_WORK_DOUBLE_CHECK)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void flip_cover_work(struct work_struct *work)
 {
 	bool first,second;
@@ -155,33 +212,54 @@ static void flip_cover_work(struct work_struct *work)
 
 	first = gpio_get_value(ddata->gpio_flip_cover);
 
+<<<<<<< HEAD
 	printk("keys:%s #1 : %d\n", __func__, first);
+=======
+	printk("[keys] %s flip_status #1 : %d (%s)\n", __func__, first, first?"open":"close");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	msleep(50);
 
 	second = gpio_get_value(ddata->gpio_flip_cover);
 
+<<<<<<< HEAD
 	printk("keys:%s #2 : %d\n", __func__, second);
+=======
+	printk("[keys] %s flip_status #2 : %d (%s)\n", __func__, second, second?"open":"close");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if(first == second) {
 		flip_cover = first;
 		input_report_switch(ddata->input, SW_FLIP, flip_cover);
 		input_sync(ddata->input);
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_HALL_NOTIFIER)
+		if(flip_cover == HALL_OPEN)
+			hall_notifier_hall_state(HALL_OPEN);
+		else
+			hall_notifier_hall_state(HALL_CLOSE);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 #else
 static void flip_cover_work(struct work_struct *work)
 {
 	bool first;
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 	bool second;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct hall_drvdata *ddata =
 		container_of(work, struct hall_drvdata,
 				flip_cover_dwork.work);
 
 	first = gpio_get_value(ddata->gpio_flip_cover);
 
+<<<<<<< HEAD
 	printk("keys:%s #1 : %d\n", __func__, first);
 
 /* WorkAround for K3G Hall IRQ Problem */
@@ -200,6 +278,19 @@ static void flip_cover_work(struct work_struct *work)
 	input_report_switch(ddata->input,
 			SW_FLIP, flip_cover);
 	input_sync(ddata->input);
+=======
+	printk("[keys] %s flip_status : %d (%s)\n", __func__, first, first?"open":"close");
+
+	flip_cover = first;
+	input_report_switch(ddata->input, SW_FLIP, flip_cover);
+	input_sync(ddata->input);
+#if defined(CONFIG_HALL_NOTIFIER)
+	if(flip_cover == HALL_OPEN)
+		hall_notifier_hall_state(HALL_OPEN);
+	else
+		hall_notifier_hall_state(HALL_CLOSE);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 #endif
 
@@ -272,12 +363,17 @@ static void init_hall_ic_irq(struct input_dev *input)
 		printk(KERN_ERR
 		"keys: failed to request flip cover irq %d gpio %d\n",
 		irq, ddata->gpio_flip_cover);
+<<<<<<< HEAD
 	} else {
 		pr_info("%s : success\n", __func__);
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 		g_drvdata->irq_state = true;
 #endif
 	}
+=======
+	} else
+		pr_info("%s : success\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #ifdef CONFIG_OF
@@ -286,10 +382,13 @@ static int of_hall_data_parsing_dt(struct hall_drvdata *ddata)
 	struct device_node *np_haptic;
 	int gpio;
 	enum of_gpio_flags flags;
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 	u32 temp;
 	int ret;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	np_haptic = of_find_node_by_path("/hall");
 	if (np_haptic == NULL) {
@@ -311,6 +410,7 @@ static int of_hall_data_parsing_dt(struct hall_drvdata *ddata)
 	}
 	ddata->irq_flip_cover = gpio;
 
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 	ret = of_property_read_u32(np_haptic, "hall,gsm_wa", &temp);
 	if (ret) {
@@ -322,6 +422,17 @@ static int of_hall_data_parsing_dt(struct hall_drvdata *ddata)
 	}
 #endif
 
+=======
+#if defined(CONFIG_CHECK_BOOKCOVER_HALL)	
+    	gpio = of_get_named_gpio_flags(np_haptic, "hall,gpio_check_bookcover", 0, &flags);
+	if (gpio < 0) {
+		pr_info("%s: fail to get check_bookcover \n", __func__ );
+	} else {
+        	gpio_check_bookcover = gpio;
+        	enable_check_bookcover = 1;
+    	}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 #endif
@@ -378,6 +489,7 @@ static int hall_probe(struct platform_device *pdev)
 	/* Enable auto repeat feature of Linux input subsystem */
 	__set_bit(EV_REP, input->evbit);
 
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_HALL_IRQ_CTRL
 	mutex_init(&ddata->irq_lock);
 
@@ -386,6 +498,8 @@ static int hall_probe(struct platform_device *pdev)
 	g_drvdata = ddata;
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	init_hall_ic_irq(input);
 
 	error = sysfs_create_group(&sec_key->kobj, &hall_attr_group);
@@ -450,6 +564,7 @@ static int hall_suspend(struct device *dev)
 {
 	struct hall_drvdata *ddata = dev_get_drvdata(dev);
 	struct input_dev *input = ddata->input;
+<<<<<<< HEAD
 
 	printk("%s start\n", __func__);
 
@@ -464,6 +579,15 @@ static int hall_suspend(struct device *dev)
 #else
 	enable_irq_wake(ddata->irq_flip_cover);
 #endif
+=======
+	bool status;
+
+	printk("%s start\n", __func__);
+	status = gpio_get_value(ddata->gpio_flip_cover);
+	printk("[keys] %s flip_status : %d (%s)\n", __func__, status, status?"open":"close");
+
+	enable_irq_wake(ddata->irq_flip_cover);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (device_may_wakeup(dev)) {
 		enable_irq_wake(ddata->irq_flip_cover);
@@ -481,6 +605,7 @@ static int hall_resume(struct device *dev)
 {
 	struct hall_drvdata *ddata = dev_get_drvdata(dev);
 	struct input_dev *input = ddata->input;
+<<<<<<< HEAD
 
 	printk("%s start\n", __func__);
 	input_sync(input);
@@ -489,6 +614,15 @@ static int hall_resume(struct device *dev)
 	if (g_drvdata->cover_state && g_drvdata->gsm_area)
 		hall_irq_set(enable, false);
 #endif
+=======
+	bool status;
+
+	printk("%s start\n", __func__);
+	status = gpio_get_value(ddata->gpio_flip_cover);
+	printk("[keys] %s flip_status : %d (%s)\n", __func__, status, status?"open":"close");
+	input_sync(input);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 #endif
@@ -524,6 +658,11 @@ late_initcall(hall_init);
 module_exit(hall_exit);
 
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 MODULE_AUTHOR("Phil Blundell <pb@handhelds.org>");
 MODULE_DESCRIPTION("Keyboard driver for GPIOs");
+=======
+MODULE_AUTHOR("Insun Choi <insun77.choi@samsung.com>");
+MODULE_DESCRIPTION("Hall IC driver for GPIOs");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 MODULE_ALIAS("platform:gpio-keys");

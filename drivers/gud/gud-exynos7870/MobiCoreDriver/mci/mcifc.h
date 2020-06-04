@@ -19,7 +19,11 @@
 /** @name MobiCore FastCall Defines
  * Defines for the two different FastCall's.
  */
+<<<<<<< HEAD
 /** @{ */
+=======
+/**/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* --- global ---- */
 #define MC_FC_INVALID	((u32)0)  /**< Invalid FastCall ID */
@@ -48,7 +52,11 @@
 
 /** @name MobiCore SMC Defines
  * Defines the different secure monitor calls (SMC) for world switching.
+<<<<<<< HEAD
  * @{ */
+=======
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**< Yield to switch from NWd to SWd. */
 #define MC_SMC_N_YIELD			3
 /**< SIQ to switch from NWd to SWd. */
@@ -57,7 +65,11 @@
 
 /** @name MobiCore status
  *  MobiCore status information.
+<<<<<<< HEAD
  * @{ */
+=======
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**< MobiCore is not yet initialized. FastCall FcInit() to set up MobiCore.*/
 #define MC_STATUS_NOT_INITIALIZED	0
 /**< Bad parameters have been passed in FcInit(). */
@@ -65,14 +77,23 @@
 /**< MobiCore did initialize properly. */
 #define MC_STATUS_INITIALIZED		2
 /**< MobiCore kernel halted due to an unrecoverable exception. Further
+<<<<<<< HEAD
  * information is available extended info */
+=======
+ * information is available extended info
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MC_STATUS_HALT			3
 /** @} */
 
 /** @name Extended Info Identifiers
  *  Extended info parameters for MC_FC_INFO to obtain further information
  *  depending on MobiCore state.
+<<<<<<< HEAD
  * @{ */
+=======
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**< Version of the MobiCore Control Interface (MCI) */
 #define MC_EXT_INFO_ID_MCI_VERSION	0
 /**< MobiCore control flags */
@@ -129,18 +150,31 @@
 
 /** @name FastCall return values
  * Return values of the MobiCore FastCalls.
+<<<<<<< HEAD
  * @{ */
+=======
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**< No error. Everything worked fine. */
 #define MC_FC_RET_OK				0
 /**< FastCall was not successful. */
 #define MC_FC_RET_ERR_INVALID			1
 /**< MobiCore has already been initialized. */
 #define MC_FC_RET_ERR_ALREADY_INITIALIZED	5
+<<<<<<< HEAD
+=======
+/**< Call is not allowed. */
+#define MC_FC_RET_ERR_NOABILITY            6
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /** @} */
 
 /** @name Init FastCall flags
  * Return flags of the Init FastCall.
+<<<<<<< HEAD
  * @{ */
+=======
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**< SWd uses LPAE MMU table format. */
 #define MC_FC_INIT_FLAG_LPAE			BIT(0)
 /** @} */

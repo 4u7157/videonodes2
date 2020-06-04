@@ -17,7 +17,11 @@ struct cm36672p_platform_data {
 
 	int vdd_always_on; /* 1: vdd is always on, 0: enable only when proximity is on */
 	int vled_ldo; /*0: vled(anode) source regulator, other: get power by LDO control */
+<<<<<<< HEAD
 	int regulator_divided; /* 1: vdd & vled uses divided circuit, 0: vdd & vled uses seperate circuit */
+=======
+	int regulator_divided;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 #endif
 #endif

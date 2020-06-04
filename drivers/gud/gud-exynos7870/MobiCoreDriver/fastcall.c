@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2015 TRUSTONIC LIMITED
+=======
+ * Copyright (c) 2013-2017 TRUSTONIC LIMITED
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,11 +21,25 @@
 #include <linux/workqueue.h>
 #include <linux/cpu.h>
 #include <linux/moduleparam.h>
+<<<<<<< HEAD
 
 #include <linux/interrupt.h>
 #include <linux/irq.h>
 
 #include "public/mc_linux.h"
+=======
+#include <linux/debugfs.h>
+#include <linux/sched.h>	/* local_clock */
+#include <linux/version.h>
+#if KERNEL_VERSION(4, 11, 0) <= LINUX_VERSION_CODE
+#include <linux/sched/clock.h>	/* local_clock */
+#endif
+#include <linux/uaccess.h>
+#include <linux/irq.h>
+#include <linux/interrupt.h>
+
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "public/mc_linux_api.h"
 
 #include "mci/mcifc.h"
@@ -38,7 +56,15 @@ uint8_t core_status = 0xFF;
 static int disable_local_timer;
 int mc_timer(void);
 void mc_set_schedule_policy(int core);
+<<<<<<< HEAD
 int __mc_switch_core(u32 core_num);
+=======
+int __mc_switch_core(int cpu);
+#endif
+
+#if KERNEL_VERSION(3, 15, 0) > LINUX_VERSION_CODE
+#define MIN_NICE	-20
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 struct fastcall_work {
@@ -179,8 +205,15 @@ static inline int _smc(union mc_fc_generic *mc_fc_generic)
 
 		__asm__ volatile (
 #ifdef MC_ARCH_EXTENSION_SEC
+<<<<<<< HEAD
 			/* This pseudo op is supported and required from
 			 * binutils 2.21 on */
+=======
+			/*
+			 * This pseudo op is supported and required from
+			 * binutils 2.21 on
+			 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			".arch_extension sec\n"
 #endif /* MC_ARCH_EXTENSION_SEC */
 			"smc #0\n"
@@ -188,9 +221,17 @@ static inline int _smc(union mc_fc_generic *mc_fc_generic)
 		);
 
 #ifdef __ARM_VE_A9X4_QEMU__
+<<<<<<< HEAD
 		/* Qemu does not return to the address following the SMC
 		 * instruction so we have to insert several nop instructions to
 		 * workaround this Qemu bug. */
+=======
+		/*
+		 * Qemu does not return to the address following the SMC
+		 * instruction so we have to insert several nop instructions to
+		 * workaround this Qemu bug.
+		 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		__asm__ volatile (
 			"nop\n"
 			"nop\n"
@@ -211,7 +252,11 @@ static inline int _smc(union mc_fc_generic *mc_fc_generic)
 }
 
 #ifdef TBASE_CORE_SWITCHER
+<<<<<<< HEAD
 static u32 active_cpu;
+=======
+static int active_cpu;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_SECURE_OS_BOOSTER_API
 /* ExySp: for sos performance */
@@ -260,6 +305,12 @@ void mc_cpu_online(int cpu)
 {
 	mutex_lock(&core_switch_lock);
 	core_status |= (0x1 << cpu);
+<<<<<<< HEAD
+=======
+
+	if (cpu == NONBOOT_LITTLE_CORE)
+		__mc_switch_core(NONBOOT_LITTLE_CORE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&core_switch_lock);
 }
 #else
@@ -289,21 +340,38 @@ static void mc_cpu_offline(int cpu)
 static int mobicore_cpu_callback(struct notifier_block *nfb,
 				 unsigned long action, void *hcpu)
 {
+<<<<<<< HEAD
 	unsigned int cpu = (unsigned long)hcpu;
 
+=======
+	int cpu = (int)(uintptr_t)hcpu;
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	switch (action) {
 #ifdef CONFIG_SECURE_OS_BOOSTER_API
 /* ExySp: for sos performance */
 	case CPU_ONLINE:
+<<<<<<< HEAD
+=======
+	case CPU_ONLINE_FROZEN:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mc_cpu_online(cpu);
 		break;
 #endif
 	case CPU_DOWN_PREPARE:
 	case CPU_DOWN_PREPARE_FROZEN:
+<<<<<<< HEAD
+=======
+		mc_dev_info("Cpu %d is going to die\n", cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mc_cpu_offline(cpu);
 		break;
 	case CPU_DEAD:
 	case CPU_DEAD_FROZEN:
+<<<<<<< HEAD
+=======
+		mc_dev_info("Cpu %d is dead\n", cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	}
 	return NOTIFY_OK;
@@ -317,19 +385,31 @@ static struct notifier_block mobicore_cpu_notifer = {
 static cpumask_t mc_exec_core_switch(union mc_fc_generic *mc_fc_generic)
 {
 	cpumask_t cpu;
+<<<<<<< HEAD
 	u32 new_cpu;
+=======
+	int new_cpu;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u32 cpu_id[] = CPU_IDS;
 
 	new_cpu = mc_fc_generic->as_in.param[0];
 	mc_fc_generic->as_in.param[0] = cpu_id[mc_fc_generic->as_in.param[0]];
 
 	if (_smc(mc_fc_generic) != 0 || mc_fc_generic->as_out.ret != 0) {
+<<<<<<< HEAD
+=======
+		/* ExySp: print info */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mc_dev_info("CoreSwap failed %d -> %d (cpu %d still active)\n",
 			     raw_smp_processor_id(),
 			     mc_fc_generic->as_in.param[0],
 			     raw_smp_processor_id());
 	} else {
 		active_cpu = new_cpu;
+<<<<<<< HEAD
+=======
+		/* ExySp: print info */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mc_dev_info("CoreSwap ok %d -> %d\n",
 			     raw_smp_processor_id(), active_cpu);
 	}
@@ -337,6 +417,31 @@ static cpumask_t mc_exec_core_switch(union mc_fc_generic *mc_fc_generic)
 	cpumask_set_cpu(active_cpu, &cpu);
 	return cpu;
 }
+<<<<<<< HEAD
+=======
+
+static ssize_t debug_coreswitch_write(struct file *file,
+				      const char __user *buffer,
+				      size_t buffer_len, loff_t *x)
+{
+	int new_cpu = 0;
+
+	/* Invalid data, nothing to do */
+	if (buffer_len < 1)
+		return -EINVAL;
+
+	if (kstrtouint_from_user(buffer, buffer_len, 0, &new_cpu))
+		return -EINVAL;
+
+	mc_dev_devel("Set active cpu to %d\n", new_cpu);
+	mc_switch_core(new_cpu);
+	return buffer_len;
+}
+
+static const struct file_operations mc_debug_coreswitch_ops = {
+	.write = debug_coreswitch_write,
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else /* TBASE_CORE_SWITCHER */
 static inline cpumask_t mc_exec_core_switch(union mc_fc_generic *mc_fc_generic)
 {
@@ -368,7 +473,11 @@ static void fastcall_work_func(struct work_struct *work)
 #ifdef MC_FASTCALL_WORKER_THREAD
 		cpumask_t new_msk = mc_exec_core_switch(mc_fc_generic);
 
+<<<<<<< HEAD
 		set_cpus_allowed(fastcall_thread, new_msk);
+=======
+		set_cpus_allowed_ptr(fastcall_thread, &new_msk);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 		mc_exec_core_switch(mc_fc_generic);
 #endif
@@ -382,7 +491,11 @@ static void fastcall_work_func(struct work_struct *work)
 		}
 #endif
 		_smc(mc_fc_generic);
+<<<<<<< HEAD
 
+=======
+	/* ExySp: for sos performance */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SECURE_OS_BOOSTER_API
 		if (irq_check_cnt) {
 			if (desc->depth != 0)
@@ -402,16 +515,34 @@ static bool mc_fastcall(void *data)
 		.data = data,
 	};
 
+<<<<<<< HEAD
+=======
+#if KERNEL_VERSION(4, 9, 0) <= LINUX_VERSION_CODE
+	if (!kthread_queue_work(&fastcall_worker, &fc_work.work))
+		return false;
+
+	/* If work is queued or executing, wait for it to finish execution */
+	kthread_flush_work(&fc_work.work);
+#else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!queue_kthread_work(&fastcall_worker, &fc_work.work))
 		return false;
 
 	/* If work is queued or executing, wait for it to finish execution */
 	flush_kthread_work(&fc_work.work);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 	struct fastcall_work fc_work = {
 		.data = data,
 	};
+<<<<<<< HEAD
 	INIT_WORK(&fc_work.work, fastcall_work_func);
+=======
+	INIT_WORK_ONSTACK(&fc_work.work, fastcall_work_func);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!schedule_work_on(0, &fc_work.work))
 		return false;
@@ -423,6 +554,10 @@ static bool mc_fastcall(void *data)
 
 int mc_fastcall_init(void)
 {
+<<<<<<< HEAD
+=======
+	cpumask_t new_msk = CPU_MASK_CPU0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret = mc_clock_init();
 
 	if (ret)
@@ -438,12 +573,25 @@ int mc_fastcall_init(void)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	/* this thread MUST run on CPU 0 at startup */
 	set_cpus_allowed(fastcall_thread, CPU_MASK_CPU0);
+=======
+	set_user_nice(fastcall_thread, MIN_NICE);
+
+	/* this thread MUST run on CPU 0 at startup */
+	set_cpus_allowed_ptr(fastcall_thread, &new_msk);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wake_up_process(fastcall_thread);
 #ifdef TBASE_CORE_SWITCHER
 	ret = register_cpu_notifier(&mobicore_cpu_notifer);
+<<<<<<< HEAD
+=======
+	/* Create debugfs structs entry */
+	debugfs_create_file("active_cpu", 0600, g_ctx.debug_dir, NULL,
+			    &mc_debug_coreswitch_ops);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif /* MC_FASTCALL_WORKER_THREAD */
 
@@ -502,9 +650,15 @@ int mc_fc_init(uintptr_t base_pa, ptrdiff_t off, size_t q_len, size_t buf_len)
 	fc_init.as_in.base = (u32)base_pa;
 	/* notification buffer start/length [16:16] [start, length] */
 	fc_init.as_in.nq_info =
+<<<<<<< HEAD
 	    ((base_high & 0xFFFF) << 16) | (q_len & 0xFFFF);
 	/* mcp buffer start/length [16:16] [start, length] */
 	fc_init.as_in.mcp_info = (off << 16) | (buf_len & 0xFFFF);
+=======
+	    (u32)(((base_high & 0xFFFF) << 16) | (q_len & 0xFFFF));
+	/* mcp buffer start/length [16:16] [start, length] */
+	fc_init.as_in.mcp_info = (u32)((off << 16) | (buf_len & 0xFFFF));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mc_dev_devel("cmd=%d, base=0x%08x,nq_info=0x%08x, mcp_info=0x%08x\n",
 		     fc_init.as_in.cmd, fc_init.as_in.base,
 		     fc_init.as_in.nq_info, fc_init.as_in.mcp_info);
@@ -632,36 +786,60 @@ int mc_fastcall_debug_smclog(struct kasnprintf_buf *buf)
 }
 
 #ifdef TBASE_CORE_SWITCHER
+<<<<<<< HEAD
 u32 mc_active_core(void)
+=======
+int mc_active_core(void)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	return active_cpu;
 }
 
 /* ExySp: for sos performance */
 #ifdef CONFIG_SECURE_OS_BOOSTER_API
+<<<<<<< HEAD
 int __mc_switch_core(u32 core_num)
 #else
 int mc_switch_core(u32 core_num)
+=======
+int __mc_switch_core(int cpu)
+#else
+int mc_switch_core(int cpu)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 {
 	s32 ret = 0;
 	union mc_fc_swich_core fc_switch_core;
 
+<<<<<<< HEAD
 	if (!cpu_online(core_num))
+=======
+	if (!cpu_online(cpu))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 1;
 
 	memset(&fc_switch_core, 0, sizeof(fc_switch_core));
 	fc_switch_core.as_in.cmd = MC_FC_SWAP_CPU;
+<<<<<<< HEAD
 	if (core_num < COUNT_OF_CPUS)
 		fc_switch_core.as_in.core_id = core_num;
+=======
+	if (cpu < COUNT_OF_CPUS)
+		fc_switch_core.as_in.core_id = cpu;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	else
 		fc_switch_core.as_in.core_id = 0;
 
 	mc_dev_devel("<- cmd=0x%08x, core_id=0x%08x\n",
 		     fc_switch_core.as_in.cmd, fc_switch_core.as_in.core_id);
 	/* ExySp: for sos performance */
+<<<<<<< HEAD
 	mc_dev_info("<- core_num=0x%08x, active_cpu=0x%08x\n",
 		     core_num, active_cpu);
+=======
+	mc_dev_info("<- cpu=0x%08x, active_cpu=0x%08x\n",
+		     cpu, active_cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mc_fastcall(&fc_switch_core.as_generic);
 	ret = convert_fc_ret(fc_switch_core.as_out.ret);
 	mc_dev_devel("exit with %d/0x%08X\n", ret, ret);
@@ -670,6 +848,7 @@ int mc_switch_core(u32 core_num)
 
 /* ExySp: for sos performance */
 #ifdef CONFIG_SECURE_OS_BOOSTER_API
+<<<<<<< HEAD
 int mc_switch_core(uint32_t core_num)
 {
 	int ret;
@@ -680,6 +859,18 @@ int mc_switch_core(uint32_t core_num)
 		return 1;
 	}
 	ret = __mc_switch_core(core_num);
+=======
+int mc_switch_core(int cpu)
+{
+	int ret;
+	mutex_lock(&core_switch_lock);
+	if (!(core_status & (0x1 << cpu))){
+		mc_dev_devel("Core status... core #%d is off line\n", cpu);
+		mutex_unlock(&core_switch_lock);
+		return 1;
+	}
+	ret = __mc_switch_core(cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&core_switch_lock);
 	return ret;
 }

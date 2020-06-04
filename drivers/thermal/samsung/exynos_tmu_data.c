@@ -951,6 +951,7 @@ struct exynos_tmu_init_data exynos7870_default_tmu_data = {
 	.tmu_count = 3,
 };
 #endif
+<<<<<<< HEAD
 
 #if defined(CONFIG_SOC_EXYNOS7570)
 static const struct exynos_tmu_registers exynos7570_tmu_registers = {
@@ -1040,3 +1041,5 @@ struct exynos_tmu_init_data exynos7570_default_tmu_data = {
 	.tmu_count = 2,
 };
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

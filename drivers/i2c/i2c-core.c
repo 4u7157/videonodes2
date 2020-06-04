@@ -1422,9 +1422,12 @@ static void of_i2c_register_devices(struct i2c_adapter *adap)
 		if (of_get_property(node, "ten-bit-address", NULL))
 			info.flags |= I2C_CLIENT_TEN;
 
+<<<<<<< HEAD
 		if (of_get_property(node, "i2c-speedy-address", NULL))
 			info.flags |= I2C_CLIENT_SPEEDY;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		request_module("%s%s", I2C_MODULE_PREFIX, info.type);
 
 		result = i2c_new_device(adap, &info);

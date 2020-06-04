@@ -22,14 +22,20 @@
 #define VENDOR_NAME			"STM"
 #define MODULE_NAME_ACC			"accelerometer_sensor"
 #define MODULE_NAME_GYRO		"gyro_sensor"
+<<<<<<< HEAD
 #define MODULE_NAME_SMD                   "SignificantMotionDetector"
 #define MODULE_NAME_TILT                   "tilt_sensor"
+=======
+#define MODULE_NAME_SMD                 "SignificantMotionDetector"
+#define MODULE_NAME_TILT                "tilt_sensor"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define CALIBRATION_FILE_PATH		"/efs/FactoryApp/accel_calibration_data"
 
 #define CALIBRATION_DATA_AMOUNT		20
 #define MAX_ACCEL_1G			8192
 
+<<<<<<< HEAD
 #define ST_INDIO_DEV_ACCEL			0
 #define ST_INDIO_DEV_GYRO			1
 #define ST_INDIO_DEV_SIGN_MOTION		2
@@ -37,6 +43,15 @@
 #define ST_INDIO_DEV_STEP_DETECTOR		4
 #define ST_INDIO_DEV_TILT			5
 #define ST_INDIO_DEV_NUM			6
+=======
+#define ST_INDIO_DEV_ACCEL		0
+#define ST_INDIO_DEV_GYRO		1
+#define ST_INDIO_DEV_SIGN_MOTION	2
+#define ST_INDIO_DEV_STEP_COUNTER	3
+#define ST_INDIO_DEV_STEP_DETECTOR	4
+#define ST_INDIO_DEV_TILT		5
+#define ST_INDIO_DEV_NUM		6
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define ST_LSM6DS3_ACCEL_DEPENDENCY	((1 << ST_INDIO_DEV_ACCEL) | \
 					(1 << ST_INDIO_DEV_STEP_COUNTER) | \
@@ -58,11 +73,19 @@
 					(1 << ST_INDIO_DEV_GYRO) | \
 					(1 << ST_INDIO_DEV_STEP_COUNTER))
 
+<<<<<<< HEAD
 #define ST_LSM6DS3_TX_MAX_LENGTH		12
 #define ST_LSM6DS3_RX_MAX_LENGTH		4097
 
 #define ST_LSM6DS3_NUMBER_DATA_CHANNELS		3
 #define ST_LSM6DS3_BYTE_FOR_CHANNEL		2
+=======
+#define ST_LSM6DS3_TX_MAX_LENGTH	12
+#define ST_LSM6DS3_RX_MAX_LENGTH	4097
+
+#define ST_LSM6DS3_NUMBER_DATA_CHANNELS	3
+#define ST_LSM6DS3_BYTE_FOR_CHANNEL	2
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define ST_LSM6DS3_DELAY_DEFAULT        200000000LL
 #define ST_LSM6DS3_DELAY_MIN            5000000LL
@@ -183,7 +206,11 @@ struct lsm6ds3_data {
 
 	struct regulator *reg_vio;
 	struct i2c_client *client;
+<<<<<<< HEAD
 	u16 stable_count;
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u8 odr;
 	bool skip_gyro_data;
 	int skip_gyro_cnt;
@@ -191,6 +218,10 @@ struct lsm6ds3_data {
 	struct lsm6ds3_sensor_data *sdata;
 
 	int lpf_on;
+<<<<<<< HEAD
+=======
+	u16 stable_count;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 int st_lsm6ds3_common_probe(struct lsm6ds3_data *cdata, int irq);

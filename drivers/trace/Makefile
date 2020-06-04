@@ -2,7 +2,19 @@
 # Makefile for trace.
 #
 
+<<<<<<< HEAD
 obj-$(CONFIG_EXYNOS_ITM) += exynos7570-itm.o
+=======
+ifeq ($(CONFIG_SOC_EXYNOS8890),y)
+ifeq ($(CONFIG_SOC_EXYNOS8890_EVT1),y)
+obj-$(CONFIG_EXYNOS_BUSMONITOR) += exynos8890-busmon.o
+else
+obj-$(CONFIG_EXYNOS_BUSMONITOR) += exynos8890-busmon-evt0.o
+endif
+else
+obj-$(CONFIG_EXYNOS_BUSMONITOR) += exynos-busmon.o
+endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 obj-$(CONFIG_EXYNOS_SNAPSHOT) += exynos-ss.o
 obj-$(CONFIG_EXYNOS_CORESIGHT) += exynos-coresight.o
 obj-$(CONFIG_EXYNOS_CORESIGHT_ETM) += exynos-coresight-etm.o

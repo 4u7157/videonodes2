@@ -168,6 +168,13 @@ struct sec_platform_data {
 	/* ---- RTC ---- */
 	struct sec_wtsr_smpl *wtsr_smpl;
 	struct rtc_time *init_time;
+<<<<<<< HEAD
+=======
+	int			osc_bias_up;
+	int			cap_sel;
+	int			osc_xin;
+	int			osc_xout;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 int sec_irq_init(struct sec_pmic_dev *sec_pmic);
@@ -235,7 +242,10 @@ enum sec_opmode {
 	SEC_OPMODE_LOWPOWER,
 	SEC_OPMODE_ON,
 	SEC_OPMODE_MIF = 0x2,
+<<<<<<< HEAD
 	SEC_OPMODE_TCXO = 0x2,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #endif /*  __LINUX_MFD_SEC_CORE_H */

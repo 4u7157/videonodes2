@@ -66,9 +66,12 @@ static const char * __init product_id_to_name(unsigned int product_id)
 	case EXYNOS5800_SOC_ID:
 		soc_name = "EXYNOS5800";
 		break;
+<<<<<<< HEAD
 	case EXYNOS7570_SOC_ID:
 		soc_name = "EXYNOS7570";
 		break;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case EXYNOS7870_SOC_ID:
 		soc_name = "EXYNOS7870";
 		break;
@@ -203,6 +206,15 @@ static ssize_t chipid_ap_id_show(struct kobject *kobj,
 	return snprintf(buf, 30, "%s EVT%d.%d\n", soc_ap_id, exynos_soc_info.revision>>4, exynos_soc_info.revision%16);
 }
 
+<<<<<<< HEAD
+=======
+static ssize_t chipid_unique_id_show(struct kobject *kobj,
+			         struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, 20, "%010LX\n", exynos_soc_info.unique_id);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t chipid_lot_id_show(struct kobject *kobj,
 			         struct kobj_attribute *attr, char *buf)
 {
@@ -222,6 +234,7 @@ static ssize_t chipid_evt_ver_show(struct kobject *kobj,
 }
 
 static struct kobj_attribute chipid_product_id_attr =
+<<<<<<< HEAD
         __ATTR(product_id, 0444, chipid_product_id_show, NULL);
 
 static struct kobj_attribute chipid_ap_id_attr =
@@ -235,10 +248,32 @@ static struct kobj_attribute chipid_revision_attr =
 
 static struct kobj_attribute chipid_evt_ver_attr =
         __ATTR(evt_ver, 0444, chipid_evt_ver_show, NULL);
+=======
+        __ATTR(product_id, 0644, chipid_product_id_show, NULL);
+
+static struct kobj_attribute chipid_ap_id_attr =
+        __ATTR(ap_id, 0644, chipid_ap_id_show, NULL);
+
+static struct kobj_attribute chipid_unique_id_attr =
+        __ATTR(unique_id, 0644, chipid_unique_id_show, NULL);
+
+static struct kobj_attribute chipid_lot_id_attr =
+        __ATTR(lot_id, 0644, chipid_lot_id_show, NULL);
+
+static struct kobj_attribute chipid_revision_attr =
+        __ATTR(revision, 0644, chipid_revision_show, NULL);
+
+static struct kobj_attribute chipid_evt_ver_attr =
+        __ATTR(evt_ver, 0644, chipid_evt_ver_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct attribute *chipid_sysfs_attrs[] = {
 	&chipid_product_id_attr.attr,
 	&chipid_ap_id_attr.attr,
+<<<<<<< HEAD
+=======
+	&chipid_unique_id_attr.attr,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&chipid_lot_id_attr.attr,
 	&chipid_revision_attr.attr,
 	&chipid_evt_ver_attr.attr,
@@ -254,6 +289,7 @@ static const struct attribute_group *chipid_sysfs_groups[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 /*
  * In exynos7570, svc_ap_show() returns lot_id.
  */
@@ -265,6 +301,17 @@ static ssize_t svc_ap_show(struct kobject *kobj,
 
 static struct kobj_attribute svc_ap_attr =
 __ATTR(SVC_AP, 0444, svc_ap_show, NULL);
+=======
+static ssize_t svc_ap_show(struct kobject *kobj,
+			struct kobj_attribute *attr, char *buf)
+{
+	return snprintf(buf, 20, "%010llX\n",
+			(exynos_soc_info.unique_id));
+}
+
+static struct kobj_attribute svc_ap_attr =
+		__ATTR(SVC_AP, 0644, svc_ap_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 extern struct kset *devices_kset;
 
@@ -280,16 +327,26 @@ void sysfs_create_svc_ap(void)
 		/* try to create svc kobject */
 		data = kobject_create_and_add("svc", &devices_kset->kobj);
 		if (IS_ERR_OR_NULL(data))
+<<<<<<< HEAD
 			pr_info("Failed to create sys/devices/svc : %ld\n", PTR_ERR(data));
 		else
 			pr_info("Created sys/devices/svc svc : 0x%pK\n", data);
 	} else {
 		data = (struct kobject *)svc_sd->priv;
 		pr_info("Found svc_sd : 0x%pK svc : 0x%pK\n", svc_sd, data);
+=======
+			pr_info("Existing path sys/devices/svc : 0x%p\n", data);
+		else
+			pr_info("Created sys/devices/svc svc : 0x%p\n", data);
+	} else {
+		data = (struct kobject *)svc_sd->priv;
+		pr_info("Found svc_sd : 0x%p svc : 0x%p\n", svc_sd, data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	ap = kobject_create_and_add("AP", data);
 	if (IS_ERR_OR_NULL(ap))
+<<<<<<< HEAD
 		pr_info("Failed to create sys/devices/svc/AP : %ld\n", PTR_ERR(ap));
 	else
 		pr_info("Success to create sys/devices/svc/AP : 0x%pK\n", ap);
@@ -297,6 +354,15 @@ void sysfs_create_svc_ap(void)
 	if (sysfs_create_file(ap, &svc_ap_attr.attr) < 0) {
 		pr_err("failed to create sys/devices/svc/AP/SVC_AP, %s\n",
 				svc_ap_attr.attr.name);
+=======
+		pr_info("Failed to create sys/devices/svc/AP : 0x%p\n", ap);
+	else
+		pr_info("Success to create sys/devices/svc/AP : 0x%p\n", ap);
+
+	if (sysfs_create_file(ap, &svc_ap_attr.attr) < 0) {
+		pr_err("failed to create sys/devices/svc/AP/SVC_AP, %s\n",
+		svc_ap_attr.attr.name);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 

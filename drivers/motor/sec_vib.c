@@ -23,6 +23,7 @@
 #include <linux/of_gpio.h>
 #include <linux/wakelock.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
 #include <linux/jiffies.h>
 
@@ -30,6 +31,15 @@
 
 #define SEC_VIB_NAME "sec_vib"
 #define DEBUG_MOTOR_LOG
+=======
+
+#include "../staging/android/timed_output.h"
+#if defined(CONFIG_IMM_VIB)
+#include "imm_vib.h"
+#endif
+
+#define SEC_VIB_NAME "sec_vib"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define INTERNAL_LDO	0
 #define EXTERNAL_LDO	1
@@ -44,6 +54,7 @@ struct sec_vib_pdata {
 	int gpio_ldo_en;
 };
 
+<<<<<<< HEAD
 #if defined(DEBUG_MOTOR_LOG)
 struct debug_log {
 	u64 start;
@@ -51,16 +62,21 @@ struct debug_log {
 };
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct sec_vib_drvdata {
 	struct regulator *regulator;
 	struct timed_output_dev dev;
 	struct hrtimer timer;
 	struct workqueue_struct *workqueue;
 	struct work_struct work;
+<<<<<<< HEAD
 #if defined(DEBUG_MOTOR_LOG)
 	struct debug_log buff;
 	struct delayed_work log_work;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spinlock_t lock;
 	bool running;
 	int max_timeout;
@@ -152,7 +168,11 @@ static void sec_vib_enable(struct timed_output_dev *dev, int value)
 
 static void sec_vib_work(struct work_struct *work)
 {
+<<<<<<< HEAD
 	struct sec_vib_drvdata *ddata =
+=======
+	struct sec_vib_drvdata *ddata = 
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		container_of(work, struct sec_vib_drvdata, work);
 
 	printk("[VIB] %s, timedout = %d , running = %d \n", __func__, ddata->timeout, ddata->running );
@@ -161,17 +181,23 @@ static void sec_vib_work(struct work_struct *work)
 		if (ddata->running)
 			return;
 		sec_vib_vdd_en(&ddata->dev, LDO_EN);
+<<<<<<< HEAD
 #if defined(DEBUG_MOTOR_LOG)
 		ddata->buff.start = local_clock();
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ddata->running = true;
 	} else {
 		if (!ddata->running)
 			return;
 		sec_vib_vdd_en(&ddata->dev, LDO_DIS);
+<<<<<<< HEAD
 #if defined(DEBUG_MOTOR_LOG)
 		ddata->buff.stop = local_clock();
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ddata->running = false;
 	}
 	return;
@@ -223,6 +249,7 @@ err_out:
 }
 #endif
 
+<<<<<<< HEAD
 #if defined(DEBUG_MOTOR_LOG)
 void sec_vib_log_show(struct work_struct *work)
 {
@@ -243,6 +270,8 @@ void sec_vib_log_show(struct work_struct *work)
 }
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int sec_vib_probe(struct platform_device *pdev)
 {
 	struct sec_vib_pdata *pdata = pdev->dev.platform_data;
@@ -302,10 +331,14 @@ static int sec_vib_probe(struct platform_device *pdev)
 	}
 
 	INIT_WORK(&(ddata->work), sec_vib_work);
+<<<<<<< HEAD
 #if defined(DEBUG_MOTOR_LOG)
 	INIT_DELAYED_WORK(&ddata->log_work, sec_vib_log_show);
 	schedule_delayed_work(&ddata->log_work, msecs_to_jiffies(60000));
 #endif
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ddata->dev.name = "vibrator";
 	ddata->dev.get_time = sec_vib_get_time;
 	ddata->dev.enable = sec_vib_enable;

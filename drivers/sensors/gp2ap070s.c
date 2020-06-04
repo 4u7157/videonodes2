@@ -61,7 +61,10 @@ enum {
 	CAL_CANCELATION,
 	CAL_SKIP,
 };
+<<<<<<< HEAD
 static bool prox_cancel_check = false;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #define PROX_READ_NUM   40
@@ -121,12 +124,21 @@ struct gp2a_data {
 	int p_out;
 	int default_low_thd;
 	int default_high_thd;
+<<<<<<< HEAD
 	int cal_skip_adc;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int prox_cancel_l;
 	int prox_cancel_h;
 	int default_trim;
 
+<<<<<<< HEAD
 	int vled_ldo; /*0: vled(anode) source regulator, other: get power by LDO control */
+=======
+	int vdd_always_on; /* 1: vdd is always on, 0: enable only when proximity is on */
+	int vled_ldo; /*0: vled(anode) source regulator, other: get power by LDO control */
+	int regulator_divided; /* 1: vdd & vled uses divided circuit, 0: vdd & vled uses seperate circuit */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 enum {
@@ -199,7 +211,10 @@ static int proximity_vled_onoff(struct device *dev, bool onoff)
 		}
 	}
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (onoff) {
 		if (regulator_is_enabled(data->vled)) {
 			SENSOR_INFO("Regulator already enabled\n");
@@ -315,7 +330,35 @@ static uint32_t gp2a_get_proximity_adc(struct gp2a_data *data)
 	return (value[0] | (value[1] << 8));
 }
 
+<<<<<<< HEAD
 static int32_t gp2a_set_threshold_low(struct gp2a_data *data, u16 thd)
+=======
+static void gp2a_set_mode(struct gp2a_data *data, u8 onoff)
+{
+	int i, ret = 0;
+
+	SENSOR_INFO("onoff = %d\n", onoff);
+	if (onoff) {
+		/* enable settings */
+		for (i = 0; i < PS_REG_NUM; i++)
+			ret += gp2a_i2c_write_byte(data->i2c_client,
+				ps_reg_init_setting[i][REG_ADDR],
+				ps_reg_init_setting[i][CMD]);
+
+		/* PS mode */
+		ret += gp2a_i2c_write_byte(data->i2c_client, REG_COM1,
+			COM1_WAKEUP | COM1_PS);
+	} else {
+		/* disable settings */
+		ret = gp2a_i2c_write_byte(data->i2c_client, REG_COM1, COM1_SD);
+	}
+
+	if (ret < 0)
+		SENSOR_ERR("failed to set mode (%d)\n", ret);
+}
+
+static int32_t gp2a_set_data_offset(struct gp2a_data *data, u16 thd)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	u8 val[2];
 	int ret;
@@ -323,6 +366,7 @@ static int32_t gp2a_set_threshold_low(struct gp2a_data *data, u16 thd)
 	val[0] = thd & 0x00FF;
 	val[1] = (thd & 0xFF00) >> 8;
 
+<<<<<<< HEAD
 	ret = gp2a_i2c_write(data->i2c_client, REG_PS_LT_LSB, 2, val);
 	if (ret < 0)
 		SENSOR_ERR("set low thd failed. %d\n", ret);
@@ -334,6 +378,19 @@ static int32_t gp2a_set_threshold_low(struct gp2a_data *data, u16 thd)
 }
 
 static int32_t gp2a_set_threshold_high(struct gp2a_data *data, u16 thd)
+=======
+	ret = gp2a_i2c_write(data->i2c_client, REG_OS_D0_LSB, 2, val);
+	if (ret < 0)
+		SENSOR_ERR("set low thd failed. %d\n", ret);
+	else
+		data->prox_offset = thd;
+
+	SENSOR_INFO("offset = %d\n", data->prox_offset);
+	return ret;
+}
+
+static int32_t gp2a_set_threshold_low(struct gp2a_data *data, u16 thd)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	u8 val[2];
 	int ret;
@@ -341,6 +398,7 @@ static int32_t gp2a_set_threshold_high(struct gp2a_data *data, u16 thd)
 	val[0] = thd & 0x00FF;
 	val[1] = (thd & 0xFF00) >> 8;
 
+<<<<<<< HEAD
 	ret = gp2a_i2c_write(data->i2c_client, REG_PS_HT_LSB, 2, val);
 	if (ret < 0)
 		SENSOR_ERR("set high thd failed. %d\n", ret);
@@ -352,6 +410,19 @@ static int32_t gp2a_set_threshold_high(struct gp2a_data *data, u16 thd)
 }
 
 static int32_t gp2a_set_data_offset(struct gp2a_data *data, u16 thd)
+=======
+	ret = gp2a_i2c_write(data->i2c_client, REG_PS_LT_LSB, 2, val);
+	if (ret < 0)
+		SENSOR_ERR("set low thd failed. %d\n", ret);
+	else
+		data->prox_thd_low = thd;
+
+	SENSOR_INFO("thd = %d\n", data->prox_thd_low);
+	return ret;
+}
+
+static int32_t gp2a_set_threshold_high(struct gp2a_data *data, u16 thd)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	u8 val[2];
 	int ret;
@@ -359,6 +430,7 @@ static int32_t gp2a_set_data_offset(struct gp2a_data *data, u16 thd)
 	val[0] = thd & 0x00FF;
 	val[1] = (thd & 0xFF00) >> 8;
 
+<<<<<<< HEAD
 	ret = gp2a_i2c_write(data->i2c_client, REG_OS_D0_LSB, 2, val);
 	if (ret < 0)
 		SENSOR_ERR("set low thd failed. %d\n", ret);
@@ -393,6 +465,18 @@ static void gp2a_set_mode(struct gp2a_data *data, u8 onoff)
 		SENSOR_ERR("failed to set mode (%d)\n", ret);
 }
 
+=======
+	ret = gp2a_i2c_write(data->i2c_client, REG_PS_HT_LSB, 2, val);
+	if (ret < 0)
+		SENSOR_ERR("set low thd failed. %d\n", ret);
+	else
+		data->prox_thd_high = thd;
+
+	SENSOR_INFO("thd = %d\n", data->prox_thd_high);
+	return ret;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t name_read(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -460,7 +544,11 @@ static int proximity_open_cancelation(struct gp2a_data *data)
 	struct file *cal_filp = NULL;
 	mm_segment_t old_fs;
 	uint16_t file_offset_data;
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	old_fs = get_fs();
 	set_fs(KERNEL_DS);
@@ -468,7 +556,12 @@ static int proximity_open_cancelation(struct gp2a_data *data)
 	cal_filp = filp_open(CANCELATION_FILE_PATH, O_RDONLY, 0);
 	if (IS_ERR(cal_filp)) {
 		ret = PTR_ERR(cal_filp);
+<<<<<<< HEAD
 		SENSOR_ERR("Can't open calibration file (%d)\n", ret);
+=======
+		if (ret != -ENOENT)
+			SENSOR_ERR("Can't open calibration file\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		set_fs(old_fs);
 		return ret;
 	}
@@ -477,6 +570,7 @@ static int proximity_open_cancelation(struct gp2a_data *data)
 		(char *)&file_offset_data,
 		sizeof(u16), &cal_filp->f_pos);
 	if (ret != sizeof(u16)) {
+<<<<<<< HEAD
 		SENSOR_ERR("Can't read the cal data from file (%d)\n", ret);
 		ret = -EIO;
 		goto done;
@@ -490,15 +584,34 @@ static int proximity_open_cancelation(struct gp2a_data *data)
 
 	prox_cancel_check = true;
 
+=======
+		SENSOR_ERR("Can't read the cal data from file(%d)\n", ret);
+		ret = -EIO;
+	}
+
+	if (file_offset_data != data->default_trim) {
+		data->prox_offset = file_offset_data;
+		gp2a_set_threshold_high(data, data->prox_cancel_h);
+		gp2a_set_threshold_low(data, data->prox_cancel_l);
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	SENSOR_INFO("file_offset = %d, ps_offset = %d, default_trim = %d\n",
 		file_offset_data, data->prox_offset,
 		data->default_trim);
 
+<<<<<<< HEAD
 done:
 	filp_close(cal_filp, current->files);
 	set_fs(old_fs);
 
 	return ret < 0 ? ret : 0;
+=======
+	filp_close(cal_filp, current->files);
+	set_fs(old_fs);
+
+	return ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int proximity_store_cancelation(struct device *dev, bool do_calib)
@@ -521,7 +634,11 @@ static int proximity_store_cancelation(struct device *dev, bool do_calib)
 		ps_data = (value[0] | (value[1] << 8));
 		SENSOR_INFO("raw data =  %d\n", ps_data);
 
+<<<<<<< HEAD
 		if (ps_data < data->cal_skip_adc) {
+=======
+		if (ps_data * 10 < (data->default_low_thd * 6)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			data->prox_offset = data->default_trim;
 			SENSOR_INFO("skip calibration = %d, crosstalk <\n",
 				ps_data);
@@ -734,6 +851,13 @@ static ssize_t proximity_avg_store(struct device *dev,
 	SENSOR_INFO("average enable = %d\n", new_value);
 	if (new_value) {
 		if (atomic_read(&data->prox_enable) == OFF) {
+<<<<<<< HEAD
+=======
+			if (!data->vdd_always_on)
+				proximity_vdd_onoff(dev, ON);
+			if (!data->regulator_divided)
+				proximity_vled_onoff(dev, ON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			gp2a_set_mode(data, ON);
 		}
 		hrtimer_start(&data->prox_timer, data->prox_poll_delay,
@@ -743,6 +867,13 @@ static ssize_t proximity_avg_store(struct device *dev,
 		cancel_work_sync(&data->work_prox);
 		if (atomic_read(&data->prox_enable) == OFF) {
 			gp2a_set_mode(data, OFF);
+<<<<<<< HEAD
+=======
+			if (!data->regulator_divided)
+				proximity_vled_onoff(dev, OFF);
+			if (!data->vdd_always_on)
+				proximity_vdd_onoff(dev, OFF);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -760,6 +891,17 @@ static ssize_t proximity_state_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%d\n", ps_data);
 }
 
+<<<<<<< HEAD
+=======
+static ssize_t proximity_trim_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct gp2a_data *data = dev_get_drvdata(dev);
+
+	return snprintf(buf, PAGE_SIZE, "%u\n", data->prox_offset);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t proximity_thresh_high_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -838,6 +980,7 @@ static ssize_t proximity_thresh_low_store(struct device *dev,
 	return size;
 }
 
+<<<<<<< HEAD
 static ssize_t proximity_default_trim_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -867,6 +1010,8 @@ static ssize_t proximity_default_trim_store(struct device *dev,
 	return size;
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(name, S_IRUGO, name_read, NULL);
 static DEVICE_ATTR(vendor, S_IRUGO, vendor_read, NULL);
 #if defined(PROXIMITY_CANCELATION)
@@ -883,14 +1028,21 @@ static DEVICE_ATTR(prox_avg, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_avg_show, proximity_avg_store);
 static DEVICE_ATTR(raw_data, S_IRUGO, proximity_state_show, NULL);
 static DEVICE_ATTR(state, S_IRUGO, proximity_state_show, NULL);
+<<<<<<< HEAD
+=======
+static DEVICE_ATTR(prox_trim, S_IRUGO, proximity_trim_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(thresh_high, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_thresh_high_show, proximity_thresh_high_store);
 static DEVICE_ATTR(thresh_low, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_thresh_low_show, proximity_thresh_low_store);
 static DEVICE_ATTR(dhr_sensor_info, S_IRUSR | S_IRGRP,
 	proximity_dhr_sensor_info_show, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(prox_trim, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_default_trim_show, proximity_default_trim_store);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct device_attribute *proximity_attrs[] = {
 	&dev_attr_name,
@@ -905,10 +1057,17 @@ static struct device_attribute *proximity_attrs[] = {
 	&dev_attr_prox_avg,
 	&dev_attr_raw_data,
 	&dev_attr_state,
+<<<<<<< HEAD
 	&dev_attr_thresh_high,
 	&dev_attr_thresh_low,
 	&dev_attr_dhr_sensor_info,
 	&dev_attr_prox_trim,
+=======
+	&dev_attr_prox_trim,
+	&dev_attr_thresh_high,
+	&dev_attr_thresh_low,
+	&dev_attr_dhr_sensor_info,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NULL,
 };
 
@@ -921,6 +1080,7 @@ static ssize_t proximity_enable_show(struct device *dev,
 			atomic_read(&gp2a->prox_enable));
 }
 
+<<<<<<< HEAD
 static void gp2a_check_first_far_event(struct gp2a_data *gp2a)
 {
 	u8 val;
@@ -943,6 +1103,8 @@ static void gp2a_check_first_far_event(struct gp2a_data *gp2a)
 	}
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t proximity_enable_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t size)
 {
@@ -965,6 +1127,7 @@ static ssize_t proximity_enable_store(struct device *dev,
 
 	if (new_value && !pre_enable) {
 #if defined(PROXIMITY_CANCELATION)
+<<<<<<< HEAD
 		/* open cancelation data */
 		if (!prox_cancel_check && proximity_open_cancelation(data))
 			SENSOR_INFO("proximity_open_cancelation() failed\n");
@@ -977,6 +1140,30 @@ static ssize_t proximity_enable_store(struct device *dev,
 
 		// Need to check for first far only. First close is reported via interrupt
 		gp2a_check_first_far_event(data);
+=======
+		int ret;
+#endif
+		if (!data->vdd_always_on)
+			proximity_vdd_onoff(dev, ON);
+		if (!data->regulator_divided)
+			proximity_vled_onoff(dev, ON);
+
+#if defined(PROXIMITY_CANCELATION)
+		/* open cancelation data */
+		ret = proximity_open_cancelation(data);
+		if (ret < 0 && ret != -ENOENT)
+			SENSOR_INFO("proximity_open_cancelation() failed\n");
+		ret = gp2a_set_data_offset(data, data->prox_offset);
+		if (ret < 0)
+			SENSOR_ERR("fail : set proximity offset(%d)\n", ret);
+#endif
+		gp2a_set_mode(data, ON);
+
+		atomic_set(&data->prox_enable, ON);
+		/* 0 is close, 1 is far */
+		input_report_abs(data->proximity_input_dev, ABS_DISTANCE, 1);
+		input_sync(data->proximity_input_dev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		enable_irq_wake(data->irq);
 		enable_irq(data->irq);
@@ -986,6 +1173,13 @@ static ssize_t proximity_enable_store(struct device *dev,
 		gp2a_set_mode(data, OFF);
 
 		atomic_set(&data->prox_enable, OFF);
+<<<<<<< HEAD
+=======
+		if (!data->regulator_divided)
+			proximity_vled_onoff(dev, OFF);
+		if (!data->vdd_always_on)
+			proximity_vdd_onoff(dev, OFF);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	SENSOR_INFO("enabled = %d\n", atomic_read(&data->prox_enable));
 
@@ -1022,7 +1216,11 @@ static enum hrtimer_restart gp2a_prox_timer_func(struct hrtimer *timer)
 }
 
 /* interrupt happened due to transition/change of near/far proximity state */
+<<<<<<< HEAD
 irqreturn_t gp2a_irq_thread_fn(int irq, void *data)
+=======
+irqreturn_t proximity_irq_thread_fn(int irq, void *data)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct gp2a_data *gp2a = data;
 	u8 val;
@@ -1101,7 +1299,11 @@ static int gp2a_setup_irq(struct gp2a_data *gp2a)
 	}
 
 	gp2a->irq = gpio_to_irq(gp2a->p_out);
+<<<<<<< HEAD
 	ret = request_threaded_irq(gp2a->irq, NULL, gp2a_irq_thread_fn,
+=======
+	ret = request_threaded_irq(gp2a->irq, NULL, proximity_irq_thread_fn,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING | IRQF_ONESHOT,
 		"proximity_int", gp2a);
 	if (ret < 0) {
@@ -1200,6 +1402,7 @@ static int gp2a_parse_dt(struct device *dev, struct gp2a_data *gp2a)
 		gp2a->default_low_thd = DEFAULT_LOW_THD;
 	}
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(np, "gp2a,cal_skip_adc",
 		&gp2a->cal_skip_adc);
 	if (ret < 0) {
@@ -1207,6 +1410,8 @@ static int gp2a_parse_dt(struct device *dev, struct gp2a_data *gp2a)
 		gp2a->cal_skip_adc = (gp2a->default_low_thd * 6) / 10;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = of_property_read_u32(np, "gp2a,cancel_high_thd",
 		&gp2a->prox_cancel_h);
 	if (ret < 0) {
@@ -1271,8 +1476,20 @@ static int gp2a_parse_dt(struct device *dev, struct gp2a_data *gp2a)
 		gpio_direction_output(gp2a->vled_ldo, 0);
 	}
 
+<<<<<<< HEAD
 	SENSOR_INFO("vled_ldo: %d\n", gp2a->vled_ldo);
 
+=======
+	ret = of_property_read_u32(np, "gp2a,regulator_divided",
+		&gp2a->regulator_divided);
+
+	ret = of_property_read_u32(np, "gp2a,vdd_always_on",
+		&gp2a->vdd_always_on);
+
+	SENSOR_INFO("vdd_alwayson_on: %d, regulator_divided: %d, vled_ldo: %d\n",
+		gp2a->vdd_always_on, gp2a->regulator_divided,
+		gp2a->vled_ldo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	SENSOR_INFO("initial register 0x83 = 0x%x, 0x85 = 0x%x, 0x86 = 0x%x, 0x87 = 0x%x",
 		ps_reg_init_setting[PS_COM4][CMD],
 		ps_reg_init_setting[PS_PS1][CMD],
@@ -1313,9 +1530,15 @@ static int gp2a_i2c_probe(struct i2c_client *client,
 	gp2a->i2c_client = client;
 	i2c_set_clientdata(client, gp2a);
 
+<<<<<<< HEAD
 	// Keep regulator always ON
 	proximity_vdd_onoff(&client->dev, ON);
 	proximity_vled_onoff(&client->dev, ON);
+=======
+	proximity_vdd_onoff(&client->dev, ON);
+	proximity_vled_onoff(&client->dev, ON);
+	usleep_range(1000, 1100);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Check if the device is there or not. (Shutdown operation) */
 	ret = gp2a_i2c_write_byte(client, REG_COM1, COM1_SD);
@@ -1370,6 +1593,14 @@ static int gp2a_i2c_probe(struct i2c_client *client,
 		goto err_setup_irq;
 	}
 
+<<<<<<< HEAD
+=======
+	if (!gp2a->regulator_divided)
+		proximity_vled_onoff(&client->dev, OFF);
+	if (!gp2a->vdd_always_on)
+		proximity_vdd_onoff(&client->dev, OFF);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	SENSOR_INFO("success\n");
 	return ret;
 
@@ -1389,7 +1620,12 @@ err_setup_register:
 err_check_device:
 	if (gp2a->vled_ldo)
 		gpio_free(gp2a->vled_ldo);
+<<<<<<< HEAD
 	proximity_vled_onoff(&client->dev, OFF);
+=======
+	if (!gp2a->regulator_divided)
+		proximity_vled_onoff(&client->dev, OFF);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	proximity_vdd_onoff(&client->dev, OFF);
 err_device_tree:
 	kfree(gp2a);
@@ -1466,7 +1702,11 @@ static struct i2c_driver gp2a_i2c_driver = {
 		.pm = &gp2a_pm_ops
 	},
 	.probe		= gp2a_i2c_probe,
+<<<<<<< HEAD
 	.shutdown = gp2a_shutdown,
+=======
+	.shutdown	= gp2a_shutdown,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.id_table	= gp2a_device_id,
 };
 

@@ -250,7 +250,11 @@
 #define ST_LSM6DS3_GYRO_FS_1000			2
 #define ST_LSM6DS3_GYRO_FS_2000			3
 
+<<<<<<< HEAD
 #define ST_LSM6DS3_REG_DUMP_TEST
+=======
+#undef ST_LSM6DS3_REG_DUMP_TEST
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define SENSOR_DATA_X(datax, datay, dataz, x1, y1, z1, x2, y2, z2, x3, y3, z3) \
 				((x1 == 1 ? datax : (x1 == -1 ? -datax : 0)) + \
@@ -661,9 +665,12 @@ int st_lsm6ds3_acc_set_enable(struct lsm6ds3_data *cdata, bool enable)
 		hrtimer_start(&cdata->acc_timer, cdata->delay,
 							HRTIMER_MODE_REL);
 	} else {
+<<<<<<< HEAD
 		hrtimer_cancel(&cdata->acc_timer);
 		cancel_work_sync(&cdata->acc_work);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if ((cdata->sensors_enabled & ST_LSM6DS3_EXTRA_DEPENDENCY)
 			|| (cdata->sa_flag)) {
 			err = st_lsm6ds3_write_data_with_mask(cdata,
@@ -681,6 +688,12 @@ int st_lsm6ds3_acc_set_enable(struct lsm6ds3_data *cdata, bool enable)
 			return err;
 
 		cdata->sensors_enabled &= ~(1 << ST_INDIO_DEV_ACCEL);
+<<<<<<< HEAD
+=======
+
+		hrtimer_cancel(&cdata->acc_timer);
+		cancel_work_sync(&cdata->acc_work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return 0;
@@ -709,9 +722,12 @@ int st_lsm6ds3_gyro_set_enable(struct lsm6ds3_data *cdata, bool enable)
 		hrtimer_start(&cdata->gyro_timer, cdata->gyro_delay,
 							HRTIMER_MODE_REL);
 	} else {
+<<<<<<< HEAD
 		hrtimer_cancel(&cdata->gyro_timer);
 		cancel_work_sync(&cdata->gyro_work);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		err = st_lsm6ds3_write_data_with_mask(cdata,
 		st_lsm6ds3_odr_table.addr[ST_INDIO_DEV_GYRO],
 		st_lsm6ds3_odr_table.mask[ST_INDIO_DEV_GYRO],
@@ -720,6 +736,12 @@ int st_lsm6ds3_gyro_set_enable(struct lsm6ds3_data *cdata, bool enable)
 			return err;
 
 		cdata->sensors_enabled &= ~(1 << ST_INDIO_DEV_GYRO);
+<<<<<<< HEAD
+=======
+
+		hrtimer_cancel(&cdata->gyro_timer);
+		cancel_work_sync(&cdata->gyro_work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return 0;
@@ -2112,6 +2134,12 @@ static void st_lsm6ds3_acc_work_func(struct work_struct *work)
 	struct lsm6ds3_data *cdata =
 		container_of(work, struct lsm6ds3_data, acc_work);
 
+<<<<<<< HEAD
+=======
+	struct timespec ts = ktime_to_timespec(ktime_get_boottime());
+	u64 timestamp_new = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+	int time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int n, len;
 	u8 buf[6];
 	s16 tmp_data[3], raw_data[3];
@@ -2153,9 +2181,20 @@ static void st_lsm6ds3_acc_work_func(struct work_struct *work)
 	cdata->accel_data[1] = tmp_data[1] - cdata->accel_cal_data[1];
 	cdata->accel_data[2] = tmp_data[2] - cdata->accel_cal_data[2];
 
+<<<<<<< HEAD
 	input_report_rel(cdata->acc_input, REL_X, cdata->accel_data[0]);
 	input_report_rel(cdata->acc_input, REL_Y, cdata->accel_data[1]);
 	input_report_rel(cdata->acc_input, REL_Z, cdata->accel_data[2]);
+=======
+	time_hi = (int)((timestamp_new & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp_new & TIME_LO_MASK);
+
+	input_report_rel(cdata->acc_input, REL_X, cdata->accel_data[0]);
+	input_report_rel(cdata->acc_input, REL_Y, cdata->accel_data[1]);
+	input_report_rel(cdata->acc_input, REL_Z, cdata->accel_data[2]);
+	input_report_rel(cdata->acc_input, REL_DIAL, time_hi);
+	input_report_rel(cdata->acc_input, REL_MISC, time_lo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_sync(cdata->acc_input);
 
 exit:
@@ -2175,6 +2214,12 @@ static void st_lsm6ds3_gyro_work_func(struct work_struct *work)
 	struct lsm6ds3_data *cdata =
 		container_of(work, struct lsm6ds3_data, gyro_work);
 
+<<<<<<< HEAD
+=======
+	struct timespec ts = ktime_to_timespec(ktime_get_boottime());
+	u64 timestamp_new = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+	int time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int n, len;
 	u8 buf[6];
 	s16 tmp_data[3], raw_data[3];
@@ -2183,6 +2228,10 @@ static void st_lsm6ds3_gyro_work_func(struct work_struct *work)
 		ST_LSM6DS3_GYRO_OUT_X_L_ADDR,
 		ST_LSM6DS3_BYTE_FOR_CHANNEL * ST_LSM6DS3_NUMBER_DATA_CHANNELS,
 		buf);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (len < 0)
 		goto exit;
 
@@ -2221,9 +2270,20 @@ static void st_lsm6ds3_gyro_work_func(struct work_struct *work)
 	cdata->gyro_data[1] = tmp_data[1];
 	cdata->gyro_data[2] = tmp_data[2];
 
+<<<<<<< HEAD
 	input_report_rel(cdata->gyro_input, REL_RX, cdata->gyro_data[0]);
 	input_report_rel(cdata->gyro_input, REL_RY, cdata->gyro_data[1]);
 	input_report_rel(cdata->gyro_input, REL_RZ, cdata->gyro_data[2]);
+=======
+	time_hi = (int)((timestamp_new & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp_new & TIME_LO_MASK);
+
+	input_report_rel(cdata->gyro_input, REL_RX, cdata->gyro_data[0]);
+	input_report_rel(cdata->gyro_input, REL_RY, cdata->gyro_data[1]);
+	input_report_rel(cdata->gyro_input, REL_RZ, cdata->gyro_data[2]);
+	input_report_rel(cdata->gyro_input, REL_X, time_hi);
+	input_report_rel(cdata->gyro_input, REL_Y, time_lo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_sync(cdata->gyro_input);
 
 exit:
@@ -2943,9 +3003,12 @@ static struct device_attribute *acc_sensor_attrs[] = {
 	&dev_attr_lowpassfilter,
 	&dev_attr_reactive_alert,
 	&dev_attr_dhr_sensor_info,
+<<<<<<< HEAD
 #ifdef ST_LSM6DS3_REG_DUMP_TEST
 	&dev_attr_reg_dump,
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NULL
 };
 
@@ -2974,6 +3037,12 @@ static struct device_attribute *smd_sensor_attrs[] = {
 static struct device_attribute *tilt_sensor_attrs[] = {
 	&dev_attr_vendor,
 	&dev_attr_name,
+<<<<<<< HEAD
+=======
+#ifdef ST_LSM6DS3_REG_DUMP_TEST
+	&dev_attr_reg_dump,
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NULL
 };
 
@@ -2992,6 +3061,11 @@ static int st_lsm6ds3_acc_input_init(struct lsm6ds3_data *cdata)
 	input_set_capability(dev, EV_REL, REL_X);
 	input_set_capability(dev, EV_REL, REL_Y);
 	input_set_capability(dev, EV_REL, REL_Z);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_DIAL);
+	input_set_capability(dev, EV_REL, REL_MISC);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(dev, cdata);
 
 	ret = input_register_device(dev);
@@ -3037,6 +3111,11 @@ static int st_lsm6ds3_gyro_input_init(struct lsm6ds3_data *cdata)
 	input_set_capability(dev, EV_REL, REL_RX);
 	input_set_capability(dev, EV_REL, REL_RY);
 	input_set_capability(dev, EV_REL, REL_RZ);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_X);
+	input_set_capability(dev, EV_REL, REL_Y);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(dev, cdata);
 
 	ret = input_register_device(dev);
@@ -3405,9 +3484,13 @@ EXPORT_SYMBOL(st_lsm6ds3_common_remove);
 
 void st_lsm6ds3_common_shutdown(struct lsm6ds3_data *cdata)
 {
+<<<<<<< HEAD
 	SENSOR_INFO("acc_en=%d, gyro_en=%d\n",
 		atomic_read(&cdata->wkqueue_en), atomic_read(&cdata->gyro_wkqueue_en));
 
+=======
+	SENSOR_INFO("\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (atomic_read(&cdata->wkqueue_en) == 1)
 		st_lsm6ds3_acc_set_enable(cdata, false);
 	if (atomic_read(&cdata->gyro_wkqueue_en) == 1)
@@ -3417,9 +3500,12 @@ EXPORT_SYMBOL(st_lsm6ds3_common_shutdown);
 
 int st_lsm6ds3_common_suspend(struct lsm6ds3_data *cdata)
 {
+<<<<<<< HEAD
 	SENSOR_INFO("acc_en=%d, gyro_en=%d\n",
 		atomic_read(&cdata->wkqueue_en), atomic_read(&cdata->gyro_wkqueue_en));
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (atomic_read(&cdata->wkqueue_en) == 1)
 		st_lsm6ds3_acc_set_enable(cdata, false);
 	if (atomic_read(&cdata->gyro_wkqueue_en) == 1)
@@ -3431,9 +3517,12 @@ EXPORT_SYMBOL(st_lsm6ds3_common_suspend);
 
 int st_lsm6ds3_common_resume(struct lsm6ds3_data *cdata)
 {
+<<<<<<< HEAD
 	SENSOR_INFO("acc_en=%d, gyro_en=%d\n",
 		atomic_read(&cdata->wkqueue_en), atomic_read(&cdata->gyro_wkqueue_en));
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (atomic_read(&cdata->wkqueue_en) == 1) {
 		st_lsm6ds3_set_fs(cdata, cdata->sdata->acc_c_gain,
 					ST_INDIO_DEV_ACCEL);

@@ -60,6 +60,8 @@ struct uhid_device {
 static struct miscdevice uhid_misc;
 bool lcd_is_on = true;
 
+bool lcd_is_on = true;
+
 static void uhid_device_add_worker(struct work_struct *work)
 {
 	struct uhid_device *uhid = container_of(work, struct uhid_device, worker);

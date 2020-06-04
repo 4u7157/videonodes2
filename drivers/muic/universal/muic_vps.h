@@ -102,5 +102,9 @@ extern int vps_find_attached_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 extern void vps_show_table(void);
 extern void vps_show_supported_list(void);
 extern int vps_resolve_dev(muic_data_t *pmuic, muic_attached_dev_t *pbuf, int *pintr);
+<<<<<<< HEAD
 
+=======
+extern bool mdev_undefined_range(int adc);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif

@@ -754,6 +754,10 @@ struct f54_query_47 {
 			unsigned char has_ctrl185:1;
 			unsigned char has_ctrl186:1;
 			unsigned char has_ctrl187:1;
+<<<<<<< HEAD
+=======
+			unsigned char f54_query47_b0__6:7;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			unsigned char has_query49:1;
 		} __packed;
 		unsigned char data[1];
@@ -1440,7 +1444,11 @@ struct f54_control {
 	struct f54_control_91 *reg_91;
 	struct f54_control_94 *reg_94;
 	struct f54_control_96 *reg_96;
+<<<<<<< HEAD
 	struct f54_control_99 *reg_99;
+=======
+    struct f54_control_99 *reg_99;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct f54_control_110 *reg_110;
 	struct f54_control_149 *reg_149;
 	struct f54_control_182 *reg_182;

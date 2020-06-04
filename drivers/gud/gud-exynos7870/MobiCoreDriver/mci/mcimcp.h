@@ -284,6 +284,10 @@ struct rsp_open {
 struct cmd_check_load {
 	struct cmd_header cmd_header;	/** Command header */
 	struct mc_uuid_t uuid;	/** Service UUID */
+<<<<<<< HEAD
+=======
+	u8      unused[4];      /** Padding to be 64-bit aligned */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u64		adr_load_data;	/** Physical address of the data */
 	u32		wsm_data_type;	/** Type of MMU */
 	u32		ofs_load_data;	/** Offset to the data */
@@ -334,6 +338,10 @@ struct cmd_map {
 	u32		ofs_buffer;	/** Offset to the payload */
 	u64		adr_buffer;	/** Physical address of the MMU */
 	u32		len_buffer;	/** Length of the buffer */
+<<<<<<< HEAD
+=======
+	u8		unused[4];	/** Padding to be 64-bit aligned */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #define MCP_MAP_MAX         0x100000    /** Maximum length for MCP map */
@@ -395,7 +403,11 @@ struct rsp_load_token {
  * of a service.
  * The memory then becomes world-shared memory (WSM).
  * The only allowed memory type here is WSM_L2.
+<<<<<<< HEAD
  * @{ */
+=======
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /** NWd physical buffer description
  *
@@ -407,6 +419,10 @@ struct buffer_map {
 	u32		ofs_buffer;	/**< Offset of buffer */
 	u32		len_buffer;	/**< Length of buffer */
 	u32		wsm_type;	/**< Type of address */
+<<<<<<< HEAD
+=======
+	u8		unused[4];	/** Padding to be 64-bit aligned */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /** MultiMap Command */
@@ -431,7 +447,11 @@ struct rsp_multimap {
  * Attention: The memory blocks will be immediately unmapped from the specified
  * session. If the service is still accessing the memory, the service will
  * trigger a segmentation fault.
+<<<<<<< HEAD
  * @{ */
+=======
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /** NWd mapped buffer description
  *
@@ -441,6 +461,10 @@ struct rsp_multimap {
 struct buffer_unmap {
 	u64		secure_va;	/**< Secure virtual address */
 	u32		len_buffer;	/**< Length of buffer */
+<<<<<<< HEAD
+=======
+	u8		unused[4];	/** Padding to be 64-bit aligned */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /** Multiunmap Command */

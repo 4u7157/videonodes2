@@ -64,3 +64,7 @@ obj-$(CONFIG_TILE_SROM)		+= tile-srom.o
 obj-$(CONFIG_XILLYBUS)		+= xillybus/
 
 obj-$(CONFIG_KNOX_KAP)		+= knox_kap.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_MST_LDO)		+= mst_ctrl.o
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

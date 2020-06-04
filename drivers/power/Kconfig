@@ -386,6 +386,7 @@ config SEC_CHARGER_S2MU003
 	  Say Y here to enable support for the Samsung S2MU003
 	  battery charger can supoprt PMIC, FLED, Fuel-gauge.
 
+<<<<<<< HEAD
 config SEC_CHARGER_S2MPW01
 	tristate "Samsung S2MPW01 charger driver"
 	depends on MFD_S2MPW01 && I2C
@@ -414,6 +415,8 @@ config SEC_FUELGAUGE_S2MPU06
 	  Say Y here to enable support for the Samsung S2MPU06
 	  fuel-gauge driver which can support only voltage-tracking mode.
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config SEC_FUELGAUGE_S2MU003
 	tristate "Samsung S2MU003 fuel gauge driver"
 	depends on MFD_S2MU003 && I2C

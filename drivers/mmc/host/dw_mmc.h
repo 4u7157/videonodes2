@@ -240,18 +240,27 @@ enum dw_mci_misc_control {
 	CTRL_RESTORE_CLKSEL = 0,
 	CTRL_REQUEST_EXT_IRQ,
 	CTRL_CHECK_CD,
+<<<<<<< HEAD
+=======
+	CTRL_SET_ETC_GPIO,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	CTRL_ADD_SYSFS,
 };
 
 #define SDMMC_DATA_TMOUT_SHIFT		11
 #define SDMMC_RESP_TMOUT		0xFF
 #define SDMMC_DATA_TMOUT_CRT		8
+<<<<<<< HEAD
 #define SDMMC_DATA_TMOUT_EXT		0x1
 #define SDMMC_DATA_TMOUT_EXT_SHIFT	8
 #define SDMMC_DATA_TMOUT_MAX_CNT	0x1FFFFF
 #define SDMMC_DATA_TMOUT_MAX_EXT_CNT	0xFFFFFF
 #define SDMMC_HTO_TMOUT_SHIFT		8
 
+=======
+#define SDMMC_DATA_TMOUT_EXT		0x7
+#define SDMMC_DATA_TMOUT_EXT_SHIFT	8
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 extern u32 dw_mci_calc_timeout(struct dw_mci *host);
 
@@ -263,6 +272,7 @@ extern int dw_mci_resume(struct dw_mci *host);
 #endif
 
 /**
+<<<<<<< HEAD
  * struct dw_mci_slot - MMC slot state
  * @mmc: The mmc_host representing this slot.
  * @host: The MMC controller this slot is using.
@@ -388,6 +398,8 @@ struct dw_mci_tuning_data {
 };
 
 /**
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * dw_mci driver data - dw-mshc implementation specific driver data.
  * @caps: mmc subsystem specified capabilities of the controller(s).
  * @init: early implementation specific initialization.

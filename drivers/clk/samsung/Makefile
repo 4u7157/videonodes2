@@ -9,7 +9,10 @@ obj-$(CONFIG_SOC_EXYNOS5260)	+= clk-exynos5260.o
 obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
 obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
 obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
+<<<<<<< HEAD
 obj-$(CONFIG_SOC_EXYNOS7570)	+= clk-exynos7570.o
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 obj-$(CONFIG_SOC_EXYNOS7870)	+= clk-exynos7870.o
 ifeq ($(CONFIG_SOC_EXYNOS8890), y)
 ifeq ($(CONFIG_SOC_EXYNOS8890_EVT1), y)

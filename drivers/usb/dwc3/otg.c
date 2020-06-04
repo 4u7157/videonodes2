@@ -24,14 +24,18 @@
 #include <linux/pm_runtime.h>
 #include <linux/usb/samsung_usb.h>
 #include <linux/phy/phy.h>
+<<<<<<< HEAD
 #if defined(CONFIG_TYPEC)
 #include <linux/usb/typec.h>
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "core.h"
 #include "otg.h"
 #include "io.h"
 
+<<<<<<< HEAD
 #if defined(CONFIG_TYPEC)
 struct intf_typec {
 	/* struct mutex lock; */ /* device lock */
@@ -42,6 +46,8 @@ struct intf_typec {
 };
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if IS_ENABLED(CONFIG_USB_DWC3_EXYNOS)
 static struct dwc3_ext_otg_ops *dwc3_otg_exynos_rsw_probe(struct dwc3 *dwc)
 {
@@ -150,8 +156,13 @@ exit:
 	if (!ret)
 		ret = (phy->state != prev_state);
 
+<<<<<<< HEAD
 	if(log_usb)
 		pr_info("OTG SM: %s => %s\n", usb_otg_state_string(prev_state),(ret > 0) ? usb_otg_state_string(phy->state) : "(no change)");
+=======
+	pr_debug("OTG SM: %s => %s\n", usb_otg_state_string(prev_state),
+		(ret > 0) ? usb_otg_state_string(phy->state) : "(no change)");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return ret;
 }
@@ -211,11 +222,14 @@ static int dwc3_otg_start_host(struct otg_fsm *fsm, int on)
 	struct device	*dev = dotg->dwc->dev;
 	int		ret = 0;
 
+<<<<<<< HEAD
 	if (dwc->dr_mode == USB_DR_MODE_PERIPHERAL) {
 		dev_info(dev, "does not support HOST mode\n");
 		return 0;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!dotg->dwc->xhci)
 		return -EINVAL;
 
@@ -224,6 +238,7 @@ static int dwc3_otg_start_host(struct otg_fsm *fsm, int on)
 	if (on) {
 		wake_lock(&dotg->wakelock);
 		pm_runtime_get_sync(dev);
+<<<<<<< HEAD
 
 		phy_set(dwc->usb2_generic_phy,
 					SET_EXTREFCLK_REQUEST, NULL);
@@ -237,6 +252,8 @@ static int dwc3_otg_start_host(struct otg_fsm *fsm, int on)
 			goto err1;
 		}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = dwc3_core_init(dwc);
 		if (ret) {
 			dev_err(dwc->dev, "%s: failed to reinitialize core\n",
@@ -281,11 +298,14 @@ static int dwc3_otg_start_gadget(struct otg_fsm *fsm, int on)
 	struct device	*dev = dotg->dwc->dev;
 	int		ret = 0;
 
+<<<<<<< HEAD
 	if (dwc->dr_mode == USB_DR_MODE_HOST) {
 		dev_info(dev, "does not support PERIPHERAL mode\n");
 		return ret;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!otg->gadget)
 		return -EINVAL;
 
@@ -295,6 +315,7 @@ static int dwc3_otg_start_gadget(struct otg_fsm *fsm, int on)
 	if (on) {
 		wake_lock(&dotg->wakelock);
 		pm_runtime_get_sync(dev);
+<<<<<<< HEAD
 
 		phy_set(dwc->usb2_generic_phy,
 					SET_EXTREFCLK_REQUEST, NULL);
@@ -308,6 +329,8 @@ static int dwc3_otg_start_gadget(struct otg_fsm *fsm, int on)
 			goto err1;
 		}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = dwc3_core_init(dwc);
 		if (ret) {
 			dev_err(dwc->dev, "%s: failed to reinitialize core\n",
@@ -669,10 +692,13 @@ int dwc3_otg_init(struct dwc3 *dwc)
 	struct dwc3_ext_otg_ops	*ops = NULL;
 	u32			reg;
 	int			ret = 0;
+<<<<<<< HEAD
 #if defined(CONFIG_TYPEC)
 	struct intf_typec	*typec;
 	struct typec_partner_desc partner;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/*
 	 * GHWPARAMS6[10] bit is SRPSupport.
@@ -738,6 +764,7 @@ has_ext_otg:
 		}
 	}
 
+<<<<<<< HEAD
 #if defined(CONFIG_TYPEC)
 	typec = devm_kzalloc(dwc->dev, sizeof(*typec), GFP_KERNEL);
 	if (!typec)
@@ -768,6 +795,8 @@ has_ext_otg:
 		dev_err(dwc->dev, "failed register partner\n");
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wake_lock_init(&dotg->wakelock, WAKE_LOCK_SUSPEND, "dwc3-otg");
 
 	ret = sysfs_create_group(&dwc->dev->kobj, &dwc3_otg_attr_group);
@@ -786,11 +815,14 @@ void dwc3_otg_exit(struct dwc3 *dwc)
 	struct dwc3_otg		*dotg = dwc->dotg;
 	u32			reg;
 
+<<<<<<< HEAD
 #if defined(CONFIG_TYPEC)
 	typec_unregister_partner(dotg->typec->partner);
 	typec_unregister_port(dotg->typec->port);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	reg = dwc3_readl(dwc->regs, DWC3_GHWPARAMS6);
 	if (!(reg & DWC3_GHWPARAMS6_SRP_SUPPORT)) {
 		if (dotg->ext_otg_ops) {

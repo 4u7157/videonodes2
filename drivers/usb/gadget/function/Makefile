@@ -52,7 +52,10 @@ usb_f_accessory-y               := f_accessory.o
 obj-$(CONFIG_USB_F_ACC)         += usb_f_accessory.o
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 usb_f_midi-y			:= f_midi.o
 obj-$(CONFIG_USB_F_MIDI)	+= usb_f_midi.o
 obj-$(CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE)	+= multi_config.o

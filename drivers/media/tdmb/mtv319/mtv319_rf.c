@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
 *
 * File name: mtv319_rf.c
 *
@@ -16,6 +17,25 @@
 * GNU General Public License for more details.
 *
 */
+=======
+ *
+ * File name: mtv319_rf.c
+ *
+ * Description : MTV319 RF services source driver.
+ *
+ * Copyright (C) (2013, RAONTECH)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2.
+ *
+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+ * kind, whether express or implied; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "mtv319_rf.h"
 #include "mtv319_rf_adc_data.h"
@@ -120,7 +140,11 @@ static INT rtvRF_ChangeAdcClock(UINT nChIdx)
 			break;
 
 		if (--nRetryCnt == 0) {
+<<<<<<< HEAD
 			RTV_DBGMSG0("[rtvRF_ChangeAdcClock] Syn Unlocked!\n");
+=======
+			RTV_DBGMSG0("Syn Unlocked!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return RTV_ADC_CLK_UNLOCKED;
 		}
 	}
@@ -206,7 +230,11 @@ INT rtvRF_SetFrequency(U32 dwChFreqKHz)
 		RTV_REG_SET(0x2A, (WR2A | 0x00)); /* RECONF_I2C = 1 */
 
 		if (--nRetryCnt == 0) {
+<<<<<<< HEAD
 			RTV_DBGMSG0("[rtvRF_SetFrequency] PLL Unlocked!\n");
+=======
+			RTV_DBGMSG0("PLL Unlocked!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return RTV_PLL_UNLOCKED;
 		}
 	}
@@ -216,7 +244,11 @@ INT rtvRF_SetFrequency(U32 dwChFreqKHz)
 	return RTV_SUCCESS;
 
 RF_SET_FREQ_ERR:
+<<<<<<< HEAD
 	RTV_DBGMSG1("[rtvRF_SetFrequency] Error(%d)\n", nRet);
+=======
+	RTV_DBGMSG1("Error(%d)\n", nRet);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return nRet;
 }
 

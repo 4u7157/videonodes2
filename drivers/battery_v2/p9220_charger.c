@@ -568,7 +568,11 @@ void p9220_send_packet(struct p9220_charger_data *charger, u8 header, u8 rx_data
 void p9220_send_command(struct p9220_charger_data *charger, int cmd_mode)
 {
 	u8 data_val[4];
+<<<<<<< HEAD
 
+=======
+	int i = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	switch (cmd_mode) {
 		case P9220_AFC_CONF_5V:
 			pr_info("%s set 5V \n", __func__);
@@ -584,6 +588,7 @@ void p9220_send_command(struct p9220_charger_data *charger, int cmd_mode)
 			p9220_reg_read(charger->client, P9220_COMMAND_REG, &data_val[0]);
 			break;
 		case P9220_AFC_CONF_9V:
+<<<<<<< HEAD
 			pr_info("%s set 9V \n", __func__);
 
 			data_val[0] = 0x2c;
@@ -598,6 +603,20 @@ void p9220_send_command(struct p9220_charger_data *charger, int cmd_mode)
 			p9220_reg_read(charger->client, P9220_RX_DATA_COMMAND, &data_val[0]);
 			p9220_reg_read(charger->client, P9220_RX_DATA_VALUE0, &data_val[0]);
 			p9220_reg_read(charger->client, P9220_COMMAND_REG, &data_val[0]);
+=======
+			for(i = 0; i < CMD_CNT - 1; i++) {
+				pr_info("%s set 9V , cnt = %d \n", __func__, i);
+				data_val[0] = 0x2c;
+				p9220_send_packet(charger, P9220_HEADER_AFC_CONF, P9220_RX_DATA_COM_AFC_SET, data_val, 1);
+				p9220_reg_read(charger->client, P9220_RX_DATA_COMMAND, &data_val[0]);
+				p9220_reg_read(charger->client, P9220_RX_DATA_VALUE0, &data_val[0]);
+				p9220_reg_read(charger->client, P9220_COMMAND_REG, &data_val[0]);
+				msleep(10);
+			}
+			p9220_set_vout(charger, P9220_VOUT_9V);
+			/* Enable Clamp1, Clamp2 for WPC 9W, should set after vout set */
+			p9220_reg_update(charger->client, P9220_MOD_DEPTH_REG, 0x30, 0x30);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			break;
 		case P9220_LED_CONTROL_ON:
 			pr_info("%s led on \n", __func__);
@@ -1495,9 +1514,15 @@ static int p9220_chg_set_property(struct power_supply *psy,
 			}
 			break;
 		case POWER_SUPPLY_PROP_ONLINE:
+<<<<<<< HEAD
 			if(val->intval == SEC_BATTERY_CABLE_WIRELESS ||
 				val->intval == SEC_BATTERY_CABLE_HV_WIRELESS ||
 				val->intval == SEC_BATTERY_CABLE_PMA_WIRELESS ) {
+=======
+			if(val->intval == POWER_SUPPLY_TYPE_WIRELESS ||
+				val->intval == POWER_SUPPLY_TYPE_HV_WIRELESS ||
+				val->intval == POWER_SUPPLY_TYPE_PMA_WIRELESS ) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				charger->pdata->ic_on_mode = true;
 			} else {
 				charger->pdata->ic_on_mode = false;
@@ -1679,7 +1704,11 @@ static void p9220_wpc_det_work(struct work_struct *work)
 	u8 vrect;
 
 	wake_lock(&charger->wpc_wake_lock);
+<<<<<<< HEAD
 	pr_info("%s\n",__func__);
+=======
+	pr_info("%s start.\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wc_w_state = gpio_get_value(charger->pdata->wpc_det);
 
 	if ((charger->wc_w_state == 0) && (wc_w_state == 1)) {
@@ -1771,7 +1800,11 @@ static void p9220_wpc_isr_work(struct work_struct *work)
 		container_of(work, struct p9220_charger_data, wpc_isr_work.work);
 
 	u8 cmd_data, val_data;
+<<<<<<< HEAD
 	int i;
+=======
+	int vout = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	union power_supply_propval value;
 
 	if (!charger->wc_w_state) {
@@ -1780,7 +1813,11 @@ static void p9220_wpc_isr_work(struct work_struct *work)
 	}
 
 	wake_lock(&charger->wpc_wake_lock);
+<<<<<<< HEAD
 	pr_info("%s\n",__func__);
+=======
+	pr_info("%s start.\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	p9220_reg_read(charger->client, P9220_TX_DATA_COMMAND, &cmd_data);
 	p9220_reg_read(charger->client, P9220_TX_DATA_VALUE0, &val_data);
@@ -1798,6 +1835,16 @@ static void p9220_wpc_isr_work(struct work_struct *work)
 		case 0x01:
 			pr_info("%s: AFC wireless charger\n", __func__);
 			if (!gpio_get_value(charger->pdata->wpc_det)) {
+<<<<<<< HEAD
+=======
+				pr_err("%s Wireless charging is paused during set high voltage. \n", __func__);
+				wake_unlock(&charger->wpc_wake_lock);
+				return;
+			}
+			if (charger->pdata->cable_type == P9220_PAD_MODE_WPC_AFC ||
+				charger->pdata->cable_type == P9220_PAD_MODE_WPC_STAND_HV) {
+				pr_err("%s: Is is already HV wireless cable. No need to set again \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				wake_unlock(&charger->wpc_wake_lock);
 				return;
 			}
@@ -1811,6 +1858,7 @@ static void p9220_wpc_isr_work(struct work_struct *work)
 			psy_do_property("wireless", set,
 				POWER_SUPPLY_PROP_ONLINE, value);
 
+<<<<<<< HEAD
 			/* retry to send AFC_SET for bad communication condition */
 			for(i = 0; i < CMD_CNT - 1; i++) {
 				int vout = 0;
@@ -1839,6 +1887,11 @@ static void p9220_wpc_isr_work(struct work_struct *work)
 					pr_info("%s read vout should be 9V -> (%dmV) \n", __func__, vout);
 				}
 			}
+=======
+			/* read vout */
+			vout = p9220_get_adc(charger, P9220_ADC_VOUT);
+			pr_info("%s read vout should be 9V -> (%dmV) \n", __func__, vout);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			if(sleep_mode) {
 				pr_info("%s sleep mode, turn on fan \n", __func__);
@@ -1944,7 +1997,11 @@ static irqreturn_t p9220_wpc_irq_thread(int irq, void *irq_data)
 	u8 irq_src[2];
 	u8 reg_data;
 
+<<<<<<< HEAD
 	pr_info("%s !\n",__func__);
+=======
+	pr_info("%s start.\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wake_lock(&charger->wpc_wake_lock);
 
 	ret = p9220_reg_read(charger->client, P9220_INT_L_REG, &irq_src[0]);
@@ -2001,7 +2058,11 @@ static irqreturn_t p9220_wpc_irq_thread(int irq, void *irq_data)
 	ret = p9220_reg_read(charger->client, P9220_INT_L_REG, &irq_src[0]);
 	ret = p9220_reg_read(charger->client, P9220_INT_H_REG, &irq_src[1]);
 	wc_w_state_irq = gpio_get_value(charger->pdata->wpc_int);
+<<<<<<< HEAD
 	pr_info("%s wc_w_state_irq = %d\n", __func__, wc_w_state_irq);
+=======
+	pr_info("%s end. wc_w_state_irq = %d\n", __func__, wc_w_state_irq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wake_unlock(&charger->wpc_wake_lock);
 
 	return IRQ_HANDLED;
@@ -2475,4 +2536,8 @@ module_exit(p9220_charger_exit);
 
 MODULE_DESCRIPTION("Samsung p9220 Charger Driver");
 MODULE_AUTHOR("Samsung Electronics");
+<<<<<<< HEAD
 MODULE_LICENSE("GPL");
+=======
+MODULE_LICENSE("GPL");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

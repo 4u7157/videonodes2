@@ -76,6 +76,10 @@ enum exynos7870_clks {
 	dispaud_bus = 430, dispaud_decon_int_vclk, dispaud_decon_int_eclk, dispaud_mipiphy_txbyteclkhs, dispaud_mipiphy_rxclkesc0,
 	decon_vclk = 450, decon_vclk_local, decon_eclk, decon_eclk_local,
 	disp_pll = 460, aud_pll, d1_i2s, d1_mixer,
+<<<<<<< HEAD
+=======
+	oscclk_aud = 470,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* The group of clocks in isp */
 	isp_sysmmu = 500, isp_ppmu, isp_bts,
@@ -138,7 +142,11 @@ static struct init_vclk exynos7870_peri_vclks[] __initdata = {
 	VCLK(i2c_touchkey, gate_peri_i2c_touchkey, "gate_peri_i2c_touchkey", 0, 0, NULL),
 	VCLK(i2c_fuelgauge, gate_peri_i2c_fuelgauge, "gate_peri_i2c_fuelgauge", 0, 0, NULL),
 	VCLK(i2c_spkamp, gate_peri_i2c_spkamp, "gate_peri_i2c_spkamp", 0, 0, NULL),
+<<<<<<< HEAD
 	VCLK(i2c_nfc, gate_peri_i2c_nfc, "gate_peri_i2c_nfc", 0, 0, NULL),
+=======
+	VCLK(i2c_nfc, gate_peri_i2c_nfc, "gate_peri_i2c_nfc", 0, 0, "i2c2_pclk"),
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	VCLK(i2c_muic, gate_peri_i2c_muic, "gate_peri_i2c_muic", 0, 0, NULL),
 	VCLK(i2c_ifpmic, gate_peri_i2c_ifpmic, "gate_peri_i2c_ifpmic", 0, 0, NULL),
 	/* PERI HSI2C ACLK */
@@ -158,7 +166,11 @@ static struct init_vclk exynos7870_peri_vclks[] __initdata = {
 	VCLK(wdt_cpucl0, gate_peri_wdt_cpucl0, "gate_peri_wdt_cpucl0", 0, 0, NULL),
 	VCLK(wdt_cpucl1, gate_peri_wdt_cpucl1, "gate_peri_wdt_cpucl1", 0, 0, NULL),
 	/* PERI UART ACLK */
+<<<<<<< HEAD
 	VCLK(uart_debug, gate_peri_uart_debug, "gate_peri_uart_debug", 0, 0, "console-pclk0"),
+=======
+	VCLK(uart_debug, gate_peri_uart_debug, "gate_peri_uart_debug", 0, 0, "console-pclk2"),
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	VCLK(uart_btwififm, gate_peri_uart_btwififm, "gate_peri_uart_btwififm", 0, 0, NULL),
 	VCLK(uart_sensor, gate_peri_uart_sensor, "gate_peri_uart_sensor", 0, 0, NULL),
 	/* PERI TMU ACLK */
@@ -168,7 +180,15 @@ static struct init_vclk exynos7870_peri_vclks[] __initdata = {
 	/* PERI SPI ACLK */
 	VCLK(peri_spi_sensorhub, gate_peri_spi_sensorhub, "gate_peri_spi_sensorhub", 0, 0, NULL),
 	VCLK(peri_spi_voiceprocessor, gate_peri_spi_voiceprocessor, "gate_peri_spi_voiceprocessor", 0, 0, NULL),
+<<<<<<< HEAD
 	VCLK(peri_spi_ese, gate_peri_spi_ese, "gate_peri_spi_ese", 0, 0, NULL),
+=======
+#ifdef CONFIG_SENSORS_FINGERPRINT
+	VCLK(peri_spi_ese, gate_peri_spi_ese, "gate_peri_spi_ese", 0, 0, "fp-spi-pclk"),
+#else
+	VCLK(peri_spi_ese, gate_peri_spi_ese, "gate_peri_spi_ese", 0, 0, NULL),
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	VCLK(peri_spi_rearfrom, gate_peri_spi_rearfrom, "gate_peri_spi_rearfrom", 0, 0, NULL),
 	VCLK(peri_spi_frontfrom, gate_peri_spi_frontfrom, "gate_peri_spi_frontfrom", 0, 0, NULL),
 	/* PERI RTC ACLK */
@@ -194,7 +214,15 @@ static struct init_vclk exynos7870_fsys_vclks[] __initdata = {
 	VCLK(fsys_sss, gate_fsys_sss, "gate_fsys_sss", 0, 0, NULL),
 	VCLK(fsys_rtic, gate_fsys_rtic, "gate_fsys_rtic", 0, 0, NULL),
 	VCLK(fsys_pdma0, gate_fsys_pdma0, "gate_fsys_pdma0", 0, 0, NULL),
+<<<<<<< HEAD
 	VCLK(fsys_pdma1, gate_fsys_pdma1, "gate_fsys_pdma1", 0, 0, NULL),
+=======
+#ifdef CONFIG_SENSORS_FINGERPRINT
+	VCLK(fsys_pdma1, gate_fsys_pdma1, "gate_fsys_pdma1", 0, 0, "apb_pclk"),
+#else
+	VCLK(fsys_pdma1, gate_fsys_pdma1, "gate_fsys_pdma1", 0, 0, NULL),
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	VCLK(fsys_sromc, gate_fsys_sromc, "gate_fsys_sromc", 0, 0, NULL),
 	VCLK(fsys_usb20drd_phyclock, umux_fsys_clkphy_fsys_usb20drd_phyclock_user, "umux_fsys_clkphy_fsys_usb20drd_phyclock_user", 0, 0, NULL),
 
@@ -230,6 +258,10 @@ static struct init_vclk exynos7870_dispaud_vclks[] __initdata = {
 
 	VCLK(d1_i2s, d1_dispaud_mi2s, "d1_dispaud_mi2s", 0, 0, NULL),
 	VCLK(d1_mixer, d1_dispaud_mixer, "d1_dispaud_mixer", 0, 0, NULL),
+<<<<<<< HEAD
+=======
+	VCLK(oscclk_aud, pxmxdx_oscclk_aud, "pxmxdx_oscclk_aud", 0, 0, NULL),
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 static struct init_vclk exynos7870_isp_vclks[] __initdata = {
 	VCLK(isp_sysmmu, gate_isp_sysmmu, "gate_isp_sysmmu", 0, 0, NULL),
@@ -263,10 +295,21 @@ static struct init_vclk exynos7870_mif_vclks[] __initdata = {
 	VCLK(usb20drd_sclk, sclk_usb20drd, "sclk_usb20drd" , 0, 0, NULL),
 	VCLK(uart_sensor_sclk, sclk_uart_sensor, "sclk_uart_sensor", 0, 0, "console-sclk0"),
 	VCLK(uart_btwififm_sclk, sclk_uart_btwififm, "sclk_uart_btwififm", 0, 0, NULL),
+<<<<<<< HEAD
 	VCLK(uart_debug_sclk, sclk_uart_debug, "sclk_uart_debug", 0, 0, NULL),
 	VCLK(spi_frontfrom_sclk, sclk_spi_frontfrom, "sclk_spi_frontfrom", 0, 0, NULL),
 	VCLK(spi_rearfrom_sclk, sclk_spi_rearfrom, "sclk_spi_rearfrom", 0, 0, NULL),
 	VCLK(spi_ese_sclk, sclk_spi_ese, "sclk_spi_ese", 0, 0, NULL),
+=======
+	VCLK(uart_debug_sclk, sclk_uart_debug, "sclk_uart_debug", 0, 0, "console-sclk2"),
+	VCLK(spi_frontfrom_sclk, sclk_spi_frontfrom, "sclk_spi_frontfrom", 0, 0, NULL),
+	VCLK(spi_rearfrom_sclk, sclk_spi_rearfrom, "sclk_spi_rearfrom", 0, 0, NULL),
+#ifdef CONFIG_SENSORS_FINGERPRINT
+	VCLK(spi_ese_sclk, sclk_spi_ese, "sclk_spi_ese", 0, 0, "fp-spi-sclk"),
+#else
+	VCLK(spi_ese_sclk, sclk_spi_ese, "sclk_spi_ese", 0, 0, NULL),
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	VCLK(spi_voiceprocessor_sclk, sclk_spi_voiceprocessor, "sclk_spi_voiceprocessor", 0, 0, NULL),
 	VCLK(spi_sensorhub_sclk, sclk_spi_sensorhub, "sclk_spi_sensorhub", 0, 0, NULL),
 	VCLK(isp_sensor0_sclk, sclk_isp_sensor0, "sclk_isp_sensor0", 0, 0, NULL),

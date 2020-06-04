@@ -90,6 +90,10 @@ struct eth_dev {
 
 	bool			zlp;
 	u8			host_mac[ETH_ALEN];
+<<<<<<< HEAD
+=======
+	int 			no_of_zlp;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /*-------------------------------------------------------------------------*/
@@ -316,7 +320,6 @@ static void rx_complete(struct usb_ep *ep, struct usb_request *req)
 
 		if (dev->unwrap) {
 			unsigned long	flags;
-
 			spin_lock_irqsave(&dev->lock, flags);
 			if (dev->port_usb) {
 				status = dev->unwrap(dev->port_usb,
@@ -356,6 +359,7 @@ static void rx_complete(struct usb_ep *ep, struct usb_request *req)
 					if (status < 0
 						|| ETH_HLEN > skb2->len
 						|| skb2->len > (dev->net->mtu + ETH_HLEN)) {
+<<<<<<< HEAD
 						printk(KERN_DEBUG "usb: %s  drop incase of NCM rx length %d\n",__func__,skb2->len);
 					} else {
 						printk(KERN_DEBUG "usb: %s  Dont drop incase of NCM rx length %d\n",__func__,skb2->len);
@@ -363,6 +367,14 @@ static void rx_complete(struct usb_ep *ep, struct usb_request *req)
 					}
 				}
 				printk(KERN_DEBUG "usb: %s Drop rx length %d\n",__func__,skb2->len);
+=======
+						printk(KERN_ERR "usb: %s  dropped incase of NCM rx length %d\n",__func__,skb2->len);
+					} else {
+						goto process_frame;
+					}
+				}
+				printk(KERN_ERR "usb: %s Drop rx length %d\n",__func__,skb2->len);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 				dev->net->stats.rx_errors++;
 				dev->net->stats.rx_length_errors++;
@@ -559,7 +571,10 @@ static void process_uether_rx(struct eth_dev *dev)
 					|| skb->len > (dev->net->mtu + ETH_HLEN)) {
 					printk(KERN_ERR "usb: %s  drop incase of NCM rx length %d\n",__func__,skb->len);
 				} else {
+<<<<<<< HEAD
 					printk(KERN_ERR "usb: %s  Dont drop incase of NCM rx length %d\n",__func__,skb->len);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					goto process_frame;
 				}
 			}
@@ -652,7 +667,11 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
 		break;
 	case 0:
 #ifdef CONFIG_USB_RNDIS_MULTIPACKET
+<<<<<<< HEAD
 		if (!req->zero)
+=======
+		if (req->zero && !dev->zlp)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			dev->net->stats.tx_bytes += req->length-1;
 		else
 			dev->net->stats.tx_bytes += req->length;
@@ -693,6 +712,7 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
 #endif
 				length = new_req->length;
 
+<<<<<<< HEAD
 				/* NCM requires no zlp if transfer is
 				 * dwNtbInMaxSize */
 				if (dev->port_usb->is_fixed &&
@@ -701,6 +721,22 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
 					new_req->zero = 0;
 				else
 					new_req->zero = 1;
+=======
+				new_req->zero =0;
+				if((length % in->maxpacket) == 0) {
+					new_req->zero = 1;
+					dev->no_of_zlp++;
+				}
+				/* NCM requires no zlp if transfer is dwNtbInMaxSize */
+				if (dev->port_usb) {
+					if (dev->port_usb->is_fixed) { 
+						if(length == dev->port_usb->fixed_in_len) {
+							new_req->zero = 0;
+							dev->no_of_zlp--;
+						}
+					}
+				}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 				/* use zlp framing on tx for strict CDC-Ether
 				 * conformance, though any robust network rx
@@ -708,12 +744,17 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
 				 * doesn't like to write zlps.
 				 */
 				if (new_req->zero && !dev->zlp &&
+<<<<<<< HEAD
 						(length % in->maxpacket) == 0) {
 					new_req->zero = 0;
+=======
+					(length % in->maxpacket) == 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					length++;
 				}
 
 				new_req->length = length;
+<<<<<<< HEAD
 #ifdef CONFIG_USB_RNDIS_MULTIPACKET
 				new_req->complete = tx_complete;
 #endif
@@ -729,6 +770,16 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
 					spin_unlock(&dev->req_lock);
 #endif
 					
+=======
+				new_req->complete = tx_complete;
+				
+				retval = usb_ep_queue(in, new_req, GFP_ATOMIC);
+				switch (retval) {
+				default:
+					printk(KERN_ERR"usb: dropped tx_complete_newreq(%p)\n",new_req);
+					DBG(dev, "tx queue err %d\n", retval);
+					new_req->length = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_USB_NCM_ACCUMULATE_MULTPKT
 					if(dev->port_usb->is_fixed){
 						memset(new_req->buf + dev->port_usb->ndp0_offset,0x00,dev->port_usb->header_len-dev->port_usb->ndp0_offset);
@@ -751,11 +802,15 @@ static void tx_complete(struct usb_ep *ep, struct usb_request *req)
 backinlist:
 #endif
 				spin_lock(&dev->req_lock);
+<<<<<<< HEAD
 #ifdef CONFIG_USB_RNDIS_MULTIPACKET
 				list_add_tail(&new_req->list, &dev->tx_reqs);				
 #else
 				list_add(&new_req->list, &dev->tx_reqs);
 #endif
+=======
+				list_add_tail(&new_req->list, &dev->tx_reqs);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				spin_unlock(&dev->req_lock);
 			}
 		} else {
@@ -831,7 +886,7 @@ static netdev_tx_t eth_start_xmit(struct sk_buff *skb,
 					struct net_device *net)
 {
 	struct eth_dev		*dev = netdev_priv(net);
-	int			length = 0;
+	int			length;
 	int			retval;
 	struct usb_request	*req = NULL;
 	unsigned long		flags;
@@ -842,7 +897,11 @@ static netdev_tx_t eth_start_xmit(struct sk_buff *skb,
 #endif
 
 	if (!skb) {
+<<<<<<< HEAD
 		pr_err("%s: skb is NULL !!!\n", __func__);
+=======
+		pr_err("%s: Dropped skb is NULL !!!\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return NETDEV_TX_OK;
 	}
 
@@ -1011,6 +1070,7 @@ static netdev_tx_t eth_start_xmit(struct sk_buff *skb,
 	req->context = skb;
 #endif
 	req->complete = tx_complete;
+<<<<<<< HEAD
 
 	/* NCM requires no zlp if transfer is dwNtbInMaxSize */
 	if (dev->port_usb) {
@@ -1021,17 +1081,38 @@ static netdev_tx_t eth_start_xmit(struct sk_buff *skb,
 			else
 				req->zero = 1;
 		}
+=======
+	
+	req->zero =0;
+	if((length % in->maxpacket) == 0) {
+		req->zero = 1;
+		dev->no_of_zlp++;		
+	}	
+	/* NCM requires no zlp if transfer is dwNtbInMaxSize */
+	if (dev->port_usb) {
+		if (dev->port_usb->is_fixed) { 
+		    if(length == dev->port_usb->fixed_in_len) { 
+				req->zero = 0;
+				dev->no_of_zlp--;
+			}
+		}
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* use zlp framing on tx for strict CDC-Ether conformance,
 	 * though any robust network rx path ignores extra padding.
 	 * and some hardware doesn't like to write zlps.
 	 */
+<<<<<<< HEAD
 #ifdef CONFIG_USB_RNDIS_MULTIPACKET
 	if (req->zero && !dev->zlp && (length % in->maxpacket) == 0) {
 		req->zero = 0;
 		length++;
 	}
 #else
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (req->zero && !dev->zlp && (length % in->maxpacket) == 0)
 		length++;
 #endif
@@ -1054,6 +1135,7 @@ static netdev_tx_t eth_start_xmit(struct sk_buff *skb,
 	retval = usb_ep_queue(in, req, GFP_ATOMIC);
 	switch (retval) {
 	default:
+		printk(KERN_ERR"usb: dropped eo queue error (%d)\n",retval);
 		DBG(dev, "tx queue err %d\n", retval);
 		break;
 	case 0:
@@ -1402,6 +1484,10 @@ struct net_device *gether_connect(struct gether *link)
 		dev->tx_skb_hold_count = 0;
 		dev->no_tx_req_used = 0;
 		dev->tx_req_bufsize = 0;
+<<<<<<< HEAD
+=======
+		dev->no_of_zlp=0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		dev->port_usb = link;
 		link->ioport = dev;
 #else
@@ -1467,7 +1553,7 @@ void gether_disconnect(struct gether *link)
 
 	netif_stop_queue(dev->net);
 	netif_carrier_off(dev->net);
-
+	printk(KERN_ERR"usb: %s No of ZLPS (%d)\n",__func__,dev->no_of_zlp);
 	/* disable endpoints, forcing (synchronous) completion
 	 * of all pending i/o.  then free the request objects
 	 * and forget about the endpoints.

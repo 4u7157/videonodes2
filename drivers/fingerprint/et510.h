@@ -19,10 +19,13 @@
 #ifndef _ET510_LINUX_DIRVER_H_
 #define _ET510_LINUX_DIRVER_H_
 
+<<<<<<< HEAD
 #ifdef ENABLE_SENSORS_FPRINT_SECURE
 #define FEATURE_SPI_WAKELOCK
 #endif /* CONFIG_SEC_FACTORY */
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/module.h>
 #include <linux/spi/spi.h>
 
@@ -204,6 +207,13 @@ struct etspi_data {
 	/* for use auto cs mode with dualization fp sensor */
 	unsigned int cs_gpio;
 #endif
+<<<<<<< HEAD
+=======
+	struct pinctrl *p;
+	struct pinctrl_state *pins_poweron;
+	struct pinctrl_state *pins_poweroff;
+	unsigned int ldocontrol;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	unsigned int spi_cs;	/* spi cs pin <temporary gpio setting> */
 
@@ -217,6 +227,7 @@ struct etspi_data {
 	struct workqueue_struct *wq_dbg;
 	struct timer_list dbg_timer;
 	int sensortype;
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_FINGERPRINT_SYSFS
 	struct device *fp_device;
 #endif
@@ -226,6 +237,13 @@ struct etspi_data {
 	struct wake_lock fp_spi_lock;
 #endif
 #endif
+=======
+	struct device *fp_device;
+#ifdef ENABLE_SENSORS_FPRINT_SECURE
+	bool enabled_clk;
+	struct wake_lock fp_spi_lock;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct wake_lock fp_signal_lock;
 	bool tz_mode;
 	int detect_period;
@@ -254,11 +272,17 @@ int etspi_io_vdm_read(struct etspi_data *etspi, struct egis_ioc_transfer *ioc);
 int etspi_io_vdm_write(struct etspi_data *etspi, struct egis_ioc_transfer *ioc);
 int etspi_io_get_frame(struct etspi_data *etspi, u8 *frame, u32 size);
 
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_FINGERPRINT_SYSFS
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern int fingerprint_register(struct device *dev, void *drvdata,
 	struct device_attribute *attributes[], char *name);
 extern void fingerprint_unregister(struct device *dev,
 	struct device_attribute *attributes[]);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #endif

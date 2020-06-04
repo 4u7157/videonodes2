@@ -4,6 +4,10 @@
 extern int attach_ta(muic_data_t *pmuic);
 extern int detach_ta(muic_data_t *pmuic);
 extern int do_BCD_rescan(muic_data_t *pmuic);
+<<<<<<< HEAD
+=======
+extern int BCD_rescan_incomplete_insertion(muic_data_t *pmuic, int get); // get == 0 do BCD rescan, get == 1 get chgtype
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern int enable_periodic_adc_scan(muic_data_t *pmuic);
 extern int disable_periodic_adc_scan(muic_data_t *pmuic);
 extern int com_to_open_with_vbus(muic_data_t *pmuic);
@@ -35,8 +39,12 @@ extern int detach_audiodock(muic_data_t *pmuic);
 extern int attach_jig_uart_boot_off(muic_data_t *pmuic, muic_attached_dev_t new_dev,
 				u8 vbvolt);
 extern int detach_jig_uart_boot_off(muic_data_t *pmuic);
+<<<<<<< HEAD
 extern int attach_jig_uart_boot_on(muic_data_t *pmuic, muic_attached_dev_t new_dev,
 				u8 vbvolt);
+=======
+extern int attach_jig_uart_boot_on(muic_data_t *pmuic, muic_attached_dev_t new_dev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern int detach_jig_uart_boot_on(muic_data_t *pmuic);
 extern int attach_jig_usb_boot_off(muic_data_t *pmuic,
 				u8 vbvolt);
@@ -50,8 +58,11 @@ extern void set_switch_mode(muic_data_t *pmuic, int mode);
 extern int get_switch_mode(muic_data_t *pmuic);
 extern void set_adc_scan_mode(muic_data_t *pmuic,const u8 val);
 extern int get_adc_scan_mode(muic_data_t *pmuic);
+<<<<<<< HEAD
 
 #ifdef CONFIG_UART_SEL
 extern int java_muic_set_path(void *drv_data, int path);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif

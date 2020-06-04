@@ -23,6 +23,7 @@ config EXYNOS7870_BTS
 	depends on SOC_EXYNOS7870
 	help
 	  Enable BTS (Bus traffic shaper) support
+<<<<<<< HEAD
 
 config EXYNOS7570_BTS
 	bool "Bus traffic shaper support"
@@ -30,4 +31,6 @@ config EXYNOS7570_BTS
 	depends on SOC_EXYNOS7570
 	help
 	  Enable BTS (Bus traffic shaper) support
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 endif

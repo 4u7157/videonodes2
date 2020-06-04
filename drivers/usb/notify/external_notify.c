@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2015-2016 Samsung Electronics Co. Ltd.
+=======
+ * Copyright (C) 2016-2017 Samsung Electronics Co. Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7,7 +11,11 @@
  * (at your option) any later version.
  */
 
+<<<<<<< HEAD
  /* usb notify layer v2.0 */
+=======
+ /* usb notify layer v3.0 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define pr_fmt(fmt) "usb_notify: " fmt
 
@@ -39,10 +47,17 @@ static const char *cmd_string(unsigned long cmd)
 		return "3s_no_device";
 	case EXTERNAL_NOTIFY_DEVICE_CONNECT:
 		return "device_connect";
+<<<<<<< HEAD
 	case EXTERNAL_NOTIFY_MDMBLOCK_PRE:
 		return "mdm_block_pre";
 	case EXTERNAL_NOTIFY_MDMBLOCK_POST:
 		return "mdm_block_post";
+=======
+	case EXTERNAL_NOTIFY_HOSTBLOCK_PRE:
+		return "host_block_pre";
+	case EXTERNAL_NOTIFY_HOSTBLOCK_POST:
+		return "host_block_post";
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		return "undefined";
 	}
@@ -55,6 +70,11 @@ static const char *listener_string(int  listener)
 		return "muic";
 	case EXTERNAL_NOTIFY_DEV_CHARGER:
 		return "charger";
+<<<<<<< HEAD
+=======
+	case EXTERNAL_NOTIFY_DEV_PDIC:
+		return "pdic";
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		return "undefined";
 	}

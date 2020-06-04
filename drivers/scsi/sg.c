@@ -962,7 +962,11 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
 				mutex_lock(&sfp->parentdp->open_rel_lock);
 				sg_remove_scat(sfp, &sfp->reserve);
 				sg_build_reserve(sfp, val);
+<<<<<<< HEAD
 				mutex_lock(&sfp->parentdp->open_rel_lock);
+=======
+				mutex_unlock(&sfp->parentdp->open_rel_lock);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 		} else {
 			if (atomic_read(&sdp->detaching))
@@ -1042,6 +1046,10 @@ sg_ioctl(struct file *filp, unsigned int cmd_in, unsigned long arg)
 				mutex_unlock(&sfp->f_mutex);
 				return -EBUSY;
 			}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			mutex_lock(&sfp->parentdp->open_rel_lock);
 			sg_remove_scat(sfp, &sfp->reserve);
 			sg_build_reserve(sfp, val);

@@ -24,7 +24,10 @@ enum samsung_cpu_type {
 	TYPE_EXYNOS7,
 	TYPE_EXYNOS8890,
 	TYPE_EXYNOS7870,
+<<<<<<< HEAD
 	TYPE_EXYNOS7570,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 enum samsung_usb_ip_type {
@@ -38,8 +41,11 @@ enum samsung_phy_set_option {
 	SET_DPPULLUP_ENABLE,
 	SET_DPPULLUP_DISABLE,
 	SET_DPDM_PULLDOWN,
+<<<<<<< HEAD
 	SET_EXTREFCLK_REQUEST,
 	SET_EXTREFCLK_RELEASE,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #endif	/* __LINUX_USB_SAMSUNG_USB_H */

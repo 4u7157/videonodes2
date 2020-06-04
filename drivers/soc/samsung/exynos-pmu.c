@@ -17,7 +17,10 @@
 #include <asm/smp_plat.h>
 
 #include <soc/samsung/exynos-pmu.h>
+<<<<<<< HEAD
 #include <soc/samsung/pmu-cp.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /**
  * register offset value from base address

@@ -32,6 +32,13 @@
 #include <linux/knox_kap.h>
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MST_LDO
+#include <linux/mst_ctrl.h>
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <asm/uaccess.h>
 
 #ifdef CONFIG_IA64
@@ -848,6 +855,12 @@ static const struct memdev {
 #ifdef CONFIG_KNOX_KAP
 	[13] = { "knox_kap", 0664, &knox_kap_fops, NULL },
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MST_LDO
+	[14] = { "mst_ctrl", 0666, &mst_ctrl_fops, NULL },
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static int memory_open(struct inode *inode, struct file *filp)

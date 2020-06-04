@@ -29,6 +29,13 @@ ifeq ($(CONFIG_FIVE_USE_TRUSTONIC), y)
     PLATFORM := exynos7570
     ccflags-$(CONFIG_FIVE_TEE_DRIVER) += -Idrivers/gud/gud-$(PLATFORM)/MobiCoreDriver
     ccflags-$(CONFIG_FIVE_TEE_DRIVER) += -Idrivers/gud/gud-$(PLATFORM)/MobiCoreDriver/public
+<<<<<<< HEAD
+=======
+  else ifeq ($(CONFIG_SOC_EXYNOS7870), y)
+    PLATFORM := exynos7870
+    ccflags-$(CONFIG_FIVE_TEE_DRIVER) += -Idrivers/gud/gud-$(PLATFORM)/MobiCoreDriver
+    ccflags-$(CONFIG_FIVE_TEE_DRIVER) += -Idrivers/gud/gud-$(PLATFORM)/MobiCoreDriver/public
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
   else
     $(error "Unknown SoC")
   endif

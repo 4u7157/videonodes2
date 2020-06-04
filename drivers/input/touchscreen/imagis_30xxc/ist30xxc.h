@@ -30,6 +30,11 @@
 #include <linux/input/input_booster.h>
 #endif
 
+<<<<<<< HEAD
+=======
+extern unsigned int lcdtype;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define USE_OPEN_CLOSE
 
 /*
@@ -50,8 +55,11 @@
 #define IMAGIS_TSP_IC			IMAGIS_IST3026C
 #elif defined(CONFIG_TOUCHSCREEN_IST3032C)
 #define IMAGIS_TSP_IC			IMAGIS_IST3032C
+<<<<<<< HEAD
 #elif defined(CONFIG_TOUCHSCREEN_IST3038C)
 #define IMAGIS_TSP_IC			IMAGIS_IST3038C
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 /* SEC defined [*/
@@ -117,7 +125,11 @@
 
 #define IST30XX_TA_RESET		(1)
 
+<<<<<<< HEAD
 #if defined(CONFIG_TOUCHSCREEN_IST3026C) || defined(CONFIG_TOUCHSCREEN_IST3038C)
+=======
+#if defined(CONFIG_TOUCHSCREEN_IST3026C) || defined(CONFIG_TOUCHSCREEN_IST3032C)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define IST30XX_USE_KEY			(0)
 #else
 #define IST30XX_USE_KEY			(1)
@@ -171,7 +183,12 @@ enum ist30xx_reliability_commands {
 	TEST_RAW_ALL_DATA = 0,
 	TEST_CM_ALL_DATA,
 	TEST_CS_ALL_DATA,
+<<<<<<< HEAD
 	TEST_SLOPE_ALL_DATA,
+=======
+	TEST_SLOPE0_ALL_DATA,
+	TEST_SLOPE1_ALL_DATA,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /* Debug message */
@@ -551,8 +568,13 @@ struct ist30xx_data {
 	u32 max_keys;
 	u32 t_status;
 	finger_info fingers[IST30XX_MAX_MT_FINGERS];
+<<<<<<< HEAD
 	u32 lx;
 	u32 ly;
+=======
+	u32 lx[IST30XX_MAX_MT_FINGERS];
+	u32 ly[IST30XX_MAX_MT_FINGERS];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	volatile bool irq_working;
 	u32 irq_enabled;
 	bool initialized;
@@ -598,6 +620,10 @@ struct ist30xx_data {
 #ifdef CONFIG_VBUS_NOTIFIER
 	struct notifier_block vbus_nb;
 #endif
+<<<<<<< HEAD
+=======
+	int lcd_id;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 };
 

@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2015 TRUSTONIC LIMITED
+=======
+ * Copyright (c) 2013-2017 TRUSTONIC LIMITED
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -21,8 +25,14 @@
 #include <linux/kthread.h>
 #include <linux/pagemap.h>
 #include <linux/device.h>
+<<<<<<< HEAD
 
 #include "public/mc_linux.h"
+=======
+#include <linux/version.h>
+
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "mci/mcimcp.h"
 
@@ -69,6 +79,66 @@
  */
 #define L1_ENTRIES_MAX	512
 
+<<<<<<< HEAD
+=======
+#if KERNEL_VERSION(4, 6, 0) > LINUX_VERSION_CODE
+static inline long gup_local(struct mm_struct *mm, uintptr_t start,
+			     unsigned long nr_pages, int write,
+			     struct page **pages)
+{
+	return get_user_pages(NULL, mm, start, nr_pages, write, 0, pages, NULL);
+}
+#elif KERNEL_VERSION(4, 9, 0) > LINUX_VERSION_CODE
+static inline long gup_local(struct mm_struct *mm, uintptr_t start,
+			     unsigned long nr_pages, int write,
+			     struct page **pages)
+{
+	unsigned int flags = 0;
+
+	if (write)
+		flags |= FOLL_WRITE;
+
+	/* ExySp */
+	flags |= FOLL_CMA;
+
+	return get_user_pages_remote(NULL, mm, start, nr_pages, write, 0, pages,
+				     NULL);
+}
+#elif KERNEL_VERSION(4, 10, 0) > LINUX_VERSION_CODE
+static inline long gup_local(struct mm_struct *mm, uintptr_t start,
+			     unsigned long nr_pages, int write,
+			     struct page **pages)
+{
+	unsigned int flags = 0;
+
+	if (write)
+		flags |= FOLL_WRITE;
+
+	/* ExySp */
+	flags |= FOLL_CMA;
+
+	return get_user_pages_remote(NULL, mm, start, nr_pages, flags, pages,
+				     NULL);
+}
+#else
+static inline long gup_local(struct mm_struct *mm, uintptr_t start,
+			     unsigned long nr_pages, int write,
+			     struct page **pages)
+{
+	unsigned int flags = 0;
+
+	if (write)
+		flags |= FOLL_WRITE;
+
+	/* ExySp */
+	flags |= FOLL_CMA;
+
+	return get_user_pages_remote(NULL, mm, start, nr_pages, flags, pages,
+				     NULL, NULL);
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /*
  * Fake L1 MMU table.
  */
@@ -172,11 +242,19 @@ static inline int map_buffer(struct task_struct *task, const void *data,
 
 	/* Check that we have enough space to map data */
 	mmu_table->length = length;
+<<<<<<< HEAD
 	mmu_table->offset = (uintptr_t)data & ~PAGE_MASK;
 	total_pages_nr = PAGE_ALIGN(mmu_table->offset + length) / PAGE_SIZE;
 	if (g_ctx.f_mem_ext)
 		l1_entries_max = L1_ENTRIES_MAX;
 	 else
+=======
+	mmu_table->offset = (u32)((uintptr_t)data & ~PAGE_MASK);
+	total_pages_nr = PAGE_ALIGN(mmu_table->offset + length) / PAGE_SIZE;
+	if (g_ctx.f_mem_ext)
+		l1_entries_max = L1_ENTRIES_MAX;
+	else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		l1_entries_max = 1;
 
 	if (total_pages_nr > (l1_entries_max * L2_ENTRIES_MAX)) {
@@ -256,6 +334,10 @@ static inline int map_buffer(struct task_struct *task, const void *data,
 		/* Get pages */
 		if (task) {
 			long gup_ret;
+<<<<<<< HEAD
+=======
+			/* ExySp: for page migration */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			unsigned int foll_flags =
 				FOLL_TOUCH | FOLL_GET | FOLL_WRITE | FOLL_CMA;
 
@@ -264,6 +346,10 @@ static inline int map_buffer(struct task_struct *task, const void *data,
 			gup_ret = __get_user_pages(task, task->mm,
 						 (uintptr_t)reader, pages_nr,
 						 foll_flags, pages, 0, 0);
+<<<<<<< HEAD
+=======
+			/* ExySp: end */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			up_read(&task->mm->mmap_sem);
 			if (gup_ret < 0) {
 				ret = gup_ret;
@@ -339,7 +425,11 @@ static inline int map_buffer(struct task_struct *task, const void *data,
 					goto end;
 				}
 #endif
+<<<<<<< HEAD
 				*pte = phys;
+=======
+				*pte = (u32)phys;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				*pte |= pte_flags_32;
 			}
 		}
@@ -355,13 +445,18 @@ end:
 
 static inline void unmap_buffer(struct tee_mmu *mmu_table)
 {
+<<<<<<< HEAD
 	int t;
+=======
+	size_t t;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mc_dev_devel("clear MMU table, virt %p", mmu_table);
 	if (!mmu_table->user)
 		goto end;
 
 	/* Release all locked user space pages */
+<<<<<<< HEAD
 	for (t = 0; t < mmu_table->l2_tables_nr; t++) {
 		if (g_ctx.f_lpae) {
 			u64 *pte = mmu_table->l2_tables[t].ptes_64;
@@ -387,6 +482,41 @@ static inline void unmap_buffer(struct tee_mmu *mmu_table)
 				/* pte_page() cannot return NULL */
 				page_cache_release(pte_page(*pte));
 			}
+=======
+	for (t = 0; t < (size_t)mmu_table->l2_tables_nr; t++) {
+		u64 *pte64 = mmu_table->l2_tables[t].ptes_64;
+		u32 *pte32 = mmu_table->l2_tables[t].ptes_32;
+		pte_t pte;
+		int i;
+
+		for (i = 0; i < L2_ENTRIES_MAX; i++) {
+#if (KERNEL_VERSION(4, 7, 0) > LINUX_VERSION_CODE) || defined(CONFIG_ARM)
+			{
+				if (g_ctx.f_lpae)
+					pte = *pte64++;
+				else
+					pte = *pte32++;
+			}
+
+			/* Unused entries are 0 */
+			if (!pte)
+				break;
+#else
+			{
+				if (g_ctx.f_lpae)
+					pte.pte = *pte64++;
+				else
+					pte.pte = *pte32++;
+			}
+
+			/* Unused entries are 0 */
+			if (!pte.pte)
+				break;
+#endif
+
+			/* pte_page() cannot return NULL */
+			put_page(pte_page(pte));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -469,8 +599,14 @@ void tee_mmu_buffer(const struct tee_mmu *mmu, struct mcp_buffer_map *map)
 int tee_mmu_debug_structs(struct kasnprintf_buf *buf, const struct tee_mmu *mmu)
 {
 	return kasnprintf(buf,
+<<<<<<< HEAD
 			  "\t\t\tmmu %p: %s len %u off %u table %lx type L%d\n",
 			  mmu, mmu->user ? "user" : "kernel", mmu->length,
 			  mmu->offset, mmu_table_pointer(mmu),
+=======
+			  "\t\t\tmmu %pK: %s len %u off %u table %pK type L%d\n",
+			  mmu, mmu->user ? "user" : "kernel", mmu->length,
+			  mmu->offset, (void *)mmu_table_pointer(mmu),
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			  mmu->l1_table.page ? 1 : 2);
 }

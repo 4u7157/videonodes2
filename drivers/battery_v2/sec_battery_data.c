@@ -2,6 +2,7 @@
  *  sec_battery_data.c
  *  Samsung Mobile Battery Driver
  *
+<<<<<<< HEAD
  * Copyright (C) 2017 Samsung Electronics, Inc.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,6 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+=======
+ *  Copyright (C) 2012 Samsung Electronics
+ *
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #include <linux/slab.h>
@@ -179,8 +188,12 @@ static void change_battery_pdata(
 		psy = power_supply_get_by_name(start_node->name);
 		if (psy) {
 			value.intval = 0;
+<<<<<<< HEAD
 			psy->desc->set_property(psy, POWER_SUPPLY_PROP_POWER_DESIGN, &value);
 			power_supply_put(psy);
+=======
+			psy->set_property(psy, POWER_SUPPLY_PROP_POWER_DESIGN, &value);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 
 		temp_node = temp_node->next;

@@ -28,6 +28,7 @@
 #define is_axi_id(id)		((id) != NAID)
 #define is_ar_axi_id(id)	(!((id) & AXI_ID_MARKER))
 
+<<<<<<< HEAD
 #define SYSMMU_BL1	(0x0 << 5)
 #define SYSMMU_BL2	(0x1 << 5)
 #define SYSMMU_BL4	(0x2 << 5)
@@ -50,4 +51,7 @@
 	(SYSMMU_BL4 | SYSMMU_PREDICTION | SYSMMU_PREFETCH_ENABLE)
 #define SYSMMU_BL4_PREFETCH_ASCENDING \
 	(SYSMMU_BL4 | SYSMMU_ASCENDING | SYSMMU_PREFETCH_ENABLE)
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* _DT_BINDINGS_EXYNOS_SYSTEM_MMU_H */

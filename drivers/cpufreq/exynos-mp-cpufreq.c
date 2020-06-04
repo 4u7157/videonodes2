@@ -34,6 +34,12 @@
 #include <linux/platform_device.h>
 #include <linux/of.h>
 #include <linux/apm-exynos.h>
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SW_SELF_DISCHARGING
+#include <linux/cpuidle.h>
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <asm/smp_plat.h>
 #include <asm/cputype.h>
@@ -43,7 +49,10 @@
 #include <soc/samsung/asv-exynos.h>
 #include <soc/samsung/tmu.h>
 #include <soc/samsung/ect_parser.h>
+<<<<<<< HEAD
 #include <trace/events/exynos.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_SEC_EXT
 #include <linux/sec_ext.h>
@@ -90,6 +99,13 @@ static int qos_min_class[CL_END] = {PM_QOS_CLUSTER0_FREQ_MIN, PM_QOS_CLUSTER1_FR
 static int qos_min_default_value[CL_END] =
 	{PM_QOS_CLUSTER0_FREQ_MIN_DEFAULT_VALUE, PM_QOS_CLUSTER1_FREQ_MIN_DEFAULT_VALUE};
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SW_SELF_DISCHARGING
+static int self_discharging;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /********************************************************************************
  *                                 Helper function                              *
  ********************************************************************************/
@@ -118,6 +134,36 @@ static unsigned int clk_get_freq(cluster_type cl)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SEC_BOOTSTAT
+void sec_bootstat_get_cpuinfo(int *freq, int *online)
+{
+	int cpu;
+	int cluster;
+	struct cpufreq_policy *policy;
+
+	get_online_cpus();
+	*online = cpumask_bits(cpu_online_mask)[0];
+	for_each_online_cpu(cpu) {
+		if (cpumask_test_cpu(cpu, &cluster_cpus[CL_ZERO]))
+			cluster = 0;
+		else
+			cluster = 1;
+
+		if (freq[cluster] == 0) {
+			policy = cpufreq_cpu_get(cpu);
+			if (!policy)
+				continue;
+			freq[cluster] = policy->cur;
+			cpufreq_cpu_put(policy);
+		}
+	}
+	put_online_cpus();
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static unsigned int get_freq_volt(int cluster, unsigned int target_freq, int *idx)
 {
 	int index;
@@ -169,6 +215,7 @@ static unsigned int get_boot_volt(int cluster)
 static void exynos_qos_nop(void *info)
 {
 }
+<<<<<<< HEAD
 #endif
 
 static int exynos_change_freq_nocpd(struct cpufreq_policy *policy, int cpu,
@@ -193,6 +240,27 @@ static int exynos_change_freq_nocpd(struct cpufreq_policy *policy, int cpu,
 
 	return ret;
 }
+=======
+
+static int exynos_enable_cpd(int cpu)
+{
+	release_cpd();
+
+	return 1;
+}
+
+static int exynos_disable_cpd(int cpu)
+{
+	block_cpd();
+
+	if (check_cluster_idle_state(cpu))
+		smp_call_function_single(cpu, exynos_qos_nop, NULL, 0);
+
+	return 1;
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /********************************************************************************
  *                         Scaling frequency and voltage                        *
@@ -549,15 +617,37 @@ static int exynos_target(struct cpufreq_policy *policy,
 
 	target_freq = freq_table[index].frequency;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CPU_IDLE
+	/* disable cluster power down during scale */
+	if (cur == CL_ONE)
+		exynos_disable_cpd(policy->cpu);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_debug("%s[%d]: new_freq[%d], index[%d]\n",
 				__func__, cur, target_freq, index);
 
 	exynos_ss_freq(cur, freqs[cur]->old, target_freq, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_freq_in(cur, freqs[cur]->old);
 	/* frequency and volt scaling */
 	ret = exynos_cpufreq_scale(target_freq, policy->cpu);
 	exynos_ss_freq(cur, freqs[cur]->old, target_freq, ESS_FLAG_OUT);
 	trace_exynos_freq_out(cur, target_freq);
+=======
+	/* frequency and volt scaling */
+	ret = exynos_cpufreq_scale(target_freq, policy->cpu);
+	exynos_ss_freq(cur, freqs[cur]->old, target_freq, ESS_FLAG_OUT);
+
+#ifdef CONFIG_CPU_IDLE
+	/* enable cluster power down  */
+	if (cur == CL_ONE)
+		exynos_enable_cpd(policy->cpu);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		goto out;
 
@@ -768,7 +858,11 @@ void ipa_set_clamp(int cpu, unsigned int clamp_freq, unsigned int gov_target)
 		     __PRETTY_FUNCTION__, __LINE__, cpu, clamp_freq, freq);
 #endif
 
+<<<<<<< HEAD
 	exynos_change_freq_nocpd(policy, cpu, new_freq);
+=======
+	__cpufreq_driver_target(policy, new_freq, CPUFREQ_RELATION_H);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cpufreq_cpu_put(policy);
 }
 
@@ -777,6 +871,11 @@ void ipa_set_clamp(int cpu, unsigned int clamp_freq, unsigned int gov_target)
  ********************************************************************************/
 #ifdef CONFIG_PM
 struct pm_qos_request cpufreq_cpu_hotplug_request;
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_SCHED_HMP
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void enable_nonboot_cluster_cpus(void)
 {
 	pm_qos_update_request(&cpufreq_cpu_hotplug_request, NR_CPUS);
@@ -787,7 +886,10 @@ static void disable_nonboot_cluster_cpus(void)
 	pm_qos_update_request(&cpufreq_cpu_hotplug_request, NR_CLUST1_CPUS);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SCHED_HMP
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static bool hmp_boosted = false;
 static bool cluster1_hotplugged = false;
 
@@ -1022,6 +1124,15 @@ static ssize_t store_cpufreq_min_limit(struct kobject *kobj, struct attribute *a
 	if (ret != 1)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SW_SELF_DISCHARGING
+	if (freq < self_discharging) {
+		freq = self_discharging;
+	}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (freq < 0)
 		freq = 0;
 
@@ -1060,6 +1171,42 @@ static ssize_t store_cpufreq_max_limit(struct kobject *kobj, struct attribute *a
 
 	return n;
 }
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_SW_SELF_DISCHARGING
+static ssize_t show_cpufreq_self_discharging(struct kobject *kobj,
+			     struct attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", self_discharging);
+}
+
+static ssize_t store_cpufreq_self_discharging(struct kobject *kobj, struct attribute *attr,
+			      const char *buf, size_t count)
+{
+	int input;
+	int i;
+
+	if (!sscanf(buf, "%d", &input))
+		return -EINVAL;
+
+	if (input > 0) {
+		self_discharging = input;
+		cpu_idle_poll_ctrl(true);
+	}
+	else {
+		self_discharging = 0;
+		cpu_idle_poll_ctrl(false);
+	}
+
+	for (i = 0; i < CL_END; i++) {
+		pm_qos_update_request(&core_min_qos[i], self_discharging);
+	}
+
+	return count;
+}
+#endif	/* CONFIG_SW_SELF_DISCHARGING */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 
@@ -1218,6 +1365,14 @@ static struct global_attr cpufreq_max_limit =
 		__ATTR(cpufreq_max_limit, S_IRUGO | S_IWUSR,
 			show_cpufreq_max_limit, store_cpufreq_max_limit);
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SW_SELF_DISCHARGING
+static struct global_attr cpufreq_self_discharging =
+		__ATTR(cpufreq_self_discharging, S_IRUGO | S_IWUSR,
+			show_cpufreq_self_discharging, store_cpufreq_self_discharging);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /********************************************************************************
  *                            Notify call chain                                 *
@@ -1680,7 +1835,11 @@ static int exynos_cluster0_min_qos_handler(struct notifier_block *b,
 	}
 #endif
 
+<<<<<<< HEAD
 	ret = exynos_change_freq_nocpd(policy, cpu, val);
+=======
+	ret = __cpufreq_driver_target(policy, val, CPUFREQ_RELATION_H);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cpufreq_cpu_put(policy);
 
 	if (ret < 0)
@@ -1705,10 +1864,18 @@ static int exynos_cluster1_min_qos_handler(struct notifier_block *b,
 	struct cpufreq_policy *policy;
 	int cpu = CL1_POLICY_CPU;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SCHED_HMP
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (val)
 		enable_nonboot_cluster_cpus();
 	else
 		disable_nonboot_cluster_cpus();
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	freq = exynos_getspeed(cpu);
 	if (freq >= val)
@@ -1732,7 +1899,11 @@ static int exynos_cluster1_min_qos_handler(struct notifier_block *b,
 	}
 #endif
 
+<<<<<<< HEAD
 	ret = exynos_change_freq_nocpd(policy, cpu, val);
+=======
+	ret = __cpufreq_driver_target(policy, val, CPUFREQ_RELATION_H);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cpufreq_cpu_put(policy);
 
 	if (ret < 0)
@@ -1779,7 +1950,11 @@ static int exynos_cluster0_max_qos_handler(struct notifier_block *b,
 	}
 #endif
 
+<<<<<<< HEAD
 	ret = exynos_change_freq_nocpd(policy, cpu, val);
+=======
+	ret = __cpufreq_driver_target(policy, val, CPUFREQ_RELATION_H);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cpufreq_cpu_put(policy);
 
 	if (ret < 0)
@@ -1826,7 +2001,11 @@ static int exynos_cluster1_max_qos_handler(struct notifier_block *b,
 	}
 #endif
 
+<<<<<<< HEAD
 	ret = exynos_change_freq_nocpd(policy, cpu, val);
+=======
+	ret = __cpufreq_driver_target(policy, val, CPUFREQ_RELATION_H);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cpufreq_cpu_put(policy);
 
 	if (ret < 0)
@@ -2264,7 +2443,11 @@ static int exynos_mp_cpufreq_driver_init(void)
 	}
 
 #if !defined(CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE) && !defined(CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE)
+<<<<<<< HEAD
 	exynos_change_freq_nocpd(policy, NR_CLUST0_CPUS, policy->min);
+=======
+	__cpufreq_driver_target(policy, policy->min, CPUFREQ_RELATION_H);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	cpufreq_cpu_put(policy);
 
@@ -2293,6 +2476,16 @@ static int exynos_mp_cpufreq_driver_init(void)
 		goto err_cpufreq_max_limit;
 	}
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SW_SELF_DISCHARGING
+	ret = sysfs_create_file(power_kobj, &cpufreq_self_discharging.attr);
+	if (ret) {
+		pr_err("%s: failed to create cpufreq_self_discharging sysfs interface\n", __func__);
+		goto err_cpufreq_self_discharging;
+	}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	exynos_cpufreq_init_done = true;
 	exynos_cpufreq_init_notify_call_chain(CPUFREQ_INIT_COMPLETE);
@@ -2300,6 +2493,13 @@ static int exynos_mp_cpufreq_driver_init(void)
 	pr_info("%s: MP-CPUFreq Initialization Complete\n", __func__);
 	return 0;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SW_SELF_DISCHARGING
+err_cpufreq_self_discharging:
+	sysfs_remove_file(power_kobj, &cpufreq_max_limit.attr);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_PM
 err_cpufreq_max_limit:
 	sysfs_remove_file(power_kobj, &cpufreq_min_limit.attr);

@@ -151,7 +151,11 @@ static inline int exynos_tmu_isp_add_notifier(struct notifier_block *n)
 #endif
 
 #if defined(CONFIG_EXYNOS_THERMAL) && (defined(CONFIG_SOC_EXYNOS5433) || defined(CONFIG_SOC_EXYNOS7420) || defined(CONFIG_SOC_EXYNOS7890) \
+<<<<<<< HEAD
 	|| defined(CONFIG_SOC_EXYNOS7870) || defined(CONFIG_SOC_EXYNOS8890) || defined(CONFIG_SOC_EXYNOS7580))
+=======
+	|| defined(CONFIG_SOC_EXYNOS7870) || defined(CONFIG_SOC_EXYNOS8890))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern void exynos_tmu_core_control(bool on, int id);
 #else
 static inline void exynos_tmu_core_control(bool on, int id)

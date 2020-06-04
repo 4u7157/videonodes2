@@ -310,6 +310,10 @@ struct tc300k_data {
 	bool sar_mode;
 	bool sar_enable;
 	bool sar_enable_off;
+<<<<<<< HEAD
+=======
+	struct delayed_work debug_work;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	//struct completion resume_done;
 	//bool is_lpm_suspend;
 
@@ -340,11 +344,14 @@ static bool tc300k_power_enabled;
 static bool tc300k_keyled_enabled;
 const char *regulator_ic;
 const char *regulator_led;
+<<<<<<< HEAD
 /*temporary*/
 int get_tsp_status(void)
 {
 	return 0;
 }
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
 static void tc300k_early_suspend(struct early_suspend *h);
@@ -371,6 +378,33 @@ static int tc300k_mode_check(struct i2c_client *client)
 
 #ifdef FEATURE_GRIP_FOR_SAR
 
+<<<<<<< HEAD
+=======
+static void tc300k_set_debug_work(struct tc300k_data *data, u8 enable,
+		unsigned int time_ms)
+{
+	if (enable == true) {
+		schedule_delayed_work(&data->debug_work,
+			msecs_to_jiffies(time_ms));
+	} else {
+		cancel_delayed_work_sync(&data->debug_work);
+	}
+}
+
+static void tc300k_debug_work_func(struct work_struct *work)
+{
+	struct tc300k_data *data = container_of((struct delayed_work *)work,
+		struct tc300k_data, debug_work);
+
+	if (data->abnormal_mode) {
+		data->diff = read_tc350k_register_data(data, TC305K_1GRIP, TC305K_GRIP_DIFF_DATA);
+		if (data->max_diff < data->diff) 
+			data->max_diff = data->diff; 
+	}
+	schedule_delayed_work(&data->debug_work, msecs_to_jiffies(2000));
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int tc300k_wake_up(struct i2c_client *client, u8 cmd)
 {
 	//If stop mode enabled, touch key IC need wake_up CMD
@@ -707,10 +741,13 @@ static int tc300k_parse_dt(struct device *dev,
 			input_err(true, dev, "%s TSK IC is unknown![%d]\n", __func__, pdata->tsk_ic_num);
 	}
 
+<<<<<<< HEAD
 	pdata->bringup = of_property_read_bool(np, "coreriver,bringup");
 	if (pdata->bringup  < 0)
 		pdata->bringup = 0;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 #else
@@ -3014,10 +3051,18 @@ static ssize_t touchkey_grip_irq_count_store(struct device *dev,
 
 	if (onoff == 0) {
 		data->abnormal_mode = 0;
+<<<<<<< HEAD
+=======
+		tc300k_set_debug_work(data, 0, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else if (onoff == 1) {
 		data->abnormal_mode = 1;
 		data->irq_count = 0;
 		data->max_diff = 0;
+<<<<<<< HEAD
+=======
+		tc300k_set_debug_work(data, 1, 2000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		input_err(true, &data->client->dev, "%s - unknown value %d\n", __func__, onoff);
 	}
@@ -3391,11 +3436,14 @@ static int tc300k_fw_check(struct tc300k_data *data)
 		return -1;
 	}
 
+<<<<<<< HEAD
 	if (data->pdata->bringup) {
 		input_info(true, &client->dev, "%s: firmware update skip, bring up\n", __func__);
 		return 0;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = tc300k_get_fw_version(data, true);
 
 	if (ret < 0) {
@@ -3512,7 +3560,11 @@ static void tc300_config_gpio_i2c(struct tc300k_data *data, int onoff)
 	mdelay(100);
 }
 
+<<<<<<< HEAD
 static int __devinit tc300k_probe(struct i2c_client *client,
+=======
+static int tc300k_probe(struct i2c_client *client,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		const struct i2c_device_id *id)
 {
 	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
@@ -3584,6 +3636,10 @@ static int __devinit tc300k_probe(struct i2c_client *client,
 
 #ifdef FEATURE_GRIP_FOR_SAR
 	wake_lock_init(&data->touchkey_wake_lock, WAKE_LOCK_SUSPEND, "touchkey wake lock");
+<<<<<<< HEAD
+=======
+	INIT_DELAYED_WORK(&data->debug_work, tc300k_debug_work_func);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	pdata->power = tc300k_touchkey_power;
@@ -3596,7 +3652,11 @@ static int __devinit tc300k_probe(struct i2c_client *client,
 	if (ret < 0) {
 		input_err(true, &client->dev,
 			"%s: Failed to init pinctrl: %d\n", __func__, ret);
+<<<<<<< HEAD
 		goto err_pinctrl_init;
+=======
+		goto err_platform_data;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	if(pdata->boot_on_ldo){
@@ -3735,6 +3795,7 @@ err_request_irq:
 	input_dev = NULL;
 err_register_input_dev:
 err_fw_check:
+<<<<<<< HEAD
 	data->pdata->keyled(data, false);
 	data->pdata->power(data, false);
 err_pinctrl_init:
@@ -3744,6 +3805,16 @@ err_pinctrl_init:
 	wake_lock_destroy(&data->touchkey_wake_lock);
 #endif
 err_platform_data:
+=======
+	mutex_destroy(&data->lock);
+	mutex_destroy(&data->lock_fac);
+	data->pdata->keyled(data, false);
+	data->pdata->power(data, false);
+err_platform_data:
+#ifdef FEATURE_GRIP_FOR_SAR
+	wake_lock_destroy(&data->touchkey_wake_lock);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_free_device(input_dev);
 err_alloc_input:
 	kfree(data);
@@ -3751,7 +3822,11 @@ err_alloc_data:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int __devexit tc300k_remove(struct i2c_client *client)
+=======
+static int tc300k_remove(struct i2c_client *client)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct tc300k_data *data = i2c_get_clientdata(client);
 
@@ -3761,6 +3836,11 @@ static int __devexit tc300k_remove(struct i2c_client *client)
 #ifdef FEATURE_GRIP_FOR_SAR
 	device_init_wakeup(&client->dev, false);
 	wake_lock_destroy(&data->touchkey_wake_lock);
+<<<<<<< HEAD
+=======
+	cancel_delayed_work_sync(&data->debug_work);
+	flush_delayed_work(&data->debug_work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	free_irq(client->irq, data);
 	input_unregister_device(data->input_dev);
@@ -3785,6 +3865,11 @@ static void tc300k_shutdown(struct i2c_client *client)
 #ifdef FEATURE_GRIP_FOR_SAR
 	device_init_wakeup(&client->dev, false);
 	wake_lock_destroy(&data->touchkey_wake_lock);
+<<<<<<< HEAD
+=======
+	cancel_delayed_work_sync(&data->debug_work);
+	flush_delayed_work(&data->debug_work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	disable_irq(client->irq);
 	data->pdata->keyled(data, false);
@@ -3955,17 +4040,29 @@ MODULE_DEVICE_TABLE(i2c, tc300k_id);
 
 static struct i2c_driver tc300k_driver = {
 	.probe = tc300k_probe,
+<<<<<<< HEAD
 	.remove = __devexit_p(tc300k_remove),
+=======
+	.remove = tc300k_remove,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.shutdown = tc300k_shutdown,
 	.driver = {
 		.name = TC300K_NAME,
 		.owner = THIS_MODULE,
 #ifdef CONFIG_OF
+<<<<<<< HEAD
 		.of_match_table = of_match_ptr(coreriver_match_table),
 #endif
 #if 0
 #if defined(CONFIG_PM) && !defined(CONFIG_HAS_EARLYSUSPEND)
 		.pm	= &tc370_pm_ops,
+=======
+		.of_match_table = coreriver_match_table,
+#endif
+#if 0
+#if defined(CONFIG_PM) && !defined(CONFIG_HAS_EARLYSUSPEND)
+		.pm	= &tc300_pm_ops,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 	},

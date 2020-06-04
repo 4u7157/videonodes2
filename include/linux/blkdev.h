@@ -40,7 +40,11 @@ struct blk_flush_queue;
 
 #define BLKDEV_MIN_RQ	4
 #ifdef CONFIG_LARGE_DIRTY_BUFFER
+<<<<<<< HEAD
 #define BLKDEV_MAX_RQ	256
+=======
+#define BLKDEV_MAX_RQ  256
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define BLKDEV_MAX_RQ  128     /* Default maximum */
 #endif

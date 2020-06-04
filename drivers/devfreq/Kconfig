@@ -48,12 +48,15 @@ config DEVFREQ_GOV_SIMPLE_EXYNOS
 	help
 	  Chooses frequency based on the threshold of target device.
 
+<<<<<<< HEAD
 config DEVFREQ_GOV_SIMPLE_INTERACTIVE
 	tristate "Simple Interactive"
 	help
 	  Chooses frequency based on the requested PM QoS from target device.
 	  And This governor uses timer when change frequency.
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config DEVFREQ_GOV_PERFORMANCE
 	tristate "Performance"
 	help
@@ -135,6 +138,7 @@ config ARM_EXYNOS7870_BUS_DEVFREQ
 	help
 	  This adds the DEVFREQ driver for Exynos7870 memory and int.
 
+<<<<<<< HEAD
 config ARM_EXYNOS7570_BUS_DEVFREQ
 	bool "ARM Exynos7570 Memory Bus DEVFREQ Driver"
 	default y
@@ -144,4 +148,6 @@ config ARM_EXYNOS7570_BUS_DEVFREQ
 	help
 	  This adds the DEVFREQ driver for Exynos7570 memory and int.
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 endif # PM_DEVFREQ

@@ -14,6 +14,12 @@
 #ifdef CONFIG_KEYBOARD_MELFAS_MHS204
 #define FW_CHIP_CODE	"H2H0"
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_KEYBOARD_MELFAS_MHS204G
+#define FW_CHIP_CODE	"H2HG"
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define FW_TYPE_TAIL
 
@@ -22,10 +28,19 @@
 
 //ISC Command
 #define ISC_CMD_ERASE_MASS		{0xFB,0x4A,0x00,0x15,0x00,0x00}
+<<<<<<< HEAD
 #define ISC_CMD_READ_PAGE		{0xFB,0x4A,0x00,0xC2,0x00,0x00}
 #define ISC_CMD_WRITE_PAGE		{0xFB,0x4A,0x00,0xA5,0x00,0x00}
 #define ISC_CMD_READ_STATUS		{0xFB,0x4A,0x36,0xC2,0x00,0x00}
 #define ISC_CMD_EXIT			{0xFB,0x4A,0x00,0x66,0x00,0x00}
+=======
+#define ISC_CMD_ERASE_PAGE		{0xFB,0x4A,0x00,0x8F,0x00,0x00}
+#define ISC_CMD_READ_PAGE		{0xFB,0x4A,0x00,0xC2,0x00,0x00}
+#define ISC_CMD_WRITE_PAGE		{0xFB,0x4A,0x00,0xA5,0x00,0x00}
+#define ISC_CMD_PROGRAM_PAGE	{0xFB,0x4A,0x00,0x54,0x00,0x00}
+#define ISC_CMD_READ_STATUS	{0xFB,0x4A,0x36,0xC2,0x00,0x00}
+#define ISC_CMD_EXIT				{0xFB,0x4A,0x00,0x66,0x00,0x00}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 //ISC Status
 #define ISC_STATUS_BUSY			0x96
@@ -166,6 +181,47 @@ ERROR:
 }
 
 /**
+<<<<<<< HEAD
+=======
+* Command : Erase Page
+*/
+static int mip_isc_erase_page(struct mip4_tk_info *info, int offset)
+{
+	u8 write_buf[6] = ISC_CMD_ERASE_PAGE;
+
+	struct i2c_msg msg[1] = {
+		{
+			.addr = info->client->addr,
+			.flags = 0,
+			.buf = write_buf,
+			.len = 6,
+		},
+	};
+
+	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+
+	write_buf[4] = (u8)(((offset)>>8)&0xFF );
+	write_buf[5] = (u8)(((offset)>>0)&0xFF );
+	if (i2c_transfer(info->client->adapter, msg, ARRAY_SIZE(msg)) != ARRAY_SIZE(msg)) {
+		input_err(true, &info->client->dev, "%s [ERROR] i2c_transfer\n", __func__);
+		goto ERROR;
+	}
+
+	if (mip_isc_read_status(info) != 0) {
+		goto ERROR;
+	}
+
+	input_dbg(true, &info->client->dev, "%s [DONE] - Offset [0x%04X]\n", __func__, offset);
+
+	return 0;
+
+ERROR:
+	input_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+	return -1;
+}
+
+/**
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 * Command : Read Page
 */
 static int __maybe_unused mip_isc_read_page(struct mip4_tk_info *info, int offset, u8 *data, int length)
@@ -236,12 +292,54 @@ static int mip_isc_write_page(struct mip4_tk_info *info, int offset, const u8 *d
 	input_dbg(true, &info->client->dev,
 		"%s [DONE] - Offset[0x%04X] Length[%d]\n",
 		__func__, offset, length);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 
 ERROR:
 	input_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+<<<<<<< HEAD
 
+=======
+	return -1;
+}
+
+/**
+* Command : Program Page
+*/
+static int mip_isc_program_page(struct mip4_tk_info *info, int offset, const u8 *data, int length)
+{
+	u8 write_buf[6 + ISC_PAGE_SIZE] = ISC_CMD_PROGRAM_PAGE;
+
+	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+
+	if (length > ISC_PAGE_SIZE) {
+		input_err(true, &info->client->dev, "%s [ERROR] page length overflow\n", __func__);
+		goto ERROR;
+	}
+
+	write_buf[4] = (u8)((offset >> 8) & 0xFF);
+	write_buf[5] = (u8)(offset & 0xFF);
+
+	memcpy(&write_buf[6], data, length);
+
+	if (i2c_master_send(info->client, write_buf, (length + 6)) != (length + 6)) {
+		input_err(true, &info->client->dev, "%s [ERROR] i2c_master_send\n", __func__);
+		goto ERROR;
+	}
+
+	if (mip_isc_read_status(info) != 0) {
+		goto ERROR;
+	}
+
+	input_dbg(true, &info->client->dev, "%s [DONE] - Offset[0x%04X] Length[%d]\n", __func__, offset, length);
+	return 0;
+
+ERROR:
+	input_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return -1;
 }
 
@@ -282,6 +380,10 @@ int mip4_tk_flash_fw(struct mip4_tk_info *info, const u8 *fw_data, size_t fw_siz
 	u16 tail_size = 0;
 	u8 tail_mark[4] = MIP_BIN_TAIL_MARK;
 	u16 ver_chip[MIP_FW_MAX_SECT_NUM];
+<<<<<<< HEAD
+=======
+	bool full_download = false;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int i;
 
 	//Check tail size
@@ -330,11 +432,16 @@ int mip4_tk_flash_fw(struct mip4_tk_info *info, const u8 *fw_data, size_t fw_siz
 
 	if (force == true) {
 		//Force update
+<<<<<<< HEAD
 		input_info(true, &client->dev,
+=======
+		input_info(true, &client->dev, 
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s - Skip chip firmware version check\n", __func__);
 	} else {
 		//Read firmware version from chip
 		while (retry--) {
+<<<<<<< HEAD
 			if (!mip4_tk_get_fw_version_u16(info, ver_chip))
 				break;
 			else
@@ -361,19 +468,116 @@ int mip4_tk_flash_fw(struct mip4_tk_info *info, const u8 *fw_data, size_t fw_siz
 				goto UPTODATE;
 			} else {
 				offset_start = 0;
+=======
+			if (!mip4_tk_get_fw_version_u16(info, ver_chip)) {
+				break;
+			} else {
+				mip4_tk_reboot(info);
+			}
+		}
+		if (retry < 0) {
+			input_err(true, &client->dev, "%s [ERROR] Unknown chip firmware version\n", __func__);
+			offset_start = 0;
+		} else {
+			input_info(true, &client->dev, "%s - Chip firmware version [0x%04X 0x%04X 0x%04X 0x%04X]\n", __func__, ver_chip[0], ver_chip[1], ver_chip[2], ver_chip[3]);
+
+			if (ver_chip[3] == 0x179) {
+				input_info(true, &client->dev, "%s - Chip firmware is specific test version\n", __func__);
+				ret = fw_err_uptodate;
+				goto UPTODATE;
+			}
+
+			//Compare version
+			if (section == false) {
+				//Full download
+				if ((ver_chip[0] == bin_info->ver_boot) && (ver_chip[1] == bin_info->ver_core) && (ver_chip[2] == bin_info->ver_app) && (ver_chip[3] == bin_info->ver_param)) {
+					input_info(true, &client->dev, "%s - Chip firmware is already up-to-date\n", __func__);
+					ret = fw_err_uptodate;
+					goto UPTODATE;
+				} else {
+					offset_start = 0;
+				}
+			} else {
+				//Section download
+				if (ver_chip[0] != bin_info->ver_boot) {
+					if ((bin_info->boot_end - bin_info->boot_start) > 0) {
+						offset_start = bin_info->boot_start * 1024;
+					} else if ((bin_info->core_end - bin_info->core_start) > 0) {
+						offset_start = bin_info->core_start * 1024;
+					} else if ((bin_info->app_end - bin_info->app_start) > 0) {
+						offset_start = bin_info->app_start * 1024;
+					} else if ((bin_info->param_end - bin_info->param_start) > 0) {
+						offset_start = bin_info->param_start * 1024;
+					} else {
+						input_err(true, &client->dev, "%s [ERROR] wrong offset\n", __func__);
+						ret = fw_err_file_type;
+						goto ERROR_FILE;
+					}
+				} else if (ver_chip[1] != bin_info->ver_core) {
+					if((bin_info->core_end - bin_info->core_start) > 0) {
+						offset_start = bin_info->core_start * 1024;
+					} else if((bin_info->app_end - bin_info->app_start) > 0) {
+						offset_start = bin_info->app_start * 1024;
+					} else if((bin_info->param_end - bin_info->param_start) > 0) {
+						offset_start = bin_info->param_start * 1024;
+					} else {
+						input_err(true, &client->dev, "%s [ERROR] wrong offset\n", __func__);
+						ret = fw_err_file_type;
+						goto ERROR_FILE;
+					}
+				} else if (ver_chip[2] != bin_info->ver_app) {
+					if ((bin_info->app_end - bin_info->app_start) > 0) {
+						offset_start = bin_info->app_start * 1024;
+					} else if ((bin_info->param_end - bin_info->param_start) > 0) {
+						offset_start = bin_info->param_start * 1024;
+					} else {
+						input_err(true, &client->dev, "%s [ERROR] wrong offset\n", __func__);
+						ret = fw_err_file_type;
+						goto ERROR_FILE;
+					}
+				} else if (ver_chip[3] != bin_info->ver_param) {
+					if ((bin_info->param_end - bin_info->param_start) > 0) {
+						offset_start = bin_info->param_start * 1024;
+					} else {
+						input_err(true, &client->dev, "%s [ERROR] wrong offset\n", __func__);
+						ret = fw_err_file_type;
+						goto ERROR_FILE;
+					}
+				} else {
+					input_info(true, &client->dev, "%s - Chip firmware is already up-to-date\n", __func__);
+					ret = fw_err_uptodate;
+					goto UPTODATE;
+				}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 		}
 	}
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s - Start offset[0x%04X]\n",
 			__func__, offset_start);
 
+=======
+	input_info(true, &client->dev, "%s - Start offset[0x%04X]\n", 
+			__func__, offset_start);
+
+	if (offset_start == 0) {
+		full_download = true;
+		input_dbg(true, &client->dev, "%s - Full download\n", __func__);
+	} else {
+		full_download = false;
+		input_dbg(true, &client->dev, "%s - Section download\n", __func__);
+	}
+	full_download = false;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	//Read bin data
 	bin_size = bin_info->bin_length;
 	bin_data = kzalloc(sizeof(u8) * (bin_size), GFP_KERNEL);
 	memcpy(bin_data, fw_data, bin_size);
 
 	//Erase
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s - Erase\n", __func__);
 	ret = mip_isc_erase_mass(info);
 	if (ret != 0) {
@@ -392,6 +596,50 @@ int mip4_tk_flash_fw(struct mip4_tk_info *info, const u8 *fw_data, size_t fw_siz
 			input_err(true, &client->dev, "%s [ERROR] mip_isc_write_page : offset[0x%04X]\n", __func__, offset);
 			ret = fw_err_download;
 			goto ERROR_UPDATE;
+=======
+	if (full_download == true) {
+		//Erase all pages
+		input_info(true, &client->dev, "%s - Erase all pages\n", __func__);
+		ret = mip_isc_erase_mass(info);
+		if (ret != 0) {
+			input_err(true, &client->dev,
+				"%s [ERROR] mip_isc_erase_mass\n", __func__);
+			ret = fw_err_download;
+			goto ERROR_UPDATE;
+		}
+	} else {
+		//Erase first page
+		input_info(true, &client->dev, "%s - Erase first page : Offset[0x%04X]\n", 
+				__func__, offset_start);
+		ret = mip_isc_erase_page(info, offset_start);
+		if (ret != 0) {
+			input_err(true, &client->dev,"%s [ERROR] mip_isc_erase_page\n", __func__);
+			ret = fw_err_download;
+			goto ERROR_UPDATE;
+		}
+	}
+
+	//Download
+	input_info(true, &client->dev, "%s - Program & Verify\n", __func__);
+	offset = bin_size - ISC_PAGE_SIZE;
+	while (offset >= offset_start) {
+		if (full_download == true) {
+			//Write page
+			if (mip_isc_write_page(info, offset, &bin_data[offset], ISC_PAGE_SIZE)) {
+				input_err(true, &client->dev, "%s [ERROR] mip_isc_write_page : offset[0x%04X]\n", __func__, offset);
+				ret = fw_err_download;
+				goto ERROR_UPDATE;
+			}
+			input_dbg(false, &client->dev, "%s - mip_isc_write_page : offset[0x%04X]\n", __func__, offset);
+		} else {
+			//Program page
+			if (mip_isc_program_page(info, offset, &bin_data[offset], ISC_PAGE_SIZE)) {
+				input_err(true, &client->dev, "%s [ERROR] mip_isc_program__page : offset[0x%04X]\n", __func__, offset);
+				ret = fw_err_download;
+				goto ERROR_UPDATE;
+			}
+			input_dbg(false, &client->dev, "%s - mip_isc_program_page : offset[0x%04X]\n", __func__, offset);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		input_dbg(false, &client->dev, "%s - mip_isc_write_page : offset[0x%04X]\n", __func__, offset);
 

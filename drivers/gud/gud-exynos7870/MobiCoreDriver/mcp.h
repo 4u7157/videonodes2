@@ -77,7 +77,12 @@ struct mcp_session {
 /* Init for the mcp_session structure */
 void mcp_session_init(struct mcp_session *session, bool is_gp,
 		      const struct identity *identity);
+<<<<<<< HEAD
 int mcp_session_waitnotif(struct mcp_session *session, s32 timeout);
+=======
+int mcp_session_waitnotif(struct mcp_session *session, s32 timeout,
+			  bool silent_expiry);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 s32 mcp_session_exitcode(struct mcp_session *mcp_session);
 
 /* SWd suspend/resume */

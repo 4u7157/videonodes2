@@ -14,7 +14,11 @@
 #ifndef _MOBICORE_DRIVER_API_H_
 #define _MOBICORE_DRIVER_API_H_
 
+<<<<<<< HEAD
 #include "mc_linux.h"
+=======
+#include "mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define __MC_CLIENT_LIB_API
 
@@ -126,8 +130,15 @@ struct mc_session_handle {
  * inform the Trustlet with the content of this structure via the TCI.
  */
 struct mc_bulk_map {
+<<<<<<< HEAD
 	/* The virtual address of the Bulk buffer regarding the address space
 	 * of the Trustlet, already includes a possible offset! */
+=======
+	/*
+	 * The virtual address of the Bulk buffer regarding the address space
+	 * of the Trustlet, already includes a possible offset!
+	 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u32	secure_virt_addr;
 	u32	secure_virt_len;	/* Length of the mapped Bulk buffer */
 };

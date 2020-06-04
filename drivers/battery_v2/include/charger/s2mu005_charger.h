@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * s2mu005_charger.h - Header of S2MU005 Charger Driver
  *
  * Copyright (C) 2017 Samsung Electronics Co.Ltd
@@ -16,6 +17,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+=======
+ * drivers/battery/s2mu005_charger.h
+ *
+ * Header of S2MU005 Charger Driver
+ *
+ * Copyright (C) 2015 Samsung Electronics
+ * Develope by Nguyen Tien Dat <tiendat.nt@samsung.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #ifndef S2MU005_CHARGER_H
@@ -121,6 +134,7 @@
 #define REG_MODE_WIDTH		3
 #define REG_MODE_MASK		MASK(REG_MODE_WIDTH, REG_MODE_SHIFT)
 
+<<<<<<< HEAD
 #define CHARGER_OFF_MODE	0
 #define CHG_MODE		3
 #define BUCK_MODE		1
@@ -128,6 +142,8 @@
 
 #define S2MU005_CHARGER_REG_MODE_OTG 2
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* S2MU005_CHG_CTRL1 */
 #define SET_VIN_DROP_SHIFT	4
 #define SET_VIN_DROP_WIDTH	3
@@ -205,6 +221,7 @@
 #define SELF_DISCHG_MODE_SHIFT	7
 #define SELF_DISCHG_MODE_MASK	BIT(SELF_DISCHG_MODE_SHIFT)
 
+<<<<<<< HEAD
 /* S2MU004_REG_SC_INT2 */
 #define S2MU005_IVR_I	(1 << 2)
 
@@ -219,12 +236,15 @@
 #define MINIMUM_INPUT_CURRENT			100
 #define SLOW_CHARGING_CURRENT_STANDARD		400
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum {
 	CHG_REG = 0,
 	CHG_DATA,
 	CHG_REGS,
 };
 
+<<<<<<< HEAD
 typedef struct s2mu005_charger_platform_data {
 	sec_charging_current_t *charging_current;
 	int chg_float_voltage;
@@ -283,6 +303,10 @@ struct s2mu005_charger_data {
 
 	bool suspended;
 	bool pending_chg_work;
+=======
+struct charger_info {
+	int dummy;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #endif /*S2MU005_CHARGER_H*/

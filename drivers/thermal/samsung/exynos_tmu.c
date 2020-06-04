@@ -61,6 +61,20 @@ struct cpufreq_frequency_table gpu_freq_table[10];
 struct isp_fps_table isp_fps_table[10];
 #endif
 
+#ifdef CONFIG_SEC_EXT
+#include <linux/sec_ext.h>
+#endif
+
+#ifdef CONFIG_CPU_THERMAL_IPA
+static unsigned int sensor_count = 0;
+#endif
+#ifdef CONFIG_GPU_THERMAL
+struct cpufreq_frequency_table gpu_freq_table[10];
+#endif
+#ifdef CONFIG_ISP_THERMAL
+struct isp_fps_table isp_fps_table[10];
+#endif
+
 /**
  * struct exynos_tmu_data : A structure to hold the private data of the TMU
 	driver
@@ -129,9 +143,12 @@ static int temp_to_code(struct exynos_tmu_data *data, u16 temp)
 			ptat_cont = readl(data->base + reg->buf_vref_otp_reg);
 			ptat_cont = (ptat_cont >> reg->buf_vref_otp_shift) & reg->buf_vref_otp_mask;
 
+<<<<<<< HEAD
 			if (!ptat_cont)
 				ptat_cont = pdata->default_ptat_cont;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			/* If ptat_cont value is 0, temp code should be divided by 12.5% to compensate.
 			   But, Linux doesn't support floating point opeation.
 			   So, some data loss can't be avoided.
@@ -173,9 +190,12 @@ static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
 			ptat_cont = readl(data->base + reg->buf_vref_otp_reg);
 			ptat_cont = (ptat_cont >> reg->buf_vref_otp_shift) & reg->buf_vref_otp_mask;
 
+<<<<<<< HEAD
 			if (!ptat_cont)
 				ptat_cont = pdata->default_ptat_cont;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			/* If ptat_cont value is 0, temperature should be increated by 12.5% to compensate.
 			   But, Linux doesn't support floating point opeation.
 			   So, some data loss can't be avoided.
@@ -239,21 +259,32 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
 	writel(con, data->base + reg->tmu_ctrl);
 
 	if (reg->calib_sel_shift) {
+<<<<<<< HEAD
 		status = (readl(data->base + reg->triminfo_data) >> reg->calib_sel_shift) \
+=======
+		status = (readb(data->base + reg->triminfo_data) >> reg->calib_sel_shift) \
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				& reg->calib_sel_mask;
 
 		if (status)
 			pdata->cal_type = TYPE_TWO_POINT_TRIMMING;
 		else
 			pdata->cal_type = TYPE_ONE_POINT_TRIMMING;
+<<<<<<< HEAD
 
 		dev_info(&pdev->dev, "cal type : %d \n", pdata->cal_type);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	if (TMU_SUPPORTS(pdata, READY_STATUS)) {
 		timeout = 10;
 		while (1) {
+<<<<<<< HEAD
 			status = readl(data->base + reg->tmu_status);
+=======
+			status = readb(data->base + reg->tmu_status);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (status & 0x1)
 				break;
 
@@ -460,7 +491,11 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
 
 			timeout = 10;
 			while (1) {
+<<<<<<< HEAD
 				status = readl(data->base + reg->tmu_status);
+=======
+				status = readb(data->base + reg->tmu_status);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				if (status & 0x1)
 					break;
 
@@ -577,8 +612,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
 
 		ptat_cont = readl(data->base + reg->buf_vref_otp_reg);
 		ptat_cont = (ptat_cont >> reg->buf_vref_otp_shift) & reg->buf_vref_otp_mask;
+<<<<<<< HEAD
 		if (!ptat_cont)
 			ptat_cont = pdata->default_ptat_cont;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ptat_cont = (ptat_cont << EXYNOS_TMU_PTAT_CON_SHIFT);
 
 		buf_cont = readl(data->base + reg->buf_slope_otp_reg);
@@ -594,7 +632,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
 
 	timeout = 10;
 	while (1) {
+<<<<<<< HEAD
 		status = readl(data->base + reg->tmu_status);
+=======
+		status = readb(data->base + reg->tmu_status);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (status & 0x1)
 			break;
 
@@ -677,7 +719,10 @@ static int exynos_tmu_read(struct exynos_tmu_data *data)
 		max_temp = exynos_tmu_max_temp_read(data);
 #endif
 	exynos_ss_thermal(pdata, temp, "READ" , 0);
+<<<<<<< HEAD
 	trace_exynos_thermal(pdata, temp, "READ" , 0);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&data->lock);
 
 	return temp;
@@ -771,7 +816,11 @@ void exynos_tmu_core_control(bool on, int id)
 				continue;
 
 			for (count = 0; count < 10; count++) {
+<<<<<<< HEAD
 				status = readl(devnode->base + devnode->pdata->registers->tmu_status);
+=======
+				status = readb(devnode->base + devnode->pdata->registers->tmu_status);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				if (status & 0x1)
 					break;
 
@@ -897,10 +946,13 @@ static const struct of_device_id exynos_tmu_match[] = {
 		.compatible = "samsung,exynos7870-tmu",
 		.data = (void *)EXYNOS7870_TMU_DRV_DATA,
 	},
+<<<<<<< HEAD
 	{
 		.compatible = "samsung,exynos7570-tmu",
 		.data = (void *)EXYNOS7570_TMU_DRV_DATA,
 	},
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{},
 };
 MODULE_DEVICE_TABLE(of, exynos_tmu_match);
@@ -999,12 +1051,15 @@ static int exynos_map_dt_data(struct platform_device *pdev)
 		dev_err(&pdev->dev, "No non_hw_trigger_levels data\n");
 	pdata->non_hw_trigger_levels = value;
 
+<<<<<<< HEAD
 	/* In exynos7570, if no e-fuse info, ptat_cont is replaced by dt. */
 	value = 0;
 	of_property_read_u32(pdev->dev.of_node, "default_ptat_cont", &value);
 	if (value)
 		pdata->default_ptat_cont = value;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	for (i = 0; i < pdata->max_trigger_level; i++) {
 		snprintf(node_name, sizeof(node_name), "trigger_levels_%d", i);
 		of_property_read_u32(pdev->dev.of_node, node_name, &value);
@@ -1154,8 +1209,11 @@ static int exynos_tmu_ect_set_information(struct platform_device *pdev)
 	}
 
 	/* setting trigger */
+<<<<<<< HEAD
 	pdata->max_trigger_level = function->num_of_range;
 	pdata->non_hw_trigger_levels = function->num_of_range - 1;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	for (i = 0; i < function->num_of_range; ++i) {
 		pdata->trigger_levels[i] = function->range_list[i].lower_bound_temperature;
 		pdata->trigger_enable[i] = true;
@@ -1227,7 +1285,10 @@ static int exynos_tmu_probe(struct platform_device *pdev)
 	    pdata->type == SOC_ARCH_EXYNOS5440 ||
 	    pdata->type == SOC_ARCH_EXYNOS7580 ||
 	    pdata->type == SOC_ARCH_EXYNOS7870 ||
+<<<<<<< HEAD
 	    pdata->type == SOC_ARCH_EXYNOS7570 ||
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	    pdata->type == SOC_ARCH_EXYNOS8890)
 		data->soc = pdata->type;
 	else {

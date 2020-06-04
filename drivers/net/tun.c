@@ -90,7 +90,10 @@
 #define META_MARK_BASE_LOWER 100
 #define META_MARK_BASE_UPPER 500
 // ------------- END of KNOX_VPN -------------------//
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <asm/uaccess.h>
 
@@ -1414,7 +1417,11 @@ static ssize_t tun_put_user(struct tun_struct *tun,
 // ------------- START of KNOX_VPN ------------------//
 	if (knoxvpn_process_uidpid(tun, skb, iv, &len, &total) < 0) {
 		return -EINVAL;
+<<<<<<< HEAD
         }
+=======
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 // ------------- END of KNOX_VPN ------------------//
 
 	copied = total;

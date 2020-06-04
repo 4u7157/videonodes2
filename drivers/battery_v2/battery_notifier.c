@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  *  battery_notifier.c
  *  Samsung Mobile Battery Notifier Driver
@@ -18,6 +19,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/device.h>
 
 #include <linux/notifier.h>
@@ -79,7 +82,11 @@ int charger_notifier_unregister(struct notifier_block *nb)
 
 	return ret;
 }
+<<<<<<< HEAD
 
+=======
+#if 0
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int pdic_notifier_register(struct notifier_block *nb, notifier_fn_t notifier,
 			pdic_notifier_device_t listener)
 {
@@ -120,7 +127,11 @@ int pdic_notifier_unregister(struct notifier_block *nb)
 
 	return ret;
 }
+<<<<<<< HEAD
 
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int battery_notifier_notify(int type)
 {
 	int ret = 0;

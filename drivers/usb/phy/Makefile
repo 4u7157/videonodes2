@@ -4,8 +4,12 @@
 obj-$(CONFIG_USB_PHY)			+= phy.o
 obj-$(CONFIG_OF)			+= of.o
 obj-$(CONFIG_USB_OTG_WAKELOCK)		+= otg-wakelock.o
+<<<<<<< HEAD
 obj-$(CONFIG_DUAL_ROLE_USB_INTF)	+= class-dual-role.o
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
+obj-$(CONFIG_DUAL_ROLE_USB_INTF)	+= class-dual-role.o
 # transceiver drivers, keep the list sorted
 
 obj-$(CONFIG_AB8500_USB)		+= phy-ab8500-usb.o

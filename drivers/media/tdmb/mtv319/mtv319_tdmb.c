@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
 *
 * File name: mtv319_tdmb.c
 *
@@ -16,6 +17,25 @@
 * GNU General Public License for more details.
 *
 */
+=======
+ *
+ * File name: mtv319_tdmb.c
+ *
+ * Description : MTV319 T-DMB services source file.
+ *
+ * Copyright (C) (2013, RAONTECH)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2.
+ *
+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+ * kind, whether express or implied; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "mtv319_rf.h"
 #include "mtv319_internal.h"
@@ -366,7 +386,11 @@ U32 rtvTDMB_GetFicCER(void)
 
 	if (period) {
 	#if 0
+<<<<<<< HEAD
 		RTV_DBGMSG2("[rtvTDMB_GetFicCER] count(%u), period(%u)\n",
+=======
+		RTV_DBGMSG2("count(%u), period(%u)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					count, period);
 	#endif
 		cer = (count * 10000) / period;
@@ -410,7 +434,11 @@ U32 rtvTDMB_GetCER(void)
 
 	if (period) {
 	#if 0
+<<<<<<< HEAD
 		RTV_DBGMSG2("[rtvTDMB_GetCER] count(%u), period(%u)\n",
+=======
+		RTV_DBGMSG2("count(%u), period(%u)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					count, period);
 	#endif
 		cer = (count * 10000) / period;
@@ -459,20 +487,35 @@ S32 rtvTDMB_GetRSSI(void)
 
 	case 1:
 		nRssi = -(RSSI_RFAGC_VAL(RFAGC, 3)
+<<<<<<< HEAD
 				+ RSSI_GVBB_VAL(GVBB, 0.3) + (19 * RTV_TDMB_RSSI_DIVIDER))
 				+ 0 * RTV_TDMB_RSSI_DIVIDER;
+=======
+		+ RSSI_GVBB_VAL(GVBB, 0.3) + (19 * RTV_TDMB_RSSI_DIVIDER))
+		+ 0 * RTV_TDMB_RSSI_DIVIDER;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 
 	case 2:
 		nRssi = -(RSSI_RFAGC_VAL(RFAGC, 3)
+<<<<<<< HEAD
 				+ RSSI_GVBB_VAL(GVBB, 0.3) + (16 * 2 * RTV_TDMB_RSSI_DIVIDER))
 				+ 0 * RTV_TDMB_RSSI_DIVIDER;
+=======
+		+ RSSI_GVBB_VAL(GVBB, 0.3) + (16 * 2 * RTV_TDMB_RSSI_DIVIDER))
+		+ 0 * RTV_TDMB_RSSI_DIVIDER;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 
 	case 3:
 		nRssi = -(RSSI_RFAGC_VAL(RFAGC, 2.6)
+<<<<<<< HEAD
 				+ RSSI_GVBB_VAL(GVBB, 0.4) + (11 * 3 * RTV_TDMB_RSSI_DIVIDER))
 				+ 0 * RTV_TDMB_RSSI_DIVIDER;
+=======
+		+ RSSI_GVBB_VAL(GVBB, 0.4) + (11 * 3 * RTV_TDMB_RSSI_DIVIDER))
+		+ 0 * RTV_TDMB_RSSI_DIVIDER;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 
 	default:
@@ -480,8 +523,15 @@ S32 rtvTDMB_GetRSSI(void)
 	}
 
 #ifdef DEBUG_LOG_FOR_RSSI_FITTING
+<<<<<<< HEAD
 	RTV_DBGMSG3("[rtvTDMB_GetRSSI] Channel Flag = %d 0x00=0x%02x, 0x01=0x%02x\n",CH_FLAG, RD00, GVBB);
 	RTV_DBGMSG3("LNAGAIN = %d, RFAGC = %d GVBB : %d\n", LNAGAIN, RFAGC,GVBB);
+=======
+	RTV_DBGMSG3("CH_FLAG(%d) RD00(0x%02x) GVBB(0x%02x)\n",
+		CH_FLAG, RD00, GVBB);
+	RTV_DBGMSG3("LNAGAIN = %d, RFAGC = %d GVBB : %d\n",
+		LNAGAIN, RFAGC, GVBB);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	return	nRssi;
@@ -943,7 +993,11 @@ static INLINE BOOL tdmb_CheckScanStatus(INT *sucess_flag,
 }
 
 /* SCAN debuging log enable */
+<<<<<<< HEAD
 /* #define DEBUG_LOG_FOR_SCAN */
+=======
+#define DEBUG_LOG_FOR_SCAN
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* NOTE: When this rountine executed, all sub channel and FIC should closed */
 INT rtvTDMB_ScanFrequency(U32 dwChFreqKHz)
@@ -1011,11 +1065,19 @@ INT rtvTDMB_ScanFrequency(U32 dwChFreqKHz)
 #endif
 
 		RTV_REG_MAP_SEL(OFDM_PAGE);
+<<<<<<< HEAD
                 RTV_REG_MASK_SET(0x82, 0x02,0x02);
                 RTV_REG_MASK_SET(0x82, 0x02,0x00);
 
                 DAB_Mode = RTV_REG_GET(0xBA);
                 DAB_Mode = (DAB_Mode>>4) & 0x03;
+=======
+		RTV_REG_MASK_SET(0x82, 0x02, 0x02);
+		RTV_REG_MASK_SET(0x82, 0x02, 0x00);
+
+		DAB_Mode = RTV_REG_GET(0xBA);
+		DAB_Mode = (DAB_Mode>>4) & 0x03;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		RTV_REG_MASK_SET(0x12, 0x80, 0x80);
 		RTV_REG_MASK_SET(0x12, 0x80, 0x00);
@@ -1082,7 +1144,11 @@ INT rtvTDMB_ScanFrequency(U32 dwChFreqKHz)
 #endif
 
 		if (ScanT >= 1000) {
+<<<<<<< HEAD
 			RTV_DBGMSG0("[rtvTDMB_ScanFrequency] Scan Timeout!\n");
+=======
+			RTV_DBGMSG0("Scan Timeout!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			scan_status = 7;
 			sucess_flag = RTV_CHANNEL_NOT_DETECTED;
 			break;
@@ -1109,7 +1175,11 @@ TDMB_SCAN_EXIT:
 	RTV_GUARD_FREE;
 
 #ifdef DEBUG_LOG_FOR_SCAN
+<<<<<<< HEAD
 	RTV_DBGMSG3("[rtvTDMB_ScanFrequency: %u] Power_Peak(%d), AGCL(%d)\n",
+=======
+	RTV_DBGMSG3("%u Power_Peak(%d), AGCL(%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			dwChFreqKHz, peak_pwr, AGC_L);
 	RTV_DBGMSG2("\tOFDML = %d, CRC = %d\n", OFDM_L, FIC_CRC);
 	RTV_DBGMSG3("\tScanT = %d Status = %d scan_done = %d\n",
@@ -1148,11 +1218,14 @@ static INLINE INT tdmb_ReadFIC_SPI(U8 *pbBuf)
 				ret_size = 384;
 #endif
 
+<<<<<<< HEAD
 #if 0
 				printk(KERN_INFO "[READ] 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X\n",
 				pbBuf[0], pbBuf[1], pbBuf[2], pbBuf[3], pbBuf[4]);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				break;
 			}
 		}
@@ -1160,7 +1233,11 @@ static INLINE INT tdmb_ReadFIC_SPI(U8 *pbBuf)
 		lock_s = tdmb_GetOfdmLockStatus();
 		if (!(lock_s & RTV_TDMB_OFDM_LOCK_MASK)) {
 			RTV_DELAY_MS(30);
+<<<<<<< HEAD
 			RTV_DBGMSG2("[tdmb_ReadFIC_SPI] ##lock_s(0x%02X)[%u]\n",
+=======
+			RTV_DBGMSG2("##lock_s(0x%02X)[%u]\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					lock_s, elapsed_cnt);
 			ret_size = -55;
 			break;
@@ -1189,10 +1266,17 @@ static INLINE INT tdmb_ReadFIC_I2C(U8 *pbBuf)
 	UINT timeout_cnt = RTV_TDMB_READ_FIC_TIMEOUT_CNT;
 
 	while (1) {
+<<<<<<< HEAD
 	RTV_REG_MAP_SEL(FEC_PAGE);
 		istatus = RTV_REG_GET(0x13) & 0x10; /* [4] */
 	#if 0
 		RTV_DBGMSG1("[tdmb_ReadFIC_I2C] istatus(0x%02X)\n", istatus);
+=======
+		RTV_REG_MAP_SEL(FEC_PAGE);
+		istatus = RTV_REG_GET(0x13) & 0x10; /* [4] */
+	#if 0
+		RTV_DBGMSG1("istatus(0x%02X)\n", istatus);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	#endif
 		if (istatus) {
 			RTV_REG_MASK_SET(0x26, 0x10, 0x10);
@@ -1215,7 +1299,11 @@ static INLINE INT tdmb_ReadFIC_I2C(U8 *pbBuf)
 		lock_s = tdmb_GetOfdmLockStatus();
 		if (!(lock_s & RTV_TDMB_OFDM_LOCK_MASK)) {
 			RTV_DELAY_MS(30);
+<<<<<<< HEAD
 			RTV_DBGMSG2("[tdmb_ReadFIC_I2C] ##lock_s(0x%02X)[%u]\n",
+=======
+			RTV_DBGMSG2("##lock_s(0x%02X)[%u]\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					lock_s, elapsed_cnt);
 			ret_size = -55;
 			break;
@@ -1251,7 +1339,11 @@ static INLINE INT tdmb_ReadFIC_I2C(U8 *pbBuf)
 	memmove(pbBuf+215, pbBuf+231, 169);
 
 #if 1
+<<<<<<< HEAD
 printk(KERN_INFO "[READ] 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X [0x%02X 0x%02X] | 0x%02X 0x%02X\n",
+=======
+RTV_DBGMSG("[READ] 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X [0x%02X 0x%02X] | 0x%02X 0x%02X\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 pbBuf[0], pbBuf[1], pbBuf[2], pbBuf[3], pbBuf[4], pbBuf[5],
 pbBuf[382], pbBuf[383], pbBuf[398], pbBuf[399]);
 #endif
@@ -1261,16 +1353,27 @@ pbBuf[382], pbBuf[383], pbBuf[398], pbBuf[399]);
 }
 #endif
 
+<<<<<<< HEAD
 /*
 NOTE: Do NOT read at the ISR.
 This function should called when scan state.
 */
+=======
+/**
+ * NOTE: Do NOT read at the ISR.
+ * This function should called when scan state.
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 INT rtvTDMB_ReadFIC(U8 *pbBuf)
 {
 	int ret_size = 0;
 
 	if (!g_fRtvFicOpened) {
+<<<<<<< HEAD
 		RTV_DBGMSG0("[rtvTDMB_ReadFIC] NOT OPEN FIC\n");
+=======
+		RTV_DBGMSG0("NOT OPEN FIC\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return RTV_NOT_OPENED_FIC;
 	}
 
@@ -1328,7 +1431,11 @@ INT rtvTDMB_OpenFIC(void)
 
 #if 0
 #if defined(RTV_IF_TSIF) || defined(RTV_IF_SPI_SLAVE)
+<<<<<<< HEAD
 	RTV_DBGMSG1("[rtvTDMB_OpenFIC] Opened with FIC_state_path(%d)\n",
+=======
+	RTV_DBGMSG1("Opened with FIC_state_path(%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				g_nRtvFicOpenedStatePath);
 #endif
 #endif
@@ -1348,7 +1455,11 @@ static void tdmb_InitHOST(void)
 #endif
 
 #if defined(RTV_CHIP_PKG_CSP) && defined(RTV_FIC_I2C_INTR_ENABLED)
+<<<<<<< HEAD
 	RTV_DBGMSG2("[tdmb_InitHOST] 0x08(0x%02X), 0x1A(0x%02X)\n",
+=======
+	RTV_DBGMSG2("0x08(0x%02X), 0x1A(0x%02X)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		RTV_REG_GET(0x08), RTV_REG_GET(0x1A));
 
 #if defined(RTV_FIC_I2C_INTR_ENABLED)
@@ -1527,7 +1638,11 @@ INT rtvTDMB_Initialize(unsigned long interface)
 {
 	INT nRet;
 
+<<<<<<< HEAD
 #if defined(RTV_IF_SPI) || defined (RTV_IF_TSIF)
+=======
+#if defined(RTV_IF_SPI) || defined(RTV_IF_TSIF)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mtv319_set_port_if(interface);
 #endif
 	g_nOpenedSubChNum = 0;

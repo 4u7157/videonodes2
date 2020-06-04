@@ -257,6 +257,11 @@ static void isdbt_set_config_poweron(void)
 		gpio_direction_output(dt_pdata->isdbt_ant_sel, 0);
 	if (gpio_is_valid(dt_pdata->isdbt_rst))
 		gpio_direction_output(dt_pdata->isdbt_rst, 0);
+<<<<<<< HEAD
+=======
+	if (gpio_is_valid(dt_pdata->isdbt_ant_ctrl))
+		gpio_direction_output(dt_pdata->isdbt_ant_ctrl, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 //	gpio_direction_input(dt_pdata->isdbt_irq);
 }
 
@@ -336,7 +341,11 @@ static void isdbt_gpio_on(void)
 	}
 	if (gpio_is_valid(dt_pdata->isdbt_ant_ctrl))
 	{
+<<<<<<< HEAD
 		gpio_set_value(dt_pdata->isdbt_ant_ctrl, 0);
+=======
+		gpio_set_value(dt_pdata->isdbt_ant_ctrl, 1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		usleep_range(10000, 10000);
 	}
 	if (gpio_is_valid(dt_pdata->isdbt_rst)) {
@@ -365,6 +374,14 @@ static void isdbt_gpio_off(void)
 		gpio_set_value(dt_pdata->isdbt_ant_sel, 0);
 		usleep_range(10000, 10000);
 	}
+<<<<<<< HEAD
+=======
+	if (gpio_is_valid(dt_pdata->isdbt_ant_ctrl))
+	{
+		gpio_set_value(dt_pdata->isdbt_ant_ctrl, 0);
+		usleep_range(10000, 10000);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (gpio_is_valid(dt_pdata->isdbt_rst)) {
 		gpio_set_value(dt_pdata->isdbt_rst, 0);
 	}

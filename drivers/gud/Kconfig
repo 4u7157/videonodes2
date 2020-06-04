@@ -9,7 +9,10 @@ endif
 if SOC_EXYNOS7870
 source "drivers/gud/gud-exynos7870/Kconfig"
 endif
+<<<<<<< HEAD
 
 if SOC_EXYNOS7570
 source "drivers/gud/gud-exynos7570/Kconfig"
 endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

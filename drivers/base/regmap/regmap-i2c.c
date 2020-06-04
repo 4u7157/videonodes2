@@ -161,6 +161,7 @@ static int regmap_i2c_read(void *context,
 			return ret;
 		else
 			return -EIO;
+<<<<<<< HEAD
 	} else if (i2c->flags & I2C_CLIENT_SPEEDY) {
 		xfer[0].flags = I2C_M_RD|I2C_CLIENT_SPEEDY;
 		xfer[0].len = val_size;
@@ -180,6 +181,8 @@ static int regmap_i2c_read(void *context,
 			return ret;
 		else
 			return -EIO;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		xfer[0].addr = i2c->addr;
 		xfer[0].flags = 0;

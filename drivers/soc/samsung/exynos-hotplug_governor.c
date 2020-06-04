@@ -33,6 +33,10 @@
 #include <linux/irq_work.h>
 #include <linux/workqueue.h>
 #include <linux/pm_qos.h>
+<<<<<<< HEAD
+=======
+#include <linux/suspend.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <soc/samsung/cpufreq.h>
 #include <soc/samsung/exynos-cpu_hotplug.h>
@@ -45,7 +49,11 @@
 #include "../../cpufreq/cpu_load_metric.h"
 
 #define DEFAULT_UP_CHANGE_FREQ		(1300000)	/* MHz */
+<<<<<<< HEAD
 #define DEFAULT_DOWN_CHANGE_FREQ	(800000)	/* MHz */
+=======
+#define DEFAULT_DOWN_CHANGE_FREQ	(1500000)	/* MHz */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define DEFAULT_MONITOR_MS		(100)		/* ms */
 #define DEFAULT_BOOT_ENABLE_MS (30000)		/* 30 s */
 #define RETRY_BOOT_ENABLE_MS (100)		/* 100 ms */
@@ -116,8 +124,14 @@ struct cpu_hstate {
 	},
 };
 
+<<<<<<< HEAD
 #define MONITOR_DURATION_NUM   3
 #define TASKS_THRESHOLD		6
+=======
+#define UP_MONITOR_DURATION_NUM   1
+#define DOWN_MONITOR_DURATION_NUM   3
+#define TASKS_THRESHOLD		410
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define DEFAULT_LOAD_THRESHOLD	320
 #define MAX_CLUSTERS   2
 static atomic_t freq_history[MAX_CLUSTERS] =  {ATOMIC_INIT(0), ATOMIC_INIT(0)};
@@ -378,7 +392,11 @@ static action_t exynos_hpgov_select_up_down(void)
 	struct cluster_stats cl_stat[2];
 	int nr;
 
+<<<<<<< HEAD
 	nr = nr_running();
+=======
+	nr = avg_nr_running();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	cpumask_copy(cl_stat[0].mask, topology_core_cpumask(0));
 	cpumask_copy(cl_stat[1].mask, topology_core_cpumask(4));
@@ -395,12 +413,26 @@ static action_t exynos_hpgov_select_up_down(void)
 
 	load = exynos_hpgov.load;
 
+<<<<<<< HEAD
 	if (((c1_freq <= down_freq) && (c0_freq <= down_freq)) &&
 			((c1_util <= load) && (c0_util <= load))) {
 		atomic_inc(&freq_history[GO_DOWN]);
 		atomic_set(&freq_history[GO_UP], 0);
 	} else if (((c0_freq >= up_freq) || (c1_freq >= up_freq)) &&
 			((c0_util >= load) || nr >= TASKS_THRESHOLD)) {
+=======
+	/* make c0_freq > c1_Freq */
+	if (c1_freq > c0_freq) {
+		swap(c0_freq, c1_freq);
+		swap(c0_util, c1_util);
+	}
+
+	if ((c1_freq > 0 && (c0_freq < down_freq)) &&
+		(c1_freq * c1_util + c0_freq * c0_util <= ((up_freq * load) >> 2) * 3)) {
+		atomic_inc(&freq_history[GO_DOWN]);
+		atomic_set(&freq_history[GO_UP], 0);
+	} else if (c0_freq >= up_freq && (c0_util >= load && nr >= TASKS_THRESHOLD)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		atomic_inc(&freq_history[GO_UP]);
 		atomic_set(&freq_history[GO_DOWN], 0);
 	} else {
@@ -408,9 +440,15 @@ static action_t exynos_hpgov_select_up_down(void)
 		atomic_set(&freq_history[GO_DOWN], 0);
 	}
 
+<<<<<<< HEAD
 	if (atomic_read(&freq_history[GO_UP]) > MONITOR_DURATION_NUM)
 		return GO_UP;
 	else if (atomic_read(&freq_history[GO_DOWN]) > MONITOR_DURATION_NUM)
+=======
+	if (atomic_read(&freq_history[GO_UP]) > UP_MONITOR_DURATION_NUM)
+		return GO_UP;
+	else if (atomic_read(&freq_history[GO_DOWN]) > DOWN_MONITOR_DURATION_NUM)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return GO_DOWN;
 
 	return STAY;
@@ -470,6 +508,57 @@ static void hpgov_dynamic_monitor(struct work_struct *work)
 	queue_delayed_work_on(0, system_freezable_wq, &hpgov_dynamic_work, msecs_to_jiffies(100));
 }
 
+<<<<<<< HEAD
+=======
+static int exynos_cpu_governor_pm_suspend_notifier(struct notifier_block *notifier,
+		unsigned long pm_event, void *v)
+{
+	int nr;
+
+	nr = hstate_state[H1].cpu_nr;
+
+	switch (pm_event) {
+		case PM_SUSPEND_PREPARE:
+			atomic_set(&freq_history[GO_UP], 0);
+			atomic_set(&freq_history[GO_DOWN], 0);
+
+			cancel_delayed_work_sync(&hpgov_dynamic_work);
+			exynos_hpgov_update_governor(HPGOV_DYNAMIC, nr, nr);
+			break;
+	}
+
+	return NOTIFY_OK;
+}
+
+static struct notifier_block exynos_cpu_governor_suspend_nb = {
+	.notifier_call = exynos_cpu_governor_pm_suspend_notifier,
+	.priority = INT_MAX - 1,
+};
+
+static int exynos_cpu_governor_pm_resume_notifier(struct notifier_block *notifier,
+		unsigned long pm_event, void *v)
+{
+
+	int nr;
+
+	nr = hstate_state[H1].cpu_nr;
+
+	switch (pm_event) {
+		case PM_POST_SUSPEND:
+			exynos_hpgov_update_governor(HPGOV_DYNAMIC, NR_CPUS, nr);
+			queue_delayed_work_on(0, system_freezable_wq, &hpgov_dynamic_work, msecs_to_jiffies(100));
+			break;
+	}
+
+	return NOTIFY_OK;
+}
+
+static struct notifier_block exynos_cpu_governor_resume_nb = {
+	.notifier_call = exynos_cpu_governor_pm_resume_notifier,
+	.priority = INT_MIN,
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int __init exynos_hpgov_init(void)
 {
 	int ret = 0;
@@ -502,16 +591,38 @@ static int __init exynos_hpgov_init(void)
 		pr_err("Unable to create sysfs objects :%d\n", ret);
 
 	atomic_set(&exynos_hpgov.cur_cpu_max, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
+<<<<<<< HEAD
 	atomic_set(&exynos_hpgov.cur_cpu_min, PM_QOS_CPU_ONLINE_MIN_DEFAULT_VALUE);
 
 	pm_qos_add_request(&hpgov_max_pm_qos, PM_QOS_CPU_ONLINE_MAX, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
 	pm_qos_add_request(&hpgov_min_pm_qos, PM_QOS_CPU_ONLINE_MIN, PM_QOS_CPU_ONLINE_MIN_DEFAULT_VALUE);
+=======
+#ifndef CONFIG_SCHED_HMP
+	atomic_set(&exynos_hpgov.cur_cpu_min, NR_CLUST0_CPUS);
+#else
+	atomic_set(&exynos_hpgov.cur_cpu_min, PM_QOS_CPU_ONLINE_MIN_DEFAULT_VALUE);
+#endif
+
+	pm_qos_add_request(&hpgov_max_pm_qos, PM_QOS_CPU_ONLINE_MAX, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
+#ifndef CONFIG_SCHED_HMP
+	pm_qos_add_request(&hpgov_min_pm_qos, PM_QOS_CPU_ONLINE_MIN, NR_CLUST0_CPUS);
+#else
+	pm_qos_add_request(&hpgov_min_pm_qos, PM_QOS_CPU_ONLINE_MIN, PM_QOS_CPU_ONLINE_MIN_DEFAULT_VALUE);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	exynos_hpgov.down_freq = DEFAULT_DOWN_CHANGE_FREQ;
 	exynos_hpgov.up_freq = DEFAULT_UP_CHANGE_FREQ;
 	exynos_hpgov.rate = DEFAULT_MONITOR_MS;
 	exynos_hpgov.load = DEFAULT_LOAD_THRESHOLD;
 
+<<<<<<< HEAD
+=======
+	/* regsiter pm notifier */
+	register_pm_notifier(&exynos_cpu_governor_suspend_nb);
+	register_pm_notifier(&exynos_cpu_governor_resume_nb);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	schedule_delayed_work_on(0, &hpgov_boot_work, msecs_to_jiffies(DEFAULT_BOOT_ENABLE_MS));
 
 done:

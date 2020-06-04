@@ -4,5 +4,11 @@ menu "USB Power Delivery and Type-C drivers"
 config TYPEC
 	tristate
 	default y
+<<<<<<< HEAD
+=======
+	depends on ANDROID_MAJOR_VERSION != "n"
+	depends on ANDROID_MAJOR_VERSION != "o"
+	depends on CCIC_NOTIFIER
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 endmenu

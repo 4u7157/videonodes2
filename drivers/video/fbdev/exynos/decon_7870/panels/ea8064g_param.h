@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* linux/drivers/video/fbdev/exynos/decon_7870/panels/ea8064g_param.h
  *
  * Copyright (c) 2015 Samsung Electronics Co., Ltd.
@@ -7,12 +8,68 @@
  * published by the Free Software Foundation.
 */
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifndef __EA8064G_PARAM_H__
 #define __EA8064G_PARAM_H__
 
 #include <linux/types.h>
 #include <linux/kernel.h>
 
+<<<<<<< HEAD
+=======
+
+struct lcd_seq_info {
+	unsigned char	*cmd;
+	unsigned int	len;
+	unsigned int	sleep;
+};
+
+enum {
+	HBM_STATUS_OFF,
+	HBM_STATUS_ON,
+	HBM_STATUS_MAX,
+};
+
+enum {
+	ACL_STATUS_0P,
+	ACL_STATUS_15P,
+	ACL_STATUS_MAX
+};
+
+enum {
+	ACL_OPR_16_FRAME,
+	ACL_OPR_32_FRAME,
+	ACL_OPR_MAX
+};
+
+#define POWER_IS_ON(pwr)			(pwr <= FB_BLANK_NORMAL)
+#define LEVEL_IS_HBM(brightness)		(brightness == EXTEND_BRIGHTNESS)
+#define UNDER_MINUS_20(temperature)	(temperature <= -20)
+#define ACL_IS_ON(nit)				(nit != 360)
+
+#define NORMAL_TEMPERATURE			25	/* 25 degrees Celsius */
+#define EXTEND_BRIGHTNESS	355
+#define UI_MAX_BRIGHTNESS	255
+#define UI_DEFAULT_BRIGHTNESS 134
+
+#define EA8064G_MTP_ADDR			0xC8
+#define EA8064G_MTP_SIZE			33
+#define EA8064G_MTP_DATE_SIZE		EA8064G_MTP_SIZE
+#define EA8064G_COORDINATE_REG		0xA1
+#define EA8064G_COORDINATE_LEN		6
+#define EA8064G_ID_REG				0x04
+#define EA8064G_ID_LEN				3
+#define TSET_REG			0xB8
+#define TSET_LEN			3
+#define ELVSS_REG			0xB6
+#define ELVSS_LEN			4   /* elvss: Global para 4th */
+
+#define GAMMA_CMD_CNT		34
+#define AID_CMD_CNT			5
+#define ELVSS_CMD_CNT		3
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const unsigned char SEQ_TEST_KEY_ON_F0[] = {
 	0xF0,
 	0x5A, 0x5A
@@ -221,6 +278,7 @@ static const unsigned char SEQ_DCDC1_SET[] = {
 	0x04,
 };
 
+<<<<<<< HEAD
 static const unsigned char SEQ_BRIGHTNESS_1[] =  {
 	0xca, 0x1, 0x0, 0x1, 0x0, 0x1, 0x0, 0x80, 0x80,
 	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
@@ -236,4 +294,6 @@ static const unsigned char SEQ_BRIGHTNESS_3[] =  {
 	0xb6, 0x5c, 0x84, 0xb8, 0x13,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* __EA8064G_PARAM_H__ */

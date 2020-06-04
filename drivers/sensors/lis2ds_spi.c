@@ -178,6 +178,10 @@ MODULE_DEVICE_TABLE(spi, lis2ds_ids);
 
 static const struct of_device_id lis2ds_id_table[] = {
 	{ .compatible = "st,lis2ds", },
+<<<<<<< HEAD
+=======
+	{ .compatible = "st,lis2ds12", },
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{ },
 };
 MODULE_DEVICE_TABLE(of, lis2ds_id_table);

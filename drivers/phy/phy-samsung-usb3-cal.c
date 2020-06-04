@@ -524,8 +524,13 @@ void samsung_exynos_cal_usb3phy_tune_dev(struct exynos_usbphy_info *usbphy_info)
 		/* TX RES TUNE */
 		phyparam0 &= ~PHYPARAM0_TXRESTUNE_MASK;
 		phyparam0 |= PHYPARAM0_TXRESTUNE(tune->tx_res);
+<<<<<<< HEAD
 		/* TX PRE EMPHASIS PULS */
 		if (tune->tx_pre_emp_puls)
+=======
+		/* TX PRE EMPHASIS PLUS */
+		if (tune->tx_pre_emp_plus)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			phyparam0 |= PHYPARAM0_TXPREEMPPULSETUNE;
 		else
 			phyparam0 &= ~PHYPARAM0_TXPREEMPPULSETUNE;
@@ -551,6 +556,11 @@ void samsung_exynos_cal_usb3phy_tune_dev(struct exynos_usbphy_info *usbphy_info)
 		writel(phyparam0, regs_base + EXYNOS_USBCON_PHYPARAM0);
 	}
 
+<<<<<<< HEAD
+=======
+	printk("usb: device_phytune: 0x%x\n", readl(regs_base + EXYNOS_USBCON_PHYPARAM0));
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Tuning the SS Block of phy */
 	if (usbphy_info->ss_tune) {
 		struct exynos_usbphy_ss_tune *tune = usbphy_info->ss_tune;
@@ -619,8 +629,13 @@ void samsung_exynos_cal_usb3phy_tune_host(
 		/* TX RES TUNE */
 		phyparam0 &= ~PHYPARAM0_TXRESTUNE_MASK;
 		phyparam0 |= PHYPARAM0_TXRESTUNE(tune->tx_res);
+<<<<<<< HEAD
 		/* TX PRE EMPHASIS PULS */
 		if (tune->tx_pre_emp_puls)
+=======
+		/* TX PRE EMPHASIS PLUS */
+		if (tune->tx_pre_emp_plus)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			phyparam0 |= PHYPARAM0_TXPREEMPPULSETUNE;
 		else
 			phyparam0 &= ~PHYPARAM0_TXPREEMPPULSETUNE;
@@ -644,6 +659,10 @@ void samsung_exynos_cal_usb3phy_tune_host(
 		phyparam0 |= PHYPARAM0_COMPDISTUNE(tune->compdis);
 
 		writel(phyparam0, regs_base + EXYNOS_USBCON_PHYPARAM0);
+<<<<<<< HEAD
+=======
+		printk("usb: host_phytune: 0x%x\n", readl(regs_base + EXYNOS_USBCON_PHYPARAM0));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* Tuning the SS Block of phy */

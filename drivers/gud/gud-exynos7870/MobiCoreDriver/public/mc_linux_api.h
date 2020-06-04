@@ -20,11 +20,19 @@
  * Switch TEE active core to core_num, defined as linux
  * core id
  */
+<<<<<<< HEAD
 int mc_switch_core(__u32 core_num);
+=======
+int mc_switch_core(int core_num);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /*
  * Return TEE active core as Linux core id
  */
+<<<<<<< HEAD
 __u32 mc_active_core(void);
+=======
+int mc_active_core(void);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #endif /* _MC_LINUX_API_H_ */

@@ -86,6 +86,7 @@ enum flat_binder_object_flags {
 	 * scheduling policy from the caller (for synchronous transactions).
 	 */
 	FLAT_BINDER_FLAG_INHERIT_RT = 0x800,
+<<<<<<< HEAD
 	/**
 	 * @FLAT_BINDER_FLAG_TXN_SECURITY_CTX: request security contexts
 	 *
@@ -93,6 +94,9 @@ enum flat_binder_object_flags {
 	 * context
 	 */
 	FLAT_BINDER_FLAG_TXN_SECURITY_CTX = 0x1000,
+=======
+	FLAT_BINDER_FLAG_TXN_SECURITY_CTX = 0x1000
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #ifdef BINDER_IPC_32BIT
@@ -120,7 +124,11 @@ struct binder_object_header {
  */
 struct flat_binder_object {
 	struct binder_object_header	hdr;
+<<<<<<< HEAD
 	__u32				flags;
+=======
+	__u32		flags;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* 8 bytes of data. */
 	union {

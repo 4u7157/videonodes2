@@ -1079,6 +1079,7 @@ static int mtp_release(struct inode *ip, struct file *fp)
 	return 0;
 }
 #ifdef CONFIG_COMPAT
+<<<<<<< HEAD
 static long mtp_compat_ioctl(struct file *fp, unsigned code, unsigned long value)
 {
 	code = (code == MTP_SEND_FILE_32) ? MTP_SEND_FILE :
@@ -1132,6 +1133,11 @@ static long mtp_compat_ioctl(struct file *fp, unsigned code, unsigned long value
 	}
 
 	return mtp_ioctl(fp, code, (unsigned long)compat_ptr(value));
+=======
+static long mtp_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+{
+	return mtp_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 #endif
 /* file operations for /dev/mtp_usb */

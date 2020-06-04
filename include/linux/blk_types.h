@@ -90,7 +90,10 @@ struct bio {
 	int			private_algo_mode;
 	unsigned char		*key;
 	unsigned int		key_length;
+<<<<<<< HEAD
 	int			private_enc_algo;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	/*
 	 * Everything starting with bi_max_vecs will be preserved by bio_reset()

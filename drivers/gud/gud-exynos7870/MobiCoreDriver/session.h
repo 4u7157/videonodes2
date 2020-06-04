@@ -24,8 +24,15 @@ struct tee_mmu;
 struct mc_ioctl_buffer;
 
 struct tee_session {
+<<<<<<< HEAD
 	/* Session list lock */
 	struct mutex		close_lock;
+=======
+	/* Session closing lock, so two calls cannot be made simultaneously */
+	struct mutex		close_lock;
+	/* Asynchronous session close (GP) requires a callback to unblock */
+	struct completion	close_completion;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* MCP session descriptor (MUST BE FIRST) */
 	struct mcp_session	mcp_session;
 	/* Owner */
@@ -58,7 +65,12 @@ int session_wsms_remove(struct tee_session *session,
 			const struct mc_ioctl_buffer *bufs);
 s32 session_exitcode(struct tee_session *session);
 int session_notify_swd(struct tee_session *session);
+<<<<<<< HEAD
 int session_waitnotif(struct tee_session *session, s32 timeout);
+=======
+int session_waitnotif(struct tee_session *session, s32 timeout,
+		      bool silent_expiry);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int session_debug_structs(struct kasnprintf_buf *buf,
 			  struct tee_session *session, bool is_closing);
 

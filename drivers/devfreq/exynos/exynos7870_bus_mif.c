@@ -33,7 +33,11 @@
 #include "../../../drivers/soc/samsung/pwrcal/S5E7870/S5E7870-vclk.h"
 #include "../governor.h"
 
+<<<<<<< HEAD
 #define DEVFREQ_MIF_REBOOT_FREQ	(900000)
+=======
+#define DEVFREQ_MIF_REBOOT_FREQ	(902000)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define DEVFREQ_MIF_SWITCH_FREQ	(667000)
 
 u32 sw_volt_table;

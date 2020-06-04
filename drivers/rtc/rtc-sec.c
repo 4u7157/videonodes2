@@ -32,6 +32,16 @@
 #include <linux/mfd/samsung/s2mpu03.h>
 #include <linux/mfd/samsung/s2mpu05.h>
 #include <soc/samsung/cpufreq.h>
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_S2MU005_ACOK_NOTIFY)
+#include <linux/mfd/samsung/s2mu005.h>
+#endif
+#if defined(CONFIG_RTC_ALARM_BOOT)
+#include <linux/reboot.h>
+#include <linux/wakelock.h>
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_EXYNOS_MBOX
 #include <linux/apm-exynos.h>
@@ -42,7 +52,22 @@ struct s2m_rtc_info {
 	struct rtc_device	*rtc_dev;
 	struct mutex		lock;
 	struct work_struct	irq_work;
+<<<<<<< HEAD
 	int			irq;
+=======
+#if defined(CONFIG_S2MU005_ACOK_NOTIFY)
+	struct work_struct	acok_work;
+	int			acokf_irq;
+	int			acokr_irq;
+#endif
+	int			irq;
+#if defined(CONFIG_RTC_ALARM_BOOT)
+	int alarm_boot_irq;
+	bool lpm_mode;
+	bool alarm_irq_flag;
+	struct wake_lock alarm_wake_lock;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int			smpl_irq;
 	bool			use_irq;
 	u8 			*adc_val;
@@ -81,6 +106,13 @@ static const unsigned int s2mps16_ldo_coeffs[38] = {S2MPS16_L600, S2MPS16_L300, 
 
 static struct wakeup_source *rtc_ws;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SEC_PM
+static int rtc_status = 0;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum S2M_RTC_OP {
 	S2M_RTC_READ,
 	S2M_RTC_WRITE_TIME,
@@ -443,6 +475,184 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RTC_ALARM_BOOT)
+static inline int s2m_rtc_set_update_reg(struct s2m_rtc_info *info,enum S2M_RTC_OP op)
+{
+	int ret;
+	unsigned int data;
+
+	ret = sec_rtc_read(info->iodev, S2M_RTC_UPDATE, &data);
+	if (ret < 0)
+		return ret;
+
+	switch (op) {
+	case S2M_RTC_READ:
+		data |= RTC_RUDR_MASK;
+		break;
+	case S2M_RTC_WRITE_TIME:
+		data |= info->wudr_mask;
+		break;
+	case S2M_RTC_WRITE_ALARM:
+		data |= info->audr_mask;
+		break;
+	default:
+		dev_err(info->dev, "%s: invalid op(%d)\n", __func__, op);
+		return -EINVAL;
+	}
+
+	ret = sec_rtc_write(info->iodev, S2M_RTC_UPDATE, (char)data);
+
+	if (ret < 0) {
+		dev_err(info->dev, "%s: fail to write update reg(%d)\n",
+				__func__, ret);
+	} else {
+		usleep_range(1000, 1000);
+	}
+
+	return ret;
+}
+
+static int s2m_rtc_stop_alarm_boot(struct s2m_rtc_info *info)
+{
+	u8 data[7];
+	int ret, i;
+	struct rtc_time tm;
+
+	ret = sec_rtc_bulk_read(info->iodev, S2M_ALARM1_SEC, 7, data);
+	if (ret < 0)
+		return ret;
+
+	s2m_data_to_tm(data, &tm);
+
+	printk(KERN_INFO "%s: %d/%d/%d %d:%d:%d(%d)\n", __func__,
+		1900 + tm.tm_year, 1 + tm.tm_mon, tm.tm_mday,
+		tm.tm_hour, tm.tm_min, tm.tm_sec, tm.tm_wday);
+
+	for (i = 0; i < 7; i++)
+		data[i] &= ~ALARM_ENABLE_MASK;
+
+	ret = sec_rtc_bulk_write(info->iodev, S2M_ALARM1_SEC, 7, data);
+	if (ret < 0)
+		return ret;
+
+	ret = s2m_rtc_set_update_reg(info, S2M_RTC_WRITE_ALARM);
+
+	return ret;
+}
+
+static int s2m_rtc_start_alarm_boot(struct s2m_rtc_info *info)
+{
+	int ret;
+	u8 data[7];
+	struct rtc_time tm;
+
+	ret = sec_rtc_bulk_read(info->iodev, S2M_ALARM1_SEC, 7, data);
+	if (ret < 0)
+		return ret;
+
+	s2m_data_to_tm(data, &tm);
+
+	printk(KERN_INFO "%s: %d/%d/%d %d:%d:%d(%d)\n", __func__,
+		1900 + tm.tm_year, 1 + tm.tm_mon, tm.tm_mday,
+		tm.tm_hour, tm.tm_min, tm.tm_sec, tm.tm_wday);
+
+	data[RTC_SEC] |= ALARM_ENABLE_MASK;
+	data[RTC_MIN] |= ALARM_ENABLE_MASK;
+	data[RTC_HOUR] |= ALARM_ENABLE_MASK;
+	data[RTC_WEEKDAY] &= 0x00;
+	if (data[RTC_DATE] & 0x1f)
+		data[RTC_DATE] |= ALARM_ENABLE_MASK;
+	if (data[RTC_MONTH] & 0xf)
+		data[RTC_MONTH] |= ALARM_ENABLE_MASK;
+	if (data[RTC_YEAR] & 0x7f)
+		data[RTC_YEAR] |= ALARM_ENABLE_MASK;
+
+	ret = sec_rtc_bulk_write(info->iodev, S2M_ALARM1_SEC, 7, data);
+	if (ret < 0)
+		return ret;
+
+	ret = s2m_rtc_set_update_reg(info, S2M_RTC_WRITE_ALARM);
+
+	return ret;
+}
+
+static int s2m_rtc_set_alarm_boot(struct device *dev,
+					struct rtc_wkalrm *alrm)
+{
+	struct s2m_rtc_info *info = dev_get_drvdata(dev);
+	u8 data[7];
+	int ret;
+
+	mutex_lock(&info->lock);
+
+	s2m_tm_to_data(&alrm->time, data);
+
+	dev_info(info->dev, "%s: %d-%02d-%02d %02d:%02d:%02d(0x%02x)%s\n",
+			__func__, data[RTC_YEAR] + 2000, data[RTC_MONTH],
+			data[RTC_DATE], data[RTC_HOUR] & 0x1f, data[RTC_MIN],
+			data[RTC_SEC], data[RTC_WEEKDAY],
+			data[RTC_HOUR] & HOUR_PM_MASK ? "PM" : "AM");
+
+	ret = s2m_rtc_stop_alarm_boot(info);
+	if (ret < 0)
+		return ret;
+
+	ret = sec_rtc_read(info->iodev, S2M_RTC_UPDATE, &info->update_reg);
+	if (ret < 0)
+	{
+		printk(KERN_INFO "%s: read fail \n", __func__);
+		return ret;
+	}
+
+	if (alrm->enabled)
+		info->update_reg |= RTC_WAKE_MASK;
+	else
+		info->update_reg &= ~RTC_WAKE_MASK;
+
+	ret = sec_rtc_write(info->iodev, S2M_RTC_UPDATE, (char)info->update_reg);
+
+	if (ret < 0) {
+		dev_err(info->dev, "%s: fail to write update reg(%d)\n",
+				__func__, ret);
+	} else {
+		usleep_range(1000, 1000);
+	}
+
+	ret = sec_rtc_bulk_write(info->iodev, S2M_ALARM1_SEC, 7, data);
+	if (ret < 0)
+		return ret;
+
+	ret = s2m_rtc_set_update_reg(info, S2M_RTC_WRITE_ALARM);
+
+	if (ret < 0)
+		return ret;
+
+	if (alrm->enabled)
+		ret = s2m_rtc_start_alarm_boot(info);
+
+	mutex_unlock(&info->lock);
+
+	return ret;
+}
+
+static int s2m_rtc_get_alarm_boot(struct device *dev,
+				      struct rtc_wkalrm *alrm)
+{
+	struct s2m_rtc_info *info = dev_get_drvdata(dev);
+
+	if( info->alarm_irq_flag)
+		alrm->enabled = 0x1;
+	else
+		alrm->enabled = 0x0;
+	printk("s2m_rtc_get_alarm_boot : %d, %d\n",
+						info->lpm_mode, alrm->enabled);
+	return info->lpm_mode;
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int s2m_rtc_alarm_irq_enable(struct device *dev,
 					unsigned int enabled)
 {
@@ -469,6 +679,71 @@ static irqreturn_t s2m_rtc_alarm_irq(int irq, void *data)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_S2MU005_ACOK_NOTIFY)
+static irqreturn_t s2m_acokf_irq(int irq, void *data)
+{
+	struct s2m_rtc_info *info = data;
+
+	if (!info->rtc_dev)
+		return IRQ_HANDLED;
+
+	dev_info(info->dev, "%s:irq(%d)\n", __func__, irq);
+
+	schedule_work(&info->acok_work);
+
+	return IRQ_HANDLED;
+}
+
+static irqreturn_t s2m_acokr_irq(int irq, void *data)
+{
+	struct s2m_rtc_info *info = data;
+
+	if (!info->rtc_dev)
+		return IRQ_HANDLED;
+
+	dev_info(info->dev, "%s:irq(%d)\n", __func__, irq);
+
+	schedule_work(&info->acok_work);
+
+	return IRQ_HANDLED;
+}
+
+static void s2m_acok_work(struct work_struct *work)
+{
+#if defined(CONFIG_S2MU005_ACOK_NOTIFY)
+	s2m_acok_notify_call_chain();
+#endif
+	//switch(info->iodev->device_type) {
+	/* smpl_warn interrupt is active high */
+	//case S2MPU04X:
+	//	s2m_acok_notify_call_chain();
+	//	break;
+	//}
+}
+#endif
+
+#if defined(CONFIG_RTC_ALARM_BOOT)
+static irqreturn_t s2m_rtc_alarm1_irq(int irq, void *data)
+{
+	struct s2m_rtc_info *info = data;
+
+	dev_info(info->dev, "%s:irq(%d), lpm_mode:(%d)\n",
+						__func__, irq, info->lpm_mode);
+
+	if (info->lpm_mode) {
+		wake_lock(&info->alarm_wake_lock);
+		info->alarm_irq_flag = true;
+	}
+
+	rtc_update_irq(info->rtc_dev, 1, RTC_IRQF | RTC_AF);
+
+	return IRQ_HANDLED;
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static irqreturn_t s2m_smpl_warn_irq(int irq, void *data)
 {
 	struct s2m_rtc_info *info = data;
@@ -554,10 +829,17 @@ static unsigned int get_coeff(struct device *dev, u8 adc_reg_num)
 	case S2MPS16X:
 		/* if the regulator is LDO */
 		if (adc_reg_num >= S2MPS16_LDO_START && adc_reg_num <= S2MPS16_LDO_END)
+<<<<<<< HEAD
 			coeff = s2mps16_ldo_coeffs[adc_reg_num - 41];
 		/* if the regulator is BUCK */
 		else if (adc_reg_num >= S2MPS16_BUCK_START && adc_reg_num <= S2MPS16_BUCK_END)
 			coeff = s2mps16_buck_coeffs[adc_reg_num - 1];
+=======
+			coeff = s2mps16_ldo_coeffs[adc_reg_num - 0x41];
+		/* if the regulator is BUCK */
+		else if (adc_reg_num >= S2MPS16_BUCK_START && adc_reg_num <= S2MPS16_BUCK_END)
+			coeff = s2mps16_buck_coeffs[adc_reg_num - 0x1];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		else {
 			dev_err(info->dev, "%s: invalid adc regulator number(%d)\n", __func__, adc_reg_num);
 			coeff = 0;
@@ -701,7 +983,11 @@ static ssize_t adc_reg_7_show(struct device *dev, struct device_attribute *attr,
 static ssize_t adc_ctrl2_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	struct s2m_rtc_info *info = dev_get_drvdata(dev);
+<<<<<<< HEAD
 	u8 adc_ctrl2;
+=======
+	u8 adc_ctrl2 = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	switch (info->iodev->device_type) {
 	case S2MPS15X:
 		sec_reg_read(info->iodev, S2MPS15_REG_ADC_CTRL2, &adc_ctrl2);
@@ -717,7 +1003,11 @@ static ssize_t adc_ctrl2_show(struct device *dev, struct device_attribute *attr,
 
 static u8 buf_to_adc_reg(const char *buf, int device_type)
 {
+<<<<<<< HEAD
 	u8 adc_reg_num;
+=======
+	u8 adc_reg_num = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (kstrtou8(buf, 16, &adc_reg_num))
 		return 0;
@@ -726,6 +1016,7 @@ static u8 buf_to_adc_reg(const char *buf, int device_type)
 	case S2MPS15X:
 		if ((adc_reg_num >= S2MPS15_BUCK_START && adc_reg_num <= S2MPS15_BUCK_END) ||
 			(adc_reg_num >= S2MPS15_LDO_START && adc_reg_num <= S2MPS15_LDO_END))
+<<<<<<< HEAD
 		return adc_reg_num;
 	case S2MPS16X:
 		if ((adc_reg_num >= S2MPS16_BUCK_START && adc_reg_num <= S2MPS16_BUCK_END) ||
@@ -734,6 +1025,17 @@ static u8 buf_to_adc_reg(const char *buf, int device_type)
 	default:
 		return 0;
 	}
+=======
+		break;
+	case S2MPS16X:
+		if ((adc_reg_num >= S2MPS16_BUCK_START && adc_reg_num <= S2MPS16_BUCK_END) ||
+			(adc_reg_num >= S2MPS16_LDO_START && adc_reg_num <= S2MPS16_LDO_END))
+		break;
+	default:
+		break;
+	}
+	return adc_reg_num;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void adc_reg_update(struct device *dev)
@@ -780,6 +1082,10 @@ static void adc_ctrl1_update(struct device *dev)
 
 		/* ADC Continuous ON */
 		sec_reg_write(info->iodev, S2MPS15_REG_ADC_CTRL2, S2MPS15_ADCEN_MASK);
+<<<<<<< HEAD
+=======
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case S2MPS16X:
 		/* ADC temporarily off */
 		sec_reg_write(info->iodev, S2MPS16_REG_ADC_CTRL2, 0);
@@ -789,6 +1095,12 @@ static void adc_ctrl1_update(struct device *dev)
 
 		/* ADC Continuous ON */
 		sec_reg_write(info->iodev, S2MPS16_REG_ADC_CTRL2, S2MPS16_ADCEN_MASK);
+<<<<<<< HEAD
+=======
+		break;
+	default:
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 
@@ -1181,6 +1493,13 @@ static const struct rtc_class_ops s2m_rtc_ops = {
 	.set_time = s2m_rtc_set_time,
 	.read_alarm = s2m_rtc_read_alarm,
 	.set_alarm = s2m_rtc_set_alarm,
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RTC_ALARM_BOOT)
+	.set_alarm_boot = s2m_rtc_set_alarm_boot,
+	.get_alarm_boot = s2m_rtc_get_alarm_boot,
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.alarm_irq_enable = s2m_rtc_alarm_irq_enable,
 };
 
@@ -1229,6 +1548,59 @@ static bool s2m_is_jigonb_low(struct s2m_rtc_info *info)
 	return !(val & mask);
 }
 
+<<<<<<< HEAD
+=======
+
+static void s2m_rtc_optimize_osc(struct s2m_rtc_info *info,
+						struct sec_platform_data *pdata)
+{
+	int ret = 0;
+
+	/* edit option for OSC_BIAS_UP */
+	if (pdata->osc_bias_up >= 0) {
+		ret = sec_rtc_update(info->iodev, S2M_CAP_SEL,
+			pdata->osc_bias_up << OSC_BIAS_UP_SHIFT,
+			OSC_BIAS_UP_MASK);
+		if (ret < 0) {
+			dev_err(info->dev, "%s: fail to write OSC_BIAS_UP(%d)\n",
+				__func__, pdata->osc_bias_up);
+			return;
+		}
+	}
+
+	/* edit option for CAP_SEL */
+	if (pdata->cap_sel >= 0) {
+		sec_rtc_update(info->iodev, S2M_CAP_SEL,
+			pdata->cap_sel << CAP_SEL_SHIFT, CAP_SEL_MASK);
+		if (ret < 0) {
+			dev_err(info->dev, "%s: fail to write CAP_SEL(%d)\n",
+			__func__, pdata->cap_sel);
+			return;
+		}
+	}
+
+	/* edit option for OSC_CTRL */
+	if (pdata->osc_xin >= 0) {
+		sec_rtc_update(info->iodev, S2M_RTC_OSC_CTRL,
+			pdata->osc_xin << OSC_XIN_SHIFT, OSC_XIN_MASK);
+		if (ret < 0) {
+			dev_err(info->dev, "%s: fail to write OSC_CTRL(%d)\n",
+			__func__,  pdata->osc_xin);
+			return;
+		}
+	}
+	if (pdata->osc_xout >= 0) {
+		sec_rtc_update(info->iodev, S2M_RTC_OSC_CTRL,
+			pdata->osc_xout << OSC_XOUT_SHIFT, OSC_XOUT_MASK);
+		if (ret < 0) {
+			dev_err(info->dev, "%s: fail to write OSC_CTRL(%d)\n",
+			__func__, pdata->osc_xout);
+			return;
+		}
+	}
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void s2m_rtc_enable_wtsr_smpl(struct s2m_rtc_info *info,
 						struct sec_platform_data *pdata)
 {
@@ -1276,6 +1648,26 @@ static int s2m_rtc_init_reg(struct s2m_rtc_info *info,
 	u32 data, update_val, ctrl_val, capsel_val;
 	int ret;
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RTC_ALARM_BOOT)
+	u8 data_alm1[7];
+	struct rtc_time alrm;
+
+	ret = sec_rtc_bulk_read(info->iodev, S2M_ALARM1_SEC, 7, data_alm1);
+	if (ret < 0)
+		return ret;
+
+	s2m_data_to_tm(data_alm1, &alrm);
+
+	printk(KERN_INFO "%s: %d/%d/%d %d:%d:%d(%d)\n", __func__,
+		1900 + alrm.tm_year, 1 + alrm.tm_mon,
+		alrm.tm_mday, alrm.tm_hour,
+		alrm.tm_min, alrm.tm_sec,
+		alrm.tm_wday);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = sec_rtc_read(info->iodev, S2M_RTC_UPDATE, &update_val);
 	if (ret < 0) {
 		dev_err(info->dev, "%s: fail to read update reg(%d)\n",
@@ -1310,9 +1702,20 @@ static int s2m_rtc_init_reg(struct s2m_rtc_info *info,
 	}
 
 	/* If the value of RTC_CTRL register is 0, RTC registers were reset */
+<<<<<<< HEAD
 	if ((ctrl_val & MODEL24_MASK) && (capsel_val == 0xf8))
 		return 0;
 
+=======
+	if ((ctrl_val & MODEL24_MASK) && ((capsel_val & 0xf0) == 0xf0))
+		return 0;
+
+#ifdef CONFIG_SEC_PM
+	/* If RTC registers were reset, set 1 to rtc_status */
+	rtc_status = 1;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Set RTC control register : Binary mode, 24hour mode */
 	data = MODEL24_MASK;
 	ret = sec_rtc_write(info->iodev, S2M_RTC_CTRL, data);
@@ -1326,7 +1729,12 @@ static int s2m_rtc_init_reg(struct s2m_rtc_info *info,
 	if (ret < 0)
 		return ret;
 
+<<<<<<< HEAD
 	ret = sec_rtc_write(info->iodev, S2M_CAP_SEL, 0xf8);
+=======
+	capsel_val |= 0xf0;
+	ret = sec_rtc_write(info->iodev, S2M_CAP_SEL, capsel_val);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		dev_err(info->dev, "%s: fail to write CAP_SEL reg(%d)\n",
 				__func__, ret);
@@ -1340,6 +1748,28 @@ static int s2m_rtc_init_reg(struct s2m_rtc_info *info,
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SEC_PM
+static ssize_t show_rtc_status(struct device *dev,
+					struct device_attribute *attr,
+					char *buf)
+{
+	int count = 0;
+
+	/* Return rtc status
+	 * 0: Keep rtc registers, 1: Reset rtc registers
+	 */
+	count += sprintf(&buf[count], "%d\n", rtc_status);
+	rtc_status = 0;
+
+	return count;
+}
+
+static DEVICE_ATTR(rtc_status, 0444, show_rtc_status, NULL);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int s2m_rtc_probe(struct platform_device *pdev)
 {
 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
@@ -1381,7 +1811,18 @@ static int s2m_rtc_probe(struct platform_device *pdev)
 	switch (iodev->device_type) {
 	case S2MPU05X:
 		info->irq = irq_base + S2MPU05_IRQ_RTCA0;
+<<<<<<< HEAD
 		sec_rtc_update(info->iodev, 0x19, 0x03, 0x03);
+=======
+#if defined(CONFIG_S2MU005_ACOK_NOTIFY)
+		info->acokf_irq = irq_base + S2MPU05_IRQ_ACOKF;
+		info->acokr_irq = irq_base + S2MPU05_IRQ_ACOKR;
+		INIT_WORK(&info->acok_work, s2m_acok_work);
+#endif
+#if defined(CONFIG_RTC_ALARM_BOOT)
+		info->alarm_boot_irq = irq_base + S2MPU05_IRQ_RTCA1;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case S2MPS16X:
 		info->irq = irq_base + S2MPS16_IRQ_RTCA0;
@@ -1497,6 +1938,11 @@ static int s2m_rtc_probe(struct platform_device *pdev)
 	if (pdata->wtsr_smpl)
 		s2m_rtc_enable_wtsr_smpl(info, pdata);
 
+<<<<<<< HEAD
+=======
+	s2m_rtc_optimize_osc(info, pdata);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	device_init_wakeup(&pdev->dev, true);
 	rtc_ws = wakeup_source_register("rtc-sec");
 
@@ -1507,6 +1953,25 @@ static int s2m_rtc_probe(struct platform_device *pdev)
 			info->irq, ret);
 		goto err_rtc_irq;
 	}
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_S2MU005_ACOK_NOTIFY)
+	ret = devm_request_threaded_irq(&pdev->dev, info->acokf_irq, NULL,
+			s2m_acokf_irq, 0, "rtc-acokf", info);
+	if (ret < 0) {
+		dev_err(&pdev->dev, "Failed to request acokf IRQ: %d: %d\n",
+			info->acokf_irq, ret);
+		goto err_rtc_init_reg;
+	}
+	ret = devm_request_threaded_irq(&pdev->dev, info->acokr_irq, NULL,
+			s2m_acokr_irq, 0, "rtc-acokr", info);
+	if (ret < 0) {
+		dev_err(&pdev->dev, "Failed to request acokr IRQ: %d: %d\n",
+			info->acokr_irq, ret);
+		goto err_rtc_init_reg;
+	}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	disable_irq(info->irq);
 	disable_irq(info->irq);
 	info->use_irq = true;
@@ -1521,6 +1986,31 @@ static int s2m_rtc_probe(struct platform_device *pdev)
 	}
 	enable_irq(info->irq);
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RTC_ALARM_BOOT)
+	ret = devm_request_threaded_irq(&pdev->dev, info->alarm_boot_irq, NULL,
+		s2m_rtc_alarm1_irq, 0, "rtc-alarm1", info);
+
+	if (ret < 0)
+		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+			info->alarm_boot_irq, ret);
+
+	info->lpm_mode = lpcharge;
+
+	if(info->lpm_mode)
+		wake_lock_init(&info->alarm_wake_lock, WAKE_LOCK_SUSPEND,
+			"alarm_wake_lock");
+#endif
+
+#ifdef CONFIG_SEC_PM
+	/* create sysfs group */
+	ret = sysfs_create_file(power_kobj, &dev_attr_rtc_status.attr);
+	if (ret)
+		pr_err("%s: failed to create rtc_status attribute file\n", __func__);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 
 err_rtc_dev_register:
@@ -1545,6 +2035,13 @@ static int s2m_rtc_remove(struct platform_device *pdev)
 	if (!info->alarm_enabled)
 		enable_irq(info->irq);
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_RTC_ALARM_BOOT)
+	free_irq(info->alarm_boot_irq, info);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (pdata->adc_en)
 		adc_deinit(info);
 

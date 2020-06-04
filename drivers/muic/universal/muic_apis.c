@@ -44,7 +44,10 @@
 #include "muic-internal.h"
 #include "muic_i2c.h"
 #include "muic_regmap.h"
+<<<<<<< HEAD
 #include "muic_vps.h"
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 int attach_ta(muic_data_t *pmuic)
 {
@@ -157,6 +160,55 @@ int do_BCD_rescan(muic_data_t *pmuic)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int BCD_rescan_incomplete_insertion(muic_data_t *pmuic, int get) // get == 0 do BCD rescan, get == 1 get chgtype
+{
+	pr_info("%s\n", __func__);
+
+	if (get) {
+		int chg_type = get_charger_type(pmuic);
+		int new_dev = 0;
+
+		if (chg_type < 0)
+			pr_err("%s:%s err %d\n", MUIC_DEV_NAME, __func__, chg_type);
+
+		pr_info("%s [MUIC] BCD result chg_type = 0x%x \n", __func__, chg_type);
+		switch(chg_type) {
+		case 0x01 : // DCP
+			new_dev = ATTACHED_DEV_TA_MUIC;
+			break;
+		case 0x02 : // CDP
+			new_dev = ATTACHED_DEV_CDP_MUIC;
+			break;
+		case 0x04 : // SDP
+			new_dev = ATTACHED_DEV_USB_MUIC;
+			break;
+		case 0x08 : // Time out SDP
+			new_dev = ATTACHED_DEV_USB_MUIC;
+			break;
+		case 0x10 : // U200
+			new_dev = ATTACHED_DEV_TA_MUIC;
+			break;
+		}
+
+		return new_dev;
+	}
+	else {
+		pr_info("[MUIC] Incomplete insertion.\n");
+		pr_info("[MUIC] BCD rescan\n");
+
+		// 0x21 -> 1  0x21 -> 0
+		set_BCD_RESCAN_reg(pmuic, 0x01);
+		msleep(1);
+		pr_info("[MUIC] Writing BCD_RECAN\n");
+		set_BCD_RESCAN_reg(pmuic, 0x00);
+
+		return 0;
+	}
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int get_switch_mode(muic_data_t *pmuic)
 {
 	struct vendor_ops *pvendor = pmuic->regmapdesc->vendorops;
@@ -483,6 +535,7 @@ int attach_otg_usb(muic_data_t *pmuic,
 
 	pr_info("%s:%s\n", MUIC_DEV_NAME, __func__);
 
+<<<<<<< HEAD
 	if (vps_is_supported_dev(ATTACHED_DEV_USB_LANHUB_MUIC)) {
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5504)
 		pmuic->is_lanhub_work = true;
@@ -495,6 +548,14 @@ int attach_otg_usb(muic_data_t *pmuic,
 		/* enable RAW DATA mode, only for OTG LANHUB */
 		set_adc_scan_mode(pmuic,ADC_SCANMODE_CONTINUOUS);
 	}
+=======
+	/* LANHUB doesn't work under AUTO switch mode, so turn it off */
+	/* set MANUAL SW mode */
+	set_switch_mode(pmuic,SWMODE_MANUAL);
+
+	/* enable RAW DATA mode, only for OTG LANHUB */
+	set_adc_scan_mode(pmuic,ADC_SCANMODE_CONTINUOUS);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = switch_to_ap_usb(pmuic);
 
@@ -516,6 +577,7 @@ int detach_otg_usb(muic_data_t *pmuic)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	if (vps_is_supported_dev(ATTACHED_DEV_USB_LANHUB_MUIC)) {
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5504)
 		pmuic->is_lanhub_work = false;
@@ -527,6 +589,13 @@ int detach_otg_usb(muic_data_t *pmuic)
 		/* set AUTO SW mode */
 		set_switch_mode(pmuic,SWMODE_AUTO);
 	}
+=======
+	/* disable RAW DATA mode */
+	set_adc_scan_mode(pmuic,ADC_SCANMODE_ONESHOT);
+
+	/* set AUTO SW mode */
+	set_switch_mode(pmuic,SWMODE_AUTO);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pmuic->attached_dev = ATTACHED_DEV_NONE_MUIC;
 
@@ -643,8 +712,12 @@ int attach_jig_uart_boot_off(muic_data_t *pmuic, muic_attached_dev_t new_dev,
 		if (pmuic->is_otg_test) {
 			pr_info("%s:%s OTG_TEST\n", MUIC_DEV_NAME, __func__);
 			/* in OTG_TEST mode, do not charge */
+<<<<<<< HEAD
 //			new_dev = ATTACHED_DEV_JIG_UART_OFF_VB_OTG_MUIC;
 			new_dev = ATTACHED_DEV_JIG_UART_OFF_MUIC;
+=======
+			new_dev = ATTACHED_DEV_JIG_UART_OFF_VB_OTG_MUIC;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		} else
 			/* JIG_UART_OFF_VB */
 			new_dev = ATTACHED_DEV_JIG_UART_OFF_VB_MUIC;
@@ -686,8 +759,12 @@ int detach_jig_uart_boot_off(muic_data_t *pmuic)
  *     Do not charge the device. (No charging Icon and current)
  *     Need to set the path OPEN and cut off VBUS input.
  */
+<<<<<<< HEAD
 int attach_jig_uart_boot_on(muic_data_t *pmuic, muic_attached_dev_t new_dev,
 				u8 vbvolt)
+=======
+int attach_jig_uart_boot_on(muic_data_t *pmuic, muic_attached_dev_t new_dev)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	int com_index = COM_OPEN;
 	int ret = 0;
@@ -705,6 +782,7 @@ int attach_jig_uart_boot_on(muic_data_t *pmuic, muic_attached_dev_t new_dev,
 
 	set_rustproof_mode(pmuic->regmapdesc, 1);
 
+<<<<<<< HEAD
 #if !defined(CONFIG_SEC_FACTORY)
 	/* Charger team request: need to check JIG UART ON + VB */
 	if (vbvolt)
@@ -713,6 +791,11 @@ int attach_jig_uart_boot_on(muic_data_t *pmuic, muic_attached_dev_t new_dev,
 	pmuic->attached_dev = new_dev;
 
 	return new_dev;
+=======
+	pmuic->attached_dev = new_dev;
+
+	return ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int detach_jig_uart_boot_on(muic_data_t *pmuic)
@@ -822,6 +905,7 @@ int get_vps_data(muic_data_t *pmuic, void *pdata)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 #ifdef CONFIG_UART_SEL
 int java_muic_set_path(void *drv_data, int path)
@@ -848,3 +932,5 @@ int java_muic_set_path(void *drv_data, int path)
 	return ret; 
 }
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

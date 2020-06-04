@@ -52,11 +52,19 @@
 #include <linux/vbus_notifier.h>
 #endif
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+#include "zinitix_o7_ref.h"
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define CONFIG_INPUT_ENABLED
 #define SEC_FACTORY_TEST
 
 #define NOT_SUPPORTED_TOUCH_DUMMY_KEY
 
+<<<<<<< HEAD
 #define GLOVE_MODE
 
 /* PAT MODE */
@@ -64,15 +72,26 @@
 
 #define MAX_FW_PATH 255
 #define TSP_FW_FILENAME "zinitix_fw.bin"
+=======
+#define MAX_FW_PATH 255
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+#define TSP_FW_FILENAME "zinitix.fw"
+#else
+#define TSP_FW_FILENAME "zinitix_fw.bin"
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_INPUT_BOOSTER
 #include <linux/input/input_booster.h>
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI
 #include <linux/trustedui.h>
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 #define SUPPORTED_PALM_TOUCH
 #endif
@@ -87,7 +106,19 @@ extern char *saved_command_line;
 
 /* added header file */
 
+<<<<<<< HEAD
 #define TOUCH_POINT_MODE			0
+=======
+#ifdef SUPPORTED_PALM_TOUCH
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+#define TOUCH_POINT_MODE			1
+#else
+#define TOUCH_POINT_MODE			2
+#endif
+#else
+#define TOUCH_POINT_MODE			0
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define MAX_SUPPORTED_FINGER_NUM	5 /* max 10 */
 
@@ -114,11 +145,27 @@ name = "zinitix_isp" , addr 0x50*/
 #define CHIP_OFF_DELAY			50 /*ms*/
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 #define CHIP_ON_DELAY			50 /*ms*/
+<<<<<<< HEAD
 #define FIRMWARE_ON_DELAY		150 /*ms*/
+=======
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+#define FIRMWARE_ON_DELAY		110 /*ms*/
+#else
+#define FIRMWARE_ON_DELAY		150 /*ms*/
+#endif
+#else
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_BT541C
+#define CHIP_ON_DELAY			20 /*ms*/
+#define FIRMWARE_ON_DELAY		60 /*ms*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define CHIP_ON_DELAY			40 /*ms*/
 #define FIRMWARE_ON_DELAY		40 /*ms*/
 #endif
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define DELAY_FOR_SIGNAL_DELAY		30 /*us*/
 #define DELAY_FOR_TRANSCATION		50
@@ -140,7 +187,11 @@ enum key_event {
 /* ESD Protection */
 /*second : if 0, no use. if you have to use, 3 is recommended*/
 #define ESD_TIMER_INTERVAL			1
+<<<<<<< HEAD
 #define SCAN_RATE_HZ				1000
+=======
+#define SCAN_RATE_HZ				100
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define CHECK_ESD_TIMER				3
 
 /*Test Mode (Monitoring Raw Data) */
@@ -149,6 +200,7 @@ enum key_event {
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 #define	SEC_MUTUAL_AMP_V_SEL	0x0232
 
+<<<<<<< HEAD
 #define	SEC_DND_N_COUNT			11
 #define	SEC_DND_U_COUNT			16
 #define	SEC_DND_FREQUENCY		139
@@ -156,6 +208,17 @@ enum key_event {
 #define	SEC_HFDND_N_COUNT		11
 #define	SEC_HFDND_U_COUNT		16
 #define	SEC_HFDND_FREQUENCY		104
+=======
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+#define	SEC_DND_N_COUNT			15
+#define	SEC_DND_U_COUNT			18
+#define	SEC_DND_FREQUENCY		169
+
+#define	SEC_HFDND_N_COUNT		15
+#define	SEC_HFDND_U_COUNT		18
+#define	SEC_HFDND_FREQUENCY		112
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define	SEC_SX_AMP_V_SEL		0x0434
 #define	SEC_SX_SUB_V_SEL		0x0055
@@ -163,6 +226,7 @@ enum key_event {
 #define	SEC_SY_SUB_V_SEL		0x0022
 #define	SEC_SHORT_N_COUNT		2
 #define	SEC_SHORT_U_COUNT		1
+<<<<<<< HEAD
 
 #define SEC_SY_SAT_FREQUENCY	200
 #define SEC_SY_SAT_N_COUNT		9
@@ -188,12 +252,15 @@ enum key_event {
 #define SEC_HFDND_N_COUNT		10
 #define SEC_HFDND_U_COUNT		10
 #define SEC_HFDND_FREQUENCY		19
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #define MAX_RAW_DATA_SZ				792 /* 36x22 */
 #define MAX_TRAW_DATA_SZ	\
 	(MAX_RAW_DATA_SZ + 4*MAX_SUPPORTED_FINGER_NUM + 2)
 
+<<<<<<< HEAD
 #define RAWDATA_DELAY_FOR_HOST		10000
 
 #ifdef PAT_CONTROL
@@ -223,6 +290,9 @@ enum key_event {
 #define PAT_FIX_VERSION_0 			0x04
 #define PAT_FIX_VERSION_1 			0x06
 #endif
+=======
+#define RAWDATA_DELAY_FOR_HOST		100
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct raw_ioctl {
 	u32 sz;
@@ -241,6 +311,7 @@ struct reg_ioctl {
 //#define TOUCH_SDND_MODE				6
 #define TOUCH_REFERENCE_MODE			8
 #define TOUCH_DND_MODE				11
+<<<<<<< HEAD
 #define TOUCH_HFDND_MODE			12
 #define TOUCH_TXSHORT_MODE			13
 #define TOUCH_RXSHORT_MODE			14
@@ -248,6 +319,10 @@ struct reg_ioctl {
 #define TOUCH_SELF_DND_MODE			17
 #define TOUCH_REF_ABNORMAL_TEST_MODE		33
 #define DEF_RAW_SELF_SFR_UNIT_DATA_MODE		40
+=======
+#define TOUCH_HFDND_MODE            12
+#define TOUCH_TRXSHORT_MODE			14
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /*  Other Things */
 #define INIT_RETRY_CNT				3
@@ -259,9 +334,15 @@ struct reg_ioctl {
 /* chip code */
 #define BT43X_CHIP_CODE		0xE200
 #define BT53X_CHIP_CODE		0xF400
+<<<<<<< HEAD
 #define ZT7548_CHIP_CODE	0xE548
 #define ZT7538_CHIP_CODE	0xE538
 #define ZT7532_CHIP_CODE	0xE532
+=======
+#define BT541C_CHIP_CODE	0xE240
+#define ZT7548_CHIP_CODE	0xE548
+#define ZT7538_CHIP_CODE	0xE538
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define ZT7554_CHIP_CODE	0xE700
 
 /* Register Map*/
@@ -279,7 +360,11 @@ struct reg_ioctl {
 
 #define BT532_THRESHOLD						0x0020
 
+<<<<<<< HEAD
 #define BT532_DEBUG_REG						0x0115
+=======
+#define BT532_DEBUG_REG						0x0115 /* 0~7 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define BT532_TOUCH_MODE					0x0010
 #define BT532_CHIP_REVISION					0x0011
@@ -310,6 +395,7 @@ struct reg_ioctl {
 #define BT532_POINT_STATUS_REG				0x0080
 #define BT532_ICON_STATUS_REG				0x00AA
 
+<<<<<<< HEAD
 #define ZT75XX_SET_AOD_X_REG				0x00AB
 #define ZT75XX_SET_AOD_Y_REG				0x00AC
 #define ZT75XX_SET_AOD_W_REG				0x00AD
@@ -319,6 +405,8 @@ struct reg_ioctl {
 #define ZT75XX_GET_AOD_X_REG				0x0191
 #define ZT75XX_GET_AOD_Y_REG				0x0192
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define BT532_DND_SHIFT_VALUE	0x012B
 #define BT532_AFE_FREQUENCY					0x0100
 #define BT532_DND_N_COUNT					0x0122
@@ -326,6 +414,11 @@ struct reg_ioctl {
 
 #define BT532_RAWDATA_REG					0x0200
 
+<<<<<<< HEAD
+=======
+#define BT532_EEPROM_INFO_REG				0x0018
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define BT532_INT_ENABLE_FLAG				0x00f0
 #define BT532_PERIODICAL_INTERRUPT_INTERVAL	0x00f1
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
@@ -342,10 +435,17 @@ struct reg_ioctl {
 #define BT532_WRITE_FLASH					0x01d1
 #define BT532_READ_FLASH					0x01d2
 
+<<<<<<< HEAD
 #define ZINITIX_INTERNAL_FLAG_03		0x011f
 
 #define BT532_OPTIONAL_SETTING				0x0116
 #define BT532_COVER_CONTROL_REG			0x023E
+=======
+#define ZINITIX_INTERNAL_FLAG_02		0x011e
+#define ZINITIX_INTERNAL_FLAG_03		0x011f
+
+#define BT532_OPTIONAL_SETTING				0x0116
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 #define ZT75XX_RESOLUTION_EXPANDER			0x0186
@@ -354,6 +454,7 @@ struct reg_ioctl {
 #define ZT75XX_SX_SUB_V_SEL				0x02E0
 #define ZT75XX_SY_AMP_V_SEL				0x02EC
 #define ZT75XX_SY_SUB_V_SEL				0x02ED
+<<<<<<< HEAD
 #define ZT75XX_CHECKSUM					0x03DF
 #define ZT75XX_JITTER_SAMPLING_CNT			0x001F
 
@@ -373,6 +474,8 @@ struct reg_ioctl {
 #define ZT75XX_SY_SAT2_AMP_V_SEL		0x03EC
 #define ZT75XX_SY_SAT2_SUB_V_SEL		0x03ED
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 /* Interrupt & status register flag bit
@@ -384,7 +487,11 @@ struct reg_ioctl {
 #define BIT_UP			3
 #define BIT_PALM		4
 #define BIT_PALM_REJECT		5
+<<<<<<< HEAD
 #define BIT_GESTURE		6
+=======
+#define RESERVED_0		6
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define RESERVED_1		7
 #define BIT_WEIGHT_CHANGE	8
 #define BIT_PT_NO_CHANGE	9
@@ -422,6 +529,7 @@ struct reg_ioctl {
 #define SUB_BIT_UPDATE		4
 #define SUB_BIT_WAIT		5
 
+<<<<<<< HEAD
 /* BT532_DEBUG_REG */
 #define DEF_DEVICE_STATUS_NPM			0
 #define DEF_DEVICE_STATUS_WALLET_COVER_MODE	1
@@ -454,6 +562,8 @@ enum zt_cover_id {
 	ZT_NEON_COVER,
 	ZT_MONTBLANC_COVER = 100,
 };
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define zinitix_bit_set(val, n)		((val) &= ~(1<<(n)), (val) |= (1<<(n)))
 #define zinitix_bit_clr(val, n)		((val) &= ~(1<<(n)))
@@ -469,6 +579,7 @@ enum zt_cover_id {
 #define	DEF_OPTIONAL_MODE_DUO_TOUCH		4
 /* end header file */
 
+<<<<<<< HEAD
 #define BIT_EVENT_SPAY	1
 #define BIT_EVENT_AOD	2
 
@@ -480,14 +591,24 @@ typedef enum {
 	SPONGE_EVENT_TYPE_AOD_DOUBLETAB		= 0x0B
 } SPONGE_EVENT_TYPE;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef SEC_FACTORY_TEST
 /* Touch Screen */
 #define TSP_CMD_STR_LEN			32
 #define TSP_CMD_RESULT_STR_LEN		3240	//30*18*6
 #define TSP_CMD_PARAM_NUM		8
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
+<<<<<<< HEAD
 #define TSP_CMD_X_NUM			30
 #define TSP_CMD_Y_NUM			18
+=======
+#define TSP_CMD_X_NUM			18
+#define TSP_CMD_Y_NUM			30
+#elif defined(CONFIG_TOUCHSCREEN_ZINITIX_BT541C)
+#define TSP_CMD_X_NUM			19
+#define TSP_CMD_Y_NUM			30
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define TSP_CMD_X_NUM			18
 #define TSP_CMD_Y_NUM			10
@@ -498,7 +619,11 @@ typedef enum {
 struct tsp_factory_info {
 	struct list_head cmd_list_head;
 	char cmd[TSP_CMD_STR_LEN];
+<<<<<<< HEAD
 	int cmd_param[TSP_CMD_PARAM_NUM];
+=======
+	char cmd_param[TSP_CMD_PARAM_NUM];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	char cmd_result[TSP_CMD_RESULT_STR_LEN];
 	char cmd_buff[TSP_CMD_RESULT_STR_LEN];
 	struct mutex cmd_lock;
@@ -512,6 +637,7 @@ struct tsp_raw_data {
 	s16 delta_data[TSP_CMD_NODE_NUM];
 	s16 vgap_data[TSP_CMD_NODE_NUM];
 	s16 hgap_data[TSP_CMD_NODE_NUM];
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 	s16 rxshort_data[TSP_CMD_NODE_NUM];
 	s16 txshort_data[TSP_CMD_NODE_NUM];
@@ -564,6 +690,16 @@ struct ts_test_result {
 #define TEST_OCTA_PASS		2
 #endif
 
+=======
+	s16 hfvgap_data[TSP_CMD_NODE_NUM];
+	s16 hfhgap_data[TSP_CMD_NODE_NUM];
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
+	s16 trxshort_data[TSP_CMD_NODE_NUM];
+	s16 reference_data[TSP_CMD_NODE_NUM];
+#endif
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum {
 	WAITING = 0,
 	RUNNING,
@@ -578,8 +714,107 @@ struct tsp_cmd {
 	void (*cmd_func)(void *device_data);
 };
 
+<<<<<<< HEAD
 #define TSP_CMD(name, func) .cmd_name = name, .cmd_func = func
 
+=======
+static void fw_update(void *device_data);
+static void get_fw_ver_bin(void *device_data);
+static void get_fw_ver_ic(void *device_data);
+static void get_threshold(void *device_data);
+static void module_off_master(void *device_data);
+static void module_on_master(void *device_data);
+static void module_off_slave(void *device_data);
+static void module_on_slave(void *device_data);
+static void get_chip_vendor(void *device_data);
+static void get_chip_name(void *device_data);
+static void get_x_num(void *device_data);
+static void get_y_num(void *device_data);
+static void not_support_cmd(void *device_data);
+
+/* Vendor dependant command */
+static void run_dnd_read(void *device_data);
+static void get_dnd(void * device_data);
+static void get_dnd_all_data(void * device_data);
+static void run_hfdnd_read(void *device_data);
+static void get_hfdnd(void * device_data);
+static void run_dnd_v_gap_read(void *device_data);
+static void get_dnd_v_gap(void * device_data);
+static void run_dnd_h_gap_read(void *device_data);
+static void get_dnd_h_gap(void * device_data);
+static void run_delta_read(void *device_data);
+static void get_delta(void *device_data);
+
+static void run_hfdnd_v_gap_read(void *device_data);
+static void get_hfdnd_v_gap(void *device_data);
+static void run_hfdnd_h_gap_read(void *device_data);
+static void get_hfdnd_h_gap(void *device_data);
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
+static void run_reference_read(void * device_data);
+static void get_reference(void *device_data);
+static void run_trxshort_read(void *device_data);
+static void get_trxshort(void *device_data);
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+static void hfdnd_spec_adjust(void *device_data);
+#endif
+#endif
+static void clear_cover_mode(void *device_data);
+static void get_module_vendor(void *device_data);
+static void clear_reference_data(void *device_data);
+static void run_ref_calibration(void *device_data);
+static void dead_zone_enable(void *device_data);
+
+#define TSP_CMD(name, func) .cmd_name = name, .cmd_func = func
+
+static struct tsp_cmd tsp_cmds[] = {
+	{TSP_CMD("fw_update", fw_update),},
+	{TSP_CMD("get_fw_ver_bin", get_fw_ver_bin),},
+	{TSP_CMD("get_fw_ver_ic", get_fw_ver_ic),},
+	{TSP_CMD("get_threshold", get_threshold),},
+	{TSP_CMD("module_off_master", module_off_master),},
+	{TSP_CMD("module_on_master", module_on_master),},
+	{TSP_CMD("module_off_slave", module_off_slave),},
+	{TSP_CMD("module_on_slave", module_on_slave),},
+	{TSP_CMD("get_module_vendor", get_module_vendor),},
+	{TSP_CMD("get_chip_vendor", get_chip_vendor),},
+	{TSP_CMD("get_chip_name", get_chip_name),},
+	{TSP_CMD("get_x_num", get_x_num),},
+	{TSP_CMD("get_y_num", get_y_num),},
+
+	/* vendor dependant command */
+	{TSP_CMD("run_delta_read", run_delta_read),},
+	{TSP_CMD("get_delta_all_data", get_delta),},
+	{TSP_CMD("run_dnd_read", run_dnd_read),},
+	{TSP_CMD("get_dnd", get_dnd),},
+	{TSP_CMD("get_dnd_all_data", get_dnd_all_data),},
+	{TSP_CMD("run_dnd_v_gap_read", run_dnd_v_gap_read),},
+	{TSP_CMD("get_dnd_v_gap", get_dnd_v_gap),},
+	{TSP_CMD("run_dnd_h_gap_read", run_dnd_h_gap_read),},
+	{TSP_CMD("get_dnd_h_gap", get_dnd_h_gap),},
+	{TSP_CMD("run_hfdnd_read", run_hfdnd_read),},
+	{TSP_CMD("get_hfdnd", get_hfdnd),},
+	{TSP_CMD("run_hfdnd_v_gap_read", run_hfdnd_v_gap_read),},
+	{TSP_CMD("get_hfdnd_v_gap", get_hfdnd_v_gap),},
+	{TSP_CMD("run_hfdnd_h_gap_read", run_hfdnd_h_gap_read),},
+	{TSP_CMD("get_hfdnd_h_gap", get_hfdnd_h_gap),},
+	
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
+	{TSP_CMD("run_reference_read", run_reference_read),},
+	{TSP_CMD("get_reference", get_reference),},
+	{TSP_CMD("run_trxshort_read", run_trxshort_read),},
+	{TSP_CMD("get_trxshort", get_trxshort),},
+#endif
+	{TSP_CMD("clear_reference_data", clear_reference_data),},
+	{TSP_CMD("run_ref_calibration", run_ref_calibration),},
+	{TSP_CMD("dead_zone_enable", dead_zone_enable),},
+	{TSP_CMD("clear_cover_mode", clear_cover_mode),},
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+	{TSP_CMD("hfdnd_spec_adjust", hfdnd_spec_adjust),},
+#endif	
+	{TSP_CMD("not_support_cmd", not_support_cmd),},
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* SEC_FACTORY_TEST */
 
 #define TSP_NORMAL_EVENT_MSG 1
@@ -588,6 +823,7 @@ struct tsp_callbacks {
 	void (*inform_charger)(struct tsp_callbacks *tsp_cb, bool mode);
 };
 
+<<<<<<< HEAD
 static bool g_ta_connected =0;
 typedef union {
 	u16 optional_mode;
@@ -605,6 +841,16 @@ struct zt7538_lpm_setting {
 	u8 data;
 };
 struct zt7538_lpm_setting lpm_mode_reg;
+=======
+#define COVER_OPEN 0
+#define COVER_CLOSED 3
+static bool g_ta_connected =0;
+#ifdef SEC_FACTORY_TEST
+static int g_cover_state;
+#endif
+static u16 m_optional_mode = 0;
+static u16 m_prev_optional_mode = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if ESD_TIMER_INTERVAL
 static struct workqueue_struct *esd_tmr_workqueue;
@@ -648,6 +894,11 @@ struct capa_info {
 	u32	ic_fw_size;
 	u32	MaxX;
 	u32	MaxY;
+<<<<<<< HEAD
+=======
+	u32	MinX;
+	u32	MinY;	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u8	gesture_support;
 	u16	multi_fingers;
 	u16	button_num;
@@ -668,10 +919,13 @@ struct capa_info {
 	u16 sy_amp_v_sel;
 	u16 sy_sub_v_sel;
 #endif
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	u8	cal_count;
 	u16	tune_fix_ver;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 enum work_state {
@@ -688,8 +942,11 @@ enum work_state {
 	HW_CALIBRAION,
 	RAW_DATA,
 	PROBE,
+<<<<<<< HEAD
 	SLEEP_MODE_IN,
 	SLEEP_MODE_OUT,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 enum {
@@ -720,7 +977,10 @@ struct bt532_ts_info {
 	u8								work_state;
 	struct semaphore				work_lock;
 	u8 finger_cnt1;
+<<<<<<< HEAD
 	unsigned int move_count[MAX_SUPPORTED_FINGER_NUM];
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct mutex					set_reg_lock;
 
 	/*u16								debug_reg[8];*/ /* for debug */
@@ -745,9 +1005,24 @@ struct bt532_ts_info {
 	struct tsp_factory_info			*factory_info;
 	struct tsp_raw_data				*raw_data;
 #endif
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	struct ts_test_result	test_result;
 #endif
+=======
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+	const u16				*dnd_max_spec;
+	const u16				*dnd_min_spec;
+	const u16				*dnd_v_gap_spec;
+	const u16				*dnd_h_gap_spec;
+	const u16				*hfdnd_max_spec;
+	const u16				*hfdnd_min_spec;
+	const u16				*hfdnd_v_gap_spec;
+	const u16				*hfdnd_h_gap_spec;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	s16 Gap_max_x;
 	s16 Gap_max_y;
 	s16 Gap_max_val;
@@ -764,6 +1039,7 @@ struct bt532_ts_info {
 #ifdef CONFIG_VBUS_NOTIFIER
 	struct notifier_block vbus_nb;
 #endif
+<<<<<<< HEAD
 	u8 cover_type;
 	bool	flip_enable;
 	bool spay_enable;
@@ -773,6 +1049,8 @@ struct bt532_ts_info {
 	unsigned int scrub_id;
 	unsigned int scrub_x;
 	unsigned int scrub_y;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 /* Dummy touchkey code */
 #define KEY_DUMMY_HOME1	249
@@ -790,17 +1068,21 @@ u32 BUTTON_MAPPING_KEY[MAX_SUPPORTED_BUTTON_NUM] = {
 	/*KEY_DUMMY_HOME2,*/ KEY_BACK, KEY_DUMMY_BACK};
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI
 struct bt532_ts_info *tui_tsp_info;
 extern int tui_force_close(uint32_t arg);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* define i2c sub functions*/
 static inline s32 read_data(struct i2c_client *client,
 	u16 reg, u8 *values, u16 length)
 {
 	s32 ret;
 	int count = 0;
+<<<<<<< HEAD
 
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI	
 	if (TRUSTEDUI_MODE_INPUT_SECURED & trustedui_get_current_mode()) {
@@ -810,6 +1092,8 @@ static inline s32 read_data(struct i2c_client *client,
 	}
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 retry:
 	/* select register*/
 	ret = i2c_master_send(client , (u8 *)&reg , 2);
@@ -831,8 +1115,12 @@ retry:
 	return length;
 }
 
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 #ifndef CONFIG_SAMSUNG_PRODUCT_SHIP
+=======
+#if (TOUCH_POINT_MODE == 1)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static s32 read_data_only(struct i2c_client *client, u8 *values, u16 length)
 {
 	s32 ret;
@@ -841,9 +1129,14 @@ static s32 read_data_only(struct i2c_client *client, u8 *values, u16 length)
 retry:
 	ret = i2c_master_recv(client, values, length);
 	if (ret < 0) {
+<<<<<<< HEAD
 		dev_err(&client->dev, "%s: failed to recv. ret:%d, try:%d\n",
 							__func__, ret, count + 1);
 		usleep_range(1 * 1000, 1 * 1000);
+=======
+		usleep_range(1 * 1000, 1 * 1000);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (++count < 8)
 			goto retry;
 		return ret;
@@ -852,13 +1145,17 @@ retry:
 	return length;
 }
 #endif
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static inline s32 write_data(struct i2c_client *client,
 	u16 reg, u8 *values, u16 length)
 {
 	s32 ret;
 	int count = 0;
+<<<<<<< HEAD
 	u8 pkt[66]; /* max packet */
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI	
 		if (TRUSTEDUI_MODE_INPUT_SECURED & trustedui_get_current_mode()) {
@@ -868,6 +1165,9 @@ static inline s32 write_data(struct i2c_client *client,
 		}
 #endif
 
+=======
+	u8 pkt[10]; /* max packet */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pkt[0] = (reg) & 0xff; /* reg addr */
 	pkt[1] = (reg >> 8)&0xff;
 	memcpy((u8 *)&pkt[2], values, length);
@@ -900,6 +1200,7 @@ static inline s32 write_cmd(struct i2c_client *client, u16 reg)
 	s32 ret;
 	int count = 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI	
 		if (TRUSTEDUI_MODE_INPUT_SECURED & trustedui_get_current_mode()) {
 			input_err(true, &client->dev,
@@ -908,6 +1209,8 @@ static inline s32 write_cmd(struct i2c_client *client, u16 reg)
 		}
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 retry:
 	ret = i2c_master_send(client , (u8 *)&reg , 2);
 	if (ret < 0) {
@@ -929,6 +1232,7 @@ static inline s32 read_raw_data(struct i2c_client *client,
 	s32 ret;
 	int count = 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI	
 		if (TRUSTEDUI_MODE_INPUT_SECURED & trustedui_get_current_mode()) {
 			input_err(true, &client->dev,
@@ -937,6 +1241,8 @@ static inline s32 read_raw_data(struct i2c_client *client,
 		}
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 retry:
 	/* select register */
 	ret = i2c_master_send(client , (u8 *)&reg , 2);
@@ -964,6 +1270,7 @@ static inline s32 read_firmware_data(struct i2c_client *client,
 	u16 addr, u8 *values, u16 length)
 {
 	s32 ret;
+<<<<<<< HEAD
 
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI
 	if (TRUSTEDUI_MODE_INPUT_SECURED & trustedui_get_current_mode()) {
@@ -974,6 +1281,10 @@ static inline s32 read_firmware_data(struct i2c_client *client,
 #endif
 
 	/* select register*/
+=======
+	/* select register*/
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = i2c_master_send(client , (u8 *)&addr , 2);
 	if (ret < 0)
 		return ret;
@@ -1012,11 +1323,14 @@ static void esd_timer_init(struct bt532_ts_info *info);
 static void esd_timeout_handler(unsigned long data);
 #endif
 
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 int get_tsp_nvm_data(struct bt532_ts_info *info, u8 addr, u8 *values, u16 length);
 void set_tsp_nvm_data(struct bt532_ts_info *info, u8 addr, u8 *values, u16 length);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef USE_MISC_DEVICE
 static long ts_misc_fops_ioctl(struct file *filp, unsigned int cmd,
 								unsigned long arg);
@@ -1027,8 +1341,13 @@ static const struct file_operations ts_misc_fops = {
 	.owner = THIS_MODULE,
 	.open = ts_misc_fops_open,
 	.release = ts_misc_fops_close,
+<<<<<<< HEAD
 	//.unlocked_ioctl = ts_misc_fops_ioctl,
 	.compat_ioctl = ts_misc_fops_ioctl,
+=======
+    //.unlocked_ioctl = ts_misc_fops_ioctl,
+    .compat_ioctl = ts_misc_fops_ioctl,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static struct miscdevice touch_misc_device = {
@@ -1062,6 +1381,7 @@ static struct miscdevice touch_misc_device = {
 
 struct bt532_ts_info *misc_info;
 
+<<<<<<< HEAD
 static void set_cover_type(struct bt532_ts_info *info, bool enable)
 {
 	struct i2c_client *client = info->client;
@@ -1093,10 +1413,13 @@ static void set_cover_type(struct bt532_ts_info *info, bool enable)
 	input_info(true, &info->client->dev, "%s: type %d enable %d\n", __func__, info->cover_type, enable);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void bt532_set_optional_mode(struct bt532_ts_info *info, bool force)
 {
 	u16	reg_val;
 
+<<<<<<< HEAD
 	if (m_prev_optional_mode.optional_mode == m_optional_mode.optional_mode && !force)
 		return;
 	mutex_lock(&info->set_reg_lock);
@@ -1104,6 +1427,15 @@ static void bt532_set_optional_mode(struct bt532_ts_info *info, bool force)
 	mutex_unlock(&info->set_reg_lock);
 	if (write_reg(info->client, BT532_OPTIONAL_SETTING, reg_val) == I2C_SUCCESS) {
 		m_prev_optional_mode.optional_mode = reg_val;
+=======
+	if(m_prev_optional_mode == m_optional_mode && !force)
+		return;
+	mutex_lock(&info->set_reg_lock);
+	reg_val = m_optional_mode;
+	mutex_unlock(&info->set_reg_lock);
+	if (write_reg(info->client, BT532_OPTIONAL_SETTING, reg_val) == I2C_SUCCESS) {
+		m_prev_optional_mode = reg_val;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 #ifdef SEC_FACTORY_TEST
@@ -1119,7 +1451,11 @@ static bool get_raw_data(struct bt532_ts_info *info, u8 *buff, int skip_cnt)
 
 	down(&info->work_lock);
 	if (info->work_state != NOTHING) {
+<<<<<<< HEAD
 		input_info(true, &client->dev, "other process occupied.. (%d)\n",
+=======
+		tsp_debug_info(true, &client->dev, "other process occupied.. (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			info->work_state);
 		enable_irq(info->irq);
 		up(&info->work_lock);
@@ -1165,7 +1501,11 @@ static bool ts_get_raw_data(struct bt532_ts_info *info)
 	u32 sz;
 
 	if (down_trylock(&info->raw_data_lock)) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to occupy sema\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to occupy sema\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		info->touch_info.status = 0;
 		return true;
 	}
@@ -1174,7 +1514,11 @@ static bool ts_get_raw_data(struct bt532_ts_info *info)
 
 	if (read_raw_data(info->client, BT532_RAWDATA_REG,
 			(char *)info->cur_data, sz) < 0) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to read raw data\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to read raw data\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		up(&info->raw_data_lock);
 		return false;
 	}
@@ -1191,9 +1535,15 @@ static bool ts_get_raw_data(struct bt532_ts_info *info)
 static bool ts_read_coord(struct bt532_ts_info *info)
 {
 	struct i2c_client *client = info->client;
+<<<<<<< HEAD
 	int retry_cnt;
 	u16* u16_point_info;
 	int i;
+=======
+#if (TOUCH_POINT_MODE == 1)
+	int i;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* zinitix_debug_msg("ts_read_coord+\r\n"); */
 
@@ -1203,7 +1553,11 @@ static bool ts_read_coord(struct bt532_ts_info *info)
 		if (ts_get_raw_data(info) == false)
 			return false;
 
+<<<<<<< HEAD
 		input_err(true, &client->dev, "status = 0x%04X\n", info->touch_info.status);
+=======
+		tsp_debug_err(true, &client->dev, "status = 0x%04X\n", info->touch_info.status);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		goto out;
 	}
@@ -1212,16 +1566,34 @@ static bool ts_read_coord(struct bt532_ts_info *info)
 	memset(&info->touch_info,
 			0x0, sizeof(struct point_info));
 
+<<<<<<< HEAD
 	if (read_data(info->client, BT532_POINT_STATUS_REG,
 			(u8 *)(&info->touch_info), 4) < 0) {
 		input_err(true, &client->dev, "%s: Failed to read point info\n", __func__);
+=======
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+	if (read_data_only(info->client, (u8 *)(&info->touch_info), 10) < 0) {
+			tsp_debug_err(true,&client->dev, "error read point info using i2c.-\r\n");
+			return false;
+		}
+#else
+	if (read_data(info->client, BT532_POINT_STATUS_REG,
+			(u8 *)(&info->touch_info), 4) < 0) {
+		tsp_debug_err(true, &client->dev, "%s: Failed to read point info\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		return false;
 	}
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "status reg = 0x%x , event_flag = 0x%04x\n",
 				info->touch_info.status, info->touch_info.event_flag);
 
+=======
+	tsp_debug_info(true, &client->dev, "status reg = 0x%x , event_flag = 0x%04x\n",
+				info->touch_info.status, info->touch_info.event_flag);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (info->touch_info.event_flag == 0)
 		goto out;
 
@@ -1232,7 +1604,11 @@ static bool ts_read_coord(struct bt532_ts_info *info)
 			if (read_data(info->client, BT532_POINT_STATUS_REG + 2 + ( i * 4),
 					(u8 *)(&info->touch_info.coord[i]),
 					sizeof(struct coord)) < 0) {
+<<<<<<< HEAD
 				input_err(true, &client->dev, "Failed to read point info\n");
+=======
+				tsp_debug_err(true, &client->dev, "Failed to read point info\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 				return false;
 			}
@@ -1240,6 +1616,7 @@ static bool ts_read_coord(struct bt532_ts_info *info)
 	}
 
 #else
+<<<<<<< HEAD
 	u16_point_info = &(info->touch_info.status);
 	retry_cnt = 0;
 	while(retry_cnt < 10) {
@@ -1304,19 +1681,36 @@ static bool ts_read_coord(struct bt532_ts_info *info)
 			input_sync(info->input_dev);
 		}
 	}
+=======
+	if (read_data(info->client, BT532_POINT_STATUS_REG,
+			(u8 *)(&info->touch_info), sizeof(struct point_info)) < 0) {
+		tsp_debug_err(true, &client->dev, "Failed to read point info\n");
+
+		return false;
+	}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	bt532_set_optional_mode(info, false);
 out:
 	/* error */
+<<<<<<< HEAD
 #if (TOUCH_POINT_MODE == 1)
 	if (zinitix_bit_test(info->touch_info.status, BIT_MUST_ZERO)) {
 		input_err(true, &client->dev, "Invalid must zero bit(%04x)\n",
+=======
+	if (zinitix_bit_test(info->touch_info.status, BIT_MUST_ZERO)) {
+		tsp_debug_err(true, &client->dev, "Invalid must zero bit(%04x)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			info->touch_info.status);
 		/*write_cmd(info->client, BT532_CLEAR_INT_STATUS_CMD);
 		udelay(DELAY_FOR_SIGNAL_DELAY);*/
 		return false;
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /*
 	if (zinitix_bit_test(info->touch_info.status, BIT_ICON_EVENT)) {
 		udelay(20);
@@ -1339,6 +1733,7 @@ static void esd_timeout_handler(unsigned long data)
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)data;
 
+<<<<<<< HEAD
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI
 	struct i2c_client *client = info->client;
 	if (TRUSTEDUI_MODE_INPUT_SECURED & trustedui_get_current_mode()) {
@@ -1350,6 +1745,8 @@ static void esd_timeout_handler(unsigned long data)
 	}
 #endif
 	
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	info->p_esd_timeout_tmr = NULL;
 	queue_work(esd_tmr_workqueue, &info->tmr_work);
 }
@@ -1357,12 +1754,15 @@ static void esd_timeout_handler(unsigned long data)
 static void esd_timer_start(u16 sec, struct bt532_ts_info *info)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 
 	if(info->sleep_mode){
 		input_info(true, &info->client->dev, "%s skip (sleep_mode)!\n", __func__);
 		return;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spin_lock_irqsave(&info->lock, flags);
 	if (info->p_esd_timeout_tmr != NULL)
 #ifdef CONFIG_SMP
@@ -1413,18 +1813,30 @@ static void ts_tmr_work(struct work_struct *work)
 	struct i2c_client *client = info->client;
 
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "tmr queue work ++\n");
 #endif
 
 	if(down_trylock(&info->work_lock)) {
 		input_err(true, &client->dev, "%s: Failed to occupy work lock\n", __func__);
+=======
+	tsp_debug_info(true, &client->dev, "tmr queue work ++\n");
+#endif
+
+	if(down_trylock(&info->work_lock)) {
+		tsp_debug_err(true, &client->dev, "%s: Failed to occupy work lock\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		esd_timer_start(CHECK_ESD_TIMER, info);
 
 		return;
 	}
 
 	if (info->work_state != NOTHING) {
+<<<<<<< HEAD
 		input_info(true, &client->dev, "%s: Other process occupied (%d)\n",
+=======
+		tsp_debug_info(true, &client->dev, "%s: Other process occupied (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__, info->work_state);
 		up(&info->work_lock);
 
@@ -1444,12 +1856,20 @@ static void ts_tmr_work(struct work_struct *work)
 	enable_irq(info->irq);
 	up(&info->work_lock);
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "tmr queue work--\n");
+=======
+	tsp_debug_info(true, &client->dev, "tmr queue work--\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	return;
 fail_time_out_init:
+<<<<<<< HEAD
 	input_err(true, &client->dev, "%s: Failed to restart\n", __func__);
+=======
+	tsp_debug_err(true, &client->dev, "%s: Failed to restart\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	esd_timer_start(CHECK_ESD_TIMER, info);
 	info->work_state = NOTHING;
 	enable_irq(info->irq);
@@ -1469,17 +1889,29 @@ static bool bt532_power_sequence(struct bt532_ts_info *info)
 
 retry_power_sequence:
 	if (write_reg(client, 0xc000, 0x0001) != I2C_SUCCESS) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to send power sequence(vendor cmd enable)\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to send power sequence(vendor cmd enable)\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto fail_power_sequence;
 	}
 	usleep_range(10, 10);
 
 	if (read_data(client, 0xcc00, (u8 *)&chip_code, 2) < 0) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to read chip code\n");
 		goto fail_power_sequence;
 	}
 
 	input_info(true, &client->dev, "%s: chip code = 0x%x\n", __func__, chip_code);
+=======
+		tsp_debug_err(true, &client->dev, "Failed to read chip code\n");
+		goto fail_power_sequence;
+	}
+
+	tsp_debug_info(true, &client->dev, "%s: chip code = 0x%x\n", __func__, chip_code);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	usleep_range(10, 10);
 
 	if(chip_code == ZT7554_CHIP_CODE)
@@ -1492,21 +1924,37 @@ retry_power_sequence:
 		info->cap_info.ic_fw_size = 24*1024;
 	else if(chip_code == BT53X_CHIP_CODE)
 		info->cap_info.ic_fw_size = 32*1024;
+<<<<<<< HEAD
 
 	if (write_cmd(client, 0xc004) != I2C_SUCCESS) {
 		input_err(true, &client->dev, "Failed to send power sequence(intn clear)\n");
+=======
+	else if(chip_code == BT541C_CHIP_CODE)
+		info->cap_info.ic_fw_size = 32*1024;
+
+	if (write_cmd(client, 0xc004) != I2C_SUCCESS) {
+		tsp_debug_err(true, &client->dev, "Failed to send power sequence(intn clear)\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto fail_power_sequence;
 	}
 	usleep_range(10, 10);
 
 	if (write_reg(client, 0xc002, 0x0001) != I2C_SUCCESS) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to send power sequence(nvm init)\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to send power sequence(nvm init)\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto fail_power_sequence;
 	}
 	usleep_range(2 * 1000, 2 * 1000);
 
 	if (write_reg(client, 0xc001, 0x0001) != I2C_SUCCESS) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to send power sequence(program start)\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to send power sequence(program start)\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto fail_power_sequence;
 	}
 
@@ -1516,7 +1964,11 @@ retry_power_sequence:
 
 fail_power_sequence:
 	if (retry++ < 3) {
+<<<<<<< HEAD
 		input_info(true, &client->dev, "retry = %d\n", retry);
+=======
+		tsp_debug_info(true, &client->dev, "retry = %d\n", retry);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		msleep(CHIP_ON_DELAY);
 		goto retry_power_sequence;
@@ -1531,7 +1983,11 @@ static bool bt532_power_control(struct bt532_ts_info *info, u8 ctl)
 
 	int ret = 0;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "[TSP] %s, %d\n", __func__, ctl);
+=======
+	tsp_debug_info(true, &client->dev, "[TSP] %s, %d\n", __func__, ctl);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = info->pdata->tsp_power(info, ctl);
 	if (ret)
@@ -1555,16 +2011,28 @@ static bool bt532_power_control(struct bt532_ts_info *info, u8 ctl)
 
 static void bt532_set_ta_status(struct bt532_ts_info *info)
 {
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s g_ta_connected %d", __func__, g_ta_connected);
 
 	if (g_ta_connected) {
 		mutex_lock(&info->set_reg_lock);
 		zinitix_bit_set(m_optional_mode.select_mode.flag, DEF_OPTIONAL_MODE_USB_DETECT_BIT);
+=======
+	tsp_debug_info(true, &info->client->dev, "%s g_ta_connected %d", __func__, g_ta_connected);
+
+	if (g_ta_connected) {
+		mutex_lock(&info->set_reg_lock);
+		zinitix_bit_set(m_optional_mode, DEF_OPTIONAL_MODE_USB_DETECT_BIT);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mutex_unlock(&info->set_reg_lock);
 	}
 	else {
 		mutex_lock(&info->set_reg_lock);
+<<<<<<< HEAD
 		zinitix_bit_clr(m_optional_mode.select_mode.flag, DEF_OPTIONAL_MODE_USB_DETECT_BIT);
+=======
+		zinitix_bit_clr(m_optional_mode, DEF_OPTIONAL_MODE_USB_DETECT_BIT);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mutex_unlock(&info->set_reg_lock);
 	}
 }
@@ -1576,6 +2044,7 @@ int tsp_vbus_notification(struct notifier_block *nb,
 	struct bt532_ts_info *info = container_of(nb, struct bt532_ts_info, vbus_nb);
 	vbus_status_t vbus_type = *(vbus_status_t *)data;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s cmd=%lu, vbus_type=%d\n", __func__, cmd, vbus_type);
 
 	switch (vbus_type) {
@@ -1585,6 +2054,17 @@ int tsp_vbus_notification(struct notifier_block *nb,
 		break;
 	case STATUS_VBUS_LOW:
 		input_info(true, &info->client->dev, "%s : detach\n",__func__);
+=======
+	tsp_debug_info(true, &info->client->dev, "%s cmd=%lu, vbus_type=%d\n", __func__, cmd, vbus_type);
+
+	switch (vbus_type) {
+	case STATUS_VBUS_HIGH:
+		tsp_debug_info(true, &info->client->dev, "%s : attach\n",__func__);
+		g_ta_connected = true;
+		break;
+	case STATUS_VBUS_LOW:
+		tsp_debug_info(true, &info->client->dev, "%s : detach\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		g_ta_connected = false;
 		break;
 	default:
@@ -1605,13 +2085,18 @@ static void bt532_charger_status_cb(struct tsp_callbacks *cb, bool ta_status)
 		g_ta_connected = true;
 
 	bt532_set_ta_status(info);
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "TA %s\n", ta_status ? "connected" : "disconnected");
+=======
+	tsp_debug_info(true, &info->client->dev, "TA %s\n", ta_status ? "connected" : "disconnected");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static bool crc_check(struct bt532_ts_info *info)
 {
 	u16 chip_check_sum = 0;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev,"%s: Check checksum\n", __func__);
 
 	if (read_data(info->client, BT532_CHECKSUM_RESULT,
@@ -1620,6 +2105,16 @@ static bool crc_check(struct bt532_ts_info *info)
 	}
 
 	input_info(true, &info->client->dev, "0x%04X\n", chip_check_sum);
+=======
+	tsp_debug_info(true, &info->client->dev,"%s: Check checksum\n", __func__);
+
+	if (read_data(info->client, BT532_CHECKSUM_RESULT,
+					(u8 *)&chip_check_sum, 2) < 0) {
+		tsp_debug_err(true, &info->client->dev, "%s: read crc fail", __func__);
+	}
+
+	tsp_debug_info(true, &info->client->dev, "0x%04X\n", chip_check_sum);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if(chip_check_sum == 0x55aa)
 		return true;
@@ -1644,17 +2139,29 @@ static bool ts_check_need_upgrade(struct bt532_ts_info *info,
 
 #if CHECK_HWID
 	new_hw_id = (u16) (fw_data[0x7528] | (fw_data[0x7529]<<8));
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "cur HW_ID = 0x%x, new HW_ID = 0x%x\n",
+=======
+	tsp_debug_info(true, &info->client->dev, "cur HW_ID = 0x%x, new HW_ID = 0x%x\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 							cur_hw_id, new_hw_id);
 	if (cur_hw_id != new_hw_id)
 		return false;
 #endif
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "cur version = 0x%x, new version = 0x%x\n",
 							cur_version, new_version);
 	input_info(true, &info->client->dev, "cur minor version = 0x%x, new minor version = 0x%x\n",
 						cur_minor_version, new_minor_version);
 	input_info(true, &info->client->dev, "cur reg data version = 0x%x, new reg data version = 0x%x\n",
+=======
+	tsp_debug_info(true, &info->client->dev, "cur version = 0x%x, new version = 0x%x\n",
+							cur_version, new_version);
+	tsp_debug_info(true, &info->client->dev, "cur minor version = 0x%x, new minor version = 0x%x\n",
+						cur_minor_version, new_minor_version);
+	tsp_debug_info(true, &info->client->dev, "cur reg data version = 0x%x, new reg data version = 0x%x\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 						cur_reg_version, new_reg_version);
 
 	if (cur_version > 0xFF)
@@ -1675,10 +2182,13 @@ static bool ts_check_need_upgrade(struct bt532_ts_info *info,
 #endif
 
 #define TC_SECTOR_SZ		8
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 #define TC_SECTOR_SZ_WRITE		64
 #define TC_SECTOR_SZ_READ		8
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if TOUCH_ONESHOT_UPGRADE || TOUCH_FORCE_UPGRADE \
 	|| defined(SEC_FACTORY_TEST) || defined(USE_MISC_DEVICE)
@@ -1692,9 +2202,13 @@ static u8 ts_upgrade_firmware(struct bt532_ts_info *info,
 	int i;
 	int page_sz = 128;
 	u16 chip_code;
+<<<<<<< HEAD
 #ifndef PAT_CONTROL
 	int fuzing_udelay = 8000;
 #endif
+=======
+	int fuzing_udelay = 8000;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	verify_data = kzalloc(size, GFP_KERNEL);
 	if (verify_data == NULL) {
@@ -1721,6 +2235,7 @@ retry_upgrade:
 
 	zinitix_printk("chip code = 0x%x\n", chip_code);
 
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	if(chip_code == ZT7538_CHIP_CODE || chip_code == ZT7548_CHIP_CODE || chip_code == ZT7532_CHIP_CODE) {
 		flash_addr = (firmware_data[0x61]<<16) | (firmware_data[0x62]<<8) | firmware_data[0x63];
@@ -1743,6 +2258,10 @@ retry_upgrade:
 	if((chip_code == ZT7538_CHIP_CODE)||(chip_code == ZT7548_CHIP_CODE)||(chip_code == BT43X_CHIP_CODE))
 		page_sz = 64;
 #endif
+=======
+	if((chip_code == ZT7538_CHIP_CODE)||(chip_code == ZT7548_CHIP_CODE)||(chip_code == BT43X_CHIP_CODE))
+		page_sz = 64;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	usleep_range(10, 10);
 
 	if (write_cmd(client, 0xc004) != I2C_SUCCESS){
@@ -1771,6 +2290,7 @@ retry_upgrade:
 		goto fail_upgrade;
 	}
 
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	if (write_reg(client, BT532_INIT_FLASH, 2) != I2C_SUCCESS) {
 		zinitix_printk("failed to enter burst upgrade mode\n");
@@ -1820,6 +2340,8 @@ retry_upgrade:
 		}
 	}
 #else
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if((chip_code == ZT7538_CHIP_CODE)||(chip_code == ZT7548_CHIP_CODE)||(chip_code == ZT7554_CHIP_CODE)) {
 		if (write_cmd(client, BT532_INIT_FLASH) != I2C_SUCCESS) {
 			zinitix_printk("failed to init flash\n");
@@ -1907,7 +2429,10 @@ retry_upgrade:
 
 		usleep_range(fuzing_udelay, fuzing_udelay);	/*for fuzing delay*/
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (write_reg(client, 0xc003, 0x0000) != I2C_SUCCESS) {
 		zinitix_printk("nvm write vpp off\n");
@@ -1928,6 +2453,7 @@ retry_upgrade:
 
 	zinitix_printk(KERN_INFO "read firmware data\n");
 
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	if (write_reg(client, 0x01D3, 0x0008) != I2C_SUCCESS) {
 		zinitix_printk( "failed to init upgrade mode\n");
@@ -1946,13 +2472,19 @@ retry_upgrade:
 		}
 	}
 #else
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	for (flash_addr = 0; flash_addr < size; ) {
 		for (i = 0; i < page_sz/TC_SECTOR_SZ; i++) {
 			//zinitix_debug_msg("read :addr=%04x, len=%d\n", flash_addr, TC_SECTOR_SZ);
 			if (read_firmware_data(client,
 				BT532_READ_FLASH,
 				(u8*)&verify_data[flash_addr], TC_SECTOR_SZ) < 0) {
+<<<<<<< HEAD
 				input_err(true, &client->dev, "Failed to read firmare\n");
+=======
+				tsp_debug_err(true, &client->dev, "Failed to read firmare\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 				goto fail_upgrade;
 			}
@@ -1960,24 +2492,35 @@ retry_upgrade:
 			flash_addr += TC_SECTOR_SZ;
 		}
 	}
+<<<<<<< HEAD
 #endif
 	/* verify */
 	input_info(true, &client->dev, "verify firmware data\n");
 	if (memcmp((u8 *)&firmware_data[0], (u8 *)&verify_data[0], size) == 0) {
 		input_info(true, &client->dev, "upgrade finished\n");
 
+=======
+	/* verify */
+	tsp_debug_info(true, &client->dev, "verify firmware data\n");
+	if (memcmp((u8 *)&firmware_data[0], (u8 *)&verify_data[0], size) == 0) {
+		tsp_debug_info(true, &client->dev, "upgrade finished\n");
+		kfree(verify_data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		bt532_power_control(info, POWER_OFF);
 		bt532_power_control(info, POWER_ON_SEQUENCE);
 
 		if (!crc_check(info))
 			goto fail_upgrade;
 
+<<<<<<< HEAD
 		if (verify_data){
 			zinitix_printk("kfree\n");
 			kfree(verify_data);
 			verify_data = NULL;
 		}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return true;
 	}
 
@@ -1985,6 +2528,7 @@ fail_upgrade:
 	bt532_power_control(info, POWER_OFF);
 
 	if (retry_cnt++ < INIT_RETRY_CNT) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "upgrade failed : so retry... (%d)\n", retry_cnt);
 		goto retry_upgrade;
 	}
@@ -1995,16 +2539,30 @@ fail_upgrade:
 	}
 
 	input_info(true, &client->dev, "Failed to upgrade\n");
+=======
+		tsp_debug_err(true, &client->dev, "upgrade failed : so retry... (%d)\n\n\n\n\n", retry_cnt);
+		goto retry_upgrade;
+	}
+
+	if (verify_data != NULL)
+		kfree(verify_data);
+
+	tsp_debug_info(true, &client->dev, "Failed to upgrade\n\n\n\n\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return false;
 }
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static bool ts_hw_calibration(struct bt532_ts_info *info)
 {
 	struct i2c_client *client = info->client;
 	u16	chip_eeprom_info;
 	int time_out = 0;
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	u8 buff[6] = {0};
 	int ret;
@@ -2055,6 +2613,10 @@ start_calibration:
 #endif
 
 	input_info(true, &client->dev, "%s start\n", __func__);
+=======
+
+	tsp_debug_info(true, &client->dev, "%s: \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (write_reg(client,
 		BT532_TOUCH_MODE, 0x07) != I2C_SUCCESS)
@@ -2085,7 +2647,11 @@ start_calibration:
 				BT532_CLEAR_INT_STATUS_CMD);
 
 		if (read_data(client,
+<<<<<<< HEAD
 			BT532_EEPROM_INFO,
+=======
+			BT532_EEPROM_INFO_REG,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			(u8 *)&chip_eeprom_info, 2) < 0)
 			return false;
 
@@ -2098,11 +2664,19 @@ start_calibration:
 			write_cmd(client, BT532_CALIBRATE_CMD);
 			usleep_range(10 * 1000, 10 * 1000);
 			write_cmd(client, BT532_CLEAR_INT_STATUS_CMD);
+<<<<<<< HEAD
 			input_err(true, &client->dev, "h/w calibration retry timeout.\n");
 		}
 
 		if(time_out++ > 10){
 			input_err(true, &client->dev, "h/w calibration timeout.\n");
+=======
+			tsp_debug_err(true, &client->dev, "h/w calibration retry timeout.\n");
+		}
+
+		if(time_out++ > 10){
+			tsp_debug_err(true, &client->dev, "h/w calibration timeout.\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			break;
 		}
 
@@ -2130,6 +2704,7 @@ start_calibration:
 	msleep(700);
 	write_reg(client, 0xc003, 0x0000);
 	write_reg(client, 0xc104, 0x0000);
+<<<<<<< HEAD
 
 #ifdef PAT_CONTROL
 	/* cal_count */
@@ -2187,6 +2762,8 @@ start_calibration:
 	input_info(true, &client->dev, "%s: pat_function=%d cal_count=%X tune_fix_ver=%02X%02X\n", 
 					__func__, info->pdata->pat_function, buff[0], buff[4], buff[2]);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return true;
 }
 
@@ -2200,19 +2777,31 @@ static int ic_version_check(struct bt532_ts_info *info)
 	/* get chip information */
 	ret = read_data(client, BT532_VENDOR_ID, (u8 *)&cap->vendor_id, 2);
 	if (ret < 0) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev,"%s: fail vendor id\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev,"%s: fail vendor id\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto error;
 	}
 
 	ret = read_data(client, BT532_MINOR_FW_VERSION, (u8 *)&cap->fw_minor_version, 2);
 	if (ret < 0) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev,"%s: fail fw_minor_version\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev,"%s: fail fw_minor_version\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto error;
 	}
 
 	ret = read_data(client, BT532_CHIP_REVISION, data, 8);
 	if (ret < 0) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev,"%s: fail chip_revision\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev,"%s: fail chip_revision\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto error;
 	}
 
@@ -2235,6 +2824,7 @@ static int fw_update_work(struct bt532_ts_info *info, bool force_update)
 	char fw_path[MAX_FW_PATH];
 	u16 chip_eeprom_info;
 
+<<<<<<< HEAD
 	if(pdata->bringup){
 		input_info(true, &info->client->dev, "%s: bringup\n", __func__);
 		return 0;
@@ -2242,11 +2832,19 @@ static int fw_update_work(struct bt532_ts_info *info, bool force_update)
 
 	snprintf(fw_path, MAX_FW_PATH, "%s", pdata->firmware_name);
 	input_info(true, &info->client->dev,
+=======
+	snprintf(fw_path, MAX_FW_PATH, "%s", pdata->firmware_name);
+	tsp_debug_info(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		"%s: start\n", __func__);
 
 	ret = request_firmware(&tsp_fw, fw_path, &(info->client->dev));
 	if (ret < 0) {
+<<<<<<< HEAD
 		input_info(true, &info->client->dev,
+=======
+		tsp_debug_info(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: Firmware image %s not available\n", __func__, fw_path);
 		goto fw_request_fail;
 	}
@@ -2263,6 +2861,7 @@ static int fw_update_work(struct bt532_ts_info *info, bool force_update)
 	if (need_update == true || force_update == true) {
 		ret = ts_upgrade_firmware(info, info->fw_data, cap->ic_fw_size);
 		if (!ret)
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s: failed fw update\n", __func__);
 
 		ret = ic_version_check(info);
@@ -2272,17 +2871,32 @@ static int fw_update_work(struct bt532_ts_info *info, bool force_update)
 	}
 
 	if (read_data(info->client, BT532_EEPROM_INFO,
+=======
+			tsp_debug_err(true, &info->client->dev, "%s: failed fw update\n", __func__);
+
+		ret = ic_version_check(info);
+		if (ret < 0) {
+			tsp_debug_err(true, &info->client->dev, "%s: failed ic version check\n", __func__);
+		}
+	}
+
+	if (read_data(info->client, BT532_EEPROM_INFO_REG,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					(u8 *)&chip_eeprom_info, 2) < 0){
 		ret = -1;
 		goto fw_request_fail;
 	}
 
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	if (need_update == true || force_update == true)
 #else
 	if (zinitix_bit_test(chip_eeprom_info, 0)) /* hw calibration bit*/
 #endif
 	{ 
+=======
+	if (zinitix_bit_test(chip_eeprom_info, 0)) { /* hw calibration bit*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if(ts_hw_calibration(info) == false){
 			ret = -1;
 			goto fw_request_fail;
@@ -2300,13 +2914,28 @@ static bool init_touch(struct bt532_ts_info *info)
 	struct bt532_ts_platform_data *pdata = info->pdata;
 	struct capa_info *cap = &(info->cap_info);
 	u16 reg_val = 0;
+<<<<<<< HEAD
 	u8 data[6] = {0};
+=======
+	u8 data[4] = {0};
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7	
+	int retry_cnt = 0;
+	int ret;
+
+retry_init:	
+#endif	
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	zinitix_bit_set(reg_val, BIT_PT_CNT_CHANGE);
 	zinitix_bit_set(reg_val, BIT_DOWN);
 	zinitix_bit_set(reg_val, BIT_MOVE);
 	zinitix_bit_set(reg_val, BIT_UP);
+<<<<<<< HEAD
 #ifdef SUPPORTED_PALM_TOUCH
+=======
+#if (TOUCH_POINT_MODE == 2)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	zinitix_bit_set(reg_val, BIT_PALM);
 	zinitix_bit_set(reg_val, BIT_PALM_REJECT);
 #endif
@@ -2321,15 +2950,41 @@ static bool init_touch(struct bt532_ts_info *info)
 	info->cap_info.x_node_num = data[0] | (data[1] << 8);
 	info->cap_info.y_node_num = data[2] | (data[3] << 8);
 
+<<<<<<< HEAD
+=======
+	
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+
+	bt532_set_ta_status(info);
+	bt532_set_optional_mode(info, true);
+
+	if(write_reg(info->client, ZT75XX_RESOLUTION_EXPANDER, 4))  //resolution * 4
+	goto fail_init;
+	info->cap_info.MinX = 0;
+	info->cap_info.MinY = 0;
+#endif	
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	info->cap_info.MaxX= pdata->x_resolution;
 	info->cap_info.MaxY = pdata->y_resolution;
 
 	info->cap_info.total_node_num = info->cap_info.x_node_num * info->cap_info.y_node_num;
 	info->cap_info.multi_fingers = MAX_SUPPORTED_FINGER_NUM;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "node x %d, y %d  resolution x %d, y %d\n",
 		info->cap_info.x_node_num, info->cap_info.y_node_num, info->cap_info.MaxX, info->cap_info.MaxY	);
 
+=======
+	tsp_debug_info(true, &info->client->dev, "node x %d, y %d  resolution x %d, y %d\n",
+		info->cap_info.x_node_num, info->cap_info.y_node_num, info->cap_info.MaxX, info->cap_info.MaxY	);
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
+	if (write_reg(info->client, BT532_INITIAL_TOUCH_MODE, TOUCH_POINT_MODE) != I2C_SUCCESS)
+		goto fail_init;
+#endif	
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if ESD_TIMER_INTERVAL
 	if (write_reg(info->client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
 			SCAN_RATE_HZ * ESD_TIMER_INTERVAL) != I2C_SUCCESS)
@@ -2337,11 +2992,16 @@ static bool init_touch(struct bt532_ts_info *info)
 
 	read_data(info->client, BT532_PERIODICAL_INTERRUPT_INTERVAL, (u8 *)&reg_val, 2);
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "Esd timer register = %d\n", reg_val);
+=======
+	tsp_debug_info(true, &info->client->dev, "Esd timer register = %d\n", reg_val);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 	if (!mini_init_touch(info))
 		goto fail_init;
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	get_tsp_nvm_data(info, PAT_TSP_TEST_DATA, (u8 *)data, 2);
 	info->test_result.data[0] = data[0];
@@ -2356,21 +3016,52 @@ static bool init_touch(struct bt532_ts_info *info)
 #endif
 	return true;
 fail_init:
+=======
+
+	return true;
+fail_init:
+	
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+	if (++retry_cnt <= INIT_RETRY_CNT) {
+		bt532_power_control(info, POWER_OFF);
+		bt532_power_control(info, POWER_ON_SEQUENCE);
+		goto retry_init;
+
+	}
+	
+	 else if (retry_cnt == INIT_RETRY_CNT + 1) {
+				
+			ret = fw_update_work(info, 1);
+			if (ret < 0) 		
+			goto retry_fail_init;
+			}	
+	 
+	 retry_fail_init:
+#endif	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return false;
 }
 
 static bool mini_init_touch(struct bt532_ts_info *info)
 {
 	struct i2c_client *client = info->client;
+<<<<<<< HEAD
 	struct bt532_ts_platform_data *pdata = info->pdata;
 	int i;
 
 	if (write_cmd(client, BT532_SWRESET_CMD) != I2C_SUCCESS) {
 		input_info(true, &client->dev, "Failed to write reset command\n");
+=======
+	int i;
+
+	if (write_cmd(client, BT532_SWRESET_CMD) != I2C_SUCCESS) {
+		tsp_debug_info(true, &client->dev, "Failed to write reset command\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		goto fail_mini_init;
 	}
 
+<<<<<<< HEAD
 	if (write_reg(client, BT532_TOUCH_MODE,
 			info->touch_mode) != I2C_SUCCESS)
 		goto fail_mini_init;
@@ -2385,6 +3076,35 @@ static bool mini_init_touch(struct bt532_ts_info *info)
 
 	bt532_set_optional_mode(info, true);
 
+=======
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
+	if (write_reg(client, BT532_INITIAL_TOUCH_MODE, TOUCH_POINT_MODE) != I2C_SUCCESS)
+		goto fail_mini_init;
+#endif	
+
+	if (write_reg(client, BT532_TOUCH_MODE,
+			info->touch_mode) != I2C_SUCCESS)
+		goto fail_mini_init;
+
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7	
+	bt532_set_ta_status(info);
+#endif	
+	bt532_set_optional_mode(info, true);
+
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX	
+	if(write_reg(client, ZT75XX_RESOLUTION_EXPANDER, 4))	//x1 x2 x3 ...
+	goto fail_mini_init;
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7		
+	/* soft calibration */
+	if (write_cmd(client, BT532_CALIBRATE_CMD) != I2C_SUCCESS)
+		goto fail_mini_init;
+#endif	
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (write_reg(client, BT532_INT_ENABLE_FLAG,
 			info->cap_info.ic_int_mask) != I2C_SUCCESS)
 		goto fail_mini_init;
@@ -2402,6 +3122,7 @@ static bool mini_init_touch(struct bt532_ts_info *info)
 
 	esd_timer_start(CHECK_ESD_TIMER, info);
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "Started esd timer\n");
 #endif
 #endif
@@ -2429,11 +3150,26 @@ static bool mini_init_touch(struct bt532_ts_info *info)
 
 fail_mini_init:
 	input_err(true, &client->dev, "Failed to initialize mini init\n");
+=======
+	tsp_debug_info(true, &client->dev, "Started esd timer\n");
+#endif
+#endif
+
+	tsp_debug_info(true, &client->dev, "Successfully mini initialized\r\n");
+	return true;
+
+fail_mini_init:
+	tsp_debug_err(true, &client->dev, "Failed to initialize mini init\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /*	bt532_power_control(info, POWER_OFF);
 	bt532_power_control(info, POWER_ON_SEQUENCE);
 
 	if(init_touch(info) == false) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to initialize\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to initialize\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		return false;
 	}
@@ -2441,7 +3177,11 @@ fail_mini_init:
 #if ESD_TIMER_INTERVAL
 	esd_timer_start(CHECK_ESD_TIMER, info);
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "Started esd timer\n");
+=======
+	tsp_debug_info(true, &client->dev, "Started esd timer\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 	return true;*/
@@ -2462,9 +3202,15 @@ static void clear_report_data(struct bt532_ts_info *info)
 				input_report_key(info->input_dev, BUTTON_MAPPING_KEY[i], 0);
 				reported = true;
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
+<<<<<<< HEAD
 				input_info(true, &client->dev, "Button up = %d\n", i);
 #else
 				input_info(true, &client->dev, "Button up\n");
+=======
+				tsp_debug_info(true, &client->dev, "Button up = %d\n", i);
+#else
+				tsp_debug_info(true, &client->dev, "Button up\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 			}
 		}
@@ -2481,6 +3227,7 @@ static void clear_report_data(struct bt532_ts_info *info)
 			input_mt_report_slot_state(info->input_dev,	MT_TOOL_FINGER, 0);
 			reported = true;
 			if (!m_ts_debug_mode && TSP_NORMAL_EVENT_MSG)
+<<<<<<< HEAD
 				input_info(true, &client->dev, "[TSP] R [%02d] mc=%d\n", i, info->move_count[i]);
 		}
 		info->reported_touch_info.coord[i].sub_status = 0;
@@ -2492,6 +3239,13 @@ static void clear_report_data(struct bt532_ts_info *info)
 	info->glove_touch = 0;
 #endif
 
+=======
+				tsp_debug_info(true, &client->dev, "[TSP] R %02d\r\n", i);
+		}
+		info->reported_touch_info.coord[i].sub_status = 0;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (reported) {
 		input_sync(info->input_dev);
 	}
@@ -2505,6 +3259,7 @@ static void clear_report_data(struct bt532_ts_info *info)
 #define	PALM_REPORT_WIDTH	200
 #define	PALM_REJECT_WIDTH	255
 
+<<<<<<< HEAD
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI
 void trustedui_mode_on(void){
 	input_info(true, &tui_tsp_info->client->dev, "%s, release all finger..", __func__);
@@ -2526,6 +3281,8 @@ void trustedui_mode_off(void){
 }
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static irqreturn_t bt532_touch_work(int irq, void *data)
 {
@@ -2537,6 +3294,7 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 	u8 sub_status;
 	u8 prev_sub_status;
 	u32 x, y, w, maxX, maxY;
+<<<<<<< HEAD
 #ifdef CONFIG_SEC_FACTORY
 	u32 z;
 #endif
@@ -2555,12 +3313,31 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 
 	if (gpio_get_value(info->pdata->gpio_int)) {
 		input_err(true, &client->dev, "Invalid interrupt\n");
+=======
+#if (TOUCH_POINT_MODE == 2)
+	u32 minor_w;
+#endif
+#ifdef CONFIG_SEC_FACTORY
+	u16 z;
+#endif
+	u8 palm = 0;
+#ifdef CONFIG_INPUT_BOOSTER
+	bool booster_enable = false;
+#endif
+
+	if (gpio_get_value(info->pdata->gpio_int)) {
+		tsp_debug_err(true, &client->dev, "Invalid interrupt\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		return IRQ_HANDLED;
 	}
 
 	if (down_trylock(&info->work_lock)) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "%s: Failed to occupy work lock\n", __func__);
+=======
+		tsp_debug_err(true, &client->dev, "%s: Failed to occupy work lock\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		write_cmd(client, BT532_CLEAR_INT_STATUS_CMD);
 
 		return IRQ_HANDLED;
@@ -2569,10 +3346,15 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 	esd_timer_stop(info);
 #endif
 
+<<<<<<< HEAD
 	read_data(client, BT532_DEBUG_REG, (u8 *)&ic_status, 2);
 
 	if (info->work_state != NOTHING) {
 		input_err(true, &client->dev, "%s: Other process occupied (0x%02x)\n", __func__, ic_status);
+=======
+	if (info->work_state != NOTHING) {
+		tsp_debug_err(true, &client->dev, "%s: Other process occupied\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		usleep_range(DELAY_FOR_SIGNAL_DELAY, DELAY_FOR_SIGNAL_DELAY);
 
 		if (!gpio_get_value(info->pdata->gpio_int)) {
@@ -2585,8 +3367,14 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 
 	info->work_state = NORMAL;
 
+<<<<<<< HEAD
 	if (ts_read_coord(info) == false) { /* maybe desirable reset */
 		input_err(true, &client->dev, "Failed to read info coord (0x%x)\n", ic_status);
+=======
+	if (ts_read_coord(info) == false || info->touch_info.status == 0xffff
+		|| info->touch_info.status == 0x1) { /* maybe desirable reset */
+		tsp_debug_err(true, &client->dev, "Failed to read info coord\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		bt532_power_control(info, POWER_OFF);
 		bt532_power_control(info, POWER_ON_SEQUENCE);
 
@@ -2600,13 +3388,20 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 	if (info->touch_info.status == 0x0){
 		goto out;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	reported = false;
 	if(pdata->support_touchkey){
 		if (zinitix_bit_test(info->touch_info.status, BIT_ICON_EVENT)) {
 			if (read_data(info->client, BT532_ICON_STATUS_REG,
 				(u8 *)(&info->icon_event_reg), 2) < 0) {
+<<<<<<< HEAD
 				input_err(true, &client->dev, "Failed to read button info\n");
+=======
+				tsp_debug_err(true, &client->dev, "Failed to read button info\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				write_cmd(client, BT532_CLEAR_INT_STATUS_CMD);
 
 				goto out;
@@ -2619,9 +3414,15 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 					input_report_key(info->input_dev, BUTTON_MAPPING_KEY[i], 1);
 					reported = true;
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
+<<<<<<< HEAD
 					input_info(true, &client->dev, "Button down = %d\n", i);
 #else
 					input_info(true, &client->dev, "Button down\n");
+=======
+					tsp_debug_info(true, &client->dev, "Button down = %d\n", i);
+#else
+					tsp_debug_info(true, &client->dev, "Button down\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 				}
 			}
@@ -2633,9 +3434,15 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 					input_report_key(info->input_dev, BUTTON_MAPPING_KEY[i], 0);
 					reported = true;
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
+<<<<<<< HEAD
 					input_info(true, &client->dev, "Button up = %d\n", i);
 #else
 					input_info(true, &client->dev, "Button up\n");
+=======
+					tsp_debug_info(true, &client->dev, "Button up = %d\n", i);
+#else
+					tsp_debug_info(true, &client->dev, "Button up\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 				}
 			}
@@ -2648,6 +3455,7 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 		for (i = 0; i < info->cap_info.multi_fingers; i++) {
 			prev_sub_status = info->reported_touch_info.coord[i].sub_status;
 			if (zinitix_bit_test(prev_sub_status, SUB_BIT_EXIST)) {
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 				input_info(true, &client->dev, "Finger [%02d] up mc=%d (%d) (%x,P%02XT%04X)\n", i, info->move_count[i], __LINE__,
 						info->test_result.data[0], info->cap_info.cal_count, info->cap_info.tune_fix_ver);
@@ -2656,12 +3464,19 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 #endif
 				if(info->finger_cnt1 > 0)
 					info->finger_cnt1--;
+=======
+				tsp_debug_info(true, &client->dev, "Finger [%02d] up (%d)\n", i,__LINE__);
+				info->finger_cnt1--;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				if (info->finger_cnt1 == 0)
 					input_report_key(info->input_dev, BTN_TOUCH, 0);
 				input_mt_slot(info->input_dev, i);
 				input_mt_report_slot_state(info->input_dev,
 											MT_TOOL_FINGER, 0);
+<<<<<<< HEAD
 				info->move_count[i] = 0;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_INPUT_BOOSTER
 				info->touch_pressed_num--;
 #endif
@@ -2679,6 +3494,7 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 #endif
 	}
 
+<<<<<<< HEAD
 #ifdef GLOVE_MODE
 //	input_info(true, &client->dev, "glovetouch = %x status = %x, glove touch bit = %x\n", 
 //		info->glove_touch, ic_status, zinitix_bit_test(ic_status, BIT_GLOVE_TOUCH));
@@ -2693,11 +3509,20 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 #ifdef SUPPORTED_PALM_TOUCH
 	if (zinitix_bit_test(info->touch_info.status, BIT_PALM)) {
 		//input_info(true, &client->dev, "Palm report\n");
+=======
+#ifdef SUPPORTED_PALM_TOUCH
+	if (zinitix_bit_test(info->touch_info.status, BIT_PALM)) {
+		//tsp_debug_info(true, &client->dev, "Palm report\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		palm = 1;
 	}
 
 	if (zinitix_bit_test(info->touch_info.status, BIT_PALM_REJECT)){
+<<<<<<< HEAD
 		//input_info(true, &client->dev, "Palm reject\n");
+=======
+		//tsp_debug_info(true, &client->dev, "Palm reject\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		palm = 2;
 	}
 #endif
@@ -2715,7 +3540,11 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 
 			if (x > maxX || y > maxY) {
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
+<<<<<<< HEAD
 				input_err(true, &client->dev,
+=======
+				tsp_debug_err(true, &client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 							"Invalid coord %d : x=%d, y=%d\n", i, x, y);
 #endif
 				continue;
@@ -2725,12 +3554,20 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 			info->touch_info.coord[i].y = y;
 			if (zinitix_bit_test(sub_status, SUB_BIT_DOWN)){
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
+<<<<<<< HEAD
 				input_info(true, &client->dev, "Finger [%02d] x = %d, y = %d,"
 							" w=%d p=%d g=%d fw=0x%02x%02x (0x%x)\n", i, x, y, w, palm, info->glove_touch,
 							info->cap_info.hw_id, info->cap_info.reg_data_version, ic_status);
 #else
 				input_info(true, &client->dev, "Finger [%02d] w=%d p=%d g=%d fw=0x%02x%02x (0x%x)\n"
 							, i, w, palm, info->glove_touch, info->cap_info.hw_id, info->cap_info.reg_data_version, ic_status);
+=======
+				tsp_debug_info(true, &client->dev, "Finger [%02d] x = %d, y = %d,"
+							" w = %d p = %d fw=0x%02x%02x \n", i, x, y, w, palm, info->cap_info.hw_id, info->cap_info.reg_data_version);
+#else
+				tsp_debug_info(true, &client->dev, "Finger [%02d] w = %d p = %d fw=0x%02x%02x \n"
+							, i, w, palm, info->cap_info.hw_id, info->cap_info.reg_data_version);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifdef CONFIG_INPUT_BOOSTER
@@ -2738,8 +3575,11 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 				booster_enable = true;
 #endif
 				info->finger_cnt1++;
+<<<<<<< HEAD
 			} else if(zinitix_bit_test(sub_status, SUB_BIT_MOVE)) {
 				info->move_count[i]++;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 			if (w == 0)
 				w = 1;
@@ -2747,19 +3587,31 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 			input_mt_slot(info->input_dev, i);
 			input_mt_report_slot_state(info->input_dev, MT_TOOL_FINGER, 1);
 
+<<<<<<< HEAD
 #ifdef SUPPORTED_PALM_TOUCH
+=======
+#if (TOUCH_POINT_MODE == 2)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (palm == 0) {
 				if(w >= PALM_REPORT_WIDTH)
 					w = PALM_REPORT_WIDTH - 10;
 				minor_w = w;
 			} else if (palm == 1) {	//palm report
 				w = PALM_REPORT_WIDTH;
+<<<<<<< HEAD
 				minor_w = PALM_REPORT_WIDTH/3;
+=======
+				minor_w = PALM_REPORT_WIDTH/3;     
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 //				info->touch_info.coord[i].minor_width = PALM_REPORT_WIDTH;
 			} else if (palm == 2){	// palm reject
 //				x = y = 0;
 				w = PALM_REJECT_WIDTH;
+<<<<<<< HEAD
 				minor_w = PALM_REJECT_WIDTH;
+=======
+				minor_w = PALM_REJECT_WIDTH;    
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 //				info->touch_info.coord[i].minor_width = PALM_REJECT_WIDTH;
 			}
 #endif
@@ -2767,24 +3619,39 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 			input_report_abs(info->input_dev, ABS_MT_TOUCH_MAJOR, (u32)w);
 #ifdef CONFIG_SEC_FACTORY
 			if (read_data(info->client, BT532_REAL_WIDTH + i, (u8*)&z, 2) < 0)
+<<<<<<< HEAD
 				input_info(true, &client->dev, "Failed to read %d's Real width %s\n", i, __func__);
 			z = z & 0x0f;	//temp
+=======
+				tsp_debug_info(true, &client->dev, "Failed to read %d's Real width %s\n", i, __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (z < 1) z = 1;
 			input_report_abs(info->input_dev, ABS_MT_PRESSURE, (u32)z);
 #endif
 			input_report_abs(info->input_dev, ABS_MT_WIDTH_MAJOR,
 								(u32)((palm == 1)?w-40:w));
+<<<<<<< HEAD
 #ifdef SUPPORTED_PALM_TOUCH
 			input_report_abs(info->input_dev,
 				ABS_MT_TOUCH_MINOR, minor_w);
 			input_report_abs(info->input_dev, ABS_MT_PALM, (palm > 0)?1:0);
 #endif
+=======
+#if (TOUCH_POINT_MODE == 2)
+			input_report_abs(info->input_dev,
+				ABS_MT_TOUCH_MINOR, (u32)minor_w); 
+#ifdef SUPPORTED_PALM_TOUCH
+			input_report_abs(info->input_dev, ABS_MT_PALM, (palm > 0)?1:0);
+#endif
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			input_report_abs(info->input_dev, ABS_MT_POSITION_X, x);
 			input_report_abs(info->input_dev, ABS_MT_POSITION_Y, y);
 			input_report_key(info->input_dev, BTN_TOUCH, 1);
 		} else if (zinitix_bit_test(sub_status, SUB_BIT_UP)||
 			zinitix_bit_test(prev_sub_status, SUB_BIT_EXIST)) {
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 			input_info(true, &client->dev, "Finger [%02d] up mc=%d (%d) (%x,P%02XT%04X)\n", i, info->move_count[i], __LINE__,
 						info->test_result.data[0], info->cap_info.cal_count, info->cap_info.tune_fix_ver);
@@ -2793,12 +3660,20 @@ static irqreturn_t bt532_touch_work(int irq, void *data)
 #endif
 			if(info->finger_cnt1 > 0)
 				info->finger_cnt1--;
+=======
+			tsp_debug_info(true, &client->dev, "Finger [%02d] up (%d)\n", i,__LINE__);
+			info->finger_cnt1--;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (info->finger_cnt1 == 0)
 				input_report_key(info->input_dev, BTN_TOUCH, 0);
 			memset(&info->touch_info.coord[i], 0x0, sizeof(struct coord));
 			input_mt_slot(info->input_dev, i);
 			input_mt_report_slot_state(info->input_dev, MT_TOOL_FINGER, 0);
+<<<<<<< HEAD
 			info->move_count[i] = 0;
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_INPUT_BOOSTER
 			info->touch_pressed_num--;
 #endif
@@ -2839,13 +3714,19 @@ out:
 static int  bt532_ts_open(struct input_dev *dev)
 {
 	struct bt532_ts_info *info = misc_info;
+<<<<<<< HEAD
 	u8 prev_work_state;
 
 	input_info(true, &misc_info->client->dev, "%s, %d \n", __func__, __LINE__);
+=======
+
+	tsp_debug_dbg(true, &misc_info->client->dev, "%s, %d \n", __func__, __LINE__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (info == NULL)
 		return 0;
 
+<<<<<<< HEAD
 	if((info->pdata->support_lpm_mode)&&(info->sleep_mode)){
 		down(&info->work_lock);
 		prev_work_state = info->work_state;
@@ -2900,24 +3781,68 @@ static int  bt532_ts_open(struct input_dev *dev)
 		info->work_state = NOTHING;
 		up(&info->work_lock);
 	}
+=======
+	down(&info->work_lock);
+	if (info->work_state != RESUME
+		&& info->work_state != EALRY_SUSPEND) {
+		zinitix_printk("invalid work proceedure (%d)\r\n",
+			info->work_state);
+		up(&info->work_lock);
+		return 0;
+	}
+
+	bt532_power_control(info, POWER_ON_SEQUENCE);
+
+	if (!crc_check(info))
+		goto fail_late_resume;
+
+	if (mini_init_touch(info) == false)
+		goto fail_late_resume;
+	enable_irq(info->irq);
+	info->work_state = NOTHING;
+
+	if (g_ta_connected)
+		bt532_set_ta_status(info);
+
+	up(&info->work_lock);
+	zinitix_debug_msg("bt532_ts_open--\n");
+	return 0;
+
+fail_late_resume:
+	zinitix_printk("failed to late resume\n");
+	enable_irq(info->irq);
+	info->work_state = NOTHING;
+	up(&info->work_lock);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
 static void bt532_ts_close(struct input_dev *dev)
 {
 	struct bt532_ts_info *info = misc_info;
+<<<<<<< HEAD
 	int i;
 	u8 prev_work_state;
 
 	input_info(true, &misc_info->client->dev, "%s, %d \n", __func__, __LINE__);
+=======
+	/*info = container_of(h, struct bt532_ts_info, early_suspend);*/
+
+	tsp_debug_dbg(true, &misc_info->client->dev, "%s, %d \n", __func__, __LINE__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (info == NULL)
 		return;
 
+<<<<<<< HEAD
+=======
+	disable_irq(info->irq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if ESD_TIMER_INTERVAL
 	flush_work(&info->tmr_work);
 #endif
 
+<<<<<<< HEAD
 	if((info->pdata->support_lpm_mode)&&(info->spay_enable||info->aod_enable)){
 		down(&info->work_lock);
 		prev_work_state = info->work_state;
@@ -2970,6 +3895,26 @@ static void bt532_ts_close(struct input_dev *dev)
 
 		bt532_power_control(info, POWER_OFF);
 	}
+=======
+	down(&info->work_lock);
+	if (info->work_state != NOTHING) {
+		zinitix_printk("invalid work proceedure (%d)\r\n",
+			info->work_state);
+		up(&info->work_lock);
+		enable_irq(info->irq);
+		return;
+	}
+	info->work_state = EALRY_SUSPEND;
+
+	clear_report_data(info);
+
+#if ESD_TIMER_INTERVAL
+	/*write_reg(info->client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);*/
+	esd_timer_stop(info);
+#endif
+
+	bt532_power_control(info, POWER_OFF);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	zinitix_debug_msg("bt532_ts_close--\n");
 	up(&info->work_lock);
@@ -3051,7 +3996,11 @@ static void bt532_ts_early_suspend(struct early_suspend *h)
 	write_reg(info->client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);
 	esd_timer_stop(info);
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "Stopped esd timer\n");
+=======
+	tsp_debug_info(true, &client->dev, "Stopped esd timer\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 
@@ -3080,11 +4029,19 @@ static int bt532_ts_resume(struct device *dev)
 	struct bt532_ts_info *info = i2c_get_clientdata(client);
 
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "resume++\n");
 #endif
 	down(&info->work_lock);
 	if (info->work_state != SUSPEND) {
 		input_err(true, &client->dev, "%s: Invalid work proceedure (%d)\n",
+=======
+	tsp_debug_info(true, &client->dev, "resume++\n");
+#endif
+	down(&info->work_lock);
+	if (info->work_state != SUSPEND) {
+		tsp_debug_err(true, &client->dev, "%s: Invalid work proceedure (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				__func__, info->work_state);
 		up(&info->work_lock);
 
@@ -3099,12 +4056,20 @@ static int bt532_ts_resume(struct device *dev)
 	info->work_state = NOTHING;
 	crc_check(info);
 	if (mini_init_touch(info) == false)
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to resume\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to resume\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enable_irq(info->irq);
 #endif
 
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "resume--\n");
+=======
+	tsp_debug_info(true, &client->dev, "resume--\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	up(&info->work_lock);
 
@@ -3117,7 +4082,11 @@ static int bt532_ts_suspend(struct device *dev)
 	struct bt532_ts_info *info = i2c_get_clientdata(client);
 
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "suspend++\n");
+=======
+	tsp_debug_info(true, &client->dev, "suspend++\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifndef CONFIG_HAS_EARLYSUSPEND
@@ -3130,7 +4099,11 @@ static int bt532_ts_suspend(struct device *dev)
 	down(&info->work_lock);
 	if (info->work_state != NOTHING
 		&& info->work_state != EALRY_SUSPEND) {
+<<<<<<< HEAD
 		input_err(true, &client->dev,"%s: Invalid work proceedure (%d)\n",
+=======
+		tsp_debug_err(true, &client->dev,"%s: Invalid work proceedure (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				__func__, info->work_state);
 		up(&info->work_lock);
 #ifndef CONFIG_HAS_EARLYSUSPEND
@@ -3145,7 +4118,11 @@ static int bt532_ts_suspend(struct device *dev)
 #if ESD_TIMER_INTERVAL
 	esd_timer_stop(info);
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "Stopped esd timer\n");
+=======
+	tsp_debug_info(true, &client->dev, "Stopped esd timer\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 #endif
@@ -3167,29 +4144,98 @@ static bool ts_set_touchmode(u16 value){
 	int i;
 
 	disable_irq(misc_info->irq);
+<<<<<<< HEAD
 
 	down(&misc_info->work_lock);
 	if (misc_info->work_state != NOTHING) {
 		input_info(true, &misc_info->client->dev, "other process occupied.. (%d)\n",
+=======
+	clear_report_data(misc_info);
+
+	down(&misc_info->work_lock);
+	if (misc_info->work_state != NOTHING) {
+		tsp_debug_info(true, &misc_info->client->dev, "other process occupied.. (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			misc_info->work_state);
 		enable_irq(misc_info->irq);
 		up(&misc_info->work_lock);
 		return -1;
 	}
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+	write_cmd(misc_info->client, BT532_WAKEUP_CMD);
+	usleep_range(50 * 1000, 50 * 1000);
+#else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	//wakeup cmd
 	write_cmd(misc_info->client, 0x0A);
 	usleep_range(20 * 1000, 20 * 1000);
 	write_cmd(misc_info->client, 0x0A);
 	usleep_range(20 * 1000, 20 * 1000);
 
+<<<<<<< HEAD
 	misc_info->work_state = SET_MODE;
+=======
+#endif
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+	if (misc_info->touch_mode == TOUCH_POINT_MODE)
+	{
+		read_data(misc_info->client, BT532_AFE_FREQUENCY,
+				(u8 *)&misc_info->cap_info.afe_frequency, 2);
+		read_data(misc_info->client, BT532_DND_SHIFT_VALUE,
+				(u8 *)&misc_info->cap_info.shift_value, 2);		
+		read_data(misc_info->client, BT532_DND_U_COUNT,
+				(u8 *)&misc_info->cap_info.u_cnt, 2);
+	}
+#endif	
+	misc_info->work_state = SET_MODE;
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+
+		if (value == TOUCH_DND_MODE) {
+			if (write_reg(misc_info->client, BT532_DND_N_COUNT,
+					SEC_DND_N_COUNT)!=I2C_SUCCESS)
+				tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+				"Fail to set ZT7548_DND_N_COUNT %d.\n", SEC_DND_N_COUNT);
+			if (write_reg(misc_info->client, BT532_DND_U_COUNT,
+					SEC_DND_U_COUNT)!=I2C_SUCCESS)
+				tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+				"Fail to set ZT7548_DND_U_COUNT %d.\n", SEC_DND_U_COUNT);
+			if (write_reg(misc_info->client, BT532_AFE_FREQUENCY,
+					SEC_DND_FREQUENCY)!=I2C_SUCCESS)
+				tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+					"Fail to set ZT7548_AFE_FREQUENCY %d.\n", SEC_DND_FREQUENCY);
+		} 
+		else if (misc_info->touch_mode == TOUCH_DND_MODE) {	
+			if (write_reg(misc_info->client, BT532_DND_SHIFT_VALUE,
+					misc_info->cap_info.shift_value) != I2C_SUCCESS)
+				tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+								"Fail to reset ZT7548_DND_SHIFT_VALUE %d.\n", misc_info->cap_info.shift_value);
+			if (write_reg(misc_info->client, BT532_AFE_FREQUENCY,
+					misc_info->cap_info.afe_frequency) != I2C_SUCCESS)
+				tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+									"Fail to reset ZT7548_AFE_FREQUENCY %d.\n", misc_info->cap_info.afe_frequency);
+
+			if (write_reg(misc_info->client, BT532_DND_U_COUNT,
+					misc_info->cap_info.u_cnt) != I2C_SUCCESS)
+				tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+													"Fail to reset ZT7548_AFE_U_count %d.\n", misc_info->cap_info.u_cnt);
+		}
+
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (value == TOUCH_SEC_MODE)
 		misc_info->touch_mode = TOUCH_POINT_MODE;
 	else
 		misc_info->touch_mode = value;
 
+<<<<<<< HEAD
 	input_info(true, &misc_info->client->dev, "[zinitix_touch] tsp_set_testmode, "
+=======
+	tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] tsp_set_testmode, "
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		"touchkey_testmode = %d\r\n", misc_info->touch_mode);
 
 	if (misc_info->touch_mode != TOUCH_POINT_MODE) {
@@ -3200,11 +4246,19 @@ static bool ts_set_touchmode(u16 value){
 
 	if (write_reg(misc_info->client, BT532_TOUCH_MODE,
 			misc_info->touch_mode) != I2C_SUCCESS)
+<<<<<<< HEAD
 		input_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
 				"Fail to set ZINITX_TOUCH_MODE %d.\r\n", misc_info->touch_mode);
 
 	/* clear garbage data */
 	for (i = 0; i < 10; i++) {
+=======
+		tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+				"Fail to set ZINITX_TOUCH_MODE %d.\r\n", misc_info->touch_mode);
+
+	/* clear garbage data */
+	for (i = 0; i < 3; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		usleep_range(20 * 1000, 20 * 1000);
 		write_cmd(misc_info->client, BT532_CLEAR_INT_STATUS_CMD);
 	}
@@ -3216,7 +4270,13 @@ static bool ts_set_touchmode(u16 value){
 }
 #endif
 
+<<<<<<< HEAD
 #if 0
+=======
+
+
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static bool ts_set_touchmode2(u16 value)
 {
 	int i;
@@ -3225,12 +4285,17 @@ static bool ts_set_touchmode2(u16 value)
 
 	down(&misc_info->work_lock);
 	if (misc_info->work_state != NOTHING) {
+<<<<<<< HEAD
 		input_info(true, &misc_info->client->dev, "other process occupied.. (%d)\n",
+=======
+		tsp_debug_info(true,&misc_info->client->dev, "other process occupied.. (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			misc_info->work_state);
 		enable_irq(misc_info->irq);
 		up(&misc_info->work_lock);
 		return -1;
 	}
+<<<<<<< HEAD
 	//wakeup cmd
 	write_cmd(misc_info->client, 0x0A);
 	usleep_range(20 * 1000, 20 * 1000);
@@ -3246,10 +4311,24 @@ static bool ts_set_touchmode2(u16 value)
 #endif
 		read_data(misc_info->client, BT532_AFE_FREQUENCY, (u8 *)&misc_info->cap_info.afe_frequency, 2);
 		read_data(misc_info->client, BT532_DND_SHIFT_VALUE, (u8 *)&misc_info->cap_info.shift_value, 2);
+=======
+
+	write_cmd(misc_info->client, BT532_WAKEUP_CMD);
+	usleep_range(50 * 1000, 50 * 1000);
+	
+	if (misc_info->touch_mode == TOUCH_POINT_MODE) {
+		read_data(misc_info->client, BT532_AFE_FREQUENCY,
+				(u8 *)&misc_info->cap_info.afe_frequency, 2);
+		read_data(misc_info->client, BT532_DND_SHIFT_VALUE,
+				(u8 *)&misc_info->cap_info.shift_value, 2);
+		read_data(misc_info->client, BT532_DND_U_COUNT,
+		(u8 *)&misc_info->cap_info.u_cnt, 2);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	misc_info->work_state = SET_MODE;
 
 	if(value == TOUCH_DND_MODE) {
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 		if (write_reg(misc_info->client, ZT75XX_MUTUAL_AMP_V_SEL,
 						SEC_MUTUAL_AMP_V_SEL)!=I2C_SUCCESS)
@@ -3294,11 +4373,45 @@ static bool ts_set_touchmode2(u16 value)
 				misc_info->cap_info.afe_frequency);
 	}
 
+=======
+		if (write_reg(misc_info->client, BT532_DND_N_COUNT,
+				SEC_HFDND_N_COUNT)!=I2C_SUCCESS)
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+					"Fail to set ZT75XX_HFDND_N_COUNT %d.\n", SEC_HFDND_N_COUNT);
+		if (write_reg(misc_info->client, BT532_DND_U_COUNT,
+				SEC_HFDND_U_COUNT)!=I2C_SUCCESS)
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+					"Fail to set ZT75XX_HFDND_U_COUNT %d.\n", SEC_HFDND_U_COUNT);
+		if (write_reg(misc_info->client, BT532_AFE_FREQUENCY,
+				SEC_HFDND_FREQUENCY)!=I2C_SUCCESS)
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+					"Fail to set ZT75XX_AFE_FREQUENCY %d.\n", SEC_HFDND_FREQUENCY);
+	} else if (misc_info->touch_mode == TOUCH_DND_MODE) {
+		if (write_reg(misc_info->client, BT532_DND_SHIFT_VALUE,
+				misc_info->cap_info.shift_value) != I2C_SUCCESS)
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+					"Fail to reset ZT75XX_DND_SHIFT_VALUE %d.\n",
+					misc_info->cap_info.shift_value);
+
+		if (write_reg(misc_info->client, BT532_AFE_FREQUENCY,
+				misc_info->cap_info.afe_frequency) != I2C_SUCCESS)
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+					"Fail to reset ZT75XX_AFE_FREQUENCY %d.\n",
+					misc_info->cap_info.afe_frequency);
+		
+		if (write_reg(misc_info->client, BT532_DND_U_COUNT,
+				misc_info->cap_info.u_cnt) != I2C_SUCCESS)
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+					"Fail to reset ZT7548_AFE_U_count %d.\n",
+					misc_info->cap_info.u_cnt);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (value == TOUCH_SEC_MODE)
 		misc_info->touch_mode = TOUCH_POINT_MODE;
 	else
 		misc_info->touch_mode = value;
 
+<<<<<<< HEAD
 	input_info(true, &misc_info->client->dev, "[zinitix_touch] tsp_set_testmode, "
 		"touchkey_testmode = %d\r\n", misc_info->touch_mode);
 
@@ -3306,15 +4419,33 @@ static bool ts_set_touchmode2(u16 value)
 		if (write_reg(misc_info->client, BT532_DELAY_RAW_FOR_HOST,
 			RAWDATA_DELAY_FOR_HOST) != I2C_SUCCESS)
 			zinitix_printk("Fail to set BT532_DELAY_RAW_FOR_HOST.\r\n");
+=======
+	tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] tsp_set_testmode, "
+			"touchkey_testmode = %d\r\n", misc_info->touch_mode);
+
+	if (misc_info->touch_mode != TOUCH_POINT_MODE) {
+		if (write_reg(misc_info->client, BT532_DELAY_RAW_FOR_HOST,
+				RAWDATA_DELAY_FOR_HOST) != I2C_SUCCESS)
+			tsp_debug_info(true, &misc_info->client->dev,
+					"Fail to set ZT7548_DELAY_RAW_FOR_HOST.\r\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	if (write_reg(misc_info->client, BT532_TOUCH_MODE,
 			misc_info->touch_mode) != I2C_SUCCESS)
+<<<<<<< HEAD
 		input_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
 				"Fail to set ZINITX_TOUCH_MODE %d.\r\n", misc_info->touch_mode);
 
 	/* clear garbage data */
 	for (i = 0; i < 10; i++) {
+=======
+		tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] TEST Mode : "
+				"Fail to set ZINITX_TOUCH_MODE %d.\r\n", misc_info->touch_mode);
+
+	/* clear garbage data */
+	for (i = 0; i < 3; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		usleep_range(20 * 1000, 20 * 1000);
 		write_cmd(misc_info->client, BT532_CLEAR_INT_STATUS_CMD);
 	}
@@ -3326,6 +4457,7 @@ static bool ts_set_touchmode2(u16 value)
 }
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 static bool ts_set_touchmode3(u16 value)
 {
@@ -3627,6 +4759,60 @@ out:
 #endif
 #ifdef SEC_FACTORY_TEST
 static inline void set_cmd_result(struct bt532_ts_info *info, char *buff, int len)
+=======
+
+
+#if defined(SEC_FACTORY_TEST) || defined(USE_MISC_DEVICE)
+static int ts_upgrade_sequence(const u8 *firmware_data)
+{
+	int ret = 0;
+	disable_irq(misc_info->irq);
+	down(&misc_info->work_lock);
+	misc_info->work_state = UPGRADE;
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_stop(misc_info);
+#endif
+	clear_report_data(misc_info);
+
+	tsp_debug_info(true, &misc_info->client->dev, "start upgrade firmware\n");
+	if (ts_upgrade_firmware(misc_info,
+		firmware_data,
+		misc_info->cap_info.ic_fw_size) == false) {
+		ret = -1;
+		goto out;
+	}
+
+	if (ic_version_check(misc_info) < 0)
+			tsp_debug_err(true, &misc_info->client->dev, "%s: failed ic version check\n", __func__);
+
+	if (ts_hw_calibration(misc_info) == false) {
+		ret = -1;
+		goto out;
+	}
+
+	if (mini_init_touch(misc_info) == false) {
+		ret = -1;
+		goto out;
+
+	}
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_start(CHECK_ESD_TIMER, misc_info);
+#if defined(TSP_VERBOSE_DEBUG)
+	tsp_debug_info(true, &misc_info->client->dev, "Started esd timer\n");
+#endif
+#endif
+out:
+	enable_irq(misc_info->irq);
+	misc_info->work_state = NOTHING;
+	up(&misc_info->work_lock);
+	return ret;
+}
+#endif
+#ifdef SEC_FACTORY_TEST
+static inline void set_cmd_result(struct bt532_ts_info *info, char *buff, int len)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	strncat(info->factory_info->cmd_result, buff, len);
 }
@@ -3662,7 +4848,11 @@ static void fw_update(void *device_data)
 
 		ret = request_firmware(&tsp_fw, fw_path, &(client->dev));
 		if (ret) {
+<<<<<<< HEAD
 			input_info(true, &client->dev,
+=======
+			tsp_debug_info(true, &client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				"%s: Firmware image %s not available\n", __func__,
 				fw_path);
 			if (tsp_fw)
@@ -3687,7 +4877,11 @@ static void fw_update(void *device_data)
 		snprintf(fw_path, MAX_FW_PATH, "/sdcard/%s", TSP_FW_FILENAME);
 		fp = filp_open(fw_path, O_RDONLY, 0);
 		if (IS_ERR(fp)) {
+<<<<<<< HEAD
 			input_err(true, &client->dev,
+=======
+			tsp_debug_err(true, &client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				"file %s open error\n", fw_path);
 			info->factory_info->cmd_state = 3;
 			goto err_open;
@@ -3696,14 +4890,22 @@ static void fw_update(void *device_data)
 		fsize = fp->f_path.dentry->d_inode->i_size;
 
 		if(fsize != info->cap_info.ic_fw_size) {
+<<<<<<< HEAD
 			input_err(true, &client->dev, "invalid fw size!!\n");
+=======
+			tsp_debug_err(true, &client->dev, "invalid fw size!!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			info->factory_info->cmd_state = 3;
 			goto err_open;
 		}
 
 		buff = kzalloc((size_t)fsize, GFP_KERNEL);
 		if (!buff) {
+<<<<<<< HEAD
 			input_err(true, &client->dev, "failed to alloc buffer for fw\n");
+=======
+			tsp_debug_err(true, &client->dev, "failed to alloc buffer for fw\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			info->factory_info->cmd_state = 3;
 			goto err_alloc;
 		}
@@ -3716,7 +4918,11 @@ static void fw_update(void *device_data)
 
 		filp_close(fp, current->files);
 		set_fs(old_fs);
+<<<<<<< HEAD
 		input_info(true, &client->dev, "ums fw is loaded!!\n");
+=======
+		tsp_debug_info(true, &client->dev, "ums fw is loaded!!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		ret = ts_upgrade_sequence((u8*)buff);
 		if(ret<0) {
@@ -3727,7 +4933,11 @@ static void fw_update(void *device_data)
 		break;
 
 	default:
+<<<<<<< HEAD
 		input_err(true, &client->dev, "invalid fw file type!!\n");
+=======
+		tsp_debug_err(true, &client->dev, "invalid fw file type!!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto not_support;
 	}
 
@@ -3769,7 +4979,11 @@ static void get_fw_ver_bin(void *device_data)
 
 	ret = request_firmware(&tsp_fw, fw_path, &(client->dev));
 	if (ret) {
+<<<<<<< HEAD
 		input_info(true, &client->dev,
+=======
+		tsp_debug_info(true, &client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: Firmware image %s not available\n", __func__,
 			fw_path);
 		goto fw_request_fail;
@@ -3795,7 +5009,11 @@ static void get_fw_ver_bin(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 fw_request_fail:
@@ -3817,15 +5035,30 @@ static void get_fw_ver_ic(void *device_data)
 
 	down(&info->work_lock);
 	//wakeup cmd
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	write_cmd(misc_info->client, BT532_WAKEUP_CMD);
+	usleep_range(50 * 1000, 50 * 1000);
+#else	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	write_cmd(misc_info->client, 0x0A);
 	usleep_range(20 * 1000, 20 * 1000);
 	write_cmd(misc_info->client, 0x0A);
 	usleep_range(20 * 1000, 20 * 1000);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = ic_version_check(info);
 	up(&info->work_lock);
 	if (ret < 0) {
+<<<<<<< HEAD
 		input_info(true, &client->dev, "%s: version check error\n", __func__);
+=======
+		tsp_debug_info(true, &client->dev, "%s: version check error\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 	}
 
@@ -3845,6 +5078,7 @@ static void get_fw_ver_ic(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
@@ -3872,11 +5106,17 @@ static void get_checksum_data(void *device_data)
 	finfo->cmd_state = OK;
 
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void get_threshold(void *device_data)
 {
@@ -3895,7 +5135,11 @@ static void get_threshold(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -3951,7 +5195,11 @@ static void get_chip_vendor(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -3979,7 +5227,11 @@ static void get_chip_name(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -3993,10 +5245,14 @@ static void get_x_num(void *device_data)
 
 	set_default_result(info);
 
+<<<<<<< HEAD
 	write_cmd(misc_info->client, 0x0A);
 	usleep_range(20 * 1000, 20 * 1000);
 
 	read_data(client, BT532_TOTAL_NUMBER_OF_X, (u8 *)&info->cap_info.x_node_num, 2);
+=======
+	read_data(client, BT532_TOTAL_NUMBER_OF_X, (u8 *)&info->cap_info.y_node_num, 2);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff),
 				"%u", info->cap_info.x_node_num);
@@ -4004,7 +5260,11 @@ static void get_x_num(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -4018,9 +5278,12 @@ static void get_y_num(void *device_data)
 
 	set_default_result(info);
 
+<<<<<<< HEAD
 	write_cmd(misc_info->client, 0x0A);
 	usleep_range(20 * 1000, 20 * 1000);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	read_data(client, BT532_TOTAL_NUMBER_OF_Y, (u8 *)&info->cap_info.y_node_num, 2);
 
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff),
@@ -4029,7 +5292,11 @@ static void get_y_num(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -4048,11 +5315,15 @@ static void not_support_cmd(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	info->factory_info->cmd_state = NOT_APPLICABLE;
 
+<<<<<<< HEAD
 	mutex_lock(&finfo->cmd_lock);
 	finfo->cmd_is_running = false;
 	mutex_unlock(&finfo->cmd_lock);
 
 	input_info(true, &client->dev, "%s: \"%s(%d)\"\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: \"%s(%d)\"\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -4066,11 +5337,21 @@ static void run_dnd_read(void *device_data)
 	struct tsp_raw_data *raw_data = info->raw_data;
 	u16 min, max;
 	s32 i,j;
+<<<<<<< HEAD
 
 #if ESD_TIMER_INTERVAL
 	esd_timer_stop(misc_info);
 	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);
 	write_cmd(client, BT532_CLEAR_INT_STATUS_CMD);
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	int fx, fy;
+	bool result = true;
+#endif	
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_stop(misc_info);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	set_default_result(info);
 
@@ -4092,21 +5373,59 @@ static void run_dnd_read(void *device_data)
 
 			if(raw_data->dnd_data[i * info->cap_info.y_node_num + j] > max)
 				max = raw_data->dnd_data[i * info->cap_info.y_node_num + j];
+<<<<<<< HEAD
 		}
 		printk("\n");
 	}
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", min, max);
+=======
+
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+			if (result && ( i * info->cap_info.y_node_num + j) < ZT7538_DND_DATA_SIZE &&
+				(raw_data->dnd_data[ i * info->cap_info.y_node_num + j] > info->dnd_max_spec[ i * info->cap_info.y_node_num + j]
+				|| raw_data->dnd_data[ i * info->cap_info.y_node_num + j] < info->dnd_min_spec[ i * info->cap_info.y_node_num + j])) {
+				result = false;
+				fx = i;
+				fy = j;
+				printk("(E)");
+			}
+#endif			
+		}
+		printk("\n");
+	}
+
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	if(result) {
+		sprintf(finfo->cmd_buff, "%s", "OK");
+	} else {
+		sprintf(finfo->cmd_buff, "%d,%d,%d,%d,%d", fx, fy,
+					info->dnd_min_spec[(fx * info->cap_info.y_node_num) + fy],
+					info->dnd_max_spec[(fx * info->cap_info.y_node_num) + fy],
+					raw_data->dnd_data[(fx * info->cap_info.y_node_num) + fy]);
+		tsp_debug_info(true, &client->dev, "%s: dnd data view fail: [%d][%d]\n", info->client->name, fx, fy);
+	}
+#else
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", min, max);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	set_cmd_result(info, finfo->cmd_buff,
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: \"%s\"(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: \"%s\"(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strlen(finfo->cmd_buff));
 
 #if ESD_TIMER_INTERVAL
 	esd_timer_start(CHECK_ESD_TIMER, misc_info);
+<<<<<<< HEAD
 	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
 		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	return;
 }
@@ -4143,7 +5462,11 @@ static void get_dnd(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -4159,8 +5482,11 @@ static void get_dnd_all_data(void *device_data)
 
 #if ESD_TIMER_INTERVAL
 	esd_timer_stop(misc_info);
+<<<<<<< HEAD
 	write_reg(misc_info->client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);
 	write_cmd(misc_info->client, BT532_CLEAR_INT_STATUS_CMD);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	set_default_result(info);
 
@@ -4183,8 +5509,11 @@ static void get_dnd_all_data(void *device_data)
 
 #if ESD_TIMER_INTERVAL
 	esd_timer_start(CHECK_ESD_TIMER, misc_info);
+<<<<<<< HEAD
 	write_reg(misc_info->client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
 		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	return;
 }
@@ -4200,6 +5529,13 @@ static void run_dnd_v_gap_read(void *device_data)
 	int i, j, offset, val, cur_val, next_val;
 	u16 screen_max = 0x0000;
 	u16 touchkey_max = 0x0000;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	int fx, fy;
+	bool result = true;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_default_result(info);
 
@@ -4214,6 +5550,7 @@ static void run_dnd_v_gap_read(void *device_data)
 
 			cur_val = raw_data->dnd_data[offset];
 			next_val = raw_data->dnd_data[offset + y_num];
+<<<<<<< HEAD
 			if (!next_val) {
 				raw_data->vgap_data[offset] = next_val;
 				continue;
@@ -4241,13 +5578,74 @@ static void run_dnd_v_gap_read(void *device_data)
 			else{
 				if(raw_data->vgap_data[i * y_num + j] > screen_max)
 						screen_max = raw_data->vgap_data[i * y_num + j];
+=======
+
+				if (!next_val) {
+					raw_data->vgap_data[offset] = next_val;
+					printk(" %d", raw_data->vgap_data[offset]);
+					continue;
+				}
+				
+			if(next_val > 0 && cur_val > 0)
+			{
+				if (next_val > cur_val)
+					val = 100 - ((cur_val * 100) / next_val);
+				else
+					val = 100 - ((next_val * 100) / cur_val);
+
+				printk("%d ", val);
+
+				raw_data->vgap_data[offset] = val;
+
+				if(pdata->support_touchkey){
+					if(i < x_num - 2){
+						if(raw_data->vgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->vgap_data[i * y_num + j];
+					}
+					else{
+						if(raw_data->vgap_data[i * y_num + j] > touchkey_max)
+							touchkey_max = raw_data->vgap_data[i * y_num + j];
+					}
+				}
+				else{
+					if(raw_data->vgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->vgap_data[i * y_num + j];
+				}
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+				if (result && offset < ZT7538_V_GAP_DATA_SIZE &&
+					raw_data->vgap_data[offset] > info->dnd_v_gap_spec[offset]) {
+					result = false;
+					fx = i;
+					fy = j;
+					printk("(E)");
+				}
+#endif				
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 	}
 		printk("\n");
 }
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "DND V Gap screen_max %d touchkey_max %d\n", screen_max, touchkey_max);
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+=======
+	tsp_debug_info(true, &client->dev, "DND V Gap screen_max %d touchkey_max %d\n", screen_max, touchkey_max);
+
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	if (result) {
+		sprintf(finfo->cmd_buff, "%s", "OK");
+	} else {
+		offset = (fx * y_num) + fy;
+		sprintf(finfo->cmd_buff, "%d,%d,%d,%d,%d", fx, fy,
+					0, info->dnd_v_gap_spec[offset],
+					raw_data->vgap_data[offset]);
+		tsp_debug_info(true, &client->dev, "%s: dnd v gap view fail: [%d][%d]\n", info->client->name, fx, fy);
+	}
+#else	
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_cmd_result(info, finfo->cmd_buff,
 			strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
@@ -4267,6 +5665,13 @@ static void run_dnd_h_gap_read(void *device_data)
 	int i, j, offset, val, cur_val, next_val;
 	u16 screen_max = 0x0000;
 	u16 touchkey_max = 0x0000;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	int fx, fy;
+	bool result = true;
+#endif	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_default_result(info);
 
@@ -4281,23 +5686,36 @@ static void run_dnd_h_gap_read(void *device_data)
 			cur_val = raw_data->dnd_data[offset];
 			if (!cur_val) {
 				raw_data->hgap_data[offset] = cur_val;
+<<<<<<< HEAD
+=======
+				printk(" %d", raw_data->hgap_data[offset]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				continue;
 			}
 
 			next_val = raw_data->dnd_data[offset + 1];
 			if (!next_val) {
 				raw_data->hgap_data[offset] = next_val;
+<<<<<<< HEAD
+=======
+				printk(" %d", raw_data->hgap_data[offset]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				for (++j; j < y_num - 1; j++) {
 					offset = (i * y_num) + j;
 
 					next_val = raw_data->dnd_data[offset];
 					if (!next_val) {
 						raw_data->hgap_data[offset] = next_val;
+<<<<<<< HEAD
+=======
+						printk(" %d", raw_data->hgap_data[offset]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 						continue;
 					}
 					break;
 				}
 			}
+<<<<<<< HEAD
 
 			if (next_val > cur_val)
 				val = 100 - ((cur_val * 100) / next_val);
@@ -4322,12 +5740,66 @@ static void run_dnd_h_gap_read(void *device_data)
 				if(raw_data->hgap_data[i * y_num + j] > screen_max)
 						screen_max = raw_data->hgap_data[i * y_num + j];
 			}
+=======
+			if(next_val > 0 && cur_val > 0)
+			{
+				if (next_val > cur_val)
+					val = 100 - ((cur_val * 100) / next_val);
+				else
+					val = 100 - ((next_val * 100) / cur_val);
+
+				printk("%d ", val);
+
+				raw_data->hgap_data[offset] = val;
+
+				if(pdata->support_touchkey){
+					if(i < x_num-1){
+						if(raw_data->hgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->hgap_data[i * y_num + j];
+					}
+					else{
+						if(raw_data->hgap_data[i * y_num + j] > touchkey_max)
+							touchkey_max = raw_data->hgap_data[i * y_num + j];
+					}
+				}
+				else{
+					if(raw_data->hgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->hgap_data[i * y_num + j];
+				}
+			}
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+			if (result && offset < ZT7538_H_GAP_DATA_SIZE &&
+				raw_data->hgap_data[offset] > info->dnd_h_gap_spec[offset]) {
+				result = false;
+				fx = i;
+				fy = j;
+				printk("(E)");
+			}
+#endif			
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		printk("\n");
 	}
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "DND H Gap screen_max %d, touchkey_max %d\n", screen_max, touchkey_max);
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+=======
+	tsp_debug_info(true, &client->dev, "DND H Gap screen_max %d, touchkey_max %d\n", screen_max, touchkey_max);
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	if(result) {
+		sprintf(finfo->cmd_buff, "%s", "OK");
+	} else {
+		offset = (fx * y_num) + fy;
+		sprintf(finfo->cmd_buff, "%d,%d,%d,%d,%d", fx, fy,
+					0, info->dnd_h_gap_spec[offset],
+					raw_data->hgap_data[offset]);
+		tsp_debug_info(true, &client->dev,"%s: dnd h gap view fail: [%d][%d]\n", info->client->name, fx, fy);
+	}
+#else	
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_cmd_result(info, finfo->cmd_buff,
 			strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
@@ -4363,7 +5835,11 @@ static void get_dnd_h_gap(void *device_data)
 	set_cmd_result(info, finfo->cmd_buff, strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s: %s(%d)\n", __func__,
+=======
+	tsp_debug_info(true, &info->client->dev, "%s: %s(%d)\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 }
 
@@ -4394,7 +5870,11 @@ static void get_dnd_v_gap(void *device_data)
 	set_cmd_result(info, finfo->cmd_buff, strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s: %s(%d)\n", __func__,
+=======
+	tsp_debug_info(true, &info->client->dev, "%s: %s(%d)\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 }
 
@@ -4409,8 +5889,11 @@ static void run_delta_read(void *device_data)
 
 #if ESD_TIMER_INTERVAL
 	esd_timer_stop(misc_info);
+<<<<<<< HEAD
 	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);
 	write_cmd(client, BT532_CLEAR_INT_STATUS_CMD);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	set_default_result(info);
 
@@ -4441,12 +5924,19 @@ static void run_delta_read(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: \"%s\"(%d)\n", __func__, finfo->cmd_buff,
 				(int)strlen(finfo->cmd_buff));
 #if ESD_TIMER_INTERVAL
 	esd_timer_start(CHECK_ESD_TIMER, misc_info);
 	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
 		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+=======
+	tsp_debug_info(true, &client->dev, "%s: \"%s\"(%d)\n", __func__, finfo->cmd_buff,
+				(int)strlen(finfo->cmd_buff));
+#if ESD_TIMER_INTERVAL
+	esd_timer_start(CHECK_ESD_TIMER, misc_info);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	return;
 }
@@ -4484,7 +5974,11 @@ static void get_delta(void *device_data)
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	info->factory_info->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
@@ -4499,6 +5993,7 @@ static void run_hfdnd_read(void *device_data)
 	int x_num = info->cap_info.x_node_num, y_num = info->cap_info.y_node_num;
 	int i, j, offset;
 	u16 min = 0xFFFF, max = 0x0000;
+<<<<<<< HEAD
 
 #if ESD_TIMER_INTERVAL
 	esd_timer_stop(misc_info);
@@ -4512,6 +6007,27 @@ static void run_hfdnd_read(void *device_data)
 	ts_set_touchmode(TOUCH_POINT_MODE);
 
 	input_info(true,&client->dev, "HF DND start\n");
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	int fx, fy;
+	bool result = true;
+#endif
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_stop(misc_info);
+#endif
+	set_default_result(info);
+
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	ts_set_touchmode2(TOUCH_DND_MODE);
+#else
+	ts_set_touchmode(TOUCH_HFDND_MODE);
+#endif
+	get_raw_data(info, (u8 *)raw_data->hfdnd_data, 2);
+	ts_set_touchmode(TOUCH_POINT_MODE);
+
+	tsp_debug_info(true,&client->dev, "HF DND start\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	for (i = 0; i < x_num; i++) {
 		for (j = 0; j < y_num; j++) {
@@ -4521,21 +6037,56 @@ static void run_hfdnd_read(void *device_data)
 				min = raw_data->hfdnd_data[offset];
 			if(raw_data->hfdnd_data[offset]>max)
 				max = raw_data->hfdnd_data[offset];
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+			if (result && offset < ZT7538_DND_DATA_SIZE &&
+				(raw_data->hfdnd_data[offset] > info->hfdnd_max_spec[offset]
+				|| raw_data->hfdnd_data[offset] < info->hfdnd_min_spec[offset])) {
+				result = false;
+				fx = i;
+				fy = j;
+				printk("(E)");
+			}
+#endif			
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		printk("\n");
 	}
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "HF DND Pass\n");
 
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", min, max);
+=======
+	tsp_debug_info(true, &client->dev, "HF DND Pass\n");
+
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	if(result) {
+		sprintf(finfo->cmd_buff, "%s", "OK");
+	} else {
+		offset = (fx * info->cap_info.y_node_num) + fy;
+		sprintf(finfo->cmd_buff, "%d,%d,%d,%d,%d", fx, fy,
+					info->hfdnd_min_spec[offset],
+					info->hfdnd_max_spec[offset],
+					raw_data->hfdnd_data[offset]);
+		tsp_debug_info(true, &client->dev, "%s: hfdnd data view fail: [%d][%d]\n", info->client->name, fx, fy);
+	}
+#else
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", min, max);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	set_cmd_result(info, finfo->cmd_buff,
 			strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
 #if ESD_TIMER_INTERVAL
 	esd_timer_start(CHECK_ESD_TIMER, misc_info);
+<<<<<<< HEAD
 	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
 		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	return;
 }
@@ -4572,23 +6123,35 @@ static void get_hfdnd(void *device_data)
 	strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true,&client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+	tsp_debug_info(true,&client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void run_hfdnd_v_gap_read(void *device_data)
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct bt532_ts_platform_data *pdata = info->pdata;
+<<<<<<< HEAD
+=======
+	struct i2c_client *client = info->client;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct tsp_factory_info *finfo = info->factory_info;
 	struct tsp_raw_data *raw_data = info->raw_data;
 	int x_num = info->cap_info.x_node_num, y_num = info->cap_info.y_node_num;
 	int i, j, offset, val, cur_val, next_val;
 	u16 screen_max = 0x0000;
 	u16 touchkey_max = 0x0000;
+<<<<<<< HEAD
 
 	set_default_result(info);
 
@@ -4596,12 +6159,27 @@ static void run_hfdnd_v_gap_read(void *device_data)
 
 	input_info(true, &info->client->dev, "HF DND V Gap start\n");
 
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	int fx, fy;
+	bool result = true;
+#endif
+
+	set_default_result(info);
+
+	memset(raw_data->hfvgap_data, 0x00, TSP_CMD_NODE_NUM);
+
+	printk("DND V Gap start\n");
+
+	printk("%s : ++++++HF DND SPEC +++++++++\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	for (i = 0; i < x_num - 1; i++) {
 		for (j = 0; j < y_num; j++) {
 			offset = (i * y_num) + j;
 
 			cur_val = raw_data->hfdnd_data[offset];
 			next_val = raw_data->hfdnd_data[offset + y_num];
+<<<<<<< HEAD
 			if (!next_val) {
 				raw_data->vgap_data[offset] = next_val;
 				continue;
@@ -4635,6 +6213,68 @@ static void run_hfdnd_v_gap_read(void *device_data)
 
 	input_info(true, &info->client->dev, "HFDND V Gap screen_max %d, touchkey_max %d\n", screen_max, touchkey_max);
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+=======
+
+				if (!next_val) {
+					raw_data->hfvgap_data[offset] = next_val;
+					printk(" %d", raw_data->hfvgap_data[offset]);
+					continue;
+				}
+				
+			if(next_val > 0 && cur_val > 0)
+			{
+				if (next_val > cur_val)
+					val = 100 - ((cur_val * 100) / next_val);
+				else
+					val = 100 - ((next_val * 100) / cur_val);
+
+				printk("%d ", val);
+
+				raw_data->hfvgap_data[offset] = val;
+
+				if(pdata->support_touchkey){
+					if(i < x_num - 2){
+						if(raw_data->hfvgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->hfvgap_data[i * y_num + j];
+					}
+					else{
+						if(raw_data->hfvgap_data[i * y_num + j] > touchkey_max)
+							touchkey_max = raw_data->hfvgap_data[i * y_num + j];
+					}
+				}
+				else{
+					if(raw_data->hfvgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->hfvgap_data[i * y_num + j];
+				}
+			}
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+			if (result && offset < ZT7538_V_GAP_DATA_SIZE &&
+				raw_data->hfvgap_data[offset] > info->hfdnd_v_gap_spec[offset]) {
+				result = false;
+				fx = i;
+				fy = j;
+				printk("(E)");
+			}
+#endif			
+	}
+		printk("\n");
+}
+
+	tsp_debug_info(true, &client->dev, "HFDND V Gap screen_max %d touchkey_max %d\n", screen_max, touchkey_max);
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	if (result) {
+		sprintf(finfo->cmd_buff, "%s", "OK");
+	} else {
+		offset = (fx * y_num) + fy;
+		sprintf(finfo->cmd_buff, "%d,%d,%d,%d,%d", fx, fy,
+					0, info->hfdnd_v_gap_spec[offset],
+					raw_data->hfvgap_data[offset]);
+		tsp_debug_info(true, &client->dev, "%s: hfdnd v gap view fail: [%d][%d]\n", info->client->name, fx, fy);
+	}
+#else	
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_cmd_result(info, finfo->cmd_buff,
 			strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
@@ -4647,18 +6287,35 @@ static void run_hfdnd_h_gap_read(void *device_data)
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct bt532_ts_platform_data *pdata = info->pdata;
+<<<<<<< HEAD
+=======
+	struct i2c_client *client = info->client;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct tsp_factory_info *finfo = info->factory_info;
 	struct tsp_raw_data *raw_data = info->raw_data;
 	int x_num = info->cap_info.x_node_num, y_num = info->cap_info.y_node_num;
 	int i, j, offset, val, cur_val, next_val;
 	u16 screen_max = 0x0000;
 	u16 touchkey_max = 0x0000;
+<<<<<<< HEAD
 
 	set_default_result(info);
 
 	memset(raw_data->hgap_data, 0x00, TSP_CMD_NODE_NUM);
 
 	input_info(true, &info->client->dev, "HF DND H Gap start\n");
+=======
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	int fx, fy;
+	bool result = true;
+#endif
+
+	set_default_result(info);
+
+	memset(raw_data->hfhgap_data, 0x00, TSP_CMD_NODE_NUM);
+
+	printk("HFDND H Gap start\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	for (i = 0; i < x_num ; i++) {
 		for (j = 0; j < y_num-1; j++) {
@@ -4666,18 +6323,29 @@ static void run_hfdnd_h_gap_read(void *device_data)
 
 			cur_val = raw_data->hfdnd_data[offset];
 			if (!cur_val) {
+<<<<<<< HEAD
 				raw_data->hgap_data[offset] = cur_val;
+=======
+				raw_data->hfhgap_data[offset] = cur_val;
+				printk(" %d", raw_data->hfhgap_data[offset]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				continue;
 			}
 
 			next_val = raw_data->hfdnd_data[offset + 1];
 			if (!next_val) {
+<<<<<<< HEAD
 				raw_data->hgap_data[offset] = next_val;
+=======
+				raw_data->hfhgap_data[offset] = next_val;
+				printk(" %d", raw_data->hfhgap_data[offset]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				for (++j; j < y_num - 1; j++) {
 					offset = (i * y_num) + j;
 
 					next_val = raw_data->hfdnd_data[offset];
 					if (!next_val) {
+<<<<<<< HEAD
 						raw_data->hgap_data[offset]
 							= next_val;
 						continue;
@@ -4709,12 +6377,73 @@ static void run_hfdnd_h_gap_read(void *device_data)
 				if(raw_data->hgap_data[i * y_num + j] > screen_max)
 						screen_max = raw_data->hgap_data[i * y_num + j];
 			}
+=======
+						raw_data->hfhgap_data[offset] = next_val;
+						printk(" %d", raw_data->hfhgap_data[offset]);
+						continue;
+					}
+					break;
+				}
+			}
+			if(next_val > 0 && cur_val > 0)
+			{
+				if (next_val > cur_val)
+					val = 100 - ((cur_val * 100) / next_val);
+				else
+					val = 100 - ((next_val * 100) / cur_val);
+
+				printk("%d ", val);
+
+				raw_data->hfhgap_data[offset] = val;
+
+				if(pdata->support_touchkey){
+					if(i < x_num-1){
+						if(raw_data->hfhgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->hfhgap_data[i * y_num + j];
+					}
+					else{
+						if(raw_data->hfhgap_data[i * y_num + j] > touchkey_max)
+							touchkey_max = raw_data->hfhgap_data[i * y_num + j];
+					}
+				}
+				else{
+					if(raw_data->hfhgap_data[i * y_num + j] > screen_max)
+							screen_max = raw_data->hfhgap_data[i * y_num + j];
+				}
+			}
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+			if (result && offset < ZT7538_H_GAP_DATA_SIZE &&
+				raw_data->hfhgap_data[offset] > info->hfdnd_h_gap_spec[offset]) {
+				result = false;
+				fx = i;
+				fy = j;
+				printk("(E)");
+			}
+#endif			
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		printk("\n");
 	}
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "HFDND H Gap screen_max %d, touchkey_max %d\n", screen_max, touchkey_max);
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+=======
+	tsp_debug_info(true, &client->dev, "HFDND H Gap screen_max %d, touchkey_max %d\n", screen_max, touchkey_max);
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	if (result) {
+		sprintf(finfo->cmd_buff, "%s", "OK");
+	} else {
+		offset = (fx * y_num) + fy;
+		sprintf(finfo->cmd_buff, "%d,%d,%d,%d,%d", fx, fy,
+					0, info->hfdnd_h_gap_spec[offset],
+					raw_data->hfhgap_data[offset]);
+		tsp_debug_info(true, &client->dev, "%s: hfdnd h gap view fail: [%d][%d]\n", info->client->name, fx, fy);
+	}
+#else	
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", screen_max, touchkey_max);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_cmd_result(info, finfo->cmd_buff,
 			strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
@@ -4738,15 +6467,21 @@ static void get_hfdnd_h_gap(void *device_data)
 	y_node = finfo->cmd_param[1];
 
 	if (x_node < 0 || x_node >= x_num || y_node < 0 || y_node >= y_num - 1) {
+<<<<<<< HEAD
 		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "abnormal");
 		set_cmd_result(info, finfo->cmd_buff,
 		strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+=======
+		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "NG");
+		set_cmd_result(info, finfo->cmd_buff, strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		finfo->cmd_state = FAIL;
 		return;
 	}
 
 	node_num = (x_node * y_num) + y_node;
 
+<<<<<<< HEAD
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d", raw_data->hgap_data[node_num]);
 	set_cmd_result(info, finfo->cmd_buff,
 	strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
@@ -4754,6 +6489,14 @@ static void get_hfdnd_h_gap(void *device_data)
 
 	input_info(true,&info->client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
 		(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+=======
+	sprintf(finfo->cmd_buff, "%d", raw_data->hfhgap_data[node_num]);
+	set_cmd_result(info, finfo->cmd_buff, strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	finfo->cmd_state = OK;
+
+	tsp_debug_info(true, &info->client->dev, "%s: %s(%d)\n", __func__,
+			finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void get_hfdnd_v_gap(void *device_data)
@@ -4771,15 +6514,21 @@ static void get_hfdnd_v_gap(void *device_data)
 	y_node = finfo->cmd_param[1];
 
 	if (x_node < 0 || x_node >= x_num - 1 || y_node < 0 || y_node >= y_num) {
+<<<<<<< HEAD
 		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "abnormal");
 		set_cmd_result(info, finfo->cmd_buff,
 		strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+=======
+		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "NG");
+		set_cmd_result(info, finfo->cmd_buff, strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		finfo->cmd_state = FAIL;
 		return;
 	}
 
 	node_num = (x_node * y_num) + y_node;
 
+<<<<<<< HEAD
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d", raw_data->vgap_data[node_num]);
 	set_cmd_result(info, finfo->cmd_buff,
 	strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
@@ -4791,11 +6540,25 @@ static void get_hfdnd_v_gap(void *device_data)
 
 #ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
 static void run_rxshort_read(void *device_data)
+=======
+	sprintf(finfo->cmd_buff, "%d", raw_data->hfvgap_data[node_num]);
+	set_cmd_result(info, finfo->cmd_buff, strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	finfo->cmd_state = OK;
+
+	tsp_debug_info(true, &info->client->dev, "%s: %s(%d)\n", __func__,
+			finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+}
+
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX
+
+static void run_reference_read(void *device_data)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct i2c_client *client = info->client;
 	struct tsp_factory_info *finfo = info->factory_info;
 	struct tsp_raw_data *raw_data = info->raw_data;
+<<<<<<< HEAD
 	int y_num = info->cap_info.y_node_num;
 	int i, touchkey_node = 2;
 	u16 screen_max = 0x0000, touchkey_max = 0x0000;
@@ -5014,11 +6777,54 @@ static void run_selfdnd_read(void *device_data)
 	
 	input_info(true, &client->dev, "SELF DND Pass\n");
 	
+=======
+	int min = 0xFFFF, max = 0x0000;
+	s32 i, j, touchkey_node = 2;
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_stop(misc_info);
+#endif
+	set_default_result(info);
+
+	ts_set_touchmode(TOUCH_REFERENCE_MODE);
+	get_raw_data(info, (u8 *)raw_data->reference_data, 2);
+	ts_set_touchmode(TOUCH_POINT_MODE);
+
+	tsp_debug_info(true,&client->dev, "%s start\n",__func__);
+
+	for (i = 0; i < info->cap_info.x_node_num; i++) {
+		for (j = 0; j < info->cap_info.y_node_num; j++) {
+			printk("%d ", raw_data->reference_data[(i * info->cap_info.y_node_num) + j]);
+
+			if(i == (info->cap_info.x_node_num-1) && info->pdata->support_touchkey){
+				if((j==touchkey_node)||(j==(info->cap_info.y_node_num-1)-touchkey_node)){
+					if(raw_data->reference_data[(i * info->cap_info.y_node_num) + j] < min &&
+						raw_data->reference_data[(i * info->cap_info.y_node_num) + j] >= 0)
+						min = raw_data->reference_data[(i * info->cap_info.y_node_num) + j];
+
+					if(raw_data->reference_data[(i * info->cap_info.y_node_num) + j] > max)
+						max = raw_data->reference_data[(i * info->cap_info.y_node_num) + j];
+				}
+			}
+			else{
+				if(raw_data->reference_data[(i * info->cap_info.y_node_num) + j] < min &&
+					raw_data->reference_data[(i * info->cap_info.y_node_num) + j] >= 0)
+					min = raw_data->reference_data[(i * info->cap_info.y_node_num) + j];
+
+				if(raw_data->reference_data[(i * info->cap_info.y_node_num) + j] > max)
+					max = raw_data->reference_data[(i * info->cap_info.y_node_num) + j];
+			}
+		}
+		printk("\n");
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%d,%d\n", min, max);
 	set_cmd_result(info, finfo->cmd_buff,
 					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: \"%s\"(%d)\n", __func__, finfo->cmd_buff,
 				(int)strlen(finfo->cmd_buff));
 
@@ -5026,11 +6832,21 @@ static void run_selfdnd_read(void *device_data)
 	esd_timer_start(CHECK_ESD_TIMER, misc_info);
 	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
 		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+=======
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+				(int)strlen(finfo->cmd_buff));
+#if ESD_TIMER_INTERVAL
+	esd_timer_start(CHECK_ESD_TIMER, misc_info);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	return;
 }
 
+<<<<<<< HEAD
 static void get_selfdnd(void *device_data)
+=======
+static void get_reference(void *device_data)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct i2c_client *client = info->client;
@@ -5038,6 +6854,10 @@ static void get_selfdnd(void *device_data)
 	struct tsp_raw_data *raw_data = info->raw_data;
 	unsigned int val;
 	int x_node, y_node;
+<<<<<<< HEAD
+=======
+	int node_num;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_default_result(info);
 
@@ -5050,6 +6870,7 @@ static void get_selfdnd(void *device_data)
 		set_cmd_result(info, finfo->cmd_buff,
 						strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 		info->factory_info->cmd_state = FAIL;
+<<<<<<< HEAD
 		return;
 	}
 
@@ -5060,11 +6881,27 @@ static void get_selfdnd(void *device_data)
 	finfo->cmd_state = OK;
 
 	input_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+=======
+
+		return;
+	}
+
+	node_num = x_node * info->cap_info.y_node_num + y_node;
+
+	val = raw_data->reference_data[node_num];
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%u", val);
+	set_cmd_result(info, finfo->cmd_buff,
+					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	info->factory_info->cmd_state = OK;
+
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
 }
 
+<<<<<<< HEAD
 static void run_selfdnd_h_gap_read(void *device_data)
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
@@ -5148,11 +6985,16 @@ static void get_selfdnd_h_gap(void *device_data)
 }
 
 static void run_jitter_read(void *device_data)
+=======
+#define Trxshort_len 4
+static void run_trxshort_read(void *device_data)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct i2c_client *client = info->client;
 	struct tsp_factory_info *finfo = info->factory_info;
 	struct tsp_raw_data *raw_data = info->raw_data;
+<<<<<<< HEAD
 	u16 min, max;
 	s32 i,j;
 
@@ -5198,11 +7040,70 @@ static void run_jitter_read(void *device_data)
 	esd_timer_start(CHECK_ESD_TIMER, misc_info);
 	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
 		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+=======
+	u32 Rx_msb=0, Rx_short=0, Tx_msb=0, Tx_short=0;
+	int i; char temp[7];
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_stop(misc_info);
+#endif
+	set_default_result(info);
+
+	memset(raw_data->trxshort_data, 0x00, Trxshort_len);
+
+	ts_set_touchmode(TOUCH_TRXSHORT_MODE);
+	get_raw_data(info, (u8 *)raw_data->trxshort_data, 2);
+	ts_set_touchmode(TOUCH_POINT_MODE);
+
+	dev_info(&client->dev, "TRX SHORT start\n");
+
+	Rx_msb = ((u32)raw_data->trxshort_data[0] & 0xffff) << 16;
+	Rx_short = ((u32)raw_data->trxshort_data[1] & 0xffff) | Rx_msb;			
+	dev_info(&client->dev, "Rx short : 0x%04x\n", Rx_short);
+
+	Tx_msb = ((u32)raw_data->trxshort_data[2] & 0xffff) << 16;
+	Tx_short = ((u32)raw_data->trxshort_data[3] & 0xffff) | Tx_msb;	
+	dev_info(&client->dev, "Tx short : 0x%04x\n", Tx_short);
+
+	if ((Rx_short != 0) || (Tx_short != 0)) {
+		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "NG");
+		if (Rx_short) {
+			for (i = 0; i < info->cap_info.y_node_num; i++) {
+				if ((Rx_short >> i) & 1) {
+					snprintf(temp, sizeof(temp), ",Rx%02d", i);
+					strcat(finfo->cmd_buff, temp);
+				}
+			}
+		}
+		if (Tx_short) {
+			for (i = 0; i < info->cap_info.x_node_num; i++) {
+				if ((Tx_short >> i) & 1) {
+					snprintf(temp, sizeof(temp), ",Tx%02d", i);
+					strcat(finfo->cmd_buff, temp);
+				}
+			}
+		}
+	} else {
+		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "OK");
+	}
+
+	dev_info(&client->dev, "TRX SHORT end\n");
+	set_cmd_result(info, finfo->cmd_buff,
+			strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	finfo->cmd_state = OK;
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_start(CHECK_ESD_TIMER, misc_info);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	return;
 }
 
+<<<<<<< HEAD
 static void get_jitter(void *device_data)
+=======
+static void get_trxshort(void *device_data)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct i2c_client *client = info->client;
@@ -5221,13 +7122,19 @@ static void get_jitter(void *device_data)
 		y_node < 0 || y_node >= info->cap_info.y_node_num) {
 		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "abnormal");
 		set_cmd_result(info, finfo->cmd_buff,
+<<<<<<< HEAD
 						strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 		info->factory_info->cmd_state = FAIL;
+=======
+				strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+		finfo->cmd_state = FAIL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 	}
 
 	node_num = x_node * info->cap_info.y_node_num + y_node;
 
+<<<<<<< HEAD
 	val = raw_data->jitter_data[node_num];
 	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%u", val);
 	set_cmd_result(info, finfo->cmd_buff,
@@ -6539,22 +8446,123 @@ static void set_aod_rect(void *device_data)
 	set_cmd_result(info, finfo->cmd_buff,
 			(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
-	mutex_lock(&finfo->cmd_lock);
-	finfo->cmd_is_running = false;
-	mutex_unlock(&finfo->cmd_lock);
-
+=======
+	val = raw_data->trxshort_data[node_num];
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%x", val);
+	set_cmd_result(info, finfo->cmd_buff,
+			strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 	finfo->cmd_state = OK;
 
-	input_info(true, &client->dev, "%s, %s\n", __func__, finfo->cmd_buff);
+	dev_info(&client->dev, "%s: %s(%d)\n", __func__, finfo->cmd_buff,
+				(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
 
 	return;
 }
-
-static void get_wet_mode(void *device_data)
+#ifdef CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7
+static void hfdnd_spec_adjust(void *device_data)
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct i2c_client *client = info->client;
 	struct tsp_factory_info *finfo = info->factory_info;
+	int test;
+
+	set_default_result(info);
+
+	test = finfo->cmd_param[0];
+
+	if (test) {	/* set : assy */
+		info->dnd_max_spec = DND_MAX_Ref_data;
+		info->dnd_min_spec = DND_MIN_Ref_data;
+		info->dnd_v_gap_spec = DND_V_GAP_Ref_data;
+		info->dnd_h_gap_spec = DND_H_GAP_Ref_data;
+		info->hfdnd_max_spec = HF_DND_MAX_Ref_data;
+		info->hfdnd_min_spec = HF_DND_MIN_Ref_data;
+		info->hfdnd_v_gap_spec = HF_DND_V_GAP_Ref_data;
+		info->hfdnd_h_gap_spec = HF_DND_H_GAP_Ref_data;
+		dev_info(&client->dev, "%s: set set spec: %d\n", __func__, test);
+	} else {	/* module */
+		info->dnd_max_spec = Module_DND_MAX_Ref_data;
+		info->dnd_min_spec = Module_DND_MIN_Ref_data;
+		info->dnd_v_gap_spec = Module_DND_V_GAP_Ref_data;
+		info->dnd_h_gap_spec = Module_DND_H_GAP_Ref_data;
+		info->hfdnd_max_spec = Module_HF_DND_MAX_Ref_data;
+		info->hfdnd_min_spec = Module_HF_DND_MIN_Ref_data;
+		info->hfdnd_v_gap_spec = Module_HF_DND_V_GAP_Ref_data;
+		info->hfdnd_h_gap_spec = Module_HF_DND_H_GAP_Ref_data;
+		dev_info(&client->dev, "%s: set module spec: %d\n", __func__, test);
+	}
+
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "OK");
+	set_cmd_result(info, finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	finfo->cmd_state = OK;
+
+	dev_info(&client->dev, "%s: %s(%d)\n", __func__,
+			finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	return;
+}
+#endif
+
+#endif
+
+static void cover_set(struct bt532_ts_info *info){
+	if(g_cover_state == COVER_OPEN) {
+		mutex_lock(&info->set_reg_lock);
+		zinitix_bit_clr(m_optional_mode, DEF_OPTIONAL_MODE_SVIEW_DETECT_BIT);
+		mutex_unlock(&info->set_reg_lock);
+	}
+	else if(g_cover_state == COVER_CLOSED) {
+		mutex_lock(&info->set_reg_lock);
+		zinitix_bit_set(m_optional_mode, DEF_OPTIONAL_MODE_SVIEW_DETECT_BIT);
+		mutex_unlock(&info->set_reg_lock);
+	}
+	if(info->work_state == SUSPEND || info->work_state == EALRY_SUSPEND || info->work_state == PROBE)
+		return;
+	bt532_set_optional_mode(info, true);
+}
+
+static void clear_cover_mode(void *device_data)
+{
+	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
+	struct tsp_factory_info *finfo = info->factory_info;
+	int arg = finfo->cmd_param[0];
+
+	set_default_result(info);
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%u",
+							(unsigned int) arg);
+
+	g_cover_state = arg;
+
+	cover_set(info);
+
+	tsp_debug_info(true, &info->client->dev, "COVER state = %d\n", g_cover_state);
+	set_cmd_result(info, finfo->cmd_buff,
+					strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+	mutex_lock(&finfo->cmd_lock);
+	finfo->cmd_is_running = false;
+	mutex_unlock(&finfo->cmd_lock);
+
+<<<<<<< HEAD
+	finfo->cmd_state = OK;
+
+	input_info(true, &client->dev, "%s, %s\n", __func__, finfo->cmd_buff);
+=======
+	info->factory_info->cmd_state = OK;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+
+	return;
+}
+
+<<<<<<< HEAD
+static void get_wet_mode(void *device_data)
+=======
+static void clear_reference_data(void *device_data)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+{
+	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
+	struct i2c_client *client = info->client;
+	struct tsp_factory_info *finfo = info->factory_info;
+<<<<<<< HEAD
 	u16 temp;
 
 	set_default_result(info);
@@ -6583,10 +8591,51 @@ static void get_wet_mode(void *device_data)
 
 #ifdef GLOVE_MODE
 static void glove_mode(void *device_data)
+=======
+
+	set_default_result(info);
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_stop(info);
+	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);
+#endif
+
+	write_reg(client, BT532_EEPROM_INFO_REG, 0xffff);
+
+	write_reg(client, 0xc003, 0x0001);
+	write_reg(client, 0xc104, 0x0001);
+	usleep_range(100, 100);
+	if (write_cmd(client, BT532_SAVE_STATUS_CMD) != I2C_SUCCESS)
+		return;
+
+	msleep(500);
+	write_reg(client, 0xc003, 0x0000);
+	write_reg(client, 0xc104, 0x0000);
+	usleep_range(100, 100);
+
+#if ESD_TIMER_INTERVAL
+	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
+		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+	esd_timer_start(CHECK_ESD_TIMER, info);
+#endif
+	tsp_debug_info(true, &client->dev, "%s: TSP clear calibration bit\n", __func__);
+
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "OK");
+	set_cmd_result(info, finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	finfo->cmd_state = OK;
+
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__,
+			finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	return;
+}
+
+static void run_ref_calibration(void *device_data)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
 	struct i2c_client *client = info->client;
 	struct tsp_factory_info *finfo = info->factory_info;
+<<<<<<< HEAD
 
 	set_default_result(info);
 
@@ -6617,6 +8666,72 @@ static void glove_mode(void *device_data)
 	return;
 }
 #endif
+=======
+	int i;
+
+	disable_irq(info->irq);
+	set_default_result(info);
+
+#if ESD_TIMER_INTERVAL
+	esd_timer_stop(info);
+	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);
+#endif
+
+	if (ts_hw_calibration(info) == true){
+		tsp_debug_info(true, &client->dev, "%s: TSP calibration Pass\n", __func__);
+		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "OK");
+		set_cmd_result(info, finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+		finfo->cmd_state = OK;
+	}
+	else{
+		tsp_debug_info(true, &client->dev, "%s: TSP calibration Fail\n", __func__);
+		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "%s", "NG");
+		set_cmd_result(info, finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+		finfo->cmd_state = FAIL;
+	}
+
+	for (i = 0; i < 5; i++) {
+		write_cmd(client, BT532_CLEAR_INT_STATUS_CMD);
+		usleep_range(10, 10);
+	}
+
+#if ESD_TIMER_INTERVAL
+	write_reg(client, BT532_PERIODICAL_INTERRUPT_INTERVAL,
+		SCAN_RATE_HZ * ESD_TIMER_INTERVAL);
+	esd_timer_start(CHECK_ESD_TIMER, info);
+#endif
+
+	enable_irq(info->irq);
+	tsp_debug_info(true, &client->dev, "%s: %s(%d)\n", __func__,
+			finfo->cmd_buff, (int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	return;
+}
+
+static void dead_zone_enable(void *device_data)
+{
+	struct bt532_ts_info *info = (struct bt532_ts_info *)device_data;
+	struct tsp_factory_info *finfo = info->factory_info;
+	struct i2c_client *client = info->client;
+	int val = finfo->cmd_param[0];
+
+	set_default_result(info);
+
+	if(val) //normal
+		zinitix_bit_clr(m_optional_mode, DEF_OPTIONAL_MODE_EDGE_SELECT);
+	else //factory
+		zinitix_bit_set(m_optional_mode, DEF_OPTIONAL_MODE_EDGE_SELECT);
+
+	snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff),
+			"dead_zone %s", val ? "disable" : "enable");
+	set_cmd_result(info, finfo->cmd_buff,
+			(int)strnlen(finfo->cmd_buff, sizeof(finfo->cmd_buff)));
+	finfo->cmd_state = OK;
+
+	dev_info(&client->dev, "%s(), %s\n", __func__, finfo->cmd_buff);
+
+	return;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static ssize_t store_cmd(struct device *dev, struct device_attribute
 				  *devattr, const char *buf, size_t count)
@@ -6632,6 +8747,7 @@ static ssize_t store_cmd(struct device *dev, struct device_attribute
 	bool cmd_found = false;
 	int param_cnt = 0;
 
+<<<<<<< HEAD
 	if (strlen(buf) >= TSP_CMD_STR_LEN) {
 		pr_err("%s: cmd length(strlen(buf)) is over (%d,%s)!!\n",
 				__func__, (int)strlen(buf), buf);
@@ -6646,6 +8762,20 @@ static ssize_t store_cmd(struct device *dev, struct device_attribute
 
 	if (finfo->cmd_is_running == true) {
 		input_err(true, &client->dev, "%s: other cmd is running\n", __func__);
+=======
+	if (finfo->cmd_is_running == true) {
+		tsp_debug_err(true, &client->dev, "%s: other cmd is running\n", __func__);
+		goto err_out;
+	}
+
+	if (strlen(buf) >= TSP_CMD_STR_LEN) {
+		tsp_debug_err(true, &client->dev, "%s: cmd length(strlen(buf)) is over (%s,%d)!!\n", __func__, buf, (int)strlen(buf));
+		goto err_out;
+	}
+
+	if (count >= (unsigned int)TSP_CMD_STR_LEN) {
+		tsp_debug_err(true, &client->dev, "%s: cmd length(count) is over (%s,%d)!!\n", __func__, buf, (unsigned int)count);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto err_out;
 	}
 
@@ -6708,9 +8838,15 @@ static ssize_t store_cmd(struct device *dev, struct device_attribute
 		} while ((cur - buf <= len) && (param_cnt < TSP_CMD_PARAM_NUM));
 	}
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "cmd = %s\n", tsp_cmd_ptr->cmd_name);
 /*	for (i = 0; i < param_cnt; i++)
 		input_info(true, &client->dev, "cmd param %d= %d\n", i, finfo->cmd_param[i]);*/
+=======
+	tsp_debug_info(true, &client->dev, "cmd = %s\n", tsp_cmd_ptr->cmd_name);
+/*	for (i = 0; i < param_cnt; i++)
+		tsp_debug_info(true, &client->dev, "cmd param %d= %d\n", i, finfo->cmd_param[i]);*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	tsp_cmd_ptr->cmd_func(info);
 
@@ -6725,7 +8861,11 @@ static ssize_t show_cmd_status(struct device *dev,
 	struct i2c_client *client = info->client;
 	struct tsp_factory_info *finfo = info->factory_info;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "tsp cmd: status:%d\n", finfo->cmd_state);
+=======
+	tsp_debug_info(true, &client->dev, "tsp cmd: status:%d\n", finfo->cmd_state);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (finfo->cmd_state == WAITING)
 		snprintf(finfo->cmd_buff, sizeof(finfo->cmd_buff), "WAITING");
@@ -6753,7 +8893,11 @@ static ssize_t show_cmd_result(struct device *dev, struct device_attribute
 	struct i2c_client *client = info->client;
 	struct tsp_factory_info *finfo = info->factory_info;
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "tsp cmd: result: %s\n", finfo->cmd_result);
+=======
+	tsp_debug_info(true, &client->dev, "tsp cmd: result: %s\n", finfo->cmd_result);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mutex_lock(&finfo->cmd_lock);
 	finfo->cmd_is_running = false;
@@ -6765,6 +8909,7 @@ static ssize_t show_cmd_result(struct device *dev, struct device_attribute
 					"%s\n", finfo->cmd_result);
 }
 
+<<<<<<< HEAD
 static ssize_t scrub_position_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -6785,12 +8930,20 @@ static DEVICE_ATTR(cmd, S_IWUSR | S_IWGRP, NULL, store_cmd);
 static DEVICE_ATTR(cmd_status, S_IRUGO, show_cmd_status, NULL);
 static DEVICE_ATTR(cmd_result, S_IRUGO, show_cmd_result, NULL);
 static DEVICE_ATTR(scrub_pos, S_IRUGO, scrub_position_show, NULL);
+=======
+static DEVICE_ATTR(cmd, S_IWUSR | S_IWGRP, NULL, store_cmd);
+static DEVICE_ATTR(cmd_status, S_IRUGO, show_cmd_status, NULL);
+static DEVICE_ATTR(cmd_result, S_IRUGO, show_cmd_result, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct attribute *touchscreen_attributes[] = {
 	&dev_attr_cmd.attr,
 	&dev_attr_cmd_status.attr,
 	&dev_attr_cmd_result.attr,
+<<<<<<< HEAD
 	&dev_attr_scrub_pos.attr,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NULL,
 };
 
@@ -6808,12 +8961,20 @@ static ssize_t show_touchkey_threshold(struct device *dev,
 	read_data(client, BT532_BUTTON_SENSITIVITY, (u8 *)&cap->key_threshold, 2);
 
 #ifdef NOT_SUPPORTED_TOUCH_DUMMY_KEY
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: key threshold = %d\n", __func__, cap->key_threshold);
+=======
+	tsp_debug_info(true, &client->dev, "%s: key threshold = %d\n", __func__, cap->key_threshold);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return snprintf(buf, 41, "%d", cap->key_threshold);
 #else
 	read_data(client, BT532_DUMMY_BUTTON_SENSITIVITY, (u8 *)&cap->dummy_threshold, 2);
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: key threshold = %d %d %d %d\n", __func__,
+=======
+	tsp_debug_info(true, &client->dev, "%s: key threshold = %d %d %d %d\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			cap->dummy_threshold, cap->key_threshold, cap->key_threshold, cap->dummy_threshold);
 
 	return snprintf(buf, 41, "%d %d %d %d", cap->dummy_threshold,
@@ -6838,7 +8999,11 @@ static ssize_t show_touchkey_sensitivity(struct device *dev,
 	else if (!strcmp(attr->attr.name, "touchkey_back"))
 		i = 1;
 	else {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "%s: Invalid attribute\n",__func__);
+=======
+		tsp_debug_err(true, &client->dev, "%s: Invalid attribute\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		goto err_out;
 	}
@@ -6857,7 +9022,11 @@ static ssize_t show_touchkey_sensitivity(struct device *dev,
 	else if (!strcmp(attr->attr.name, "touchkey_dummy_btn6"))
 		i = 5;
 	else {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "%s: Invalid attribute\n",__func__);
+=======
+		tsp_debug_err(true, &client->dev, "%s: Invalid attribute\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		goto err_out;
 	}
@@ -6866,13 +9035,21 @@ static ssize_t show_touchkey_sensitivity(struct device *dev,
 	ret = read_data(client, BT532_BTN_WIDTH + i, (u8*)&val, 2);
 	up(&info->work_lock);
 	if (ret < 0) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "%s: Failed to read %d's key sensitivity\n",
+=======
+		tsp_debug_err(true, &client->dev, "%s: Failed to read %d's key sensitivity\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					 __func__,i);
 
 		goto err_out;
 	}
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s: %d's key sensitivity = %d\n",
+=======
+	tsp_debug_info(true, &client->dev, "%s: %d's key sensitivity = %d\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				__func__, i, val);
 
 	return snprintf(buf, 6, "%d", val);
@@ -6906,21 +9083,37 @@ static ssize_t touch_led_control(struct device *dev, struct device_attribute *at
 	if(pdata->regulator_tkled){
 		regulator_led = regulator_get(NULL, pdata->regulator_tkled);
 		if (IS_ERR(regulator_led)) {
+<<<<<<< HEAD
 			input_err(true, dev, "%s: Failed to get regulator_led.\n", __func__);
 			goto out_led_control;
 		}
 
 		input_info(true, &info->client->dev, "[TKEY] %s : %d _ %d\n",__func__,data,__LINE__);
+=======
+			tsp_debug_err(true, dev, "%s: Failed to get regulator_led.\n", __func__);
+			goto out_led_control;
+		}
+
+		tsp_debug_info(true, &info->client->dev, "[TKEY] %s : %d _ %d\n",__func__,data,__LINE__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (data) {
 			retval = regulator_enable(regulator_led);
 			if (retval)
+<<<<<<< HEAD
 				input_err(true, dev, "%s: Failed to enable regulator_led: %d\n", __func__, retval);
+=======
+				tsp_debug_err(true, dev, "%s: Failed to enable regulator_led: %d\n", __func__, retval);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		} else {
 			if (regulator_is_enabled(regulator_led)){
 				retval = regulator_disable(regulator_led);
 				if (retval)
+<<<<<<< HEAD
 					input_err(true, dev, "%s: Failed to disable regulator_led: %d\n", __func__, retval);
+=======
+					tsp_debug_err(true, dev, "%s: Failed to disable regulator_led: %d\n", __func__, retval);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 		}
 
@@ -6967,6 +9160,7 @@ static struct attribute_group touchkey_attr_group = {
 	.attrs = touchkey_attributes,
 };
 
+<<<<<<< HEAD
 static struct tsp_cmd tsp_cmds[] = {
 	{TSP_CMD("fw_update", fw_update),},
 	{TSP_CMD("get_fw_ver_bin", get_fw_ver_bin),},
@@ -7045,6 +9239,8 @@ static struct tsp_cmd tsp_cmds[] = {
 	{TSP_CMD("not_support_cmd", not_support_cmd),},
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int init_sec_factory(struct bt532_ts_info *info)
 {
 	struct device *factory_ts_dev = NULL;
@@ -7057,7 +9253,11 @@ static int init_sec_factory(struct bt532_ts_info *info)
 
 	factory_info = kzalloc(sizeof(struct tsp_factory_info), GFP_KERNEL);
 	if (unlikely(!factory_info)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s: Failed to allocate memory\n",
+=======
+		tsp_debug_err(true, &info->client->dev, "%s: Failed to allocate memory\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				__func__);
 		ret = -ENOMEM;
 
@@ -7065,7 +9265,11 @@ static int init_sec_factory(struct bt532_ts_info *info)
 	}
 	raw_data = kzalloc(sizeof(struct tsp_raw_data), GFP_KERNEL);
 	if (unlikely(!raw_data)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s: Failed to allocate memory\n",
+=======
+		tsp_debug_err(true, &info->client->dev, "%s: Failed to allocate memory\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				__func__);
 		ret = -ENOMEM;
 
@@ -7078,7 +9282,11 @@ static int init_sec_factory(struct bt532_ts_info *info)
 
 	factory_ts_dev = sec_device_create( info, "tsp");
 	if (unlikely(!factory_ts_dev)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "Failed to create factory dev\n");
+=======
+		tsp_debug_err(true, &info->client->dev, "Failed to create factory dev\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -ENODEV;
 		goto err_create_device;
 	}
@@ -7086,7 +9294,11 @@ static int init_sec_factory(struct bt532_ts_info *info)
 	if(pdata->support_touchkey){
 		factory_tk_dev = sec_device_create( info, "sec_touchkey");
 		if (IS_ERR(factory_tk_dev)) {
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "Failed to create factory dev\n");
+=======
+			tsp_debug_err(true, &info->client->dev, "Failed to create factory dev\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = -ENODEV;
 			goto err_create_device;
 		}
@@ -7094,7 +9306,11 @@ static int init_sec_factory(struct bt532_ts_info *info)
 
 	ret = sysfs_create_group(&factory_ts_dev->kobj, &touchscreen_attr_group);
 	if (unlikely(ret)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "Failed to create touchscreen sysfs group\n");
+=======
+		tsp_debug_err(true, &info->client->dev, "Failed to create touchscreen sysfs group\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto err_create_sysfs;
 	}
 
@@ -7102,14 +9318,22 @@ static int init_sec_factory(struct bt532_ts_info *info)
 		&info->input_dev->dev.kobj, "input");
 
 	if (ret < 0) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s: Failed to create link\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s: Failed to create link\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto err_create_sysfs;
 	}
 
 	if(pdata->support_touchkey){
 		ret = sysfs_create_group(&factory_tk_dev->kobj, &touchkey_attr_group);
 		if (unlikely(ret)) {
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "Failed to create touchkey sysfs group\n");
+=======
+			tsp_debug_err(true, &info->client->dev, "Failed to create touchkey sysfs group\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			goto err_create_sysfs;
 		}
 	}
@@ -7147,6 +9371,10 @@ static int ts_misc_fops_close(struct inode *inode, struct file *filp)
 static long ts_misc_fops_ioctl(struct file *filp,
 	unsigned int cmd, unsigned long arg)
 {
+<<<<<<< HEAD
+=======
+	void __user *argp = (void __user *)arg;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct raw_ioctl raw_ioctl;
 	u8 *u8Data;
 	int ret = 0;
@@ -7157,7 +9385,10 @@ static long ts_misc_fops_ioctl(struct file *filp,
 	struct reg_ioctl reg_ioctl;
 	u16 val;
 	int nval = 0;
+<<<<<<< HEAD
 	void __user *argp = compat_ptr(arg);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (misc_info == NULL)
 	{
@@ -7175,6 +9406,7 @@ static long ts_misc_fops_ioctl(struct file *filp,
 
 	case TOUCH_IOCTL_SET_DEBUGMSG_STATE:
 		if (copy_from_user(&nval, argp, 4)) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\n");
 			return -1;
 		}
@@ -7183,6 +9415,16 @@ static long ts_misc_fops_ioctl(struct file *filp,
 				nval);
 		else
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] off debug mode (%d)\n",
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\n");
+			return -1;
+		}
+		if (nval)
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] on debug mode (%d)\n",
+				nval);
+		else
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] off debug mode (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				nval);
 		m_ts_debug_mode = nval;
 		break;
@@ -7209,9 +9451,15 @@ static long ts_misc_fops_ioctl(struct file *filp,
 		if (copy_from_user(&sz, argp, sizeof(size_t)))
 			return -1;
 
+<<<<<<< HEAD
 		//input_info(true, &misc_info->client->dev, KERN_INFO "[zinitix_touch]: firmware size = %d\r\n", sz);
 		if (misc_info->cap_info.ic_fw_size != sz) {
 			input_info(true, &misc_info->client->dev, "[zinitix_touch]: firmware size error\r\n");
+=======
+		//tsp_debug_info(true, &misc_info->client->dev, KERN_INFO "[zinitix_touch]: firmware size = %d\r\n", sz);
+		if (misc_info->cap_info.ic_fw_size != sz) {
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]: firmware size error\r\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -1;
 		}
 		break;
@@ -7223,7 +9471,11 @@ static long ts_misc_fops_ioctl(struct file *filp,
 
 		version = (u16) (m_firmware_data[52] | (m_firmware_data[53]<<8));
 
+<<<<<<< HEAD
 		input_info(true, &misc_info->client->dev, "[zinitix_touch]: firmware version = %x\r\n", version);
+=======
+		tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]: firmware version = %x\r\n", version);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (copy_to_user(argp, &version, sizeof(version)))
 			return -1;
@@ -7267,7 +9519,11 @@ static long ts_misc_fops_ioctl(struct file *filp,
 		disable_irq(misc_info->irq);
 		down(&misc_info->work_lock);
 		if (misc_info->work_state != NOTHING) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.. (%d)\r\n",
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.. (%d)\r\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				misc_info->work_state);
 			up(&misc_info->work_lock);
 			return -1;
@@ -7282,7 +9538,11 @@ static long ts_misc_fops_ioctl(struct file *filp,
 		mode = misc_info->touch_mode;
 		if (write_reg(misc_info->client,
 			BT532_TOUCH_MODE, mode) != I2C_SUCCESS) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch]: failed to set touch mode %d.\n",
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]: failed to set touch mode %d.\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				mode);
 			goto fail_hw_cal;
 		}
@@ -7307,7 +9567,11 @@ fail_hw_cal:
 			return -1;
 		}
 		if (copy_from_user(&nval, argp, 4)) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\r\n");
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\r\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			misc_info->work_state = NOTHING;
 			return -1;
 		}
@@ -7322,7 +9586,11 @@ fail_hw_cal:
 		}
 		down(&misc_info->work_lock);
 		if (misc_info->work_state != NOTHING) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch]:other process occupied.. (%d)\n",
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]:other process occupied.. (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				misc_info->work_state);
 			up(&misc_info->work_lock);
 			return -1;
@@ -7334,20 +9602,35 @@ fail_hw_cal:
 			argp, sizeof(struct reg_ioctl))) {
 			misc_info->work_state = NOTHING;
 			up(&misc_info->work_lock);
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\n");
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -1;
 		}
 
 		if (read_data(misc_info->client,
+<<<<<<< HEAD
 			(u16)reg_ioctl.addr, (u8 *)&val, 2) < 0)
+=======
+			reg_ioctl.addr, (u8 *)&val, 2) < 0)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = -1;
 
 		nval = (int)val;
 
+<<<<<<< HEAD
 		if (copy_to_user(compat_ptr(reg_ioctl.val), (u8 *)&nval, 4)) {
 			misc_info->work_state = NOTHING;
 			up(&misc_info->work_lock);
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_to_user\n");
+=======
+		if (copy_to_user((void *)(unsigned long)reg_ioctl.val, (u8 *)&nval, 4)) {
+			misc_info->work_state = NOTHING;
+			up(&misc_info->work_lock);
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_to_user\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -1;
 		}
 
@@ -7362,7 +9645,11 @@ fail_hw_cal:
 
 		down(&misc_info->work_lock);
 		if (misc_info->work_state != NOTHING) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.. (%d)\n",
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.. (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				misc_info->work_state);
 			up(&misc_info->work_lock);
 			return -1;
@@ -7373,6 +9660,7 @@ fail_hw_cal:
 				argp, sizeof(struct reg_ioctl))) {
 			misc_info->work_state = NOTHING;
 			up(&misc_info->work_lock);
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user(1)\n");
 			return -1;
 		}
@@ -7381,11 +9669,25 @@ fail_hw_cal:
 			misc_info->work_state = NOTHING;
 			up(&misc_info->work_lock);
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user(2)\n");
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\n");
+			return -1;
+		}
+
+		if (copy_from_user(&val, (void *)(unsigned long)reg_ioctl.val, 4)) {
+			misc_info->work_state = NOTHING;
+			up(&misc_info->work_lock);
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -1;
 		}
 
 		if (write_reg(misc_info->client,
+<<<<<<< HEAD
 			(u16)reg_ioctl.addr, val) != I2C_SUCCESS)
+=======
+			reg_ioctl.addr, val) != I2C_SUCCESS)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = -1;
 
 		zinitix_debug_msg("write : reg addr = 0x%x, val = 0x%x\r\n",
@@ -7402,7 +9704,11 @@ fail_hw_cal:
 		}
 		down(&misc_info->work_lock);
 		if (misc_info->work_state != NOTHING) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.. (%d)\r\n",
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.. (%d)\r\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				misc_info->work_state);
 			up(&misc_info->work_lock);
 			return -1;
@@ -7426,7 +9732,11 @@ fail_hw_cal:
 		}
 		down(&misc_info->work_lock);
 		if (misc_info->work_state != NOTHING) {
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.." \
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch]: other process occupied.." \
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				"(%d)\r\n", misc_info->work_state);
 			up(&misc_info->work_lock);
 			return -1;
@@ -7465,7 +9775,11 @@ fail_hw_cal:
 		if (copy_from_user(&raw_ioctl,
 			argp, sizeof(struct raw_ioctl))) {
 			up(&misc_info->raw_data_lock);
+<<<<<<< HEAD
 			input_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\r\n");
+=======
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_from_user\r\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -1;
 		}
 
@@ -7474,8 +9788,13 @@ fail_hw_cal:
 		u8Data = (u8 *)&misc_info->cur_data[0];
 		if(raw_ioctl.sz > MAX_TRAW_DATA_SZ*2)
 			raw_ioctl.sz = MAX_TRAW_DATA_SZ*2;
+<<<<<<< HEAD
 		if (copy_to_user(compat_ptr(raw_ioctl.buf), (u8 *)u8Data,
 			raw_ioctl.sz)) {
+=======
+		if (copy_to_user((void *)(unsigned long)raw_ioctl.buf, (u8 *)u8Data, raw_ioctl.sz)) {
+			tsp_debug_info(true, &misc_info->client->dev, "[zinitix_touch] error : copy_to_user\r\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			up(&misc_info->raw_data_lock);
 			return -1;
 		}
@@ -7497,7 +9816,11 @@ static int bt532_pinctrl_configure(struct bt532_ts_info *info, bool active)
 	struct pinctrl_state *pinctrl_state;
 	int retval = 0;
 
+<<<<<<< HEAD
 	input_dbg(true, dev, "%s: pinctrl %d\n", __func__, active);
+=======
+	tsp_debug_dbg(true, dev, "%s: pinctrl %d\n", __func__, active);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (active)
 		pinctrl_state = pinctrl_lookup_state(info->pinctrl, "on_state");
@@ -7505,11 +9828,19 @@ static int bt532_pinctrl_configure(struct bt532_ts_info *info, bool active)
 		pinctrl_state = pinctrl_lookup_state(info->pinctrl, "off_state");
 
 	if (IS_ERR(pinctrl_state)) {
+<<<<<<< HEAD
 		input_err(true, dev, "%s: Failed to lookup pinctrl.\n", __func__);
 	} else {
 		retval = pinctrl_select_state(info->pinctrl, pinctrl_state);
 		if (retval)
 			input_err(true, dev, "%s: Failed to configure pinctrl.\n", __func__);
+=======
+		tsp_debug_err(true, dev, "%s: Failed to lookup pinctrl.\n", __func__);
+	} else {
+		retval = pinctrl_select_state(info->pinctrl, pinctrl_state);
+		if (retval)
+			tsp_debug_err(true, dev, "%s: Failed to configure pinctrl.\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	return 0;
 }
@@ -7529,30 +9860,50 @@ static int bt532_power_ctrl(void *data, bool on)
 	if (!pdata->gpio_ldo_en) {
 		regulator_dvdd = regulator_get(NULL, pdata->regulator_dvdd);
 		if (IS_ERR(regulator_dvdd)) {
+<<<<<<< HEAD
 			input_err(true, dev, "%s: Failed to get %s regulator.\n",
+=======
+			tsp_debug_err(true, dev, "%s: Failed to get %s regulator.\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				 __func__, pdata->regulator_dvdd);
 			return PTR_ERR(regulator_dvdd);
 		}
 	}
 	regulator_avdd = regulator_get(NULL, pdata->regulator_avdd);
 	if (IS_ERR(regulator_avdd)) {
+<<<<<<< HEAD
 		input_err(true, dev, "%s: Failed to get %s regulator.\n",
+=======
+		tsp_debug_err(true, dev, "%s: Failed to get %s regulator.\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			 __func__, pdata->regulator_avdd);
 		return PTR_ERR(regulator_avdd);
 	}
 
+<<<<<<< HEAD
 	input_info(true, dev, "%s: %s\n", __func__, on ? "on" : "off");
+=======
+	tsp_debug_info(true, dev, "%s: %s\n", __func__, on ? "on" : "off");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (on) {
 		retval = regulator_enable(regulator_avdd);
 		if (retval) {
+<<<<<<< HEAD
 			input_err(true, dev, "%s: Failed to enable avdd: %d\n", __func__, retval);
+=======
+			tsp_debug_err(true, dev, "%s: Failed to enable avdd: %d\n", __func__, retval);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return retval;
 		}
 		if (!pdata->gpio_ldo_en) {
 			retval = regulator_enable(regulator_dvdd);
 			if (retval) {
+<<<<<<< HEAD
 				input_err(true, dev, "%s: Failed to enable vdd: %d\n", __func__, retval);
+=======
+				tsp_debug_err(true, dev, "%s: Failed to enable vdd: %d\n", __func__, retval);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				return retval;
 			}
 		}
@@ -7627,12 +9978,20 @@ static int bt532_ts_probe_dt(struct device_node *np,
 			pdata->gpio_ldo_en = true;
 	} else {
 		if (of_property_read_string(np, "zinitix,regulator_dvdd", &pdata->regulator_dvdd)) {
+<<<<<<< HEAD
 			input_err(true, dev, "Failed to get regulator_dvdd name property\n");
+=======
+			tsp_debug_err(true, dev, "Failed to get regulator_dvdd name property\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -EINVAL;
 		}
 	}
 	if (of_property_read_string(np, "zinitix,regulator_avdd", &pdata->regulator_avdd)) {
+<<<<<<< HEAD
 		input_err(true, dev, "Failed to get regulator_avdd name property\n");
+=======
+		tsp_debug_err(true, dev, "Failed to get regulator_avdd name property\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EINVAL;
 	}
 
@@ -7643,6 +10002,7 @@ static int bt532_ts_probe_dt(struct device_node *np,
 	 */
 	of_property_read_string(np, "zinitix,firmware_name", &pdata->firmware_name);
 	of_property_read_string(np, "zinitix,chip_name", &pdata->chip_name);
+<<<<<<< HEAD
 	of_property_read_string(np, "zinitix,project_name", &pdata->project_name);
 	of_property_read_string(np, "zinitix,regulator_tkled", &pdata->regulator_tkled);
 
@@ -7668,6 +10028,11 @@ static int bt532_ts_probe_dt(struct device_node *np,
 	
 	pdata->mis_cal_check = of_property_read_bool(np, "zinitix,mis_cal_check");
 #endif
+=======
+	of_property_read_string(np, "zinitix,regulator_tkled", &pdata->regulator_tkled);
+
+	pdata->support_touchkey = of_property_read_bool(np, "zinitix,touchkey");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -7679,6 +10044,10 @@ static int bt532_ts_probe(struct i2c_client *client,
 	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
 	struct bt532_ts_platform_data *pdata = client->dev.platform_data;
 	struct bt532_ts_info *info;
+<<<<<<< HEAD
+=======
+	struct input_dev *input_dev;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct device_node *np = client->dev.of_node;
 	int ret = 0;
 	int i;
@@ -7710,18 +10079,30 @@ static int bt532_ts_probe(struct i2c_client *client,
 
 	}
 	else if (!pdata) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Not exist platform data\n");
+=======
+		tsp_debug_err(true, &client->dev, "Not exist platform data\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EINVAL;
 	}
 
 	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C)) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Not compatible i2c function\n");
+=======
+		tsp_debug_err(true, &client->dev, "Not compatible i2c function\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EIO;
 	}
 
 	info = kzalloc(sizeof(struct bt532_ts_info), GFP_KERNEL);
 	if (!info) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to allocate memory\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to allocate memory\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -ENOMEM;
 	}
 
@@ -7729,20 +10110,34 @@ static int bt532_ts_probe(struct i2c_client *client,
 	info->client = client;
 	info->pdata = pdata;
 
+<<<<<<< HEAD
 	info->input_dev = input_allocate_device();
 	if (!info->input_dev) {
 		input_err(true, &client->dev, "Failed to allocate input device\n");
+=======
+	input_dev = input_allocate_device();
+	if (!input_dev) {
+		tsp_debug_err(true, &client->dev, "Failed to allocate input device\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -ENOMEM;
 		goto err_alloc;
 	}
 
 	info->pinctrl = devm_pinctrl_get(&client->dev);
 	if (IS_ERR(info->pinctrl)) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "%s: Failed to get pinctrl data\n", __func__);
+=======
+		tsp_debug_err(true, &client->dev, "%s: Failed to get pinctrl data\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = PTR_ERR(info->pinctrl);
 		goto err_get_pinctrl;
 	}
 
+<<<<<<< HEAD
+=======
+	info->input_dev = input_dev;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	info->work_state = PROBE;
 
 	// power on
@@ -7760,6 +10155,7 @@ static int bt532_ts_probe(struct i2c_client *client,
 	/* init touch mode */
 	info->touch_mode = TOUCH_POINT_MODE;
 	misc_info = info;
+<<<<<<< HEAD
 	mutex_init(&info->set_reg_lock);
 
 #if ESD_TIMER_INTERVAL
@@ -7781,10 +10177,19 @@ static int bt532_ts_probe(struct i2c_client *client,
 	ret = ic_version_check(info);
 	if (ret < 0) {
 		input_err(true, &info->client->dev,
+=======
+
+	mutex_init(&info->set_reg_lock);
+
+	ret = ic_version_check(info);
+	if (ret < 0) {
+		tsp_debug_err(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: fail version check", __func__);
 		force_update = true;
 	}
 
+<<<<<<< HEAD
 #ifdef PAT_CONTROL
 	if (info->pdata->pat_function == PAT_CONTROL_FORCE_UPDATE)
 		force_update = true;
@@ -7794,6 +10199,12 @@ static int bt532_ts_probe(struct i2c_client *client,
 	if (ret < 0) {
 		ret = -EPERM;
 		input_err(true, &info->client->dev,
+=======
+	ret = fw_update_work(info, force_update);
+	if (ret < 0) {
+		ret = -EPERM;
+		tsp_debug_err(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: fail update_work", __func__);
 		goto err_fw_update;
 	}
@@ -7804,6 +10215,7 @@ static int bt532_ts_probe(struct i2c_client *client,
 	}
 	snprintf(info->phys, sizeof(info->phys),
 		"%s/input0", dev_name(&client->dev));
+<<<<<<< HEAD
 	info->input_dev->name = "sec_touchscreen";
 	info->input_dev->id.bustype = BUS_I2C;
 /*	info->input_dev->id.vendor = 0x0001; */
@@ -7815,6 +10227,15 @@ static int bt532_ts_probe(struct i2c_client *client,
 #ifdef GLOVE_MODE
 	input_set_capability(info->input_dev, EV_SW, SW_GLOVE);
 #endif
+=======
+	input_dev->name = "sec_touchscreen";
+	input_dev->id.bustype = BUS_I2C;
+/*	input_dev->id.vendor = 0x0001; */
+	input_dev->phys = info->phys;
+/*	input_dev->id.product = 0x0002; */
+/*	input_dev->id.version = 0x0100; */
+	input_dev->dev.parent = &client->dev;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	set_bit(EV_SYN, info->input_dev->evbit);
 	set_bit(EV_KEY, info->input_dev->evbit);
@@ -7828,10 +10249,13 @@ static int bt532_ts_probe(struct i2c_client *client,
 			set_bit(BUTTON_MAPPING_KEY[i], info->input_dev->keybit);
 	}
 
+<<<<<<< HEAD
 	if(pdata->support_lpm_mode){
 		set_bit(KEY_BLACK_UI_GESTURE, info->input_dev->keybit);
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_abs_params(info->input_dev, ABS_MT_POSITION_X,
 		0, pdata->x_resolution + ABS_PT_OFFSET,	0, 0);
 	input_set_abs_params(info->input_dev, ABS_MT_POSITION_Y,
@@ -7845,7 +10269,11 @@ static int bt532_ts_probe(struct i2c_client *client,
 	input_set_abs_params(info->input_dev, ABS_MT_WIDTH_MAJOR,
 		0, 255, 0, 0);
 
+<<<<<<< HEAD
 #ifdef SUPPORTED_PALM_TOUCH
+=======
+#if (TOUCH_POINT_MODE == 2)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_abs_params(info->input_dev, ABS_MT_TOUCH_MINOR,
 		0, 255, 0, 0);
 	input_set_abs_params(info->input_dev, ABS_MT_PALM,
@@ -7859,11 +10287,38 @@ static int bt532_ts_probe(struct i2c_client *client,
 	input_set_drvdata(info->input_dev, info);
 	ret = input_register_device(info->input_dev);
 	if (ret) {
+<<<<<<< HEAD
 		input_info(true, &client->dev, "unable to register %s input device\r\n",
+=======
+		tsp_debug_info(true, &client->dev, "unable to register %s input device\r\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			info->input_dev->name);
 		goto err_input_register_device;
 	}
 
+<<<<<<< HEAD
+=======
+#if ESD_TIMER_INTERVAL
+	spin_lock_init(&info->lock);
+	INIT_WORK(&info->tmr_work, ts_tmr_work);
+	esd_tmr_workqueue =
+		create_singlethread_workqueue("esd_tmr_workqueue");
+
+	if (!esd_tmr_workqueue) {
+		tsp_debug_err(true, &client->dev, "Failed to create esd tmr work queue\n");
+		ret = -EPERM;
+
+		goto err_esd_sequence;
+	}
+
+	esd_timer_init(info);
+/*	esd_timer_start(CHECK_ESD_TIMER, info);
+#if defined(TSP_VERBOSE_DEBUG)
+	tsp_debug_info(true, &client->dev, "Started esd timer\n");
+#endif*/
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if(init_touch(info) == false) {
 		ret = -EPERM;
 		goto err_init_touch;
@@ -7875,7 +10330,11 @@ static int bt532_ts_probe(struct i2c_client *client,
 	/* configure irq */
 	info->irq = gpio_to_irq(pdata->gpio_int);
 	if (info->irq < 0){
+<<<<<<< HEAD
 		input_info(true, &client->dev, "error. gpio_to_irq(..) function is not \
+=======
+		tsp_debug_info(true, &client->dev, "error. gpio_to_irq(..) function is not \
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			supported? you should define GPIO_TOUCH_IRQ.\r\n");
 		ret = -EINVAL;
 		goto error_gpio_irq;
@@ -7886,6 +10345,7 @@ static int bt532_ts_probe(struct i2c_client *client,
 		IRQF_TRIGGER_FALLING | IRQF_ONESHOT , BT532_TS_DEVICE, info);
 
 	if (ret) {
+<<<<<<< HEAD
 		input_info(true, &client->dev, "unable to register irq.(%s)\r\n",
 			info->input_dev->name);
 		goto err_request_irq;
@@ -7897,6 +10357,13 @@ static int bt532_ts_probe(struct i2c_client *client,
 	input_info(true, &client->dev, "%s[%d] called!\n",
 		__func__, info->irq);
 #endif
+=======
+		tsp_debug_info(true, &client->dev, "unable to register irq.(%s)\r\n",
+			info->input_dev->name);
+		goto err_request_irq;
+	}
+	tsp_debug_info(true, &client->dev, "zinitix touch probe.\r\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
 	info->early_suspend.level = EARLY_SUSPEND_LEVEL_BLANK_SCREEN + 1;
@@ -7906,8 +10373,13 @@ static int bt532_ts_probe(struct i2c_client *client,
 #endif
 
 #ifdef CONFIG_INPUT_ENABLED
+<<<<<<< HEAD
 	info->input_dev->open = bt532_ts_open;
 	info->input_dev->close = bt532_ts_close;
+=======
+	input_dev->open = bt532_ts_open;
+	input_dev->close = bt532_ts_close;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #if defined(CONFIG_PM_RUNTIME)
@@ -7918,17 +10390,33 @@ static int bt532_ts_probe(struct i2c_client *client,
 #ifdef USE_MISC_DEVICE
 	ret = misc_register(&touch_misc_device);
 	if (ret) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to register touch misc device\n");
+=======
+		tsp_debug_err(true, &client->dev, "Failed to register touch misc device\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto err_misc_register;
 	}
 #endif
 #ifdef SEC_FACTORY_TEST
 	ret = init_sec_factory(info);
 	if (ret) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "Failed to init sec factory device\n");
 
 		goto err_kthread_create_failed;
 	}
+=======
+		tsp_debug_err(true, &client->dev, "Failed to init sec factory device\n");
+
+		goto err_kthread_create_failed;
+	}
+#if defined(CONFIG_TOUCHSCREEN_ZINITIX_ZT75XX_O7)
+	info->factory_info->cmd_param[0] = 1;
+	hfdnd_spec_adjust(info);
+	info->factory_info->cmd_state = WAITING;
+#endif	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	info->register_cb = info->pdata->register_cb;
@@ -7941,6 +10429,7 @@ static int bt532_ts_probe(struct i2c_client *client,
 				VBUS_NOTIFY_DEV_CHARGER);
 #endif
 
+<<<<<<< HEAD
 	if(pdata->support_lpm_mode){
 		device_init_wakeup(&client->dev, true);
 	}
@@ -7949,6 +10438,8 @@ static int bt532_ts_probe(struct i2c_client *client,
 	tui_tsp_info = info;
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 
 #ifdef SEC_FACTORY_TEST
@@ -7963,6 +10454,7 @@ err_misc_register:
 err_request_irq:
 error_gpio_irq:
 err_init_touch:
+<<<<<<< HEAD
 	input_unregister_device(info->input_dev);
 err_input_register_device:
 err_fw_update:
@@ -7974,6 +10466,18 @@ err_power_sequence:
 err_get_pinctrl:
 	input_free_device(info->input_dev);
 	info->input_dev = NULL;
+=======
+#if ESD_TIMER_INTERVAL
+err_esd_sequence:
+#endif
+	input_unregister_device(info->input_dev);
+err_input_register_device:
+err_fw_update:
+err_power_sequence:
+	bt532_power_control(info, POWER_OFF);
+	input_free_device(info->input_dev);
+err_get_pinctrl:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_alloc:
 	kfree(info);
 err_gpio_request:
@@ -8002,7 +10506,11 @@ static int bt532_ts_remove(struct i2c_client *client)
 	write_reg(info->client, BT532_PERIODICAL_INTERRUPT_INTERVAL, 0);
 	esd_timer_stop(info);
 #if defined(TSP_VERBOSE_DEBUG)
+<<<<<<< HEAD
 	input_info(true, &client->dev, "Stopped esd timer\n");
+=======
+	tsp_debug_info(true, &client->dev, "Stopped esd timer\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	destroy_workqueue(esd_tmr_workqueue);
 #endif
@@ -8031,7 +10539,11 @@ void bt532_ts_shutdown(struct i2c_client *client)
 {
 	struct bt532_ts_info *info = i2c_get_clientdata(client);
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s++\n",__func__);
+=======
+	tsp_debug_info(true, &client->dev, "%s++\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	disable_irq(info->irq);
 	down(&info->work_lock);
 #if ESD_TIMER_INTERVAL
@@ -8040,7 +10552,11 @@ void bt532_ts_shutdown(struct i2c_client *client)
 #endif
 	up(&info->work_lock);
 	bt532_power_control(info, POWER_OFF);
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s--\n",__func__);
+=======
+	tsp_debug_info(true, &client->dev, "%s--\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static struct i2c_device_id bt532_idtable[] = {

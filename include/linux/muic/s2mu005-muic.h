@@ -21,6 +21,10 @@
 #define __S2MU005_MUIC_H__
 
 #include <linux/muic/muic.h>
+<<<<<<< HEAD
+=======
+#include <linux/wakelock.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define MUIC_DEV_NAME	"muic-s2mu005"
 
@@ -32,12 +36,20 @@
 #define CTRL_MANUAL_SW_SHIFT	2
 #define CTRL_WAIT_SHIFT			1
 #define CTRL_INT_MASK_SHIFT		0
+<<<<<<< HEAD
+=======
+#define CTRL_ONE_SHOT_SHIFT		2
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define CTRL_SWITCH_OPEN_MASK	(0x1 << CTRL_SWITCH_OPEN_SHIFT)
 #define CTRL_RAW_DATA_MASK		(0x1 << CTRL_RAW_DATA_SHIFT)
 #define CTRL_MANUAL_SW_MASK		(0x1 << CTRL_MANUAL_SW_SHIFT)
 #define CTRL_WAIT_MASK			(0x1 << CTRL_WAIT_SHIFT)
 #define CTRL_INT_MASK_MASK		(0x1 << CTRL_INT_MASK_SHIFT)
+<<<<<<< HEAD
+=======
+#define CTRL_ONE_SHOT_MASK		(0x1 << CTRL_ONE_SHOT_SHIFT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_MUIC_S2MU005_ENABLE_AUTOSW
 #define CTRL_MASK			(CTRL_SWITCH_OPEN_MASK | \
@@ -74,6 +86,10 @@
 
 /* S2MU005 ADC register */
 #define ADC_MASK				(0x1f)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define ADC_CONVERSION_MASK	(0x1 << 7)
 
 /* S2MU005 Timing Set 1 & 2 register Timing table */
@@ -145,13 +161,21 @@
 
 /*
  * Manual Switch
+<<<<<<< HEAD
  * D- [7:5] / D+ [4:2] / CHARGER[1] / OTGEN[0]
  * 000: Open all / 001: USB / 010: AUDIO / 011: UART / 100: V_AUDIO
+=======
+ * D- [7:5] / D+ [4:2] / RSVD[1] / JIG[0]
+ * 000: Open all / 001: USB / 010: UART / 011: UART2 / 100: V_AUDIO
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * 00: Vbus to Open / 01: Vbus to Charger / 10: Vbus to MIC / 11: Vbus to VBout
  */
 #define MANUAL_SW_DM_SHIFT		5
 #define MANUAL_SW_DP_SHIFT		2
+<<<<<<< HEAD
 #define MANUAL_SW_CHG_SHIFT		1
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MANUAL_SW_DM_DP_MASK	0xFC
 
 #define MANUAL_SW_OPEN			(0x0)
@@ -160,6 +184,7 @@
 #define MANUAL_SW_UART2			(0x3 << MANUAL_SW_DM_SHIFT | 0x3 << MANUAL_SW_DP_SHIFT)
 #define MANUAL_SW_AUDIO		(0x0 << MANUAL_SW_DM_SHIFT | 0x0 << MANUAL_SW_DP_SHIFT) /* Not Used */
 
+<<<<<<< HEAD
 #define MANUAL_SW_OTGEN		(0x1)
 #define MANUAL_SW_CHARGER	(0x1 << MANUAL_SW_CHG_SHIFT)
 
@@ -173,6 +198,36 @@ enum s2mu005_reg_manual_sw_value {
 	MANSW_OPEN_RUSTPROOF	=	(MANUAL_SW_OPEN | MANUAL_SW_CHARGER),
 };
 
+=======
+enum s2mu005_reg_manual_sw_value {
+	MANSW_OPEN		=	(MANUAL_SW_OPEN),
+	MANSW_USB		=	(MANUAL_SW_USB),
+	MANSW_AUDIO		=	(MANUAL_SW_AUDIO), /* Not Used */
+	MANSW_UART		=	(MANUAL_SW_UART),
+};
+
+#if !defined (CONFIG_SEC_FACTORY) && !defined (CONFIG_MUIC_S2MU005_WATER_WA_DISABLE)
+/* S2MU005_REG_LDOADC_VSET register */
+#define LDOADC_VSET_MASK        0x1F
+#define LDOADC_VSET_3V          0x1F
+#define LDOADC_VSET_2_6V        0x0E
+#define LDOADC_VSET_2_0V        0x08
+#define LDOADC_VSET_2_2V        0x0A
+#define LDOADC_VSET_2_4V        0x0C
+#define LDOADC_VSET_1_5V        0x03
+#define LDOADC_VSET_1_4V        0x02
+#define LDOADC_VSET_1_2V        0x00
+
+/* Range of ADC */
+#define IS_WATER_ADC(adc)( ((adc) > (ADC_GND)) && ((adc) < (ADC_OPEN)) ? 1 : 0 )
+#define IS_AUDIO_ADC(adc)( ((adc) >= (ADC_SEND_END)) && ((adc) <= (ADC_REMOTE_S12)) ? 1 : 0 )
+
+#define WATER_TOGGLE_WA_MIN_DURATION_US	20000
+#define WATER_TOGGLE_WA_MAX_DURATION_US	21000
+
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* muic chip specific internal data structure
  * that setted at muic-xxxx.c file
  */
@@ -199,6 +254,11 @@ struct s2mu005_muic_data {
 	/* model dependant muic platform data */
 	struct muic_platform_data *pdata;
 
+<<<<<<< HEAD
+=======
+	struct wake_lock wake_lock;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* muic support vps list */
 	bool muic_support_list[ATTACHED_DEV_NUM];
 
@@ -213,9 +273,16 @@ struct s2mu005_muic_data {
 	bool	is_factory_start;
 	bool	is_rustproof;
 	bool	is_otg_test;
+<<<<<<< HEAD
 
 #if !defined(CONFIG_MUIC_S2MU005_ENABLE_AUTOSW)
 	bool	is_jig_on;
+=======
+	bool jigonb_enable;
+	bool jig_disable;
+#if !defined (CONFIG_SEC_FACTORY) && !defined (CONFIG_MUIC_S2MU005_WATER_WA_DISABLE)
+	bool	is_water_wa;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	/* W/A waiting for the charger ic */
 	bool suspended;
@@ -227,7 +294,10 @@ struct s2mu005_muic_data {
 };
 
 
+<<<<<<< HEAD
 extern struct device *switch_device;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern unsigned int system_rev;
 extern struct muic_platform_data muic_pdata;
 

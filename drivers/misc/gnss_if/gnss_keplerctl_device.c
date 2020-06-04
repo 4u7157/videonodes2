@@ -19,7 +19,10 @@
 #include <linux/delay.h>
 #include <linux/platform_device.h>
 #include <linux/regulator/consumer.h>
+<<<<<<< HEAD
 #include <linux/clk-private.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/mcu_ipc.h>
 
 #include <asm/cacheflush.h>
@@ -107,11 +110,19 @@ static irqreturn_t kepler_wakelock_isr(int irq, void *arg)
 
 	/* 3. Write 0x1 to MBOX_reg[6]. */
 	/* MBOX_req[6] is WAKE_LOCK */
+<<<<<<< HEAD
 	if (gnss_read_reg(shmd->reg[GNSS_REG_WAKE_LOCK]) == 0X1) {
 		gif_err("@@ reg_wake_lock is already 0x1!!!!!!\n");
 		return IRQ_HANDLED;
 	} else {
 		gnss_write_reg(shmd->reg[GNSS_REG_WAKE_LOCK], 0x1);
+=======
+	if (mbox_get_value(MCU_GNSS, mbx->reg_wake_lock) == 0X1) {
+		gif_err("@@ reg_wake_lock is already 0x1!!!!!!\n");
+		return IRQ_HANDLED;
+	} else {
+		mbox_set_value(MCU_GNSS, mbx->reg_wake_lock, 0x1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* 4. Send interrupt MBOX1[3]. */
@@ -164,11 +175,19 @@ static void mbox_kepler_wake_clr(void *arg)
 
 	wake_unlock(&gc->gc_wake_lock);
 	enable_irq(gc->wake_lock_irq);
+<<<<<<< HEAD
 	if (gnss_read_reg(gc->gnss_data->reg[GNSS_REG_WAKE_LOCK]) == 0X0) {
 		gif_err("@@ reg_wake_lock is already 0x0!!!!!!\n");
 		return ;
 	}
 	gnss_write_reg(gc->gnss_data->reg[GNSS_REG_WAKE_LOCK], 0x0);
+=======
+	if (mbox_get_value(MCU_GNSS, mbx->reg_wake_lock) == 0X0) {
+		gif_err("@@ reg_wake_lock is already 0x0!!!!!!\n");
+		return ;
+	}
+	mbox_set_value(MCU_GNSS, mbx->reg_wake_lock, 0x0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mbox_set_interrupt(MCU_GNSS, mbx->int_ap2gnss_ack_wake_clr);
 
 }
@@ -190,12 +209,15 @@ static int kepler_hold_reset(struct gnss_ctl *gc)
 	}
 
 	gc->iod->gnss_state_changed(gc->iod, STATE_HOLD_RESET);
+<<<<<<< HEAD
 
 	if (gc->ccore_qch_lh_gnss) {
 		clk_disable_unprepare(gc->ccore_qch_lh_gnss);
 		gif_err("Disabled GNSS Qch\n");
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	gc->pmu_ops.hold_reset(gc);
 	mbox_sw_reset(MCU_GNSS);
 
@@ -204,12 +226,16 @@ static int kepler_hold_reset(struct gnss_ctl *gc)
 
 static int kepler_release_reset(struct gnss_ctl *gc)
 {
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	gif_err("%s\n", __func__);
 
 	gc->iod->gnss_state_changed(gc->iod, STATE_ONLINE);
 	gc->pmu_ops.release_reset(gc);
 
+<<<<<<< HEAD
 	if (gc->ccore_qch_lh_gnss) {
 		ret = clk_prepare_enable(gc->ccore_qch_lh_gnss);
 		if (!ret)
@@ -218,17 +244,23 @@ static int kepler_release_reset(struct gnss_ctl *gc)
 			gif_err("Could not enable Qch (%d)\n", ret);
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
 static int kepler_power_on(struct gnss_ctl *gc)
 {
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	gif_err("%s\n", __func__);
 
 	gc->iod->gnss_state_changed(gc->iod, STATE_ONLINE);
 	gc->pmu_ops.power_on(gc, GNSS_POWER_ON);
 
+<<<<<<< HEAD
 	if (gc->ccore_qch_lh_gnss) {
 		ret = clk_prepare_enable(gc->ccore_qch_lh_gnss);
 		if (!ret)
@@ -263,11 +295,28 @@ static int kepler_req_fault_info(struct gnss_ctl *gc, u32 **fault_info_regs)
 	mbox_set_interrupt(MCU_GNSS, mbx->int_ap2gnss_req_fault_info);
 
 	ret = wait_for_completion_timeout(&gc->fault_cmpl, timeout);
+=======
+	return 0;
+}
+
+static int kepler_req_fault_info(struct gnss_ctl *gc, u32 *fault_info_regs)
+{
+	int i, ret;
+	struct gnss_mbox *mbx = gc->gnss_data->mbx;
+	unsigned long timeout = msecs_to_jiffies(1000);
+
+
+	mbox_set_interrupt(MCU_GNSS, mbx->int_ap2gnss_req_fault_info);
+
+	ret = wait_for_completion_timeout(&gc->fault_cmpl,
+						timeout);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret == 0) {
 		gif_err("Req Fault Info TIMEOUT!\n");
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	switch (pdata->fault_info.device) {
 	case GNSS_IPC_MBOX:
 		size = pdata->fault_info.size * sizeof(u32);
@@ -317,6 +366,16 @@ static int kepler_req_fault_info(struct gnss_ctl *gc, u32 **fault_info_regs)
 	wake_unlock(&gc->gc_fault_wake_lock);
 
 	return size;
+=======
+	/* Issue interrupt. */
+	for (i = 0; i < FAULT_INFO_COUNT; i++) {
+		fault_info_regs[i] = mbox_get_value(MCU_GNSS,
+				mbx->reg_fault_info[i]);
+	}
+	wake_unlock(&gc->gc_fault_wake_lock);
+
+	return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 
@@ -459,7 +518,11 @@ int init_gnssctl_device(struct gnss_ctl *gc, struct gnss_data *pdata)
 	gc->pmu_ops.init_conf(gc);
 	gc->gnss_state = STATE_OFFLINE;
 
+<<<<<<< HEAD
 	gif_info("[GNSS IF] Register mailbox for GNSS2AP fault handling\n");
+=======
+	pr_info("[GNSS IF] Register mailbox for GNSS2AP fault handling\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mbox_request_irq(MCU_GNSS, mbox->irq_gnss2ap_req_wake_clr,
 			 mbox_kepler_wake_clr, (void *)gc);
 

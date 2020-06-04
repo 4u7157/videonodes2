@@ -34,8 +34,11 @@ struct tee_client {
 	struct list_head	sessions;
 	struct list_head	closing_sessions;
 	struct mutex		sessions_lock;	/* sessions list + closing */
+<<<<<<< HEAD
 	/* Client state */
 	bool			closing;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* The list entry to attach to "ctx.clients" list */
 	struct list_head	list;
 };
@@ -48,7 +51,11 @@ static inline void client_get(struct tee_client *client)
 }
 
 void client_put(struct tee_client *client);
+<<<<<<< HEAD
 int client_freeze(struct tee_client *client);
+=======
+bool client_has_sessions(struct tee_client *client);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void client_close(struct tee_client *client);
 
 /* All clients */
@@ -69,7 +76,11 @@ int client_add_session(struct tee_client *client,
 int client_remove_session(struct tee_client *client, u32 session_id);
 int client_notify_session(struct tee_client *client, u32 session_id);
 int client_waitnotif_session(struct tee_client *client, u32 session_id,
+<<<<<<< HEAD
 			     s32 timeout);
+=======
+			     s32 timeout, bool silent_expiry);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int client_get_session_exitcode(struct tee_client *client, u32 session_id,
 				s32 *exit_code);
 int client_map_session_wsms(struct tee_client *client, u32 session_id,

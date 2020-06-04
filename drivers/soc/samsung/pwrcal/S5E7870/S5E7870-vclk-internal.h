@@ -33,6 +33,10 @@ PXMXDX_EXTERN(pxmxdx_mfcmscl)
 PXMXDX_EXTERN(pxmxdx_isp_vra)
 PXMXDX_EXTERN(pxmxdx_isp_cam)
 PXMXDX_EXTERN(pxmxdx_isp_isp)
+<<<<<<< HEAD
+=======
+PXMXDX_EXTERN(pxmxdx_oscclk_aud)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 P1_EXTERN(p1_disp_pll)
 P1_EXTERN(p1_aud_pll)
@@ -63,7 +67,10 @@ GRPGATE_EXTERN(gate_g3d_sysmmu)
 GRPGATE_EXTERN(gate_g3d_ppmu)
 GRPGATE_EXTERN(gate_g3d_bts)
 GRPGATE_EXTERN(gate_g3d_g3d)
+<<<<<<< HEAD
 GRPGATE_EXTERN(gate_peri_peris0)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 GRPGATE_EXTERN(gate_peri_peric0)
 GRPGATE_EXTERN(gate_peri_peric1)
 GRPGATE_EXTERN(gate_peri_pwm_motor)

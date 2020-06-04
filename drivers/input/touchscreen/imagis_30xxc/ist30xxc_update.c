@@ -29,6 +29,13 @@
 #include "ist30xxc_update.h"
 #include "ist30xxc_tracking.h"
 
+<<<<<<< HEAD
+=======
+#if IST30XX_INTERNAL_BIN
+#include "ist30xxc_fw.h"
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define TAGS_PARSE_OK		(0)
 
 // ISP burst r/w
@@ -1085,13 +1092,21 @@ int ist30xx_auto_bin_update(struct ist30xx_data *data)
 
 		fw->buf = (u8 *)firmware->data;
 		fw->buf_size = firmware->size;
+<<<<<<< HEAD
 	}
 #if defined(CONFIG_TOUCHSCREEN_IST3026C)	//novel
 	else {
+=======
+	} else {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		fw->buf = (u8 *)ist30xxc_fw;
 		fw->buf_size = sizeof(ist30xxc_fw);
 	}
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TOUCHSCREEN_IST3026C)	//novel
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if IST30XX_MULTIPLE_TSP
 	ist30xx_set_tsp_fw(data);
 #endif
@@ -1316,7 +1331,11 @@ ssize_t ist30xx_fw_sdcard_show(struct device *dev,
 		 IST30XX_FW_NAME);
 	fp = filp_open(fw_path, O_RDONLY, 0);
 	if (IS_ERR(fp)) {
+<<<<<<< HEAD
         data->status.update_result = 1;
+=======
+		data->status.update_result = 1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		tsp_info("file %s open error\n", fw_path);
 		goto err_file_open;
 	}
@@ -1332,7 +1351,11 @@ ssize_t ist30xx_fw_sdcard_show(struct device *dev,
 
 	nread = vfs_read(fp, (char __user *)buff, fsize, &fp->f_pos);
 	if (nread != fsize) {
+<<<<<<< HEAD
         data->status.update_result = 1;
+=======
+		data->status.update_result = 1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		tsp_info("mismatch fw size\n");
 		goto err_fw_size;
 	}
@@ -1346,8 +1369,13 @@ ssize_t ist30xx_fw_sdcard_show(struct device *dev,
 	ret = ist30xx_get_update_info(data, fw, fw_size);
 	if (ret) {
 		data->status.update_result = 1;
+<<<<<<< HEAD
         goto err_get_info;
     }
+=======
+		goto err_get_info;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	data->fw.bin.main_ver = ist30xx_parse_ver(data, FLAG_MAIN, fw);
 	data->fw.bin.fw_ver = ist30xx_parse_ver(data, FLAG_FW, fw);
@@ -1510,7 +1538,11 @@ ssize_t ist30xx_fw_version_show(struct device *dev,
 
 /* sysfs  */
 static DEVICE_ATTR(fw_read, S_IRUGO, ist30xx_fw_read_show, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(firmware, S_IRUGO, ist30xx_fw_status_show, ist30xx_fw_store);
+=======
+static DEVICE_ATTR(firmware, S_IRUGO | S_IWUSR, ist30xx_fw_status_show, ist30xx_fw_store);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(fw_sdcard, S_IRUGO, ist30xx_fw_sdcard_show, NULL);
 static DEVICE_ATTR(version, S_IRUGO, ist30xx_fw_version_show, NULL);
 

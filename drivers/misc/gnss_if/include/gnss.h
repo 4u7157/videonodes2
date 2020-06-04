@@ -49,6 +49,22 @@ struct gnss_io_t {
 #define SHMEM_SIZE_2MB		(2 << 20)	/* 2 MB */
 #define SHMEM_SIZE_4MB		(4 << 20)	/* 4 MB */
 
+<<<<<<< HEAD
+=======
+enum gnss_fault_info {
+	INFO0,
+	INFO1,
+	INFO2,
+	INFO3,
+	INFO4,
+	INFO5,
+	INFO6,
+	INFO7,
+	INFO8,
+	INFO9,
+	FAULT_INFO_COUNT,
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 enum gnss_bcmd_ctrl {
 	CTRL0,
@@ -58,6 +74,7 @@ enum gnss_bcmd_ctrl {
 	BCMD_CTRL_COUNT,
 };
 
+<<<<<<< HEAD
 enum gnss_reg_type {
 	GNSS_REG_RX_IPC_MSG,
 	GNSS_REG_TX_IPC_MSG,
@@ -75,6 +92,8 @@ enum gnss_ipc_vector {
 	GNSS_IPC_COUNT,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct gnss_mbox {
 	int int_ap2gnss_bcmd;
 	int int_ap2gnss_req_fault_info;
@@ -88,6 +107,7 @@ struct gnss_mbox {
 	int irq_gnss2ap_req_wake_clr;
 
 	unsigned reg_bcmd_ctrl[BCMD_CTRL_COUNT];
+<<<<<<< HEAD
 };
 
 struct gnss_shared_reg_value {
@@ -111,6 +131,18 @@ struct gnss_fault_data_area {
 	struct gnss_fault_data_area_value value;
 	u32 size;
 	u32 device;
+=======
+	unsigned reg_rx_ipc_msg;
+	unsigned reg_tx_ipc_msg;
+	unsigned reg_wake_lock;
+
+	unsigned reg_rx_head;
+	unsigned reg_rx_tail;
+	unsigned reg_tx_head;
+	unsigned reg_tx_tail;
+
+	unsigned reg_fault_info[FAULT_INFO_COUNT];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct gnss_pmu {
@@ -134,10 +166,13 @@ struct gnss_data {
 
 	struct gnss_mbox *mbx;
 
+<<<<<<< HEAD
 	struct gnss_shared_reg *reg[GNSS_REG_COUNT];
 
 	struct gnss_fault_data_area fault_info;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Information of IO devices */
 	struct gnss_io_t *iodev;
 
@@ -146,7 +181,10 @@ struct gnss_data {
 	u32 shmem_size;
 	u32 ipcmem_offset;
 	u32 ipc_size;
+<<<<<<< HEAD
 	u32 ipc_reg_cnt;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	u8 __iomem *gnss_base;
 	u8 __iomem *ipc_base;

@@ -30,6 +30,11 @@ void gpio_dvs_check_initgpio(void);
 void gpio_dvs_check_sleepgpio(void);
 
 /* list of all exported SoC specific data */
+<<<<<<< HEAD
 extern struct gpio_dvs_t exynos7570_secgpio_dvs;
 extern int exynos7570_secgpio_get_nr_gpio(void);
+=======
+extern struct gpio_dvs_t exynos7870_secgpio_dvs;
+extern int exynos7870_secgpio_get_nr_gpio(void);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* __SECGPIO_DVS_H */

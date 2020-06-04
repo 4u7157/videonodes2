@@ -21,6 +21,7 @@ static int lis2ds_i2c_read(struct lis2ds_data *cdata, u8 reg_addr, int len,
 			   u8 *data, bool b_lock)
 {
 	int err = 0;
+<<<<<<< HEAD
 	int retry = 5;
 	struct i2c_msg msg[2];
 	struct i2c_client *client = to_i2c_client(cdata->dev);
@@ -48,6 +49,28 @@ static int lis2ds_i2c_read(struct lis2ds_data *cdata, u8 reg_addr, int len,
 	}
 
 	SENSOR_ERR("i2c transfer error ret=%d\n", err);
+=======
+	struct i2c_msg msg[2];
+	struct i2c_client *client = to_i2c_client(cdata->dev);
+
+	msg[0].addr = client->addr;
+	msg[0].flags = client->flags;
+	msg[0].len = 1;
+	msg[0].buf = &reg_addr;
+
+	msg[1].addr = client->addr;
+	msg[1].flags = client->flags | I2C_M_RD;
+	msg[1].len = len;
+	msg[1].buf = data;
+
+	if (b_lock) {
+		mutex_lock(&cdata->bank_registers_lock);
+		err = i2c_transfer(client->adapter, msg, 2);
+		mutex_unlock(&cdata->bank_registers_lock);
+	} else
+		err = i2c_transfer(client->adapter, msg, 2);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return err;
 }
 
@@ -55,7 +78,10 @@ static int lis2ds_i2c_write(struct lis2ds_data *cdata, u8 reg_addr, int len,
 			    u8 *data, bool b_lock)
 {
 	int err = 0;
+<<<<<<< HEAD
 	int retry = 5;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u8 send[len + 1];
 	struct i2c_msg msg;
 	struct i2c_client *client = to_i2c_client(cdata->dev);
@@ -64,6 +90,7 @@ static int lis2ds_i2c_write(struct lis2ds_data *cdata, u8 reg_addr, int len,
 	memcpy(&send[1], data, len * sizeof(u8));
 	len++;
 
+<<<<<<< HEAD
 	while (retry--) {
 		msg.addr = client->addr;
 		msg.flags = client->flags;
@@ -82,6 +109,20 @@ static int lis2ds_i2c_write(struct lis2ds_data *cdata, u8 reg_addr, int len,
 	}
 
 	SENSOR_ERR("i2c transfer error ret=%d\n", err);
+=======
+	msg.addr = client->addr;
+	msg.flags = client->flags;
+	msg.len = len;
+	msg.buf = send;
+
+	if (b_lock) {
+		mutex_lock(&cdata->bank_registers_lock);
+		err = i2c_transfer(client->adapter, &msg, 1);
+		mutex_unlock(&cdata->bank_registers_lock);
+	} else
+		err = i2c_transfer(client->adapter, &msg, 1);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return err;
 }
 

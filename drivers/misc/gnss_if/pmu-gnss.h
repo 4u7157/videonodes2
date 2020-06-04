@@ -14,12 +14,17 @@
 
 #include "gnss_prj.h"
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SOC_EXYNOS7870
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* BLK_ALIVE: GNSS related SFRs */
 #define EXYNOS_PMU_GNSS_CTRL_NS			0x0040
 #define EXYNOS_PMU_GNSS_CTRL_S			0x0044
 #define EXYNOS_PMU_GNSS_STAT			0x0048
 #define EXYNOS_PMU_GNSS_DEBUG			0x004C
 #define EXYNOS_PMU_GNSS2AP_MEM_CONFIG		0x0090
+<<<<<<< HEAD
 #if !defined(CONFIG_SOC_EXYNOS7870) && !defined(CONFIG_SOC_EXYNOS7880)
 #define EXYNOS_PMU_GNSS2AP_MEM_CONFIG1		0x00A4
 #define EXYNOS_PMU_GNSS2AP_MEM_CONFIG2		0x00BC
@@ -31,6 +36,10 @@
 #define EXYNOS_PMU_GNSS2AP_MIF2_PERI_ACCESS_CON	0x009C
 #define EXYNOS_PMU_GNSS2AP_MIF3_PERI_ACCESS_CON	0x00A0
 #endif
+=======
+#define EXYNOS_PMU_GNSS2AP_MIF0_PERI_ACCESS_CON	0x0094
+#define EXYNOS_PMU_GNSS2AP_MIF1_PERI_ACCESS_CON	0x0098
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define EXYNOS_PMU_GNSS_BOOT_TEST_RST_CONFIG	0x00A8
 #define EXYNOS_PMU_GNSS2AP_PERI_ACCESS_WIN	0x00AC
 #define EXYNOS_PMU_GNSS_MODAPIF_CONFIG		0x00B0
@@ -60,6 +69,7 @@
 #define CLEANY_BYPASS_END       BIT(16)
 #define TCXO_26M_40M_SEL		BIT(17)
 
+<<<<<<< HEAD
 #if !defined(CONFIG_SOC_EXYNOS7870) && !defined(CONFIG_SOC_EXYNOS7880)
 #define MEMSIZE_SHIFT	12
 #define MEMSIZE_OFFSET	0
@@ -74,6 +84,10 @@
 #define MEMBASE_ADDR_SHIFT	22
 #define MEMBASE_ADDR_OFFSET	0
 #define MEMBASE_ADDR_MASK	0x3fff
+=======
+#define MEMSIZE_OFFSET	16
+#define MEMBASE_ADDR_OFFSET	0
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #define SMC_ID		0x82000700
@@ -98,6 +112,10 @@ enum gnss_tcxo_mode {
 	TCXO_NON_SHARED_MODE = 1,
 };
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SOC_EXYNOS7870)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct gnss_ctl;
 extern int gnss_pmu_init_conf(struct gnss_ctl *);
 extern int gnss_pmu_hold_reset(struct gnss_ctl *);
@@ -106,5 +124,9 @@ extern int gnss_pmu_power_on(struct gnss_ctl *, enum gnss_mode mode);
 extern int gnss_pmu_clear_interrupt(struct gnss_ctl *,
 				enum gnss_int_clear);
 extern int gnss_change_tcxo_mode(struct gnss_ctl *, enum gnss_tcxo_mode);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #endif /* __EXYNOS_PMU_GNSS_H */

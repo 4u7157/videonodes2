@@ -31,7 +31,10 @@ void __iomem *shm_request_region(unsigned long sh_addr, unsigned size);
 void __iomem *shm_get_boot_region(void);
 void __iomem *shm_get_ipc_region(void);
 void shm_release_region(void *v_addr);
+<<<<<<< HEAD
 #ifdef CONFIG_SHARE_MIF_FREQ_INFO
 void shm_set_mif_freq(u32 freq);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif

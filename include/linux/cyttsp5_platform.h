@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * cyttsp5_platform.h
  * Parade TrueTouch(TM) Standard Product V5 Platform Module.
  * For use with Parade touchscreen controllers.
@@ -11,6 +12,15 @@
  *
  * Copyright (C) 2015 Parade Technologies
  * Copyright (C) 2013-2015 Cypress Semiconductor
+=======
+ * cyttsp5_devtree.h
+ * Cypress TrueTouch(TM) Standard Product V5 Device Access Module.
+ * For use with Cypress Txx5xx parts.
+ * Supported parts include:
+ * TMA5XX
+ *
+ * Copyright (C) 2013 Cypress Semiconductor
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,6 +32,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
+<<<<<<< HEAD
  * Contact Parade Technologies at www.paradetech.com <ttdrivers@paradetech.com>
  *
  */
@@ -34,12 +45,24 @@
 #if defined(CONFIG_TOUCHSCREEN_CYPRESS_CYTTSP5) \
 	|| defined(CONFIG_TOUCHSCREEN_CYPRESS_CYTTSP5_MODULE)
 extern struct cyttsp5_loader_platform_data _cyttsp5_loader_platform_data;
+=======
+ * Contact Cypress Semiconductor at www.cypress.com <ttdrivers@cypress.com>
+ *
+ */
+
+#include <linux/cyttsp5_core.h>
+
+extern struct cyttsp5_loader_platform_data _cyttsp5_loader_platform_data;
+extern struct cyttsp5_touch_firmware cyttsp5_firmware;
+//extern struct cyttsp5_touch_firmware cyttsp5_firmware_hw03;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 int cyttsp5_xres(struct cyttsp5_core_platform_data *pdata, struct device *dev);
 int cyttsp5_init(struct cyttsp5_core_platform_data *pdata, int on,
 		struct device *dev);
 int cyttsp5_power(struct cyttsp5_core_platform_data *pdata, int on,
 		struct device *dev, atomic_t *ignore_irq);
+<<<<<<< HEAD
 #ifdef CYTTSP5_DETECT_HW
 int cyttsp5_detect(struct cyttsp5_core_platform_data *pdata,
 		struct device *dev, cyttsp5_platform_read read);
@@ -58,3 +81,8 @@ static struct cyttsp5_loader_platform_data _cyttsp5_loader_platform_data;
 #endif /* CONFIG_TOUCHSCREEN_CYPRESS_CYTTSP5 */
 
 #endif /* _LINUX_CYTTSP5_PLATFORM_H */
+=======
+int cyttsp5_irq_stat(struct cyttsp5_core_platform_data *pdata,
+		struct device *dev);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

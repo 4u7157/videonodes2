@@ -423,7 +423,10 @@ DECLARE_TIMEOUT_FUNC(mouse);
 DECLARE_TIMEOUT_FUNC(mouse_wheel);
 DECLARE_TIMEOUT_FUNC(pen);
 DECLARE_TIMEOUT_FUNC(hover);
+<<<<<<< HEAD
 DECLARE_TIMEOUT_FUNC(gamepad);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 // ********** Define Set Booster Functions ********** //
 DECLARE_SET_BOOSTER_FUNC(touch);
@@ -435,7 +438,10 @@ DECLARE_SET_BOOSTER_FUNC(mouse);
 DECLARE_SET_BOOSTER_FUNC(mouse_wheel);
 DECLARE_SET_BOOSTER_FUNC(pen);
 DECLARE_SET_BOOSTER_FUNC(hover);
+<<<<<<< HEAD
 DECLARE_SET_BOOSTER_FUNC(gamepad);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 // ********** Define Reet Booster Functions ********** //
 DECLARE_RESET_BOOSTER_FUNC(touch);
@@ -447,7 +453,10 @@ DECLARE_RESET_BOOSTER_FUNC(mouse);
 DECLARE_RESET_BOOSTER_FUNC(mouse_wheel);
 DECLARE_RESET_BOOSTER_FUNC(pen);
 DECLARE_RESET_BOOSTER_FUNC(hover);
+<<<<<<< HEAD
 DECLARE_RESET_BOOSTER_FUNC(gamepad);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 // ********** Define State Functions ********** //
 DECLARE_STATE_FUNC(idle)
@@ -522,7 +531,11 @@ void input_booster_disable(struct t_input_booster *_this)
 // ********** Detect Events ********** //
 void input_booster(struct input_dev *dev)
 {
+<<<<<<< HEAD
 	int i, j, DetectedCategory = false, iTouchID = -1, iTouchSlot = -1, gamepad_flag = 0;
+=======
+	int i, j, DetectedCategory = false, iTouchID = -1, iTouchSlot = -1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_SOC_EXYNOS7420) // This code should be working properly in Exynos7420(Noble & Zero2) only.
 	int lcdoffcounter = 0;
 #endif
@@ -598,10 +611,17 @@ void input_booster(struct input_dev *dev)
 		} else if (input_events[i].type == EV_ABS) {
 			if (input_events[i].code == ABS_MT_TRACKING_ID) {
 				iTouchID = i;
+<<<<<<< HEAD
 				if(input_events[iTouchSlot].value < MAX_MULTI_TOUCH_EVENTS && iTouchID < MAX_EVENTS && iTouchSlot <= MAX_EVENTS) {
 					if(TouchIDs[input_events[iTouchSlot].value] < 0 && input_events[iTouchID].value >= 0) {
 						TouchIDs[input_events[iTouchSlot].value] = input_events[iTouchID].value;
 						if(touch_booster.multi_events <= 0 || input_events[iTouchSlot].value == 0) {
+=======
+				if(input_events[iTouchSlot].value < MAX_MULTI_TOUCH_EVENTS && input_events[iTouchSlot].value >= 0 && iTouchID < MAX_EVENTS && iTouchSlot <= MAX_EVENTS) {
+					if(TouchIDs[input_events[iTouchSlot].value] < 0 && input_events[iTouchID].value >= 0) {
+						TouchIDs[input_events[iTouchSlot].value] = input_events[iTouchID].value;
+						if((input_events[iTouchSlot].value >= 0 && touch_booster.multi_events <= 0) || (input_events[iTouchSlot].value == 0 && TouchIDs[1] < 0)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 							touch_booster.multi_events = 0;
 							pr_debug("[Input Booster] TOUCH EVENT - PRESS - ID: 0x%x, Slot: 0x%x, multi : %d\n", input_events[iTouchID].value, input_events[iTouchSlot].value, touch_booster.multi_events);
 							RUN_BOOSTER(touch, BOOSTER_ON );
@@ -651,6 +671,7 @@ void input_booster(struct input_dev *dev)
 					pr_debug("[Input Booster] *****************************\n[Input Booster] All boosters are reset  %d\n[Input Booster] *****************************\n", lcdoffcounter);
 				}
 #endif
+<<<<<<< HEAD
 			} else if (input_events[i].code >= ABS_X && input_events[i].code <= ABS_RZ) {
 				if(input_events[i].value != 0x80) {
 					gamepad_flag = 2;
@@ -663,6 +684,8 @@ void input_booster(struct input_dev *dev)
 				} else if(gamepad_flag == 0 && input_events[i].value == 0) {
 					gamepad_flag = 1;
 				}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 		} else if (input_events[i].type == EV_MSC && input_events[i].code == MSC_SCAN) {
 			if (input_events[i+1].type == EV_KEY) {
@@ -689,6 +712,7 @@ void input_booster(struct input_dev *dev)
 			}
 		}
 	}
+<<<<<<< HEAD
 
 	if(gamepad_flag == 2 && gamepad_booster.multi_events <= 0) {
 		pr_debug("[Input Booster] GAME PAD EVENT - ON\n");
@@ -697,6 +721,8 @@ void input_booster(struct input_dev *dev)
 		pr_debug("[Input Booster] GAME PAD EVENT - OFF\n");
 		RUN_BOOSTER(gamepad, BOOSTER_OFF );
 	}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 // ********** Init Booster ********** //
@@ -706,7 +732,14 @@ void input_booster_init()
 	struct device_node *np;
 	int nlevels = 0, i;
 
+<<<<<<< HEAD
 	if(device_tree_infor != NULL){
+=======
+	printk("[Input Booster] %s\n", __FUNCTION__);
+
+	if(device_tree_infor != NULL){
+		printk("[Input Booster] %s   device_tree_infor is NULL\n", __FUNCTION__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 	}
 
@@ -714,12 +747,20 @@ void input_booster_init()
 
 	if(np == NULL) {
 		ndevice_in_dt = 0;
+<<<<<<< HEAD
+=======
+		printk("[Input Booster] %s    np is NULL\n", __FUNCTION__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 	}
 
 	// Geting the count of devices.
 	ndevice_in_dt = of_get_child_count(np);
+<<<<<<< HEAD
 	pr_debug("[Input Booster] %s   ndevice_in_dt : %d\n", __FUNCTION__, ndevice_in_dt);
+=======
+	printk("[Input Booster] %s   ndevice_in_dt : %d\n", __FUNCTION__, ndevice_in_dt);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	device_tree_infor = kcalloc(ABS_CNT, sizeof(struct t_input_booster_device_tree_infor) * ndevice_in_dt, GFP_KERNEL);
 	if(device_tree_infor > 0) {
@@ -732,10 +773,17 @@ void input_booster_init()
 
 			// Geting label.
 			dt_infor->label = of_get_property(cnp, "input_booster,label", NULL);
+<<<<<<< HEAD
 			pr_debug("[Input Booster] %s   dt_infor->label : %s\n", __FUNCTION__, dt_infor->label);
 
 			if (of_property_read_u32(cnp, "input_booster,type", &dt_infor->type)) {
 				pr_debug("Failed to get type property\n");
+=======
+			printk("[Input Booster] %s   dt_infor->label : %s\n", __FUNCTION__, dt_infor->label);
+
+			if (of_property_read_u32(cnp, "input_booster,type", &dt_infor->type)) {
+				printk("Failed to get type property\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				break;
 			}
 
@@ -744,16 +792,26 @@ void input_booster_init()
 
 			if (plevels && nlevels) {
 				dt_infor->nlevels = nlevels / sizeof(u32);
+<<<<<<< HEAD
 				pr_debug("[Input Booster] %s   dt_infor->nlevels : %d\n", __FUNCTION__, dt_infor->nlevels);
 			} else {
 				pr_debug("Failed to calculate number of frequency.\n");
+=======
+				printk("[Input Booster] %s   dt_infor->nlevels : %d\n", __FUNCTION__, dt_infor->nlevels);
+			} else {
+				printk("Failed to calculate number of frequency.\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				break;
 			}
 
 			// Allocation the param table.
 			dt_infor->param_tables = kcalloc(ABS_CNT, sizeof(struct t_input_booster_device_tree_param) * dt_infor->nlevels, GFP_KERNEL);
 			if (!dt_infor->param_tables) {
+<<<<<<< HEAD
 				pr_debug("Failed to allocate memory of freq_table\n");
+=======
+				printk("Failed to allocate memory of freq_table\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				break;
 			}
 
@@ -775,10 +833,17 @@ void input_booster_init()
 				err |= of_property_read_u32_index(cnp, "input_booster,tail_times", i, &temp); dt_infor->param_tables[i].tail_time = (u16)temp;
 				err |= of_property_read_u32_index(cnp, "input_booster,phase_times", i, &temp); dt_infor->param_tables[i].phase_time = (u16)temp;
 				if (err) {
+<<<<<<< HEAD
 					pr_debug("Failed to get [%d] param table property\n", i);
 				}
 
 				pr_debug("[Input Booster] Level %d : frequency[%d,%d,%d,%d] hmp_boost[%d] times[%d,%d,%d]\n", i,
+=======
+					printk("Failed to get [%d] param table property\n", i);
+				}
+
+				printk("[Input Booster] Level %d : frequency[%d,%d,%d,%d] hmp_boost[%d] times[%d,%d,%d]\n", i,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					dt_infor->param_tables[i].cpu_freq,
 					dt_infor->param_tables[i].kfc_freq,
 					dt_infor->param_tables[i].mif_freq,
@@ -808,7 +873,10 @@ void input_booster_init()
 	INIT_BOOSTER(mouse_wheel)
 	INIT_BOOSTER(pen)
 	INIT_BOOSTER(hover)
+<<<<<<< HEAD
 	INIT_BOOSTER(gamepad)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	multitouch_booster.change_on_release = 1;
 
 	// ********** Initialize Sysfs **********
@@ -817,7 +885,11 @@ void input_booster_init()
 
 		sysfs_class = class_create(THIS_MODULE, "input_booster");
 		if (IS_ERR(sysfs_class)) {
+<<<<<<< HEAD
 			pr_debug("[Input Booster] Failed to create class\n");
+=======
+			printk("[Input Booster] Failed to create class\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return;
 		}
 
@@ -835,7 +907,10 @@ void input_booster_init()
 		INIT_SYSFS_DEVICE(mouse_wheel)
 		INIT_SYSFS_DEVICE(pen)
 		INIT_SYSFS_DEVICE(hover)
+<<<<<<< HEAD
 		INIT_SYSFS_DEVICE(gamepad)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 #endif  // Input Booster -
@@ -1124,6 +1199,50 @@ void input_close_device(struct input_handle *handle)
 	mutex_unlock(&dev->mutex);
 }
 EXPORT_SYMBOL(input_close_device);
+static int input_enable_device(struct input_dev *dev)
+{
+	int retval;
+
+	retval = mutex_lock_interruptible(&dev->mutex);
+	if (retval)
+		return retval;
+
+	if (!dev->disabled)
+		goto out;
+
+	if (dev->users_private && dev->open) {
+		retval = dev->open(dev);
+		if (retval)
+			goto out;
+	}
+	dev->users = dev->users_private;
+	dev->disabled = false;
+
+out:
+	mutex_unlock(&dev->mutex);
+
+	return retval;
+}
+
+static int input_disable_device(struct input_dev *dev)
+{
+	int retval;
+
+	retval = mutex_lock_interruptible(&dev->mutex);
+	if (retval)
+		return retval;
+
+	if (!dev->disabled) {
+		dev->disabled = true;
+		if (dev->users && dev->close)
+			dev->close(dev);
+		dev->users = 0;
+	}
+
+	mutex_unlock(&dev->mutex);
+	return 0;
+}
+
 static int input_enable_device(struct input_dev *dev)
 {
 	int retval;

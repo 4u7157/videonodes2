@@ -48,12 +48,15 @@
 #define DM_BUFIO_DEFAULT_RETAIN_BYTES   (1024 * 1024)
 
 /*
+<<<<<<< HEAD
  * The number of bvec entries that are embedded directly in the buffer.
  * If the chunk size is larger, dm-io is used to do the io.
  */
 #define DM_BUFIO_INLINE_VECS		16
 
 /*
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * Don't try to use kmem_cache_alloc for blocks larger than this.
  * For explanation, see alloc_buffer_data below.
  */

@@ -4,7 +4,11 @@
  * header file supporting usb notify layer
  * external notify call chain information
  *
+<<<<<<< HEAD
  * Copyright (C) 2016 Samsung Electronics
+=======
+ * Copyright (C) 2016-2017 Samsung Electronics
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +26,11 @@
  *
  */
 
+<<<<<<< HEAD
   /* usb notify layer v2.0 */
+=======
+  /* usb notify layer v3.0 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifndef __EXTERNAL_NOTIFY_H__
 #define __EXTERNAL_NOTIFY_H__
@@ -33,6 +41,11 @@
 enum external_notify_cmd {
 	EXTERNAL_NOTIFY_3S_NODEVICE = 1,
 	EXTERNAL_NOTIFY_DEVICE_CONNECT,
+<<<<<<< HEAD
+=======
+	EXTERNAL_NOTIFY_HOSTBLOCK_PRE,
+	EXTERNAL_NOTIFY_HOSTBLOCK_POST,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	EXTERNAL_NOTIFY_MDMBLOCK_PRE,
 	EXTERNAL_NOTIFY_MDMBLOCK_POST,
 };
@@ -42,6 +55,10 @@ enum external_notify_cmd {
 enum external_notify_device {
 	EXTERNAL_NOTIFY_DEV_MUIC,
 	EXTERNAL_NOTIFY_DEV_CHARGER,
+<<<<<<< HEAD
+=======
+	EXTERNAL_NOTIFY_DEV_PDIC,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 enum external_notify_condev {

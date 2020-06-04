@@ -16,10 +16,13 @@
 #include <linux/smc.h>
 
 #include "dw_mmc-exynos.h"
+<<<<<<< HEAD
 #if defined(CONFIG_MMC_DW_FMP_ECRYPT_FS)
 #include <linux/pagemap.h>
 #include "fmp_derive_iv.h"
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_FIPS_FMP)
 #include "fmpdev_info.h"
@@ -37,10 +40,15 @@ extern spinlock_t disk_key_lock;
 			((unsigned char *)(x) + 4 * (c))[2], ((unsigned char *)(x) + 4 * (c))[3])
 
 #define FMP_KEY_SIZE    32
+<<<<<<< HEAD
+=======
+#define SHA256_HASH_SIZE 32
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_FIPS_FMP)
 static int fmp_xts_check_key(uint8_t *enckey, uint8_t *twkey, uint32_t len)
 {
+<<<<<<< HEAD
         if (!enckey | !twkey | !len) {
                 printk(KERN_ERR "FMP key buffer is NULL or length is 0.\n");
                 return -1;
@@ -134,6 +142,17 @@ static int configure_fmp_file_enc(struct dw_mci *host, struct idmac_desc_64addr 
 #endif
 
 	return 0;
+=======
+	if (!enckey | !twkey | !len) {
+		printk(KERN_ERR "FMP key buffer is NULL or length is 0.\n");
+		return -1;
+	}
+
+	if (!memcmp(enckey, twkey, len))
+		return -1;      /* enckey and twkey are same */
+	else
+		return 0;       /* enckey and twkey are different */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 #endif
 
@@ -141,6 +160,7 @@ int fmp_mmc_map_sg(struct dw_mci *host, struct idmac_desc_64addr *desc,
 			uint32_t idx, uint32_t enc_mode, uint32_t sector,
 			struct mmc_data *data, struct bio *bio)
 {
+<<<<<<< HEAD
         int ret;
         uint32_t size;
 
@@ -155,6 +175,22 @@ int fmp_mmc_map_sg(struct dw_mci *host, struct idmac_desc_64addr *desc,
                                 size);
                 return -EINVAL;
         }
+=======
+	int ret;
+	uint32_t size;
+
+	if (!host || !desc || !data || !bio)
+		return 0;
+
+	size = desc->des2;
+#if defined(CONFIG_FIPS_FMP)
+	/* The length of XTS AES must be smaller than 4KB */
+	if (size > 0x1000) {
+		printk(KERN_ERR "Fail to FMP XTS due to invalid size(%x)\n",
+				size);
+		return -EINVAL;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #if defined(CONFIG_MMC_DW_FMP_DM_CRYPT)
@@ -173,6 +209,7 @@ int fmp_mmc_map_sg(struct dw_mci *host, struct idmac_desc_64addr *desc,
 	desc->des30 = 0;
 	desc->des31 = htonl(sector);
 
+<<<<<<< HEAD
         if (disk_key_flag) {
                 int ret;
 		unsigned long flags;
@@ -221,6 +258,42 @@ file_enc:
 	}
 #endif
 
+=======
+	if (disk_key_flag) {
+		unsigned long flags;
+
+#if defined(CONFIG_FIPS_FMP)
+		if (!bio) {
+			printk(KERN_ERR "Fail to check xts key due to bio\n");
+			return -EINVAL;
+		}
+
+		if (fmp_xts_check_key(bio->key,
+					(uint8_t *)((uint64_t)bio->key + FMP_KEY_SIZE), FMP_KEY_SIZE)) {
+			printk(KERN_ERR "Fail to FMP XTS because enckey and twkey is the same\n");
+			return -EINVAL;
+		}
+#endif
+		if (disk_key_flag == 1)
+			printk(KERN_INFO "FMP disk encryption key is set\n");
+		else if (disk_key_flag == 2)
+			printk(KERN_INFO "FMP disk encryption key is set after clear\n");
+		ret = exynos_smc(SMC_CMD_FMP, FMP_KEY_SET, EMMC0_FMP, 0);
+		if (ret < 0)
+			panic("Fail to load FMP loadable firmware\n");
+		else if (ret) {
+			printk(KERN_ERR "Fail to smc call for FMP key setting(%x)\n", ret);
+			return ret;
+		}
+
+		spin_lock_irqsave(&disk_key_lock, flags);
+		disk_key_flag = 0;
+		spin_unlock_irqrestore(&disk_key_lock, flags);
+	}
+#endif
+
+file_enc:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
         return 0;
 }
 EXPORT_SYMBOL_GPL(fmp_mmc_map_sg);

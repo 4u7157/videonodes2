@@ -21,7 +21,11 @@ config ANDROID_BINDER_IPC
 
 config ANDROID_BINDER_IPC_32BIT
 	bool "Use old 32-bit binder api"
+<<<<<<< HEAD
 	default y if ANDROID_MAJOR_VERSION != "o" && ANDROID_MAJOR_VERSION != "p"
+=======
+        default y if ANDROID_MAJOR_VERSION != "o" && ANDROID_MAJOR_VERSION != "p"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	---help---
 	  The Binder API has been changed to support both 32 and 64bit
 	  applications in a mixed environment.
@@ -44,6 +48,7 @@ config ANDROID_BINDER_DEVICES
 	  therefore logically separated from the other devices.
 
 config ANDROID_BINDER_IPC_SELFTEST
+<<<<<<< HEAD
 	bool "Android Binder IPC Driver Selftest"
 	depends on ANDROID_BINDER_IPC
 	---help---
@@ -52,6 +57,16 @@ config ANDROID_BINDER_IPC_SELFTEST
 	Binder selftest checks the allocation and free of binder buffers
 	exhaustively with combinations of various buffer sizes and
 	alignments.
+=======
+        bool "Android Binder IPC Driver Selftest"
+        depends on ANDROID_BINDER_IPC
+        ---help---
+          This feature allows binder selftest to run.
+
+          Binder selftest checks the allocation and free of binder buffers
+          exhaustively with combinations of various buffer sizes and
+          alignments.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config ASHMEM
 	bool "Enable the Anonymous Shared Memory Subsystem"

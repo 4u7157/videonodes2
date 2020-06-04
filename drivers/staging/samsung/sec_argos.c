@@ -38,6 +38,11 @@ enum {
 	THRESHOLD,
 	CPU_MIN_FREQ,
 	CPU_MAX_FREQ,
+<<<<<<< HEAD
+=======
+	KFC_MIN_FREQ,
+	KFC_MAX_FREQ,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	MIFFREQ,
 	INTFREQ,
 	TASK_AFFINITY_EN,
@@ -66,6 +71,11 @@ struct argos_irq_affinity {
 struct argos_pm_qos {
 	struct pm_qos_request cpu_min_qos_req;
 	struct pm_qos_request cpu_max_qos_req;
+<<<<<<< HEAD
+=======
+	struct pm_qos_request kfc_min_qos_req;
+	struct pm_qos_request kfc_max_qos_req;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct pm_qos_request mif_qos_req;
 	struct pm_qos_request int_qos_req;
 	struct pm_qos_request hotplug_min_qos_req;
@@ -369,6 +379,11 @@ static void argos_freq_unlock(int type)
 
 	REMOVE_PM_QOS(&qos->cpu_min_qos_req);
 	REMOVE_PM_QOS(&qos->cpu_max_qos_req);
+<<<<<<< HEAD
+=======
+	REMOVE_PM_QOS(&qos->kfc_min_qos_req);
+	REMOVE_PM_QOS(&qos->kfc_max_qos_req);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	REMOVE_PM_QOS(&qos->mif_qos_req);
 	REMOVE_PM_QOS(&qos->int_qos_req);
 
@@ -377,7 +392,11 @@ static void argos_freq_unlock(int type)
 
 static void argos_freq_lock(int type, int level)
 {
+<<<<<<< HEAD
 	unsigned cpu_min_freq, cpu_max_freq, mif_freq, int_freq;
+=======
+	unsigned cpu_min_freq, cpu_max_freq, kfc_min_freq, kfc_max_freq, mif_freq, int_freq;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct boost_table *t = &argos_pdata->devices[type].tables[level];
 	struct argos_pm_qos *qos = argos_pdata->devices[type].qos;
 	const char *cname;
@@ -386,23 +405,53 @@ static void argos_freq_lock(int type, int level)
 
 	cpu_min_freq = t->items[CPU_MIN_FREQ];
 	cpu_max_freq = t->items[CPU_MAX_FREQ];
+<<<<<<< HEAD
+=======
+	kfc_min_freq = t->items[KFC_MIN_FREQ];
+	kfc_max_freq = t->items[KFC_MAX_FREQ];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mif_freq = t->items[MIFFREQ];
 	int_freq = t->items[INTFREQ];
 
 	if (cpu_min_freq) {
 		UPDATE_PM_QOS(&qos->cpu_min_qos_req,
+<<<<<<< HEAD
 			PM_QOS_CLUSTER0_FREQ_MIN, cpu_min_freq);
+=======
+			PM_QOS_CLUSTER1_FREQ_MIN, cpu_min_freq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		REMOVE_PM_QOS(&qos->cpu_min_qos_req);
 	}
 
 	if (cpu_max_freq) {
 		UPDATE_PM_QOS(&qos->cpu_max_qos_req,
+<<<<<<< HEAD
 			PM_QOS_CLUSTER0_FREQ_MAX, cpu_max_freq);
+=======
+			PM_QOS_CLUSTER1_FREQ_MAX, cpu_max_freq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		REMOVE_PM_QOS(&qos->cpu_max_qos_req);
 	}
 
+<<<<<<< HEAD
+=======
+	if (kfc_min_freq) {
+		UPDATE_PM_QOS(&qos->kfc_min_qos_req,
+			PM_QOS_CLUSTER0_FREQ_MIN, kfc_min_freq);
+	} else {
+		REMOVE_PM_QOS(&qos->kfc_min_qos_req);
+	}
+
+	if (kfc_max_freq) {
+		UPDATE_PM_QOS(&qos->kfc_max_qos_req,
+			PM_QOS_CLUSTER0_FREQ_MAX, kfc_max_freq);
+	} else {
+		REMOVE_PM_QOS(&qos->kfc_max_qos_req);
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (mif_freq) {
 		UPDATE_PM_QOS(&qos->mif_qos_req,
 			PM_QOS_BUS_THROUGHPUT, mif_freq);
@@ -416,8 +465,13 @@ static void argos_freq_lock(int type, int level)
 	} else {
 		REMOVE_PM_QOS(&qos->int_qos_req);
 	}
+<<<<<<< HEAD
 	pr_info("%s name:%s, CPU_MIN=%d, CPU_MAX=%d, MIF=%d, INT=%d\n",
 		__func__, cname, cpu_min_freq, cpu_max_freq, mif_freq, int_freq);
+=======
+	pr_info("%s name:%s, CPU_MIN=%d, CPU_MAX=%d, KFC_MIN=%d, KFC_MAX=%d, MIF=%d, INT=%d\n",
+		__func__, cname, cpu_min_freq, cpu_max_freq, kfc_min_freq, kfc_max_freq, mif_freq, int_freq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void argos_block_enable(char *req_name, bool set)

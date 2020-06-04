@@ -155,6 +155,7 @@ static int devfreq_simple_exynos_register_notifier(struct devfreq *df)
 	if (ret < 0)
 		goto err1;
 
+<<<<<<< HEAD
 	if (data->pm_qos_class_max) {
 		data->nb_max.df = df;
 		data->nb_max.nb.notifier_call = devfreq_simple_exynos_notifier;
@@ -164,6 +165,15 @@ static int devfreq_simple_exynos_register_notifier(struct devfreq *df)
 			pm_qos_remove_notifier(data->pm_qos_class, &data->nb.nb);
 			goto err2;
 		}
+=======
+	data->nb_max.df = df;
+	data->nb_max.nb.notifier_call = devfreq_simple_exynos_notifier;
+
+	ret = pm_qos_add_notifier(data->pm_qos_class_max, &data->nb_max.nb);
+	if (ret < 0) {
+		pm_qos_remove_notifier(data->pm_qos_class, &data->nb.nb);
+		goto err2;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return 0;
@@ -184,11 +194,17 @@ static int devfreq_simple_exynos_unregister_notifier(struct devfreq *df)
 	if (!data)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (data->pm_qos_class_max) {
 		ret = pm_qos_remove_notifier(data->pm_qos_class_max, &data->nb_max.nb);
 		if (ret < 0)
 			goto err;
 	}
+=======
+	ret = pm_qos_remove_notifier(data->pm_qos_class_max, &data->nb_max.nb);
+	if (ret < 0)
+		goto err;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = pm_qos_remove_notifier(data->pm_qos_class, &data->nb.nb);
 

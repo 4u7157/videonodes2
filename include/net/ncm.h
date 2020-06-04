@@ -48,6 +48,7 @@
 /* Struct Socket definition */
 struct knox_socket_metadata {
 /* The source port of the socket */
+<<<<<<< HEAD
     __u16   srcport;
 /* The destination port of the socket */
     __u16   dstport;
@@ -71,6 +72,31 @@ struct knox_socket_metadata {
     char srcaddr[INET6_ADDRSTRLEN_NAP];
 /* The destination address of the socket */
     char dstaddr[INET6_ADDRSTRLEN_NAP];
+=======
+	__u16   srcport;
+/* The destination port of the socket */
+	__u16   dstport;
+/* The Transport layer protocol of the socket*/
+	__u16   trans_proto;
+/* The number of application layer bytes sent by the socket */
+	__u64   knox_sent;
+/* The number of application layer bytes recieved by the socket */
+	__u64   knox_recv;
+/* The uid which created the socket */
+	uid_t   knox_uid;
+/* The pid under which the socket was created */
+	pid_t   knox_pid;
+/* The parent user id under which the socket was created */
+	uid_t   knox_puid;
+/* The epoch time at which the socket was opened */
+	__u64   open_time;
+/* The epoch time at which the socket was closed */
+	__u64   close_time;
+/* The source address of the socket */
+	char srcaddr[INET6_ADDRSTRLEN_NAP];
+/* The destination address of the socket */
+	char dstaddr[INET6_ADDRSTRLEN_NAP];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* The name of the process which created the socket */
 	char process_name[PROCESS_NAME_LEN_NAP];
 /* The name of the parent process which created the socket */
@@ -78,20 +104,31 @@ struct knox_socket_metadata {
 /*  The Domain name associated with the ip address of the socket. The size needs to be in sync with the userspace implementation */
 	char domain_name[DOMAIN_NAME_LEN_NAP];
 /* The uid which originated the dns request */
+<<<<<<< HEAD
     uid_t   knox_uid_dns;
 /* The parent process id under which the socket was created */
     pid_t   knox_ppid;
+=======
+	uid_t   knox_uid_dns;
+/* The parent process id under which the socket was created */
+	pid_t   knox_ppid;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* The interface used by the flow to transmit packet */
 	char interface_name[IFNAMSIZ];
 /* The flow type is used identify the current state of the network flow*/
 	int   flow_type;
 /* The struct defined is responsible for inserting the socket meta-data into kfifo */
+<<<<<<< HEAD
     struct work_struct work_kfifo;
+=======
+	struct work_struct work_kfifo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /* Struct Socket definition */
 struct knox_user_socket_metadata {
 /* The source port of the socket */
+<<<<<<< HEAD
     __u16   srcport;
 /* The destination port of the socket */
     __u16   dstport;
@@ -115,6 +152,31 @@ struct knox_user_socket_metadata {
     char srcaddr[INET6_ADDRSTRLEN_NAP];
 /* The destination address of the socket */
     char dstaddr[INET6_ADDRSTRLEN_NAP];
+=======
+	__u16   srcport;
+/* The destination port of the socket */
+	__u16   dstport;
+/* The Transport layer protocol of the socket*/
+	__u16   trans_proto;
+/* The number of application layer bytes sent by the socket */
+	__u64   knox_sent;
+/* The number of application layer bytes recieved by the socket */
+	__u64   knox_recv;
+/* The uid which created the socket */
+	uid_t   knox_uid;
+/* The pid under which the socket was created */
+	pid_t   knox_pid;
+/* The parent user id under which the socket was created */
+	uid_t   knox_puid;
+/* The epoch time at which the socket was opened */
+	__u64   open_time;
+/* The epoch time at which the socket was closed */
+	__u64   close_time;
+/* The source address of the socket */
+	char srcaddr[INET6_ADDRSTRLEN_NAP];
+/* The destination address of the socket */
+	char dstaddr[INET6_ADDRSTRLEN_NAP];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* The name of the process which created the socket */
 	char process_name[PROCESS_NAME_LEN_NAP];
 /* The name of the parent process which created the socket */
@@ -122,16 +184,26 @@ struct knox_user_socket_metadata {
 /*  The Domain name associated with the ip address of the socket. The size needs to be in sync with the userspace implementation */
 	char domain_name[DOMAIN_NAME_LEN_NAP];
 /* The uid which originated the dns request */
+<<<<<<< HEAD
     uid_t   knox_uid_dns;
 /* The parent process id under which the socket was created */
     pid_t   knox_ppid;
+=======
+	uid_t   knox_uid_dns;
+/* The parent process id under which the socket was created */
+	pid_t   knox_ppid;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* The interface used by the flow to transmit packet */
 	char interface_name[IFNAMSIZ];
 /* The flow type is used identify the current state of the network flow*/
 	int   flow_type;
 };
 
+<<<<<<< HEAD
 /* The list of function which is being referenced by the af_inet.c class */
+=======
+/* The list of function which is being referenced */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern unsigned int check_ncm_flag(void);
 extern void knox_collect_conntrack_data(struct nf_conn *ct, int startStop, int where);
 extern bool kfifo_status(void);

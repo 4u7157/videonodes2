@@ -24,19 +24,33 @@
 #define DSIM_STOP_STATE_CNT		0xa
 #define DSIM_BTA_TIMEOUT		0xff
 #define DSIM_LP_RX_TIMEOUT		0xffff
+<<<<<<< HEAD
 #define DSIM_MULTI_PACKET_CNT		0xffff
+=======
+#define DSIM_MULTI_PACKET_CNT		0x2
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define DSIM_PLL_STABLE_TIME		0x13880
 
 /* If below values depend on panel. These values wil be move to panel file.
  * And these values are valid in case of video mode only. */
 #define DSIM_CMD_ALLOW_VALUE		4
+<<<<<<< HEAD
 #define DSIM_STABLE_VFP_VALUE		2
+=======
+#define DSIM_STABLE_VFP_VALUE		1
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define DSIM_M_PLL_CTRL2		0x0
 
 
 #define TE_PROTECT_ON			158
 #define TE_TOUT			180
 
+<<<<<<< HEAD
+=======
+/* Error report mask bits */
+#define MIPI_DSI_ERR_BIT_MASK	(0x3f3f)
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* M_PLL_CTRL setting value */
 const u32 DSIM_M_PLL_CTRL1[3] = {0x40000000, 0x40000040, 0x40000040};
 
@@ -377,10 +391,27 @@ void dsim_reg_set_lpdr_timeout(u32 id)
 	dsim_write_mask(id, DSIM_TIMEOUT0, val, DSIM_TIMEOUT_LPDR_TOUT_MASK);
 }
 
+<<<<<<< HEAD
 void dsim_reg_set_packet_ctrl(u32 id)
 {
 	u32 val = DSIM_CMD_CONFIG_MULTI_PKT_CNT(DSIM_MULTI_PACKET_CNT);
 	dsim_write_mask(id, DSIM_CMD_CONFIG, val, DSIM_CMD_CONFIG_MULTI_PKT_CNT_MASK);
+=======
+void dsim_reg_set_packet_ctrl(u32 id, u32 en)
+{
+	u32 val = 0;
+	u32 mask = DSIM_CMD_CONFIG_MULTI_PKT_CNT_MASK | DSIM_CMD_CONFIG_MULTI_CMD_PKT_EN;
+
+	if (en) {
+		val = DSIM_CMD_CONFIG_MULTI_PKT_CNT(DSIM_MULTI_PACKET_CNT) |
+		DSIM_CMD_CONFIG_MULTI_CMD_PKT_EN;
+	} else {
+		val = DSIM_CMD_CONFIG_MULTI_PKT_CNT(0) &
+			~DSIM_CMD_CONFIG_MULTI_CMD_PKT_EN;
+	}
+
+	dsim_write_mask(id, DSIM_CMD_CONFIG, val, mask);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void dsim_reg_set_m_pll_ctrl1(u32 id, u32 m_pll_ctrl1)
@@ -397,7 +428,11 @@ void dsim_reg_set_porch(u32 id, struct decon_lcd *lcd)
 {
 
 	if (lcd->mode == DECON_VIDEO_MODE) {
+<<<<<<< HEAD
 		dsim_reg_set_cmdallow(id, DSIM_CMD_ALLOW_VALUE);
+=======
+		dsim_reg_set_cmdallow(id, lcd->vfp - DSIM_STABLE_VFP_VALUE - 2);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		dsim_reg_set_stable_vfp(id, DSIM_STABLE_VFP_VALUE);
 		dsim_reg_set_vbp(id, lcd->vbp);
 		dsim_reg_set_hfp(id, lcd->hfp);
@@ -458,7 +493,11 @@ void dsim_reg_set_config(u32 id, struct decon_lcd *lcd_info, u32 data_lane_cnt)
 		dsim_reg_set_burst_mode(id, 1);
 		dsim_reg_set_sync_inform(id, 0);
 		dsim_reg_enable_mflush(id, 1);
+<<<<<<< HEAD
 		dsim_reg_enable_clocklane_stop_start(id, 1);
+=======
+		dsim_reg_enable_clocklane_stop_start(id, lcd_info->clklane_onoff);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else if (lcd_info->mode == DECON_MIPI_COMMAND_MODE) {
 		dsim_reg_enable_noncontinuous_clock(id, 1);
 		dsim_reg_enable_mflush(id, 1);
@@ -834,6 +873,14 @@ int dsim_reg_wait_hs_clk_ready(u32 id)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+u32 dsim_reg_header_fifo_is_empty(u32 id)
+{
+	return dsim_read_mask(id, DSIM_FIFOCTRL, DSIM_FIFOCTRL_EMPTY_PH_SFR);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void dsim_reg_set_fifo_ctrl(u32 id, u32 cfg)
 {
 	dsim_write_mask(id, DSIM_FIFOCTRL, ~cfg, cfg);
@@ -847,7 +894,11 @@ void dsim_reg_force_dphy_stop_state(u32 id, u32 en)
 	dsim_write_mask(id, DSIM_ESCMODE, val, DSIM_ESCMODE_FORCE_STOP_STATE);
 }
 
+<<<<<<< HEAD
 void dsim_reg_wr_tx_header(u32 id, u32 data_id, unsigned long data0, u32 data1)
+=======
+void dsim_reg_wr_tx_header(u32 id, u32 data_id, u32 data0, u32 data1)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	u32 val = DSIM_PKTHDR_ID(data_id) | DSIM_PKTHDR_DATA0(data0) |
 		DSIM_PKTHDR_DATA1(data1);
@@ -1001,9 +1052,16 @@ int dsim_reg_init(u32 id, struct decon_lcd *lcd_info, u32 data_lane_cnt, struct 
 	 */
 	if (dsim_read_mask(id, DSIM_CLKCTRL, DSIM_CLKCTRL_TX_REQUEST_HSCLK)) {
 		dsim_info("dsim%d is probed with LCD ON UBOOT\n", id);
+<<<<<<< HEAD
 		dsim_reg_init_probe(id, lcd_info, data_lane_cnt, clks);
 		/* If reg_init_probe() sequence is not equal to reg_init()
 		   then just return. */
+=======
+		if(lcd_info->mode == DECON_MIPI_COMMAND_MODE)
+			dsim_reg_init_probe(id, lcd_info, data_lane_cnt, clks);
+			/* If reg_init_probe() sequence is not equal to reg_init()
+			   then just return. */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EBUSY;
 	}
 
@@ -1039,7 +1097,11 @@ int dsim_reg_init(u32 id, struct decon_lcd *lcd_info, u32 data_lane_cnt, struct 
 	dsim_reg_set_porch(id, lcd_info);
 	dsim_reg_enable_shadow(id, 0);
 	if (lcd_info->mode == DECON_VIDEO_MODE)
+<<<<<<< HEAD
 		dsim_reg_set_packet_ctrl(id); /* set multi packet cnt */
+=======
+		dsim_reg_set_packet_ctrl(id, 0); /* set multi packet cnt */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	else if (lcd_info->mode == DECON_MIPI_COMMAND_MODE) {
 		/*set TE base command*/
 		time_stable_vfp = lcd_info->xres * DSIM_STABLE_VFP_VALUE * 3 / 100;
@@ -1204,6 +1266,65 @@ void dsim_reg_set_int(u32 id, u32 en)
 	dsim_write_mask(id, DSIM_INTMSK, val, mask);
 }
 
+<<<<<<< HEAD
+=======
+u32 dsim_reg_rx_fifo_is_empty(u32 id)
+{
+	return dsim_read_mask(id, DSIM_FIFOCTRL, DSIM_FIFOCTRL_EMPTY_RX);
+}
+
+u32 dsim_reg_get_rx_fifo(u32 id)
+{
+	return dsim_read(id, DSIM_RXFIFO);
+}
+
+int dsim_reg_rx_err_handler(u32 id, u32 rx_fifo)
+{
+	int ret = 0;
+	u32 err_bit = rx_fifo >> 8; /* Error_Range [23:8] */
+
+	if ((err_bit & MIPI_DSI_ERR_BIT_MASK) == 0) {
+		dsim_dbg("dsim%d, Non error reporting format (rx_fifo=0x%x)\n",
+				id, rx_fifo);
+		return ret;
+	}
+
+	/* Parse error report bit*/
+	if (err_bit & MIPI_DSI_ERR_SOT)
+		dsim_err("SoT error!\n");
+	if (err_bit & MIPI_DSI_ERR_SOT_SYNC)
+		dsim_err("SoT sync error!\n");
+	if (err_bit & MIPI_DSI_ERR_EOT_SYNC)
+		dsim_err("EoT error!\n");
+	if (err_bit & MIPI_DSI_ERR_ESCAPE_MODE_ENTRY_CMD)
+		dsim_err("Escape mode entry command error!\n");
+	if (err_bit & MIPI_DSI_ERR_LOW_POWER_TRANSMIT_SYNC)
+		dsim_err("Low-power transmit sync error!\n");
+	if (err_bit & MIPI_DSI_ERR_HS_RECEIVE_TIMEOUT)
+		dsim_err("HS receive timeout error!\n");
+	if (err_bit & MIPI_DSI_ERR_FALSE_CONTROL)
+		dsim_err("False control error!\n");
+	if (err_bit & MIPI_DSI_ERR_CONTENTION_DETECTED)
+		dsim_err("contention detection!\n");
+	if (err_bit & MIPI_DSI_ERR_ECC_SINGLE_BIT)
+		dsim_err("ECC error, single-bit(detected and corrected)!\n");
+	if (err_bit & MIPI_DSI_ERR_ECC_MULTI_BIT)
+		dsim_err("ECC error, multi-bit(detected, not corrected)!\n");
+	if (err_bit & MIPI_DSI_ERR_CHECKSUM)
+		dsim_err("Checksum error(long packet only)!\n");
+	if (err_bit & MIPI_DSI_ERR_DATA_TYPE_NOT_RECOGNIZED)
+		dsim_err("DSI data type not recognized!\n");
+	if (err_bit & MIPI_DSI_ERR_VCHANNEL_ID_INVALID)
+		dsim_err("DSI VC ID invalid!\n");
+	if (err_bit & MIPI_DSI_ERR_INVALID_TRANSMIT_LENGTH)
+		dsim_err("Invalid transmission length!\n");
+
+	dsim_err("dsim%d, (rx_fifo=0x%x) Check DPHY values about HS clk.\n",
+			id, rx_fifo);
+	return -EINVAL;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /*
  * enter or exit ulps mode
  *
@@ -1345,11 +1466,22 @@ u32 dsim_reg_get_xres(u32 id)
 int dsim_reg_exit_ulps_and_start(u32 id, u32 ddi_type, u32 lanes)
 {
 	int ret = 0;
+<<<<<<< HEAD
 	/* try to exit ULPS mode. The sequence is depends on DDI type */
 	ret = dsim_reg_set_ulps_by_ddi(id, ddi_type, lanes, 0);
 	dsim_reg_set_hs_clock(id, 1);
 	dsim_reg_set_standby(id, 1);
 	dsim_reg_set_int(id, 1);
+=======
+	/* Guarantee 1.2v signal level for data line(positive) when exit ULPS */
+	dsim_reg_set_hs_clock(id, 1);
+	dsim_reg_set_standby(id, 1);
+	dsim_reg_set_hs_clock(id, 0);
+
+	/* try to exit ULPS mode. The sequence is depends on DDI type */
+	ret = dsim_reg_set_ulps_by_ddi(id, ddi_type, lanes, 0);
+	dsim_reg_start(id, NULL, lanes);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 

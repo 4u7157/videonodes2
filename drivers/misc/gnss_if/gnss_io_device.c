@@ -25,7 +25,10 @@
 #include <linux/device.h>
 #include <linux/module.h>
 #include <linux/skbuff.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "gnss_prj.h"
 #include "gnss_utils.h"
@@ -489,9 +492,14 @@ static long misc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	struct io_device *iod = (struct io_device *)filp->private_data;
 	struct link_device *ld = iod->ld;
 	struct gnss_ctl *gc = iod->gc;
+<<<<<<< HEAD
 	u32 *fault_info_regs;
 	int err = 0;
 	int size;
+=======
+	u32 fault_info_regs[FAULT_INFO_COUNT];
+	int err = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!valid_cmd_arg(cmd, arg))
 		return -ENOTTY;
@@ -510,15 +518,21 @@ static long misc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case GNSS_IOCTL_REQ_FAULT_INFO:
 		if (gc->ops.gnss_req_fault_info) {
 			gif_err("%s: GNSS_IOCTL_REQ_FAULT_INFO\n", iod->name);
+<<<<<<< HEAD
 			size = gc->ops.gnss_req_fault_info(gc, &fault_info_regs);
 
 			gif_err("gnss_req_fault_info returned %d\n", size);
 
 			if (size < 0) {
+=======
+			err = gc->ops.gnss_req_fault_info(gc, fault_info_regs);
+			if (err) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				gif_err("Can't get fault info from Kepler\n");
 				return -EFAULT;
 			}
 
+<<<<<<< HEAD
 			if (size > 0) {
 				err = copy_to_user((void __user *)arg,
 					(void *)fault_info_regs, size);
@@ -534,6 +548,17 @@ static long misc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			return -EFAULT;
 		}
 		return size;
+=======
+			err = copy_to_user((void __user *)arg,
+					(void *)fault_info_regs, sizeof(fault_info_regs));
+			if (err) {
+				gif_err("copy_to_user fail(to copy fault info)\n");
+				return -EFAULT;
+			}
+		}
+		gif_err("%s: !gc->ops.req_fault_info\n", iod->name);
+		return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	case GNSS_IOCTL_REQ_BCMD:
 		if (ld->req_bcmd) {

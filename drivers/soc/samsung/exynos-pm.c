@@ -18,9 +18,12 @@
 #ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
 #endif
+<<<<<<< HEAD
 #include <linux/of.h>
 #include <linux/of_address.h>
 #include <linux/slab.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <asm/psci.h>
 #include <asm/suspend.h>
 #include <asm/smp_plat.h>
@@ -31,6 +34,14 @@
 
 #include <sound/exynos-audmixer.h>
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SOC_EXYNOS8890)
+#define GPIO_ALIVE_PA_ADDR             0x10580000
+#elif defined(CONFIG_SOC_EXYNOS7870)
+#define GPIO_ALIVE_PA_ADDR             0x139F0000
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define WAKEUP_STAT_EINT                (1 << 0)
 #define WAKEUP_STAT_RTC_ALARM           (1 << 1)
 #define WAKEUP_STAT_RTC_TICK		(1 << 2)
@@ -41,7 +52,10 @@
 #define WAKEUP_STAT_MMC2		(1 << 11)
 #define WAKEUP_STAT_I2S			(1 << 13)
 #define WAKEUP_STAT_TIMER		(1 << 14)
+<<<<<<< HEAD
 #define WAKEUP_STAT_WIFI_ACTIVE		(1 << 19)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define WAKEUP_STAT_CP_RESET_REQ	(1 << 20)
 #define WAKEUP_STAT_GNSS_WAKEUP_REQ	(1 << 21)
 #define WAKEUP_STAT_GNSS_RESET_REQ	(1 << 22)
@@ -49,10 +63,14 @@
 #define WAKEUP_STAT_INT_MBOX_CP		(1 << 24)
 #define WAKEUP_STAT_CP_ACTIVE		(1 << 25)
 #define WAKEUP_STAT_INT_MBOX_GNSS	(1 << 26)
+<<<<<<< HEAD
 #define WAKEUP_STAT_INT_MBOX_WIFI	(1 << 27)
 #define WAKEUP_STAT_CORTEXM0_APM	(1 << 28)
 #define WAKEUP_STAT_WIFI_RESET_REQ	(1 << 29)
 
+=======
+#define WAKEUP_STAT_SFR		(1 << 28)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /*
  * PMU register offset
  */
@@ -61,6 +79,7 @@
 #define BOOT_CPU			0
 #define NR_CPUS_PER_CLUSTER		4
 
+<<<<<<< HEAD
 extern u32 exynos_eint_to_pin_num(int eint);
 #define EXYNOS_EINT_PEND(b, x)      ((b) + 0xA00 + (((x) >> 3) * 4))
 
@@ -83,6 +102,16 @@ struct exynos_pm_dbg {
 	u32 test_cp_call;
 };
 static struct exynos_pm_dbg *pm_dbg;
+=======
+static void __iomem *exynos_eint_base;
+extern u32 exynos_eint_to_pin_num(int eint);
+#define EXYNOS_EINT_PEND(b, x)      ((b) + 0xA00 + (((x) >> 3) * 4))
+#ifdef CONFIG_SOC_EXYNOS7870
+#define EXYNOS_MAX_EINT_IRQS	24
+#else
+#define EXYNOS_MAX_EINT_IRQS	32
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void exynos_show_wakeup_reason_eint(void)
 {
@@ -93,18 +122,41 @@ static void exynos_show_wakeup_reason_eint(void)
 	bool found = 0;
 	unsigned int val;
 
+<<<<<<< HEAD
 	pr_info("EINT_PEND: ");
 	for (i = 0, size = 8; i < pm_info->num_eint; i += size)
 		pr_info("0x%02x ", __raw_readl(EXYNOS_EINT_PEND(pm_info->eint_base, i)));
 
 	pr_info("\n");
+=======
+#ifdef CONFIG_SOC_EXYNOS7870
+	/* gpa0, gpa1, gpa2 */
+	pr_info("EINT_PEND: 0x%02x, 0x%02x 0x%02x\n",
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, 0)),
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, 8)),
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, 16)));
+#else
+	/* gpa0, gpa1, gpa2, gpa3 */
+	pr_info("EINT_PEND: 0x%02x, 0x%02x 0x%02x, 0x%02x\n",
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, 0)),
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, 8)),
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, 16)),
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, 24)));
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	exynos_pmu_read(EXYNOS_PMU_EINT_WAKEUP_MASK, &val);
 	eint_wakeup_mask = val;
 
+<<<<<<< HEAD
 	for (i = 0, size = 8; i < pm_info->num_eint; i += size) {
 		ext_int_pend =
 			__raw_readl(EXYNOS_EINT_PEND(pm_info->eint_base, i));
+=======
+	for (i = 0, size = 8; i < EXYNOS_MAX_EINT_IRQS; i += size) {
+		ext_int_pend =
+			__raw_readl(EXYNOS_EINT_PEND(exynos_eint_base, i));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		for_each_set_bit(bit, &ext_int_pend, size) {
 			u32 gpio;
@@ -125,12 +177,17 @@ static void exynos_show_wakeup_reason_eint(void)
 	}
 
 	if (!found)
+<<<<<<< HEAD
 		pr_info("%s Resume caused by unknown EINT\n", EXYNOS_PM_PREFIX);
+=======
+		pr_info("Resume caused by unknown EINT\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void exynos_show_wakeup_reason(bool sleep_abort)
 {
 	unsigned int wakeup_stat;
+<<<<<<< HEAD
 	int i, size;
 
 	if (sleep_abort) {
@@ -151,10 +208,20 @@ static void exynos_show_wakeup_reason(bool sleep_abort)
 	exynos_pmu_read(EXYNOS_PMU_WAKEUP_STAT, &wakeup_stat);
 
 	pr_info("%s WAKEUP_STAT: 0x%08x\n", EXYNOS_PM_PREFIX, wakeup_stat);
+=======
+
+	if (sleep_abort)
+		pr_info("PM: early wakeup!\n");
+
+	exynos_pmu_read(EXYNOS_PMU_WAKEUP_STAT, &wakeup_stat);
+
+	pr_info("WAKEUP_STAT: 0x%08x\n", wakeup_stat);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (wakeup_stat & WAKEUP_STAT_EINT)
 		exynos_show_wakeup_reason_eint();
 	else if (wakeup_stat & WAKEUP_STAT_RTC_ALARM)
+<<<<<<< HEAD
 		pr_info("%s Resume caused by RTC alarm\n", EXYNOS_PM_PREFIX);
 	else if (wakeup_stat & WAKEUP_STAT_RTC_TICK)
 		pr_info("%s Resume caused by RTC tick\n", EXYNOS_PM_PREFIX);
@@ -197,6 +264,44 @@ static void exynos_show_wakeup_reason(bool sleep_abort)
 	else
 		pr_info("%s Resume caused by wakeup_stat 0x%08x\n",
 			EXYNOS_PM_PREFIX, wakeup_stat);
+=======
+		pr_info("Resume caused by RTC alarm\n");
+	else if (wakeup_stat & WAKEUP_STAT_RTC_TICK)
+		pr_info("Resume caused by RTC tick\n");
+	else if (wakeup_stat & WAKEUP_STAT_TRTC_ALARM)
+		pr_info("Resume caused by TRTC alarm\n");
+	else if (wakeup_stat & WAKEUP_STAT_TRTC_TICK)
+		pr_info("Resume caused by TRTC tick\n");
+	else if (wakeup_stat & WAKEUP_STAT_MMC0)
+		pr_info("Resume caused by MMC0\n");
+	else if (wakeup_stat & WAKEUP_STAT_MMC1)
+		pr_info("Resume caused by MMC1\n");
+	else if (wakeup_stat & WAKEUP_STAT_MMC2)
+		pr_info("Resume caused by MMC2\n");
+	else if (wakeup_stat & WAKEUP_STAT_I2S)
+		pr_info("Resume caused by I2S\n");
+	else if (wakeup_stat & WAKEUP_STAT_TIMER)
+		pr_info("Resume caused by TIMER\n");
+	else if (wakeup_stat & WAKEUP_STAT_CP_RESET_REQ)
+		pr_info("Resume caused by CP_RESET_REQ\n");
+	else if (wakeup_stat & WAKEUP_STAT_GNSS_WAKEUP_REQ)
+		pr_info("Resume caused by GNSS_WAKEUP_REQ\n");
+	else if (wakeup_stat & WAKEUP_STAT_GNSS_RESET_REQ)
+		pr_info("Resume caused by GNSS_RESET_REQ\n");
+	else if (wakeup_stat & WAKEUP_STAT_GNSS_ACTIVE)
+		pr_info("Resume caused by GNSS active\n");
+	else if (wakeup_stat & WAKEUP_STAT_INT_MBOX_CP)
+		pr_info("Resume caused by INT_MBOX_CP\n");
+	else if (wakeup_stat & WAKEUP_STAT_CP_ACTIVE)
+		pr_info("Resume caused by CP active\n");
+	else if (wakeup_stat & WAKEUP_STAT_INT_MBOX_GNSS)
+		pr_info("Resume caused by INT_MBOX_GNSS\n");
+	else if (wakeup_stat & WAKEUP_STAT_SFR)
+		pr_info("Resume caused by SFR\n");
+	else
+		pr_info("Resume caused by wakeup_stat 0x%08x\n",
+			wakeup_stat);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #ifdef CONFIG_CPU_IDLE
@@ -296,6 +401,13 @@ int exynos_pm_sicd_exit(void)
 EXPORT_SYMBOL_GPL(exynos_pm_sicd_exit);
 #endif /* CONFIG_CPU_IDLE */
 
+<<<<<<< HEAD
+=======
+int early_wakeup;
+int psci_index;
+int is_cp_call;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int exynos_pm_syscore_suspend(void)
 {
 #ifdef CONFIG_SEC_DEBUG
@@ -303,12 +415,21 @@ static int exynos_pm_syscore_suspend(void)
 	unsigned int addr;
 	int debug_level;
 #endif
+<<<<<<< HEAD
 	if (!exynos_check_cp_status()) {
 		pr_info("%s %s: sleep canceled by CP reset \n",
 					EXYNOS_PM_PREFIX, __func__);
 		return -EINVAL;
 	}
 
+=======
+
+	if (!exynos_check_cp_status()) {
+		pr_info("%s: sleep canceled by CP reset \n",__func__);
+		return -EINVAL;
+	}
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SEC_DEBUG
 	debug_level = sec_debug_get_debug_level();
 
@@ -316,6 +437,7 @@ static int exynos_pm_syscore_suspend(void)
 		/* debug level MID or HIGH */
 		addr = 0x0038;
 		exynos_pmu_read(addr, &val);
+<<<<<<< HEAD
 		pr_info("CP_STAT (0x%x) = 0x%08x\n", addr, val);
 		addr = 0x0048;
 		exynos_pmu_read(addr, &val);
@@ -335,6 +457,27 @@ static int exynos_pm_syscore_suspend(void)
 		exynos_prepare_sys_powerdown(pm_info->suspend_mode_idx, true);
 		pr_info("%s %s: Enter Suspend scenario. (mode_idx = %d)\n",
 				EXYNOS_PM_PREFIX,__func__, pm_info->suspend_mode_idx);
+=======
+		pr_info("CP_STAT (0x%x) = 0x%x\n", addr, val);
+		addr = 0x0048;
+		exynos_pmu_read(addr, &val);
+		pr_info("GNSS_STAT (0x%x) = 0x%x\n", addr, val);
+		addr = 0x00c0;
+		exynos_pmu_read(addr, &val);
+		pr_info("CONNECT_SLEEP_STATUS (0x%x) = 0x%x\n", addr, val);
+	}
+#endif
+
+	is_cp_call = is_cp_aud_enabled();
+	if (is_cp_call) {
+		psci_index = PSCI_SYSTEM_CP_CALL;
+		exynos_prepare_cp_call();
+		pr_info("%s: Enter CP Call mode for voice call\n",__func__);
+	} else {
+		psci_index = PSCI_SYSTEM_SLEEP;
+		exynos_prepare_sys_powerdown(SYS_SLEEP);
+		pr_info("%s: Enter sleep mode\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return 0;
@@ -343,6 +486,7 @@ static int exynos_pm_syscore_suspend(void)
 static void exynos_pm_syscore_resume(void)
 {
 	pr_info("========== wake up ==========\n");
+<<<<<<< HEAD
 	if (pm_info->is_cp_call || pm_dbg->test_cp_call)
 		exynos_wakeup_sys_powerdown(pm_info->cp_call_mode_idx, pm_info->is_early_wakeup);
 	else
@@ -353,6 +497,17 @@ static void exynos_pm_syscore_resume(void)
 	if (!pm_info->is_early_wakeup)
 		pr_debug("%s %s: post sleep, preparing to return\n",
 						EXYNOS_PM_PREFIX, __func__);
+=======
+	if (is_cp_call)
+		exynos_wakeup_cp_call(early_wakeup);
+	else
+		exynos_wakeup_sys_powerdown(SYS_SLEEP,
+					(bool)early_wakeup);
+
+	exynos_show_wakeup_reason((bool)early_wakeup);
+
+	pr_debug("%s: post sleep, preparing to return\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static struct syscore_ops exynos_pm_syscore_ops = {
@@ -366,6 +521,7 @@ extern void gpio_dvs_check_sleepgpio(void);
 
 static int exynos_pm_enter(suspend_state_t state)
 {
+<<<<<<< HEAD
 	unsigned int psci_index;
 
 	if (pm_info->is_cp_call || pm_dbg->test_cp_call)
@@ -377,6 +533,8 @@ static int exynos_pm_enter(suspend_state_t state)
 	if (pm_dbg->test_early_wakeup)
 		arch_send_call_function_single_ipi(0);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SEC_GPIO_DVS
 	/************************ Caution !!! ****************************/
 	/* This function must be located in appropriate SLEEP position
@@ -385,6 +543,7 @@ static int exynos_pm_enter(suspend_state_t state)
 	/************************ Caution !!! ****************************/
 	gpio_dvs_check_sleepgpio();
 #endif
+<<<<<<< HEAD
 
 	/* This will also act as our return point when
 	 * we resume as it saves its own register state and restores it
@@ -395,6 +554,16 @@ static int exynos_pm_enter(suspend_state_t state)
 				EXYNOS_PM_PREFIX, __func__);
 
 	return pm_info->is_early_wakeup;
+=======
+	/* This will also act as our return point when
+	 * we resume as it saves its own register state and restores it
+	 * during the resume. */
+	early_wakeup = cpu_suspend(psci_index);
+	if (early_wakeup)
+		pr_info("%s: return to originator\n", __func__);
+
+	return early_wakeup;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static const struct platform_suspend_ops exynos_pm_ops = {
@@ -455,6 +624,7 @@ static const struct attribute_group *exynos_info_sysfs_groups[] = {
 	NULL,
 };
 
+<<<<<<< HEAD
 bool is_test_cp_call_set(void)
 {
 	if (!pm_dbg)
@@ -497,6 +667,14 @@ enum ids_info {
 	big_asv,
 	g3d_asv,
 	cpu_ids,
+=======
+#if defined(CONFIG_SEC_DEBUG)
+enum ids_info
+{
+	table_ver,
+	cpu_asv,
+	g3d_asv
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 extern int asv_ids_information(enum ids_info id);
@@ -509,19 +687,29 @@ static ssize_t show_asv_info(struct device *dev,
 
 	/* Set asv group info to buf */
 	count += sprintf(&buf[count], "%d ", asv_ids_information(table_ver));
+<<<<<<< HEAD
 	count += sprintf(&buf[count], "%03x ", asv_ids_information(big_asv));
 	count += sprintf(&buf[count], "%03x ", asv_ids_information(g3d_asv));
 	count += sprintf(&buf[count], "%u ", asv_ids_information(cpu_ids));
+=======
+	count += sprintf(&buf[count], "%03x ", asv_ids_information(cpu_asv));
+	count += sprintf(&buf[count], "%03x ", asv_ids_information(g3d_asv));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	count += sprintf(&buf[count], "\n");
 
 	return count;
 }
 
 static DEVICE_ATTR(asv_info, 0664, show_asv_info, NULL);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* CONFIG_SEC_FACTORY */
 
 static __init int exynos_pm_drvinit(void)
 {
+<<<<<<< HEAD
 	int ret;
 
 	pm_info = kzalloc(sizeof(struct exynos_pm_info), GFP_KERNEL);
@@ -627,6 +815,34 @@ static __init int exynos_pm_drvinit(void)
 		pr_err("%s: failed to create exynos7570 asv attribute file\n", __func__);
 	}
 #endif /* CONFIG_SEC_FACTORY */
+=======
+#if defined(CONFIG_SEC_DEBUG)
+	int ret;
+#endif
+	if (subsys_system_register(&exynos_info_subsys,
+					exynos_info_sysfs_groups))
+		pr_err("fail to register exynos_info subsys\n");
+
+	suspend_set_ops(&exynos_pm_ops);
+	register_syscore_ops(&exynos_pm_syscore_ops);
+
+	exynos_eint_base = ioremap(GPIO_ALIVE_PA_ADDR, SZ_8K);
+
+	if (exynos_eint_base == NULL) {
+		pr_err("%s: unable to ioremap for EINT base address\n",
+				__func__);
+		BUG();
+	}
+
+#if defined(CONFIG_SEC_DEBUG)
+	/* create sysfs group */
+	ret = sysfs_create_file(power_kobj, &dev_attr_asv_info.attr);
+	if (ret) {
+		pr_err("%s: failed to create exynos8890 asv attribute file\n",
+				__func__);
+	}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }

@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
 *
 * File name: mtv319.c
 *
@@ -16,6 +17,25 @@
 * GNU General Public License for more details.
 *
 */
+=======
+ *
+ * File name: mtv319.c
+ *
+ * Description : MTV319 T-DMB services source file.
+ *
+ * Copyright (C) (2013, RAONTECH)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2.
+ *
+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+ * kind, whether express or implied; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "mtv319_rf.h"
 #include "mtv319_internal.h"
@@ -54,7 +74,11 @@ INT rtv_InitSystem(void)
 		if ((read0 == WR27_VAL) && (read1 == WR29_VAL))
 			goto RTV_POWER_ON_SUCCESS;
 
+<<<<<<< HEAD
 		RTV_DBGMSG1("[rtv_InitSystem] Power On wait: %d\n", i);
+=======
+		RTV_DBGMSG1("Power On wait: %d\n", i);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		RTV_DELAY_MS(5);
 	}
 #else
@@ -72,12 +96,20 @@ INT rtv_InitSystem(void)
 
 		RTV_REG_SET(0x07, 0x00);
 
+<<<<<<< HEAD
 		RTV_DBGMSG1("[rtv_InitSystem] Power On wait: %d\n", i);
+=======
+		RTV_DBGMSG1("Power On wait: %d\n", i);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		RTV_DELAY_MS(5);
 	}
 #endif
 
+<<<<<<< HEAD
 	RTV_DBGMSG1("rtv_InitSystem: Power On Check error: %d\n", i);
+=======
+	RTV_DBGMSG1("Power On Check error: %d\n", i);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return RTV_POWER_ON_CHECK_ERROR;
 
 RTV_POWER_ON_SUCCESS:

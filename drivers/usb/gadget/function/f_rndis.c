@@ -68,9 +68,12 @@
 
 #ifdef CONFIG_USB_RNDIS_MULTIPACKET
 static unsigned int rndis_dl_max_pkt_per_xfer = 10;
+<<<<<<< HEAD
 #else
 static unsigned int rndis_dl_max_pkt_per_xfer = 3;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 module_param(rndis_dl_max_pkt_per_xfer, uint, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(rndis_dl_max_pkt_per_xfer,
 	"Maximum packets per transfer for DL aggregation");
@@ -79,6 +82,10 @@ static unsigned int rndis_ul_max_pkt_per_xfer = 3;
 module_param(rndis_ul_max_pkt_per_xfer, uint, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(rndis_ul_max_pkt_per_xfer,
        "Maximum packets per transfer for UL aggregation");
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct f_rndis {
 	struct gether			port;
@@ -503,6 +510,7 @@ static void rndis_response_complete(struct usb_ep *ep, struct usb_request *req)
 	switch (status) {
 	case -ECONNRESET:
 	case -ESHUTDOWN:
+		pr_err("RNDIS notify_count to 0 \n");
 		/* connection gone */
 		atomic_set(&rndis->notify_count, 0);
 		break;

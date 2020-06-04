@@ -225,7 +225,11 @@ struct da9155_charger_data {
 
 	struct da9155_charger_platform_data *pdata;
 
+<<<<<<< HEAD
 	struct power_supply	*psy_chg;
+=======
+	struct power_supply	psy_chg;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	unsigned int siop_level;
 	unsigned int chg_irq;

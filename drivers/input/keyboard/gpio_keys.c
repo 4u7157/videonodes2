@@ -32,7 +32,13 @@
 #include <linux/of_irq.h>
 #include <linux/spinlock.h>
 #include <linux/exynos-ss.h>
+<<<<<<< HEAD
 #include <linux/sec_sysfs.h>
+=======
+
+#include <linux/sec_sysfs.h>
+#include <linux/sec_debug.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct device *sec_key;
 EXPORT_SYMBOL(sec_key);
@@ -40,10 +46,13 @@ int wakeup_reason;
 bool irq_in_suspend;
 bool suspend_state;
 
+<<<<<<< HEAD
 #if defined(CONFIG_KEYBOARD_S2MPU06)
 extern int get_pkey_press(void);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 bool wakeup_by_key(void) {
 	if (irq_in_suspend) {
 		if (wakeup_reason == KEY_HOMEPAGE) {
@@ -54,7 +63,16 @@ bool wakeup_by_key(void) {
 	}
 	return false;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(wakeup_by_key);
+=======
+
+EXPORT_SYMBOL(wakeup_by_key);
+
+#if defined(CONFIG_FB) && defined(CONFIG_SENSORS_VFS7XXX)
+extern void vfsspi_fp_homekey_ev(void);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct gpio_button_data {
 	struct gpio_keys_button *button;
@@ -380,7 +398,11 @@ static ssize_t key_pressed_show_code(struct device *dev,
 
 	for (i = 0; i < ddata->pdata->nbuttons; i++) {
 		struct gpio_button_data *bdata = &ddata->data[i];
+<<<<<<< HEAD
 			if (bdata->button->code == KEY_VOLUMEUP)
+=======
+			if(bdata->button->code == KEY_VOLUMEUP)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				volume_up = bdata->key_state;
 			else if(bdata->button->code == KEY_VOLUMEDOWN)
 				volume_down = bdata->key_state;
@@ -414,6 +436,7 @@ static ssize_t wakeup_enable(struct device *dev,
 
 	for (i = 0; i < ddata->pdata->nbuttons; i++) {
 		struct gpio_button_data *bdata = &ddata->data[i];
+<<<<<<< HEAD
 		if (test_bit(bdata->button->code, bits)) {
 			bdata->button->wakeup = 1;
 		} else {
@@ -421,6 +444,12 @@ static ssize_t wakeup_enable(struct device *dev,
 				bdata->button->wakeup = 0;
 			}
 		}
+=======
+		if (test_bit(bdata->button->code, bits))
+			bdata->button->wakeup = 1;
+		else
+			bdata->button->wakeup = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 out:
@@ -437,9 +466,15 @@ static ssize_t keycode_pressed_show(struct device *dev,
 	char *buff;
 	char tmp[7] = {0};
 	ssize_t count;
+<<<<<<< HEAD
 	int len = (ddata->pdata->nbuttons + 1) * 7 + 2;
 
 	buff = kmalloc(len, GFP_KERNEL);
+=======
+	int len = (ddata->pdata->nbuttons) * 7 + 2;
+
+	buff = kzalloc(len, GFP_KERNEL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!buff) {
 		pr_err("%s %s: failed to mem alloc\n", SECLOG, __func__);
 		return snprintf(buf, 5, "NG\n");
@@ -459,6 +494,7 @@ static ssize_t keycode_pressed_show(struct device *dev,
 		}
 	}
 
+<<<<<<< HEAD
 #if defined(CONFIG_KEYBOARD_S2MPU06)
 	state = get_pkey_press();
 	keycode = KEY_POWER;
@@ -466,6 +502,8 @@ static ssize_t keycode_pressed_show(struct device *dev,
 	strncat(buff, tmp, 7);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_info("%s %s: %s\n", SECLOG, __func__, buff);
 	count = snprintf(buf, strnlen(buff, len - 2) + 2, "%s\n", buff);
 
@@ -474,10 +512,13 @@ static ssize_t keycode_pressed_show(struct device *dev,
 	return count;
 }
 
+<<<<<<< HEAD
 extern int pkey_pressed_count(int clear);
 #define GET_KEY_COUNT		0
 #define CLEAR_KEY_COUNT		1
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t key_pressed_count_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -504,6 +545,7 @@ static ssize_t key_pressed_count_show(struct device *dev,
 
 		memset(tmp, 0x00, 20);
 
+<<<<<<< HEAD
 		if (keycode == KEY_VOLUMEUP)
 			snprintf(tmp, 20, "\"KVUP\":\"%d\",", button->key_press_count);
 		else if (keycode == KEY_WINK)
@@ -514,16 +556,40 @@ static ssize_t key_pressed_count_show(struct device *dev,
 			snprintf(tmp, 20, "\"KVDN\":\"%d\",", button->key_press_count);
 		else
 			pr_err("%s: do not match keycode(%d)\n", __func__, keycode);
+=======
+		switch (keycode) {
+		case KEY_VOLUMEUP:
+			snprintf(tmp, 20, "\"KVUP\":\"%d\",", button->key_press_count);
+			break;
+		case KEY_WINK:
+			snprintf(tmp, 20, "\"KBIX\":\"%d\",", button->key_press_count);
+			break;
+		case KEY_HOMEPAGE:
+			snprintf(tmp, 20, "\"KHOM\":\"%d\",", button->key_press_count);
+			break;
+		case KEY_VOLUMEDOWN:
+			snprintf(tmp, 20, "\"KVDN\":\"%d\",", button->key_press_count);
+			break;
+		case KEY_POWER:
+			snprintf(tmp, 20, "\"KPWR\":\"%d\",", button->key_press_count);
+			break;
+		default:
+			pr_err("%s: do not match keycode(%d)\n", __func__, keycode);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		strncat(buff, tmp, 20);
 	}
 
+<<<<<<< HEAD
 #if defined(CONFIG_KEYBOARD_S2MPU06)
 	memset(tmp, 0x00, 20);
 	snprintf(tmp, 20, "\"KPWR\":\"%d\"", pkey_pressed_count(GET_KEY_COUNT));
 	strncat(buff, tmp, 20);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	endchar = (int)strnlen(buff, len);
 	buff[endchar - 1] = '\0';
 
@@ -549,10 +615,13 @@ static ssize_t key_pressed_count_store(struct device *dev,
 		button->key_press_count = 0;
 	}
 
+<<<<<<< HEAD
 #if defined(CONFIG_KEYBOARD_S2MPU06)
 	pkey_pressed_count(CLEAR_KEY_COUNT);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return count;
 }
 
@@ -581,6 +650,30 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	struct input_dev *input = bdata->input;
 	unsigned int type = button->type ?: EV_KEY;
 	int state = (gpio_get_value_cansleep(button->gpio) ? 1 : 0) ^ button->active_low;
+	struct irq_desc *desc = irq_to_desc(gpio_to_irq(button->gpio));
+
+	if (!desc) {
+		pr_err("%s: irq_desc is null!! (gpio=%d)\n", __func__, button->gpio);
+		return;
+	}
+
+	switch (button->code) {
+	case KEY_POWER:
+		printk(KERN_INFO "[sec_input] PWR key is %s\n", !!state ? "pressed" : "released");
+		break;
+	case KEY_HOMEPAGE:
+		printk(KERN_INFO "[sec_input] HOME key is %s\n", !!state ? "pressed" : "released");
+		break;
+	case KEY_VOLUMEUP:
+		printk(KERN_INFO "[sec_input] VolumeUp key is %s\n", !!state ? "pressed" : "released");
+		break;
+	case KEY_VOLUMEDOWN:
+		printk(KERN_INFO "[sec_input] VolumeDown key is %s\n", !!state ? "pressed" : "released");
+		break;
+	default:
+		printk(KERN_INFO "[sec_input] %d key is %s\n", button->code, !!state ? "pressed" : "released");
+		break;
+	}
 
 	if ((button->code == KEY_POWER) && !!state) {
 		printk(KERN_INFO "PWR key is pressed\n");
@@ -615,7 +708,16 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 			input_event(input, type, button->code, button->value);
 	} else {
 		bdata->key_state = !!state;
+<<<<<<< HEAD
 		input_event(input, type, button->code, !!state);
+=======
+		input_event(input, type, button->code, state);
+
+#if defined(CONFIG_FB) && defined(CONFIG_SENSORS_VFS7XXX)
+		if(button->code == KEY_HOMEPAGE && !!state == 1)
+			vfsspi_fp_homekey_ev();
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	if (state)
@@ -628,6 +730,9 @@ static void gpio_keys_gpio_work_func(struct work_struct *work)
 {
 	struct gpio_button_data *bdata =
 		container_of(work, struct gpio_button_data, work);
+	int state = (gpio_get_value_cansleep(bdata->button->gpio) ? 1 : 0) ^ bdata->button->active_low;
+
+	exynos_ss_check_crash_key(bdata->button->code, state);
 
 	gpio_keys_gpio_report_event(bdata);
 
@@ -946,7 +1051,12 @@ gpio_keys_get_devtree_pdata(struct device *dev)
 				button->gpio);
 			return ERR_PTR(-EINVAL);
 		}
-
+#if defined(CONFIG_SEC_FACTORY) && defined(CONFIG_VOLUME_SWAP)
+		if (button->code == KEY_VOLUMEDOWN)
+			button->code = KEY_VOLUMEUP;
+		else if (button->code == KEY_VOLUMEUP)
+			button->code = KEY_VOLUMEDOWN;
+#endif
 		button->desc = of_get_property(pp, "label", NULL);
 
 		if (of_property_read_u32(pp, "linux,input-type", &button->type))
@@ -980,6 +1090,16 @@ gpio_keys_get_devtree_pdata(struct device *dev)
 }
 
 #endif
+
+static void gpio_remove_key(struct gpio_button_data *bdata)
+{
+	free_irq(bdata->irq, bdata);
+	if (bdata->timer_debounce)
+		del_timer_sync(&bdata->timer);
+	cancel_work_sync(&bdata->work);
+	if (gpio_is_valid(bdata->button->gpio))
+		gpio_free(bdata->button->gpio);
+}
 
 static int gpio_keys_probe(struct platform_device *pdev)
 {
@@ -1067,6 +1187,17 @@ static int gpio_keys_probe(struct platform_device *pdev)
 		return error;
 	}
 
+	sec_key = sec_device_create(ddata, "sec_key");
+	if (IS_ERR(sec_key))
+		pr_err("%s failed to create sec_key\n", __func__);
+
+	error = sysfs_create_group(&sec_key->kobj, &sec_key_attr_group);
+	if (error) {
+		dev_err(dev, "Unable to export keys/switches, error: %d\n",
+			error);
+		goto fail2;
+	}
+
 	error = input_register_device(input);
 	if (error) {
 		dev_err(dev, "Unable to register input device, error: %d\n",
@@ -1079,6 +1210,18 @@ static int gpio_keys_probe(struct platform_device *pdev)
 
 err_remove_group:
 	sysfs_remove_group(&pdev->dev.kobj, &gpio_keys_attr_group);
+fail2:
+	while (--i >= 0)
+		gpio_remove_key(&ddata->data[i]);
+
+	platform_set_drvdata(pdev, NULL);
+//fail1:
+	input_free_device(input);
+	kfree(ddata);
+	/* If we have no platform data, we allocated pdata dynamically. */
+	if (!dev_get_platdata(&pdev->dev))
+		kfree(pdata);
+
 	return error;
 }
 
@@ -1101,6 +1244,10 @@ static int gpio_keys_suspend(struct device *dev)
 	suspend_state = true;
 	irq_in_suspend = false;
 	wakeup_reason = 0;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (device_may_wakeup(dev)) {
 		for (i = 0; i < ddata->pdata->nbuttons; i++) {
 			struct gpio_button_data *bdata = &ddata->data[i];

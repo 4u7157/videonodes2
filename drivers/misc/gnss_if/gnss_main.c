@@ -33,12 +33,20 @@
 #include <linux/delay.h>
 #include <linux/wakelock.h>
 #include <linux/mfd/syscon.h>
+<<<<<<< HEAD
 #include <linux/clk-private.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_OF
 #include <linux/of.h>
 #include <linux/of_platform.h>
 #endif
 
+<<<<<<< HEAD
+=======
+#include <linux/firmware.h>
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "gnss_prj.h"
 
 extern struct shmem_conf shmem_conf;
@@ -48,7 +56,10 @@ static struct gnss_ctl *create_gnssctl_device(struct platform_device *pdev)
 	struct device *dev = &pdev->dev;
 	struct gnss_data *pdata = pdev->dev.platform_data;
 	struct gnss_ctl *gnssctl;
+<<<<<<< HEAD
 	struct clk *qch_clk;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret;
 
 	/* create GNSS control device */
@@ -64,6 +75,7 @@ static struct gnss_ctl *create_gnssctl_device(struct platform_device *pdev)
 	gnssctl->gnss_data = pdata;
 	gnssctl->name = pdata->name;
 
+<<<<<<< HEAD
 	qch_clk = devm_clk_get(dev, "ccore_qch_lh_gnss");
 	if (!IS_ERR(qch_clk)) {
 		gif_err("Found Qch clk!\n");
@@ -75,11 +87,25 @@ static struct gnss_ctl *create_gnssctl_device(struct platform_device *pdev)
 
 #ifdef USE_IOREMAP_NOPMU
 	gnssctl->pmu_reg = devm_ioremap(dev, PMU_ADDR, PMU_SIZE);
+=======
+#ifdef USE_IOREMAP_NOPMU
+	gnssctl->pmu_reg = devm_ioremap(dev, PMU_ADDR_7870, PMU_SIZE_7870);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (gnssctl->pmu_reg == NULL) {
 		gif_err("%s: pmu ioremap failed.\n", pdata->name);
 		return NULL;
 	} else
 		gif_err("pmu_reg : 0x%p\n", gnssctl->pmu_reg);
+<<<<<<< HEAD
+=======
+#else
+	gnssctl->pmu_reg = syscon_regmap_lookup_by_phandle(dev->of_node,
+			"samsung,syscon-phandle");
+	if (IS_ERR(gnssctl->pmu_reg)) {
+		gif_err("%s: syscon regmap lookup failed.\n", pdata->name);
+		return NULL;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	/* init gnssctl device for getting gnssctl operations */
@@ -87,7 +113,11 @@ static struct gnss_ctl *create_gnssctl_device(struct platform_device *pdev)
 	if (ret) {
 		gif_err("%s: init_gnssctl_device fail (err %d)\n",
 			pdata->name, ret);
+<<<<<<< HEAD
 		devm_kfree(dev, gnssctl);
+=======
+		kfree(gnssctl);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return NULL;
 	}
 
@@ -125,7 +155,11 @@ static struct io_device *create_io_device(struct platform_device *pdev,
 	/* register misc device */
 	ret = exynos_init_gnss_io_device(iod);
 	if (ret) {
+<<<<<<< HEAD
 		devm_kfree(dev, iod);
+=======
+		kfree(iod);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		gif_err("exynos_init_gnss_io_device fail (%d)\n", ret);
 		return NULL;
 	}
@@ -142,7 +176,10 @@ static int parse_dt_common_pdata(struct device_node *np,
 	gif_dt_read_string(np, "shmem,device_node_name", pdata->device_node_name);
 	gif_dt_read_u32(np, "shmem,ipc_offset", pdata->ipcmem_offset);
 	gif_dt_read_u32(np, "shmem,ipc_size", pdata->ipc_size);
+<<<<<<< HEAD
 	gif_dt_read_u32(np, "shmem,ipc_reg_cnt", pdata->ipc_reg_cnt);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Shared Memory Configuration from reserved_mem */
 	pdata->shmem_base = shmem_conf.shmem_base;
@@ -181,6 +218,7 @@ static int parse_dt_mbox_pdata(struct device *dev, struct device_node *np,
 
 	gif_dt_read_u32_array(np, "mbx,reg_bcmd_ctrl", mbox->reg_bcmd_ctrl,
 			      BCMD_CTRL_COUNT);
+<<<<<<< HEAD
 
 	return 0;
 }
@@ -281,14 +319,30 @@ static int parse_dt_fault_pdata(struct device *dev, struct gnss_data *pdata)
 	else {
 		return -EINVAL;
 	}
+=======
+	gif_dt_read_u32(np, "mbx,reg_rx_ipc_msg", mbox->reg_rx_ipc_msg);
+	gif_dt_read_u32(np, "mbx,reg_tx_ipc_msg", mbox->reg_tx_ipc_msg);
+	gif_dt_read_u32(np, "mbx,reg_wake_lock", mbox->reg_wake_lock);
+
+	gif_dt_read_u32(np, "mbx,reg_rx_head", mbox->reg_rx_head);
+	gif_dt_read_u32(np, "mbx,reg_rx_tail", mbox->reg_rx_tail);
+	gif_dt_read_u32(np, "mbx,reg_tx_head", mbox->reg_tx_head);
+	gif_dt_read_u32(np, "mbx,reg_tx_tail", mbox->reg_tx_tail);
+
+	gif_dt_read_u32_array(np, "mbx,reg_fault_info", mbox->reg_fault_info,
+			      FAULT_INFO_COUNT);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
 static struct gnss_data *gnss_if_parse_dt_pdata(struct device *dev)
 {
 	struct gnss_data *pdata;
+<<<<<<< HEAD
 	int i;
 	u32 ret;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pdata = devm_kzalloc(dev, sizeof(struct gnss_data), GFP_KERNEL);
 	if (!pdata) {
@@ -296,6 +350,7 @@ static struct gnss_data *gnss_if_parse_dt_pdata(struct device *dev)
 		return ERR_PTR(-ENOMEM);
 	}
 
+<<<<<<< HEAD
 	ret = parse_dt_common_pdata(dev->of_node, pdata);
 	if (ret != 0) {
 		gif_err("Failed to parse common pdata.\n");
@@ -343,6 +398,15 @@ parse_dt_pdata_err:
 		devm_kfree(dev, pdata);
 
 	return ERR_PTR(-EINVAL);
+=======
+	parse_dt_common_pdata(dev->of_node, pdata);
+	parse_dt_mbox_pdata(dev, dev->of_node, pdata);
+
+	dev->platform_data = pdata;
+	gif_info("DT parse complete!\n");
+
+	return pdata;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static const struct of_device_id sec_gnss_match[] = {
@@ -357,6 +421,87 @@ static struct gnss_data *gnss_if_parse_dt_pdata(struct device *dev)
 }
 #endif /* CONFIG_OF */
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_GNSS_DISABLE
+/*
+ * If GNSS is NOT used(ex, WIFI only), GNSS driver should remove
+ * reserved memory after downloading temp(hibernation) image.
+ */
+static void gnss_disable(struct gnss_data *pdata)
+{
+	struct page *page;
+	size_t  sh_addr = pdata->shmem_base;
+	int i;
+
+	gif_err("Remove reserved memory.\n");
+	/* Release reserved memory */
+	for (i = 0; i < (pdata->shmem_size >> PAGE_SHIFT); i++) {
+		page = phys_to_page(sh_addr);
+		sh_addr += PAGE_SIZE;
+
+		free_reserved_page(page);
+	}
+}
+#endif
+
+static int gnss_hiberimg_dl(struct gnss_data *pdata, struct link_device *ld)
+{
+	const struct firmware *fw_entry = NULL;
+	int err;
+	struct kepler_bcmd_args bcmd_args;
+
+	pr_err("GNSS Load Firmware.\n");
+	err = request_firmware(&fw_entry, "gnss_firmware.bin", NULL);
+	if (err) {
+ 		pr_err("Can't get firmware structure!!!\n");
+		err = -EIO;
+		goto exit_img_dl;
+	}
+
+	memcpy(ld->mdm_data->gnss_base, fw_entry->data, fw_entry->size);
+	printk("0x%x,  0x%x\n", ((u32*)ld->mdm_data->gnss_base)[0],
+			((u32*)fw_entry->data)[0]);
+
+	release_firmware(fw_entry);
+
+	/* Send Load Firmware BCMD */
+	bcmd_args.flags = 0x0; /* Not used in this command */
+	bcmd_args.cmd_id = 0x1; /* Load firmware command */
+	bcmd_args.param1 = 0x50000000; /* Load address */
+	bcmd_args.param2 = 0x20000; /* Load size */
+
+	pr_err("Send load firmware BCMD.\n");
+	err = ld->req_bcmd(ld, bcmd_args.cmd_id, bcmd_args.flags,
+				bcmd_args.param1, bcmd_args.param2);
+
+	if (err == -EIO) {
+		pr_err("BCMD timeout cmd_id : %d\n", bcmd_args.cmd_id);
+		goto exit_img_dl;
+	}
+
+	/* Run GNSS BCMD */
+	bcmd_args.flags = 0x0; /* Not used in this command */
+	bcmd_args.cmd_id = 0x2; /* Run command */
+	bcmd_args.param1 = 0x2000C1; /* Start address */
+	bcmd_args.param2 = 0x0; /* Not used in this command */
+
+	pr_err("Send RUN BCMD.\n");
+	err = ld->req_bcmd(ld, bcmd_args.cmd_id, bcmd_args.flags,
+				bcmd_args.param1, bcmd_args.param2);
+
+	if (err == -EIO) {
+		pr_err("BCMD timeout cmd_id : %d\n", bcmd_args.cmd_id);
+	}
+#ifdef CONFIG_GNSS_DISABLE
+	gnss_disable(pdata);
+#endif
+
+exit_img_dl:
+	return err;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int gnss_probe(struct platform_device *pdev)
 {
 	struct device *dev = &pdev->dev;
@@ -422,15 +567,31 @@ static int gnss_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, gnssctl);
 
+<<<<<<< HEAD
+=======
+	gif_err("Download hibernation image.\n");
+	if (gnss_hiberimg_dl(pdata, ld))
+		gif_err("WARNING!!!, Can't download hibernation image.\n");
+	else
+		gif_err("Success downloading hibernation image.\n");
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	gif_err("%s: ---\n", pdata->name);
 
 	return 0;
 
 free_iod:
+<<<<<<< HEAD
 	devm_kfree(dev, iod);
 
 free_gc:
 	devm_kfree(dev, gnssctl);
+=======
+	kfree(iod);
+
+free_gc:
+	kfree(gnssctl);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	gif_err("%s: xxx\n", pdata->name);
 

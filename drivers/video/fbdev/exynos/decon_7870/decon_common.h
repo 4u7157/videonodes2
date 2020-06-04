@@ -62,6 +62,10 @@ enum decon_idma_type {
 
 enum decon_output_type {
 	DECON_OUT_DSI = 0,
+<<<<<<< HEAD
+=======
+	DECON_OUT_TUI,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct decon_psr_info {

@@ -502,7 +502,15 @@ static int __init sec_nad_init(void)
     INIT_WORK(&sec_nad_param_data.sec_nad_work, sec_nad_param_update);
     INIT_DELAYED_WORK(&sec_nad_param_data.sec_nad_delay_work, sec_nad_init_update);
 
+<<<<<<< HEAD
     schedule_delayed_work(&sec_nad_param_data.sec_nad_delay_work, HZ * 10);
+=======
+#if defined(CONFIG_SEC_NAD_MANUAL_PARAM_READTIME)
+    schedule_delayed_work(&sec_nad_param_data.sec_nad_delay_work, HZ * CONFIG_SEC_NAD_MANUAL_PARAM_READTIME);
+#else
+    schedule_delayed_work(&sec_nad_param_data.sec_nad_delay_work, HZ * 10);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
     return 0;
 err_create_nad_sysfs:

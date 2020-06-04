@@ -26,7 +26,11 @@ mcDrvModule-y := \
 ccflags-y += -DNDEBUG
 ccflags-y += -Wno-declaration-after-statement
 
+<<<<<<< HEAD
 ccflags-$(CONFIG_MOBICORE_DEBUG) += -DDEBUG
+=======
+ccflags-$(CONFIG_TRUSTONIC_TEE_DEBUG) += -DDEBUG
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 # MobiCore Driver includes
 ccflags-y += -I$(GUD_ROOT_FOLDER)/MobiCoreDriver

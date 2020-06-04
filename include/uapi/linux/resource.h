@@ -70,11 +70,18 @@ struct rlimit64 {
  */
 //#define MLOCK_LIMIT	((PAGE_SIZE > 64*1024) ? PAGE_SIZE : 64*1024)
 /*
+<<<<<<< HEAD
 * Secure Storage wants 64MB of mlocked memory, to make sure
 * the authentication of an application using Secure Storage.
 */
 #define MLOCK_LIMIT ((PAGE_SIZE > 64*1024*1024) ? PAGE_SIZE : 64*1024*1024)
 
+=======
+ * Secure Storage wants 64MB of mlocked memory, to make sure
+ * the authentication of an application using Secure Storage.
+ */
+#define MLOCK_LIMIT ((PAGE_SIZE > 64*1024*1024) ? PAGE_SIZE : 64*1024*1024)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /*
  * Due to binary compatibility, the actual resource numbers

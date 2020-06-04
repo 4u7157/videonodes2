@@ -211,6 +211,10 @@ static int proximity_open_cancelation(struct cm36672p_data *data)
 {
 	struct file *cancel_filp = NULL;
 	int err = 0;
+<<<<<<< HEAD
+=======
+	u16 buf = 0;	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mm_segment_t old_fs;
 
 	old_fs = get_fs();
@@ -225,14 +229,26 @@ static int proximity_open_cancelation(struct cm36672p_data *data)
 		return err;
 	}
 
+<<<<<<< HEAD
 	err = cancel_filp->f_op->read(cancel_filp,
 		(char *)&ps_reg_init_setting[PS_CANCEL][CMD],
+=======
+	err = cancel_filp->f_op->read(cancel_filp, (char *)&buf,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		sizeof(u16), &cancel_filp->f_pos);
 	if (err != sizeof(u16)) {
 		SENSOR_ERR("Can't read the cancel data from file(%d)\n", err);
 		err = -EIO;
 	}
 
+<<<<<<< HEAD
+=======
+	if (buf < data->pdata->offset_range_low)
+		goto exit;
+
+	ps_reg_init_setting[PS_CANCEL][CMD] = buf;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/*If there is an offset cal data. */
 	if (ps_reg_init_setting[PS_CANCEL][CMD] != data->pdata->default_trim) {
 		ps_reg_init_setting[PS_THD_HIGH][CMD] =
@@ -250,6 +266,10 @@ static int proximity_open_cancelation(struct cm36672p_data *data)
 		ps_reg_init_setting[PS_THD_HIGH][CMD],
 		ps_reg_init_setting[PS_THD_LOW][CMD]);
 
+<<<<<<< HEAD
+=======
+exit:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	filp_close(cancel_filp, current->files);
 	set_fs(old_fs);
 
@@ -269,7 +289,11 @@ static int proximity_store_cancelation(struct device *dev, bool do_calib)
 		cm36672p_i2c_read_word(data, REG_PS_DATA, &ps_data);
 		mutex_unlock(&data->read_lock);
 
+<<<<<<< HEAD
 		if (ps_data < data->pdata->offset_range_low) {
+=======
+		if (ps_data  < data->pdata->offset_range_low ) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			/* SKIP. CAL_SKIP_ADC */
 			ps_reg_init_setting[PS_CANCEL][CMD] =
 				data->pdata->default_trim;
@@ -813,7 +837,11 @@ irqreturn_t proximity_irq_thread_fn(int irq, void *user_data)
 #else
 		SENSOR_INFO("near/far=%d, ps code = %d\n",
 				val, ps_data);
+<<<<<<< HEAD
 		if (((!val) && (ps_data >= ps_reg_init_setting[PS_THD_HIGH][CMD])) ||
+=======
+		if (((!val) && (ps_data >= ps_reg_init_setting[PS_THD_HIGH][CMD] )) ||
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			(val && (ps_data <= ps_reg_init_setting[PS_THD_LOW][CMD])))
 #endif
 		{
@@ -1035,13 +1063,18 @@ static int cm36672p_parse_dt(struct device *dev,
 	struct device_node *np = dev->of_node;
 	enum of_gpio_flags flags;
 	int ret;
+<<<<<<< HEAD
 	u32 temp, reg_org;
+=======
+	u32 temp;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!pdata) {
 		SENSOR_ERR("missing pdata\n");
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	pdata->irq = of_get_named_gpio_flags(np, "cm36672p,irq_gpio", 0,
 		&flags);
 	if (pdata->irq < 0) {
@@ -1053,6 +1086,12 @@ static int cm36672p_parse_dt(struct device *dev,
 		0, &flags);
 	if (pdata->vled_ldo < 0) {
 		SENSOR_ERR("Not defined vled_ldo: means to use regulator as vLED\n");
+=======
+	pdata->vled_ldo = of_get_named_gpio_flags(np, "cm36672p,vled_ldo",
+		0, &flags);
+	if (pdata->vled_ldo < 0) {
+		SENSOR_ERR("fail to get vled_ldo: means to use regulator as vLED\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->vled_ldo = 0;
 	} else {
 		ret = gpio_request(pdata->vled_ldo, "prox_vled_en");
@@ -1069,45 +1108,79 @@ static int cm36672p_parse_dt(struct device *dev,
 	ret = of_property_read_u32(np, "cm36672p,regulator_divided",
 		&pdata->regulator_divided);
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(np, "cm36672p,default_hi_thd",
 		&pdata->default_hi_thd);
 	if (ret < 0) {
 		SENSOR_ERR("Not defined default_hi_thd\n");
+=======
+	pdata->irq = of_get_named_gpio_flags(np, "cm36672p,irq_gpio", 0,
+		&flags);
+	if (pdata->irq < 0) {
+		SENSOR_ERR("get prox_int error\n");
+		return -ENODEV;
+	}
+
+	ret = of_property_read_u32(np, "cm36672p,default_hi_thd",
+		&pdata->default_hi_thd);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set default_hi_thd\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->default_hi_thd = DEFAULT_HI_THD;
 	}
 
 	ret = of_property_read_u32(np, "cm36672p,default_low_thd",
 		&pdata->default_low_thd);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined default_low_thd\n");
+=======
+		SENSOR_ERR("Cannot set default_low_thd\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->default_low_thd = DEFAULT_LOW_THD;
 	}
 
 	ret = of_property_read_u32(np, "cm36672p,cancel_hi_thd",
 		&pdata->cancel_hi_thd);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined cancel_hi_thd\n");
+=======
+		SENSOR_ERR("Cannot set cancel_hi_thd\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->cancel_hi_thd = CANCEL_HI_THD;
 	}
 
 	ret = of_property_read_u32(np, "cm36672p,cancel_low_thd",
 		&pdata->cancel_low_thd);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined cancel_low_thd\n");
+=======
+		SENSOR_ERR("Cannot set cancel_low_thd\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->cancel_low_thd = CANCEL_LOW_THD;
 	}
 
 	ret = of_property_read_u32(np, "cm36672p,offset_range_hi",
 		&pdata->offset_range_hi);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined offset_range_hi\n");
+=======
+		SENSOR_ERR("Cannot set offset_range_hi\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->offset_range_hi = pdata->default_hi_thd;
 	}
 
 	ret = of_property_read_u32(np, "cm36672p,offset_range_low",
 		&pdata->offset_range_low);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined offset_range_low\n");
+=======
+		SENSOR_ERR("Cannot set offset_range_low\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->offset_range_low = (int)((pdata->default_low_thd)*50/100);
 	}
 
@@ -1118,58 +1191,102 @@ static int cm36672p_parse_dt(struct device *dev,
 	/* Proximity Duty ratio Register Setting */
 	ret = of_property_read_u32(np, "cm36672p,ps_duty", &temp);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined ps_duty\n");
 	} else {
 		temp = temp << 6;
 		reg_org = ps_reg_init_setting[PS_CONF1][CMD] & 0xff3f;
 		ps_reg_init_setting[PS_CONF1][CMD] = reg_org | temp ;
+=======
+		SENSOR_ERR("Cannot set ps_duty\n");
+		ps_reg_init_setting[PS_CONF1][CMD] |= DEFAULT_CONF1;
+	} else {
+		temp = temp << 6;
+		ps_reg_init_setting[PS_CONF1][CMD] |= temp;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* Proximity Interrupt Persistence Register Setting */
 	ret = of_property_read_u32(np, "cm36672p,ps_pers", &temp);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined ps_pers\n");
 	} else {
 		temp = temp << 4;
 		reg_org = ps_reg_init_setting[PS_CONF1][CMD] & 0xffcf;
 		ps_reg_init_setting[PS_CONF1][CMD] = reg_org | temp ;
+=======
+		SENSOR_ERR("Cannot set ps_pers\n");
+		ps_reg_init_setting[PS_CONF1][CMD] |= DEFAULT_CONF1;
+	} else {
+		temp = temp << 4;
+		ps_reg_init_setting[PS_CONF1][CMD] |= temp;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* Proximity Integration Time Register Setting */
 	ret = of_property_read_u32(np, "cm36672p,ps_it", &temp);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined ps_it\n");
 	} else {
 		temp = temp << 1;
 		reg_org = ps_reg_init_setting[PS_CONF1][CMD] & 0xfff1;
 		ps_reg_init_setting[PS_CONF1][CMD] = reg_org | temp ;
+=======
+		SENSOR_ERR("Cannot set ps_it\n");
+		ps_reg_init_setting[PS_CONF1][CMD] |= DEFAULT_CONF1;
+	} else {
+		temp = temp << 1;
+		ps_reg_init_setting[PS_CONF1][CMD] |= temp;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* Proximity LED Current Register Setting */
 	ret = of_property_read_u32(np, "cm36672p,led_current", &temp);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined led_current\n");
 	} else {
 		temp = temp << 8;
 		reg_org = ps_reg_init_setting[PS_CONF3][CMD] & 0xf8ff;
 		ps_reg_init_setting[PS_CONF3][CMD] = reg_org | temp ;
+=======
+		SENSOR_ERR("Cannot set led_current\n");
+		ps_reg_init_setting[PS_CONF3][CMD] |= DEFAULT_CONF3;
+	} else {
+		temp = temp << 8;
+		ps_reg_init_setting[PS_CONF3][CMD] |= temp;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* Proximity Smart Persistence Register Setting */
 	ret = of_property_read_u32(np, "cm36672p,ps_smart_pers", &temp);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined ps_smart_pers\n");
 	} else {
 		temp = temp << 4;
 		reg_org = ps_reg_init_setting[PS_CONF3][CMD] & 0xffef;
 		ps_reg_init_setting[PS_CONF3][CMD] = reg_org | temp ;
+=======
+		SENSOR_ERR("Cannot set ps_smart_pers\n");
+		ps_reg_init_setting[PS_CONF3][CMD] |= DEFAULT_CONF3;
+	} else {
+		temp = temp << 4;
+		ps_reg_init_setting[PS_CONF3][CMD] |= temp;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 
 	ret = of_property_read_u32(np, "cm36672p,default_trim",
 		&pdata->default_trim);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("Not defined default_trim\n");
+=======
+		SENSOR_ERR("Cannot set default_trim\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->default_trim = DEFAULT_TRIM;
 	}
 
@@ -1177,12 +1294,19 @@ static int cm36672p_parse_dt(struct device *dev,
 	ps_reg_init_setting[PS_THD_HIGH][CMD] = pdata->default_hi_thd;
 	ps_reg_init_setting[PS_CANCEL][CMD] = pdata->default_trim;
 
+<<<<<<< HEAD
 	SENSOR_INFO("CONF1 = 0x%X, CONF3 = 0x%X, vdd_alwayson_on: %d, regulator_divided: %d, vled_ldo: %d\n",
 		ps_reg_init_setting[PS_CONF1][CMD],
 		ps_reg_init_setting[PS_CONF3][CMD],
 		pdata->vdd_always_on,
 		pdata->regulator_divided,
 		pdata->vled_ldo);
+=======
+	SENSOR_INFO("initial CONF1 = 0x%X, CONF3 = 0x%X, vdd_alwayson_on: %d, vled_ldo: %d\n",
+		ps_reg_init_setting[PS_CONF1][CMD],
+		ps_reg_init_setting[PS_CONF3][CMD],
+		pdata->vdd_always_on, pdata->vled_ldo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -1210,12 +1334,20 @@ static int cm36672p_i2c_probe(struct i2c_client *client,
 		pdata = devm_kzalloc(&client->dev,
 			sizeof(struct cm36672p_platform_data), GFP_KERNEL);
 		ret = cm36672p_parse_dt(&client->dev, pdata);
+<<<<<<< HEAD
 		if (ret) {
 			SENSOR_ERR("error in device tree");
 			goto err_parse_dt;
 		}
 	} else
 		pdata = client->dev.platform_data;
+=======
+		if (ret)
+			goto err_parse_dt;
+	} else {
+		pdata = client->dev.platform_data;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!pdata) {
 		SENSOR_ERR("missing pdata!\n");
@@ -1338,6 +1470,10 @@ err_sysfs_create_group_proximity:
 err_sensors_create_symlink_prox:
 	input_unregister_device(data->proximity_input_dev);
 err_input_register_device:
+<<<<<<< HEAD
+=======
+	input_free_device(data->proximity_input_dev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_input_alloc_device:
 err_setup_dev:
 	if (!data->pdata->regulator_divided)

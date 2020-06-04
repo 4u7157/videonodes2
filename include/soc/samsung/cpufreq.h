@@ -141,9 +141,12 @@ static inline int exynos_cpufreq_smpl_warn_notify_call_chain(void){return 0;}
 #endif
 
 #if defined(CONFIG_CPU_FREQ)
+<<<<<<< HEAD
 #if defined(CONFIG_ARM_EXYNOS_SC_CPUFREQ)
 extern int exynos_sc_cpufreq_cal_init(struct exynos_dvfs_info *);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern int exynos_cpufreq_cluster0_init(struct exynos_dvfs_info *);
 extern int exynos_cpufreq_cluster1_init(struct exynos_dvfs_info *);
 typedef enum {
@@ -153,7 +156,15 @@ typedef enum {
 } cluster_type;
 extern int exynos_cpufreq_regulator_register_notifier(cluster_type cluster);
 
+<<<<<<< HEAD
 #define COLD_VOLT_OFFSET	25000
+=======
+#if defined(CONFIG_SOC_EXYNOS7870)
+#define COLD_VOLT_OFFSET	25000
+#else
+#define COLD_VOLT_OFFSET	37500
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define LIMIT_COLD_VOLTAGE	1350000
 #define MIN_COLD_VOLTAGE	950000
 #define NR_CLUST0_CPUS		4

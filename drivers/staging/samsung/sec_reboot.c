@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+=======
+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *      http://www.samsung.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,12 +21,21 @@
 #include <linux/input.h>
 #endif
 #include <linux/sec_ext.h>
+<<<<<<< HEAD
 #include <linux/battery/sec_battery.h>
+=======
+#if defined(CONFIG_BATTERY_SAMSUNG_V2)
+#include "../../battery_v2/include/sec_battery.h"
+#else
+#include <linux/battery/sec_battery.h>
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/sec_batt.h>
 
 #include <asm/cacheflush.h>
 #include <asm/system_misc.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_KEYBOARD_S2MPU06
 #include <linux/mfd/samsung/s2mpu06.h>
 #include <linux/mfd/samsung/s2mpu06-private.h>
@@ -34,6 +47,10 @@
 #include <linux/sec_debug.h>
 #endif
 
+=======
+#include <soc/samsung/exynos-pmu.h>
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* function ptr for original arm_pm_restart */
 void (*mach_restart)(enum reboot_mode mode, const char *cmd);
 EXPORT_SYMBOL(mach_restart);
@@ -56,8 +73,15 @@ enum sec_reset_reason {
 	SEC_RESET_REASON_FOTA_BL   = (SEC_RESET_REASON_PREFIX | 0x6), /* update bootloader */
 	SEC_RESET_REASON_SECURE    = (SEC_RESET_REASON_PREFIX | 0x7), /* image secure check fail */
 	SEC_RESET_REASON_FWUP      = (SEC_RESET_REASON_PREFIX | 0x9), /* emergency firmware update */
+<<<<<<< HEAD
 	SEC_RESET_REASON_CP_OTP    = (SEC_RESET_REASON_PREFIX | 0xc), /* OTP fusing for CP */
 	SEC_RESET_REASON_BOOTLOADER    = (SEC_RESET_REASON_PREFIX | 0xd),
+=======
+	SEC_RESET_REASON_BOOTLOADER      = (SEC_RESET_REASON_PREFIX | 0xd),
+#ifdef CONFIG_MUIC_S2MU005
+	SEC_RESET_REASON_MUIC_1K   = (SEC_RESET_REASON_PREFIX | 0xe), /* setting for muic 1k */
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	SEC_RESET_REASON_EMERGENCY = 0x0,
 	
 	#ifdef CONFIG_SEC_DEBUG_MDM_SEPERATE_CRASH
@@ -79,10 +103,17 @@ static void sec_power_off(void)
 	struct power_supply *usb_psy = power_supply_get_by_name("usb");
 	struct power_supply *wc_psy = power_supply_get_by_name("wireless");
 	union power_supply_propval ac_val;
+<<<<<<< HEAD
 	union power_supply_propval usb_val;
 	union power_supply_propval wc_val;
 
 #ifndef CONFIG_KEYBOARD_S2MPU06
+=======
+	union power_supply_propval water_val;
+	union power_supply_propval usb_val;
+	union power_supply_propval wc_val;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_OF
 	int powerkey_gpio = -1;
 	struct device_node *np, *pp;
@@ -110,35 +141,65 @@ static void sec_power_off(void)
 #else
 	int powerkey_gpio = GPIO_nPOWER;
 #endif
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	local_irq_disable();
 
 	ac_psy->get_property(ac_psy, POWER_SUPPLY_PROP_ONLINE, &ac_val);
 	usb_psy->get_property(usb_psy, POWER_SUPPLY_PROP_ONLINE, &usb_val);
 	wc_psy->get_property(wc_psy, POWER_SUPPLY_PROP_ONLINE, &wc_val);
+<<<<<<< HEAD
 
 	pr_info("[%s] AC[%d] : USB[%d] : WC[%d]\n", __func__,
 		ac_val.intval, usb_val.intval, wc_val.intval);
+=======
+#if defined(CONFIG_BATTERY_SAMSUNG_V2)
+	ac_psy->get_property(ac_psy, POWER_SUPPLY_EXT_PROP_WATER_DETECT, &water_val);
+#else
+	water_val.intval = 0;
+#endif
+
+	pr_info("[%s] AC[%d] : USB[%d] : WC[%d] : WATER[%d]\n", __func__,
+		ac_val.intval, usb_val.intval, wc_val.intval, water_val.intval);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	while (1) {
 		/* Check reboot charging */
 #ifdef CONFIG_SAMSUNG_BATTERY
+<<<<<<< HEAD
 		if ((ac_val.intval || usb_val.intval || wc_val.intval ||
 		     (poweroff_try >= 5)) && !lpcharge) {
 #else
 		if ((ac_val.intval || usb_val.intval || wc_val.intval ||
+=======
+		if ((ac_val.intval || water_val.intval || usb_val.intval || wc_val.intval ||
+		     (poweroff_try >= 5)) && !lpcharge) {
+#else
+		if ((ac_val.intval || water_val.intval || usb_val.intval || wc_val.intval ||
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		     (poweroff_try >= 5))) {
 #endif
 			pr_emerg("%s: charger connected or power off "
 					"failed(%d), reboot!\n",
 					__func__, poweroff_try);
+<<<<<<< HEAD
 #ifdef CONFIG_SEC_DEBUG
 			sec_debug_reboot_handler();
 #endif
 			/* To enter LP charging */
 			exynos_pmu_write(EXYNOS_PMU_INFORM2, SEC_POWER_OFF);
 
+=======
+			/* To enter LP charging */
+			exynos_pmu_write(EXYNOS_PMU_INFORM2, SEC_POWER_OFF);
+
+#ifdef CONFIG_SEC_DEBUG
+			sec_debug_reboot_handler();
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			flush_cache_all();
 			mach_restart(REBOOT_SOFT, "sw reset");
 
@@ -148,12 +209,18 @@ static void sec_power_off(void)
 		}
 
 		/* wait for power button release */
+<<<<<<< HEAD
 #ifdef CONFIG_KEYBOARD_S2MPU06
 		if (!s2mpu06_is_pwron()) {
 #else
 		if (gpio_get_value(powerkey_gpio)) {
 #endif
 			pr_emerg("%s: set PS_HOLD low\n", __func__);
+=======
+		if (gpio_get_value(powerkey_gpio)) {
+			pr_emerg("%s: set PS_HOLD low\n", __func__);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SEC_DEBUG
 			sec_debug_reboot_handler();
 			flush_cache_all();
@@ -204,13 +271,23 @@ static void sec_reboot(enum reboot_mode reboot_mode, const char *cmd)
 			exynos_pmu_write(EXYNOS_PMU_INFORM3, SEC_RESET_REASON_SECURE);
 		else if (!strcmp(cmd, "fwup"))
 			exynos_pmu_write(EXYNOS_PMU_INFORM3, SEC_RESET_REASON_FWUP);
+<<<<<<< HEAD
 		else if (!strcmp(cmd, "cp_otp"))
 			exynos_pmu_write(EXYNOS_PMU_INFORM3, SEC_RESET_REASON_CP_OTP);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		else if (!strncmp(cmd, "emergency", 9))
 			exynos_pmu_write(EXYNOS_PMU_INFORM3, SEC_RESET_REASON_EMERGENCY);
 		else if (!strncmp(cmd, "debug", 5)
 			 && !kstrtoul(cmd + 5, 0, &value))
 			exynos_pmu_write(EXYNOS_PMU_INFORM3, SEC_RESET_SET_DEBUG | value);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MUIC_S2MU005
+		else if (!strcmp(cmd, "muic_1k"))
+			exynos_pmu_write(EXYNOS_PMU_INFORM3, SEC_RESET_REASON_MUIC_1K);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SEC_DEBUG_MDM_SEPERATE_CRASH
 		else if (!strncmp(cmd, "cpdebug", 7)
 			 && !kstrtoul(cmd + 7, 0, &value))

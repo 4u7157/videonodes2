@@ -2,21 +2,34 @@
  * sec_battery.h
  * Samsung Mobile Battery Header
  *
+<<<<<<< HEAD
  * Copyright (C) 2017 Samsung Electronics
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+=======
+ *
+ * Copyright (C) 2012 Samsung Electronics, Inc.
+ *
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
+<<<<<<< HEAD
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #ifndef __SEC_BATTERY_H
@@ -25,6 +38,10 @@
 #include "sec_charging_common.h"
 #include <linux/of_gpio.h>
 #include <linux/alarmtimer.h>
+<<<<<<< HEAD
+=======
+#include <linux/wakelock.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/workqueue.h>
 #include <linux/proc_fs.h>
 #include <linux/jiffies.h>
@@ -47,6 +64,7 @@
 #if defined(CONFIG_VBUS_NOTIFIER)
 #include <linux/vbus_notifier.h>
 #endif
+<<<<<<< HEAD
 
 #if defined(CONFIG_BATTERY_CISD)
 #include "sec_cisd.h"
@@ -56,10 +74,20 @@
 
 #define SEC_BAT_CURRENT_EVENT_NONE					0x0000
 #define SEC_BAT_CURRENT_EVENT_AFC					0x0001
+=======
+#if defined(CONFIG_BATTERY_CISD)
+#include "sec_cisd.h"
+#endif
+#include <linux/sec_batt.h>
+
+#define SEC_BAT_CURRENT_EVENT_NONE			0x0000
+#define SEC_BAT_CURRENT_EVENT_AFC			0x0001
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define SEC_BAT_CURRENT_EVENT_CHARGE_DISABLE		0x0002
 #define SEC_BAT_CURRENT_EVENT_SKIP_HEATING_CONTROL	0x0004
 #define SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING		0x0010
 #define SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING	0x0020
+<<<<<<< HEAD
 #if defined(CONFIG_ENABLE_100MA_CHARGING_BEFORE_USB_CONFIGURED)
 #define SEC_BAT_CURRENT_EVENT_USB_100MA			0x0040
 #else
@@ -74,10 +102,25 @@
 #define SEC_BAT_CURRENT_EVENT_VBAT_OVP			0x1000
 #define SEC_BAT_CURRENT_EVENT_VSYS_OVP			0x2000
 #define SEC_BAT_CURRENT_EVENT_WPC_VOUT_LOCK		0x4000
+=======
+#define SEC_BAT_CURRENT_EVENT_BLOCK_CHG_IN_SWELLLING	0x0040
+#define SEC_BAT_CURRENT_EVENT_LOW_TEMP		0x0080
+#define SEC_BAT_CURRENT_EVENT_USB_SUPER			0x0100
+#define SEC_BAT_CURRENT_EVENT_CHG_LIMIT			0x0200
+#define SEC_BAT_CURRENT_EVENT_VBAT_OVP			0x1000
+#define SEC_BAT_CURRENT_EVENT_VSYS_OVP			0x2000
+#if defined(CONFIG_ENABLE_100MA_CHARGING_BEFORE_USB_CONFIGURED)
+#define SEC_BAT_CURRENT_EVENT_USB_100MA			0x0400
+#else
+#define SEC_BAT_CURRENT_EVENT_USB_100MA			0x0000
+#endif
+#define SEC_BAT_CURRENT_EVENT_HV_DISABLE		0x10000
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define SIOP_EVENT_NONE 	0x0000
 #define SIOP_EVENT_WPC_CALL 	0x0001
 
+<<<<<<< HEAD
 #if defined(CONFIG_SEC_FACTORY)             // SEC_FACTORY
 #define STORE_MODE_CHARGING_MAX 80
 #define STORE_MODE_CHARGING_MIN 70
@@ -87,6 +130,19 @@
 #define STORE_MODE_CHARGING_MAX_VZW 35
 #define STORE_MODE_CHARGING_MIN_VZW 30
 #endif //(CONFIG_SEC_FACTORY)
+=======
+#if defined(CONFIG_CHARGING_VZWCONCEPT)
+#define STORE_MODE_CHARGING_MAX 35
+#define STORE_MODE_CHARGING_MIN 30
+#else
+#if defined(CONFIG_SEC_FACTORY)
+#define STORE_MODE_CHARGING_MAX 80
+#else
+#define STORE_MODE_CHARGING_MAX 70
+#endif
+#define STORE_MODE_CHARGING_MIN 60
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define ADC_CH_COUNT		10
 #define ADC_SAMPLE_COUNT	10
@@ -100,7 +156,10 @@
 #define SIOP_WIRELESS_CHARGING_LIMIT_CURRENT    780
 #define SIOP_HV_WIRELESS_INPUT_LIMIT_CURRENT	700
 #define SIOP_HV_WIRELESS_CHARGING_LIMIT_CURRENT	600
+<<<<<<< HEAD
 #define SIOP_STORE_HV_WIRELESS_CHARGING_LIMIT_CURRENT	450
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define SIOP_HV_INPUT_LIMIT_CURRENT				1200
 #define SIOP_HV_CHARGING_LIMIT_CURRENT			1000
 #define SIOP_HV_12V_INPUT_LIMIT_CURRENT			535
@@ -110,16 +169,23 @@
 #define BATT_MISC_EVENT_WIRELESS_BACKPACK_TYPE	0x00000002
 #define BATT_MISC_EVENT_TIMEOUT_OPEN_TYPE	0x00000004
 #define BATT_MISC_EVENT_BATT_RESET_SOC		0x00000008
+<<<<<<< HEAD
 #define BATT_MISC_EVENT_HICCUP_TYPE		0x00000020
+=======
+#define BATT_MISC_EVENT_UNDEFINED_RANGE_POGO    0x00000010
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define SEC_INPUT_VOLTAGE_5V	5
 #define SEC_INPUT_VOLTAGE_9V	9
 #define SEC_INPUT_VOLTAGE_10V	10
 #define SEC_INPUT_VOLTAGE_12V	12
 
+<<<<<<< HEAD
 #define HV_CHARGER_STATUS_STANDARD1	12000 /* mW */
 #define HV_CHARGER_STATUS_STANDARD2	20000 /* mW */
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_CCIC_NOTIFIER)
 struct sec_bat_pdic_info {
 	unsigned int input_voltage;
@@ -160,6 +226,12 @@ struct sec_battery_info {
 	struct power_supply psy_ac;
 	struct power_supply psy_wireless;
 	struct power_supply psy_ps;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_USE_POGO)
+	struct power_supply psy_pogo;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int irq;
 
 	int pd_usb_attached;
@@ -173,10 +245,17 @@ struct sec_battery_info {
 	struct notifier_block batt_nb;
 #endif
 #endif
+<<<<<<< HEAD
 
 #if defined(CONFIG_CCIC_NOTIFIER)
 	bool pdic_attach;
 	bool pdic_ps_rdy;
+=======
+	bool pdic_attach;
+	bool pdic_ps_rdy;
+	bool rp_attach;
+#if defined(CONFIG_CCIC_NOTIFIER)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct pdic_notifier_struct pdic_info;
 	struct sec_bat_pdic_list pd_list;
 #endif
@@ -187,7 +266,10 @@ struct sec_battery_info {
 
 	bool is_sysovlo;
 	bool is_vbatovlo;
+<<<<<<< HEAD
 	bool is_abnormal_temp;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	bool safety_timer_set;
 	bool lcd_status;
@@ -234,8 +316,11 @@ struct sec_battery_info {
 
 #if defined(CONFIG_BATTERY_CISD)
 	struct cisd cisd;
+<<<<<<< HEAD
 	bool skip_cisd;
 	bool usb_overheat_check;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	/* battery check */
@@ -259,9 +344,12 @@ struct sec_battery_info {
 	unsigned long wc_heating_passed_time;
 	unsigned int wc_heat_limit;
 
+<<<<<<< HEAD
 	unsigned long sleep_start_time;
 	unsigned long sleep_passed_time;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* chg temperature check */
 	unsigned int chg_limit;
 	unsigned int chg_limit_recovery_cable;
@@ -270,26 +358,39 @@ struct sec_battery_info {
 
 	/* temperature check */
 	int temperature;	/* battery temperature */
+<<<<<<< HEAD
 #if defined(CONFIG_ENG_BATTERY_CONCEPT)
 	int temperature_test_battery;
 	int temperature_test_usb;
 	int temperature_test_wpc;
 	int temperature_test_chg;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int temper_amb;		/* target temperature */
 	int usb_temp;
 	int chg_temp;		/* charger temperature */
 	int wpc_temp;
+<<<<<<< HEAD
 	int coil_temp;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int slave_chg_temp;
 
 	int temp_adc;
 	int temp_ambient_adc;
+<<<<<<< HEAD
 	int usb_temp_adc;	
 	int chg_temp_adc;
 	int wpc_temp_adc;
 	int coil_temp_adc;
 	int slave_chg_temp_adc;
+=======
+	int chg_temp_adc;
+	int wpc_temp_adc;
+	int slave_chg_temp_adc;
+	int usb_temp_adc;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	int temp_highlimit_threshold;
 	int temp_highlimit_recovery;
@@ -303,8 +404,11 @@ struct sec_battery_info {
 	unsigned int temp_low_cnt;
 	unsigned int temp_recover_cnt;
 
+<<<<<<< HEAD
 	unsigned int wa_float_cnt;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* charging */
 	unsigned int charging_mode;
 	bool is_recharging;
@@ -337,10 +441,14 @@ struct sec_battery_info {
 	struct wake_lock batt_data_wake_lock;
 	char *data_path;
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_OF
 	struct delayed_work parse_mode_dt_work;
 	struct wake_lock parse_mode_dt_wake_lock;
 #endif
+=======
+	struct delayed_work init_chg_work;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	char batt_type[48];
 	unsigned int full_check_cnt;
@@ -357,13 +465,22 @@ struct sec_battery_info {
 	int wc_enable;
 	int wc_enable_cnt;
 	int wc_enable_cnt_value;
+<<<<<<< HEAD
 	int led_cover;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int wc_status;
 	bool wc_cv_mode;
 	bool wc_pack_max_curr;
 
 	int wire_status;
 
+<<<<<<< HEAD
+=======
+	/* pogo status */
+	int pogo_status;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* wearable charging */
 	int ps_status;
 	int ps_enable;
@@ -387,7 +504,10 @@ struct sec_battery_info {
 	bool skip_wpc_temp_check;
 	bool wpc_temp_mode;
 	bool charging_block;
+<<<<<<< HEAD
 	bool charging_by_single;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_BATTERY_SWELLING)
 	unsigned int swelling_mode;
 	int swelling_full_check_cnt;
@@ -397,12 +517,22 @@ struct sec_battery_info {
 #endif
 #if defined(CONFIG_CALC_TIME_TO_FULL)
 	int timetofull;
+<<<<<<< HEAD
+=======
+	bool complete_timetofull;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct delayed_work timetofull_work;
 #endif
 	struct delayed_work slowcharging_work;
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
 	int batt_cycle;
 #endif
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_DCM_JPN_CONCEPT_FG_CYCLE_CHECK)
+	int fg_cycle_check_value;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_STEP_CHARGING)
 	unsigned int step_charging_type;
 	unsigned int step_charging_charge_power;
@@ -411,9 +541,13 @@ struct sec_battery_info {
 #else
 	unsigned int base_charge_power;
 #endif
+<<<<<<< HEAD
 #if defined(CONFIG_ENG_BATTERY_CONCEPT) || defined(CONFIG_SEC_FACTORY)
 	bool cooldown_mode;
 #endif
+=======
+	unsigned int pd_current_efficiency;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int prepare_afc_delay;
 
 	struct mutex misclock;
@@ -423,17 +557,26 @@ struct sec_battery_info {
 	struct wake_lock misc_event_wake_lock;
 	struct mutex batt_handlelock;
 	struct mutex current_eventlock;
+<<<<<<< HEAD
 	struct mutex typec_notylock;
 
 	unsigned int hiccup_status;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	bool stop_timer;
 	unsigned long prev_safety_time;
 	unsigned long expired_time;
 	unsigned long cal_safety_time;
+<<<<<<< HEAD
 	int fg_reset;
 
 	bool block_water_event;
+=======
+
+	bool block_water_event;
+	int water_det;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 ssize_t sec_bat_show_attrs(struct device *dev,
@@ -485,12 +628,20 @@ enum {
 	BATT_TEMP_AVER,
 	BATT_TEMP_ADC_AVER,
 	USB_TEMP,
+<<<<<<< HEAD
 	USB_TEMP_ADC,	
 	CHG_TEMP,
 	CHG_TEMP_ADC,
 	SLAVE_CHG_TEMP,
 	SLAVE_CHG_TEMP_ADC,
 
+=======
+	USB_TEMP_ADC,
+	BATT_CHG_TEMP,
+	BATT_CHG_TEMP_ADC,
+	BATT_SLAVE_CHG_TEMP,
+	BATT_SLAVE_CHG_TEMP_ADC,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	BATT_VF_ADC,
 	BATT_SLATE_MODE,
 
@@ -510,7 +661,10 @@ enum {
 	WC_ENABLE,
 	WC_CONTROL,
 	WC_CONTROL_CNT,
+<<<<<<< HEAD
 	LED_COVER,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	HV_CHARGER_STATUS,
 	HV_WC_CHARGER_STATUS,
 	HV_CHARGER_SET,
@@ -539,10 +693,17 @@ enum {
 	BATT_EVENT,
 	BATT_TEMP_TABLE,
 	BATT_HIGH_CURRENT_USB,
+<<<<<<< HEAD
 #if defined(CONFIG_ENG_BATTERY_CONCEPT)
 	TEST_CHARGE_CURRENT,
 #endif
 	SET_STABILITY_TEST,
+=======
+#if defined(CONFIG_SAMSUNG_BATTERY_ENG_TEST)
+	BATT_TEST_CHARGE_CURRENT,
+#endif
+	BATT_STABILITY_TEST,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	BATT_CAPACITY_MAX,
 	BATT_INBAT_VOLTAGE,
 	BATT_INBAT_VOLTAGE_OCV,
@@ -560,6 +721,7 @@ enum {
 	BATT_AFTER_MANUFACTURED,
 #endif
 #endif
+<<<<<<< HEAD
 	BATT_WPC_TEMP,
 	BATT_WPC_TEMP_ADC,
 	BATT_COIL_TEMP,
@@ -581,6 +743,29 @@ enum {
 	BATT_HV_WIRELESS_PAD_CTRL,
 	WC_OP_FREQ,
 	WC_CMD_INFO,
+=======
+#if defined(CONFIG_DCM_JPN_CONCEPT_FG_CYCLE_CHECK)
+	FG_CYCLE_CHECK_VALUE,
+#endif
+	BATT_WPC_TEMP,
+	BATT_WPC_TEMP_ADC,
+#if defined(CONFIG_WIRELESS_FIRMWARE_UPDATE)
+	BATT_WIRELESS_FIRMWARE_UPDATE,
+	BATT_WIRELESS_OTP_FIRMWARE_RESULT,
+	BATT_WIRELESS_IC_GRADE,
+	BATT_WIRELESS_FIRMWARE_VER_BIN,
+	BATT_WIRELESS_FIRMWARE_VER,
+	BATT_WIRELESS_TX_FIRMWARE_RESULT,
+	BATT_WIRELESS_TX_FIRMWARE_VER,
+	BATT_TX_STATUS,
+#endif
+	BATT_WIRELESS_VOUT,
+	BATT_WIRELESS_VRCT,
+	BATT_HV_WIRELESS_STATUS,
+	BATT_HV_WIRELESS_PAD_CTRL,
+	BATT_WIRELESS_OP_FREQ,
+	BATT_WIRELESS_CMD_INFO,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	BATT_TUNE_FLOAT_VOLTAGE,
 	BATT_TUNE_INPUT_CHARGE_CURRENT,
 	BATT_TUNE_FAST_CHARGE_CURRENT,
@@ -592,10 +777,17 @@ enum {
 	BATT_TUNE_TEMP_LOW_REC_NORMAL,
 	BATT_TUNE_CHG_TEMP_HIGH,
 	BATT_TUNE_CHG_TEMP_REC,
+<<<<<<< HEAD
 	BATT_TUNE_CHG_LIMIT_CUR,
 	BATT_TUNE_COIL_TEMP_HIGH,
 	BATT_TUNE_COIL_TEMP_REC,
 	BATT_TUNE_COIL_LIMIT_CUR,
+=======
+	BATT_TUNE_CHG_LIMMIT_CURRENT,
+	BATT_TUNE_COIL_TEMP_HIGH,
+	BATT_TUNE_COIL_TEMP_REC,
+	BATT_TUNE_COIL_LIMMIT_CURRENT,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_UPDATE_BATTERY_DATA)
 	BATT_UPDATE_DATA,
@@ -603,14 +795,18 @@ enum {
 
 	BATT_MISC_EVENT,
 	BATT_EXT_DEV_CHG,
+<<<<<<< HEAD
 	BATT_WDT_CONTROL,
 	MODE,
 	CHECK_PS_READY,
 	BATT_CHIP_ID,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	CISD_FULLCAPREP_MAX,
 #if defined(CONFIG_BATTERY_CISD)
 	CISD_DATA,
 	CISD_DATA_JSON,
+<<<<<<< HEAD
 	CISD_DATA_D_JSON,
 	CISD_WIRE_COUNT,
 	CISD_WC_DATA,
@@ -623,10 +819,26 @@ enum {
 	BATT_TEMP_TEST,
 #endif
 	BATT_CURRENT_EVENT,
+=======
+	CISD_WIRE_COUNT,
+	CISD_DATA_EFS_PATH,
+#endif
+	BATT_WDT_CONTROL,
+	BATT_SWELLING_CONTROL,
+	SAFETY_TIMER_SET,
+	SAFETY_TIMER_INFO,
+	MODE,
+	CHECK_PS_READY,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	FACTORY_MODE_RELIEVE,
 	FACTORY_MODE_BYPASS,
 	NORMAL_MODE_BYPASS,
 	FACTORY_VOLTAGE_REGULATION,
+<<<<<<< HEAD
+=======
+	FACTORY_MODE_DISABLE,
+	BATT_PRESENT,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 enum {
@@ -636,6 +848,7 @@ enum {
 };
 
 extern void select_pdo(int num);
+<<<<<<< HEAD
 
 extern int adc_read(struct sec_battery_info *battery, int channel);
 extern void adc_init(struct platform_device *pdev, struct sec_battery_info *battery);
@@ -647,6 +860,13 @@ extern bool sec_bat_get_value_by_adc(struct sec_battery_info *battery, enum sec_
 extern int sec_bat_get_adc_value(struct sec_battery_info *battery, int channel);
 extern int sec_bat_get_inbat_vol_by_adc(struct sec_battery_info *battery);
 extern bool sec_bat_check_vf_adc(struct sec_battery_info *battery);
+=======
+#ifdef CONFIG_OF
+extern int adc_read(struct sec_battery_info *battery, int channel);
+extern void adc_init(struct platform_device *pdev, struct sec_battery_info *battery);
+extern void adc_exit(struct sec_battery_info *battery);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_STEP_CHARGING)
 extern void sec_bat_reset_step_charging(struct sec_battery_info *battery);
@@ -654,11 +874,22 @@ extern void sec_step_charging_init(struct sec_battery_info *battery, struct devi
 extern bool sec_bat_check_step_charging(struct sec_battery_info *battery);
 #endif
 
+<<<<<<< HEAD
 #if defined(CONFIG_UPDATE_BATTERY_DATA)
 extern int sec_battery_update_data(const char* file_path);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_BATTERY_CISD)
 extern bool sec_bat_cisd_check(struct sec_battery_info *battery);
 extern void sec_battery_cisd_init(struct sec_battery_info *battery);
 #endif
+<<<<<<< HEAD
+=======
+
+#if defined(CONFIG_UPDATE_BATTERY_DATA)
+extern int sec_battery_update_data(const char* file_path);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* __SEC_BATTERY_H */

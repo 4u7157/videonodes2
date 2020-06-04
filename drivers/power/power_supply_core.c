@@ -341,7 +341,11 @@ static void power_supply_dev_release(struct device *dev)
 	kfree(dev);
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_THERMAL) && !defined(CONFIG_SOC_EXYNOS7580) && !defined(CONFIG_SOC_EXYNOS7870) && !defined(CONFIG_SOC_EXYNOS7570)
+=======
+#if defined(CONFIG_THERMAL) && !defined(CONFIG_SOC_EXYNOS7580) && !defined(CONFIG_SOC_EXYNOS7870)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int power_supply_read_temp(struct thermal_zone_device *tzd,
 		unsigned long *temp)
 {

@@ -417,7 +417,11 @@ void ist30xx_gesture_cmd(struct ist30xx_data *data, int cmd)
 #define TOUCH_UP_MESSAGE	("r")
 #define TOUCH_MOVE_MESSAGE	(" ")
 bool tsp_touched[IST30XX_MAX_MT_FINGERS] = { false, };
+<<<<<<< HEAD
 void print_tsp_event(struct ist30xx_data *data, finger_info *finger)
+=======
+void print_tsp_event(struct ist30xx_data *data, finger_info *finger, u32 z_value)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	int idx = finger->bit_field.id - 1;
 	bool press;
@@ -431,11 +435,19 @@ void print_tsp_event(struct ist30xx_data *data, finger_info *finger)
 			/* touch down */
 			data->touch_pressed_num++;
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
+<<<<<<< HEAD
 			tsp_noti("%s%d (%d, %d)(%d) fw:%d\n",
 					TOUCH_DOWN_MESSAGE, finger->bit_field.id,
 					finger->bit_field.x, finger->bit_field.y, data->z_values[idx], data->fw.cur.fw_ver);
 #else
 			tsp_noti("%s%d fw:%d\n", TOUCH_DOWN_MESSAGE, finger->bit_field.id, data->fw.cur.fw_ver);
+=======
+			tsp_noti("%s%d (%d, %d)(%d) fw:%x\n",
+					TOUCH_DOWN_MESSAGE, finger->bit_field.id,
+					finger->bit_field.x, finger->bit_field.y, z_value, data->fw.cur.fw_ver);
+#else
+			tsp_noti("%s%d fw:%x\n", TOUCH_DOWN_MESSAGE, finger->bit_field.id, data->fw.cur.fw_ver);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #if defined(CONFIG_INPUT_BOOSTER)
 			input_booster_send_event(BOOSTER_DEVICE_TOUCH, BOOSTER_MODE_ON);
@@ -446,12 +458,21 @@ void print_tsp_event(struct ist30xx_data *data, finger_info *finger)
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
 			tsp_debug("%s%d (%d, %d)(%d)\n",
 					TOUCH_MOVE_MESSAGE, finger->bit_field.id,
+<<<<<<< HEAD
 					finger->bit_field.x, finger->bit_field.y, data->z_values[idx]);
 #endif
 		}
 
 		data->lx = finger->bit_field.x;
 		data->ly = finger->bit_field.y;
+=======
+					finger->bit_field.x, finger->bit_field.y, z_value);
+#endif
+		}
+
+		data->lx[idx] = finger->bit_field.x;
+		data->ly[idx] = finger->bit_field.y;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		if (tsp_touched[idx] == true) {
 			/* touch up */
@@ -464,15 +485,24 @@ void print_tsp_event(struct ist30xx_data *data, finger_info *finger)
 #endif
 			}
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
+<<<<<<< HEAD
 			tsp_noti("%s%d(%d, %d)\n", TOUCH_UP_MESSAGE, finger->bit_field.id, data->lx, data->ly);
+=======
+			tsp_noti("%s%d(%d, %d)\n", TOUCH_UP_MESSAGE, finger->bit_field.id, data->lx[idx], data->ly[idx]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 			tsp_noti("%s%d\n", TOUCH_UP_MESSAGE, finger->bit_field.id);
 
 #endif
 			tsp_touched[idx] = false;
 
+<<<<<<< HEAD
 			data->lx = 0;
 			data->ly = 0;
+=======
+			data->lx[idx] = 0;
+			data->ly[idx] = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 }
@@ -616,6 +646,10 @@ static void report_input_data(struct ist30xx_data *data, int finger_counts,
 	bool press = false;
 	finger_info *fingers = (finger_info *)data->fingers;
 	u32 *z_values = (u32 *)data->z_values;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int idx = 0;
 	u32 status;
 
@@ -627,7 +661,11 @@ static void report_input_data(struct ist30xx_data *data, int finger_counts,
 		input_mt_report_slot_state(data->input_dev, MT_TOOL_FINGER, press);
 
 		fingers[idx].bit_field.id = id + 1;
+<<<<<<< HEAD
 		print_tsp_event(data, &fingers[idx]);
+=======
+		print_tsp_event(data, &fingers[idx], z_values[idx]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (press == false)
 			continue;
@@ -638,9 +676,17 @@ static void report_input_data(struct ist30xx_data *data, int finger_counts,
 				fingers[idx].bit_field.y);
 		input_report_abs(data->input_dev, ABS_MT_TOUCH_MAJOR,
 				fingers[idx].bit_field.area);
+<<<<<<< HEAD
 		if (data->jig_mode)
 			input_report_abs(data->input_dev, ABS_MT_PRESSURE, z_values[idx]);
 
+=======
+		if (data->jig_mode){
+			if(z_values[idx] < 1)
+				z_values[idx] = 1;
+			input_report_abs(data->input_dev, ABS_MT_PRESSURE, z_values[idx]);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		idx++;
 	}
 
@@ -771,12 +817,25 @@ static irqreturn_t ist30xx_irq_thread(int irq, void *ptr)
 	}
 
 #if IST30XX_CMCS_TEST
+<<<<<<< HEAD
 	if (unlikely(*msg == IST30XX_CMCS_MSG_VALID)) {
 		data->status.cmcs = 1;
 		tsp_info("cmcs status: 0x%08x\n", *msg);
 
 		goto irq_end;
 	}
+=======
+	if (((*msg & CMCS_MSG_MASK) == CM_MSG_VALID) ||
+		((*msg & CMCS_MSG_MASK) == CM2_MSG_VALID) ||
+		((*msg & CMCS_MSG_MASK) == CS_MSG_VALID) ||
+		((*msg & CMCS_MSG_MASK) == CMJIT_MSG_VALID) ||
+		((*msg & CMCS_MSG_MASK) == INT_MSG_VALID)) {
+			data->status.cmcs = *msg;
+			tsp_info("cmcs status: 0x%08x\n", *msg);
+
+			goto irq_end;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #if IST30XX_GESTURE
@@ -1446,8 +1505,12 @@ static int ist30xx_parse_dt(struct device *dev, struct ist30xx_data *data)
 	if (rc < 0)
 		tsp_err("%s: Unable to read TSP ldo name\n", __func__);
 
+<<<<<<< HEAD
 	tsp_info("%s() irq:%d, touch_en:%d, tsp_ldo: %s\n",
 			__func__, data->dt_data->irq_gpio, data->dt_data->tsp_vdd_name);
+=======
+	tsp_info("%s irq:%d\n",__func__, data->dt_data->irq_gpio);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -1769,8 +1832,13 @@ static int ist30xx_probe(struct i2c_client *client,
 
 	return 0;
 
+<<<<<<< HEAD
 #if SEC_FACTORY_MODE
 err_sec_sysfs:
+=======
+err_sec_sysfs:
+#if SEC_FACTORY_MODE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sec_fac_cmd_remove(data);
 	sec_touch_sysfs_remove(data);
 #endif
@@ -1811,9 +1879,15 @@ static int ist30xx_remove(struct i2c_client *client)
 	ist30xx_disable_irq(data);
 	free_irq(client->irq, data);
 	ist30xx_power_off(data);
+<<<<<<< HEAD
 #if SEC_FACTORY_MODE
 	sec_fac_cmd_remove(data);
 #endif
+=======
+
+	sec_fac_cmd_remove(data);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->dt_data)
 		ist30xx_free_gpio(data);
 

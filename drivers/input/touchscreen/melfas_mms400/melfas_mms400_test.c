@@ -19,7 +19,10 @@ static ssize_t mms_dev_fs_read(struct file *fp, char *rbuf, size_t cnt, loff_t *
 {
 	struct mms_ts_info *info = fp->private_data;
 	int ret = 0;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = copy_to_user(rbuf, info->dev_fs_buf, cnt);
 	return ret;
 }
@@ -37,7 +40,11 @@ static ssize_t mms_dev_fs_write(struct file *fp, const char *wbuf, size_t cnt, l
 	buf = kzalloc(cnt + 1, GFP_KERNEL);
 
 	if ((buf == NULL) || copy_from_user(buf, wbuf, cnt)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] copy_from_user\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] copy_from_user\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EIO;
 		goto EXIT;
 	}
@@ -46,10 +53,17 @@ static ssize_t mms_dev_fs_write(struct file *fp, const char *wbuf, size_t cnt, l
 
 	if (cmd == 1) {
 		if (mms_i2c_read(info, buf, (cnt - 2), info->dev_fs_buf, buf[cnt - 2]))
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
 	} else if (cmd == 2) {
 		if (mms_i2c_write(info, buf, (cnt - 1)))
 			input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
+	} else if (cmd == 2) {
+		if (mms_i2c_write(info, buf, (cnt - 1)))
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 
 EXIT:
@@ -64,7 +78,10 @@ EXIT:
 static int mms_dev_fs_open(struct inode *node, struct file *fp)
 {
 	struct mms_ts_info *info = container_of(node->i_cdev, struct mms_ts_info, cdev);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	fp->private_data = info;
 	info->dev_fs_buf = kzalloc(1024 * 4, GFP_KERNEL);
 	return 0;
@@ -76,7 +93,10 @@ static int mms_dev_fs_open(struct inode *node, struct file *fp)
 static int mms_dev_fs_release(struct inode *node, struct file *fp)
 {
 	struct mms_ts_info *info = fp->private_data;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	kfree(info->dev_fs_buf);
 	return 0;
 }
@@ -100,10 +120,17 @@ int mms_dev_create(struct mms_ts_info *info)
 	struct i2c_client *client = info->client;
 	int ret = 0;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (alloc_chrdev_region(&info->mms_dev, 0, 1, MMS_DEVICE_NAME)) {
 		input_err(true, &client->dev, "%s [ERROR] alloc_chrdev_region\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+
+	if (alloc_chrdev_region(&info->mms_dev, 0, 1, MMS_DEVICE_NAME)) {
+		tsp_debug_err(true, &client->dev, "%s [ERROR] alloc_chrdev_region\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -ENOMEM;
 		goto ERROR;
 	}
@@ -112,16 +139,28 @@ int mms_dev_create(struct mms_ts_info *info)
 	info->cdev.owner = THIS_MODULE;
 
 	if (cdev_add(&info->cdev, info->mms_dev, 1)) {
+<<<<<<< HEAD
 		input_err(true, &client->dev, "%s [ERROR] cdev_add\n", __func__);
+=======
+		tsp_debug_err(true, &client->dev, "%s [ERROR] cdev_add\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EIO;
 		goto ERROR;
 	}
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
 	return 0;
 
 ERROR:
 	input_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+	return 0;
+
+ERROR:
+	tsp_debug_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -156,7 +195,11 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 
 	memset(data, 0, 10);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	//set axis
 	if (rotate == 0) {
@@ -176,7 +219,11 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 		}
 		flip_x = true;
 	} else {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] rotate [%d]\n", __func__, rotate);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] rotate [%d]\n", __func__, rotate);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto ERROR;
 	}
 
@@ -191,7 +238,11 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 		wbuf[0] = (buf_addr >> 8) & 0xFF;
 		wbuf[1] = buf_addr & 0xFF;
 		if (mms_i2c_read(info, wbuf, 2, rbuf, size)) {
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] Read data buffer\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] Read data buffer\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			goto ERROR;
 		}
 
@@ -215,7 +266,11 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 						(rbuf[data_size * i_col + 2] << 16) |
 						(rbuf[data_size * i_col + 3] << 24));
 				} else {
+<<<<<<< HEAD
 					input_err(true, &info->client->dev,
+=======
+					tsp_debug_err(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 						"%s [ERROR] data_size [%d]\n",
 						__func__, data_size);
 					goto ERROR;
@@ -234,7 +289,11 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 						(rbuf[data_size * i_col + 2] << 16) |
 						(rbuf[data_size * i_col + 3] << 24));
 				} else {
+<<<<<<< HEAD
 					input_err(true, &info->client->dev,
+=======
+					tsp_debug_err(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 						"%s [ERROR] data_size [%d]\n",
 						__func__, data_size);
 					goto ERROR;
@@ -251,21 +310,35 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 					info->image_buf[size_screen + i_col] = value;
 				} else {
 					int tmp = i_col * row_num + (row_num - 1 - i_row);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					info->image_buf[tmp] = value;
 				}
 				break;
 			default:
+<<<<<<< HEAD
 				input_err(true, &info->client->dev,
 					"%s [ERROR] rotate [%d]\n", __func__, rotate);
 				goto ERROR;
+=======
+				tsp_debug_err(true, &info->client->dev,
+					"%s [ERROR] rotate [%d]\n", __func__, rotate);
+				goto ERROR;
+				break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 		}
 	}
 
 	//print table header
 #if defined(CONFIG_SEC_DEBUG_TSP_LOG)
+<<<<<<< HEAD
 		if (info->add_log_header == 1)
+=======
+		if(info->add_log_header == 1)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			printk("mms_tsp");
 #endif
 	printk("    ");
@@ -299,9 +372,16 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 		}
 		break;
 	default:
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] data_size [%d]\n",
 			__func__, data_size);
 		goto ERROR;
+=======
+		tsp_debug_err(true, &info->client->dev,"%s [ERROR] data_size [%d]\n",
+			__func__, data_size);
+		goto ERROR;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	printk("\n");
@@ -314,10 +394,17 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 	for (i_y = 0; i_y < lim_y; i_y++) {
 		//print line header
 #if defined(CONFIG_SEC_DEBUG_TSP_LOG)
+<<<<<<< HEAD
 		if (info->add_log_header == 1)
 			printk("mms_tsp");
 #endif
 		if ((key_num > 0) && (i_y == (lim_y - 1))) {
+=======
+			if(info->add_log_header == 1)
+				printk("mms_tsp");
+#endif
+		if ((key_num > 0) && (i_y == (lim_y -1))) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			printk("[TK]");
 			sprintf(data, "[TK]");
 		} else {
@@ -348,9 +435,16 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 				sprintf(data, " %5u", info->image_buf[i_y * max_x + i_x]);
 				break;
 			default:
+<<<<<<< HEAD
 				input_err(true, &info->client->dev, "%s [ERROR] data_size [%d]\n",
 					__func__, data_size);
 				goto ERROR;
+=======
+				tsp_debug_err(true, &info->client->dev, "%s [ERROR] data_size [%d]\n",
+					__func__, data_size);
+				goto ERROR;
+				break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 
 			strcat(info->print_buf, data);
@@ -368,11 +462,19 @@ static int mms_proc_table_data(struct mms_ts_info *info, u8 size,
 	strcat(info->print_buf, data);
 	memset(data, 0, 10);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
 	return 0;
 
 ERROR:
 	input_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+	return 0;
+
+ERROR:
+	tsp_debug_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 1;
 }
 
@@ -396,6 +498,7 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 	u8 data_type_sign;
 	u8 buf_addr_h;
 	u8 buf_addr_l;
+<<<<<<< HEAD
 	int ret = 0;
 
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
@@ -405,6 +508,17 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 		if (info->test_busy == false)
 			break;
 
+=======
+	int ret = 1;
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+	tsp_debug_dbg(true, &info->client->dev, "%s - test_type[%d]\n", __func__, test_type);
+
+	while (busy_cnt--) {
+		if (info->test_busy == false) {
+			break;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		msleep(10);
 	}
 	mutex_lock(&info->lock);
@@ -421,12 +535,20 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 	wbuf[1] = MIP_R1_CTRL_EVENT_TRIGGER_TYPE;
 	wbuf[2] = MIP_TRIGGER_TYPE_NONE;
 	if (mms_i2c_write(info, wbuf, 3)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Disable event\n", __func__);
+=======
+		dev_err(&info->client->dev, "%s [ERROR] Disable event\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto EXIT;
 	}
 
 	//check test type
+<<<<<<< HEAD
 	switch (test_type) {
+=======
+	switch(test_type){
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case MIP_TEST_TYPE_CM_DELTA:
 		//printk("=== Cm Delta Test ===\n");
 		sprintf(info->print_buf, "\n=== Cm Delta Test ===\n\n");
@@ -448,9 +570,16 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 		sprintf(info->print_buf, "\n=== OPEN Test(TSP Connection check) ===\n\n");
 		break;
 	default:
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown test type\n", __func__);
 		sprintf(info->print_buf, "\nERROR : Unknown test type\n\n");
 		goto EXIT;
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Unknown test type\n", __func__);
+		sprintf(info->print_buf, "\nERROR : Unknown test type\n\n");
+		goto EXIT;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	//set test mode
@@ -458,13 +587,18 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 	wbuf[1] = MIP_R1_CTRL_MODE;
 	wbuf[2] = MIP_CTRL_MODE_TEST_CM;
 	if (mms_i2c_write(info, wbuf, 3)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Write test mode\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Write test mode\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto EXIT;
 	}
 
 	//wait ready status
 	wait_cnt = 50;
 	while (wait_cnt--) {
+<<<<<<< HEAD
 		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY)
 			break;
 
@@ -479,21 +613,46 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 	}
 
 	input_dbg(true, &info->client->dev, "%s - set control mode\n", __func__);
+=======
+		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY) {
+			break;
+		}
+		msleep(50);
+
+		tsp_debug_dbg(true, &info->client->dev, "%s - wait [%d]\n", __func__, wait_cnt);
+	}
+
+	if (wait_cnt <= 0) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Wait timeout\n", __func__);
+		goto EXIT;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s - set control mode\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	//set test type
 	wbuf[0] = MIP_R0_TEST;
 	wbuf[1] = MIP_R1_TEST_TYPE;
 	wbuf[2] = test_type;
 	if (mms_i2c_write(info, wbuf, 3)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Write test type\n", __func__);
 		goto EXIT;
 	}
 
 	input_dbg(true, &info->client->dev, "%s - set test type\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Write test type\n", __func__);
+		goto EXIT;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s - set test type\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	//wait ready status
 	wait_cnt = 50;
 	while (wait_cnt--) {
+<<<<<<< HEAD
 		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY)
 			break;
 
@@ -510,6 +669,24 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 	input_dbg(true, &info->client->dev, "%s - ready\n", __func__);
 
 	if( test_type == MIP_TEST_TYPE_OPEN ) {
+=======
+		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY) {
+			break;
+		}
+		msleep(10);
+
+		tsp_debug_dbg(true, &info->client->dev, "%s - wait [%d]\n", __func__, wait_cnt);
+	}
+
+	if (wait_cnt <= 0) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Wait timeout\n", __func__);
+		goto EXIT;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s - ready\n", __func__);
+
+	if (test_type == MIP_TEST_TYPE_OPEN) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		info->image_buf[0] = 1;
 	
 		//data format
@@ -521,12 +698,21 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 		}
 		input_info(true, &info->client->dev, "%s: connection check(%d)\n", __func__, rbuf[0]);
 		info->image_buf[0] = rbuf[0]; //pass: 1, NG: 0
+<<<<<<< HEAD
 	} else {
+=======
+	}
+	else {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		//data format
 		wbuf[0] = MIP_R0_TEST;
 		wbuf[1] = MIP_R1_TEST_DATA_FORMAT;
 		if (mms_i2c_read(info, wbuf, 2, rbuf, 6)) {
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] Read data format\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] Read data format\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			goto EXIT;
 		}
 		row_num = rbuf[0];
@@ -539,10 +725,17 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 		data_type_sign = (data_type & 0x80) >> 7;
 		data_type_size = data_type & 0x7F;
 
+<<<<<<< HEAD
 		input_dbg(true, &info->client->dev,
 			"%s - row_num[%d] col_num[%d] buffer_col_num[%d] rotate[%d] key_num[%d]\n",
 			__func__, row_num, col_num, buffer_col_num, rotate, key_num);
 		input_dbg(true, &info->client->dev,
+=======
+		tsp_debug_dbg(true, &info->client->dev,
+			"%s - row_num[%d] col_num[%d] buffer_col_num[%d] rotate[%d] key_num[%d]\n",
+			__func__, row_num, col_num, buffer_col_num, rotate, key_num);
+		tsp_debug_dbg(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s - data_type[0x%02X] data_sign[%d] data_size[%d]\n",
 			__func__, data_type, data_type_sign, data_type_size);
 
@@ -550,19 +743,31 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 		wbuf[0] = MIP_R0_TEST;
 		wbuf[1] = MIP_R1_TEST_BUF_ADDR;
 		if (mms_i2c_read(info, wbuf, 2, rbuf, 2)) {
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] Read buf addr\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] Read buf addr\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			goto EXIT;
 		}
 
 		buf_addr_l = rbuf[0];
 		buf_addr_h = rbuf[1];
+<<<<<<< HEAD
 		input_dbg(true, &info->client->dev, "%s - buf_addr[0x%02X 0x%02X]\n",
+=======
+		tsp_debug_dbg(true, &info->client->dev, "%s - buf_addr[0x%02X 0x%02X]\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__, buf_addr_h, buf_addr_l);
 
 		//print data
 		if (mms_proc_table_data(info, size, data_type_size, data_type_sign,
 			buf_addr_h, buf_addr_l, row_num, col_num, buffer_col_num, rotate, key_num)) {
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] mms_proc_table_data\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_proc_table_data\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			goto EXIT;
 		}
 	}
@@ -572,13 +777,18 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 	wbuf[1] = MIP_R1_CTRL_MODE;
 	wbuf[2] = MIP_CTRL_MODE_NORMAL;
 	if (mms_i2c_write(info, wbuf, 3)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto EXIT;
 	}
 
 	//wait ready status
 	wait_cnt = 50;
 	while (wait_cnt--) {
+<<<<<<< HEAD
 		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY)
 			break;
 
@@ -593,6 +803,23 @@ int mms_run_test(struct mms_ts_info *info, u8 test_type)
 	}
 
 	input_dbg(true, &info->client->dev, "%s - set normal mode\n", __func__);
+=======
+		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY) {
+			break;
+		}
+		msleep(10);
+
+		tsp_debug_dbg(true, &info->client->dev, "%s - wait [%d]\n", __func__, wait_cnt);
+	}
+
+	if (wait_cnt <= 0) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Wait timeout\n", __func__);
+		goto EXIT;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s - set normal mode\n", __func__);
+	ret = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 EXIT:
 	//enable touch event
@@ -600,7 +827,11 @@ EXIT:
 	wbuf[1] = MIP_R1_CTRL_EVENT_TRIGGER_TYPE;
 	wbuf[2] = MIP_TRIGGER_TYPE_INTR;
 	if (mms_i2c_write(info, wbuf, 3)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Enable event\n", __func__);
+=======
+		dev_err(&info->client->dev, "%s [ERROR] Enable event\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = 1;
 	}
 
@@ -612,9 +843,15 @@ EXIT:
 	mutex_unlock(&info->lock);
 
 	if (ret)
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
 	else
 		input_info(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+		dev_err(&info->client->dev, "%s [ERROR]\n", __func__);
+	else
+		dev_info(&info->client->dev, "%s [DONE]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return ret;
 }
@@ -640,6 +877,7 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	u8 buf_addr_h;
 	u8 buf_addr_l;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 	input_dbg(true, &info->client->dev, "%s - image_type[%d]\n", __func__, image_type);
 
@@ -647,6 +885,15 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 		if (info->test_busy == false)
 			break;
 
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+	tsp_debug_dbg(true, &info->client->dev, "%s - image_type[%d]\n", __func__, image_type);
+
+	while (busy_cnt--) {
+		if (info->test_busy == false) {
+			break;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		msleep(10);
 	}
 	mutex_lock(&info->lock);
@@ -658,6 +905,7 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	//check image type
 	switch (image_type) {
 	case MIP_IMG_TYPE_INTENSITY:
+<<<<<<< HEAD
 		input_dbg(true, &info->client->dev, "=== Intensity Image ===\n");
 		sprintf(info->print_buf, "\n=== Intensity Image ===\n\n");
 		break;
@@ -669,6 +917,20 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown image type\n", __func__);
 		sprintf(info->print_buf, "\nERROR : Unknown image type\n\n");
 		goto ERROR;
+=======
+		tsp_debug_dbg(true, &info->client->dev, "=== Intensity Image ===\n");
+		sprintf(info->print_buf, "\n=== Intensity Image ===\n\n");
+		break;
+	case MIP_IMG_TYPE_RAWDATA:
+		tsp_debug_dbg(true, &info->client->dev, "=== Rawdata Image ===\n");
+		sprintf(info->print_buf, "\n=== Rawdata Image ===\n\n");
+		break;
+	default:
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Unknown image type\n", __func__);
+		sprintf(info->print_buf, "\nERROR : Unknown image type\n\n");
+		goto ERROR;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	//set image type
@@ -676,15 +938,24 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	wbuf[1] = MIP_R1_IMAGE_TYPE;
 	wbuf[2] = image_type;
 	if (mms_i2c_write(info, wbuf, 3)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Write image type\n", __func__);
 		goto ERROR;
 	}
 
 	input_dbg(true, &info->client->dev, "%s - set image type\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Write image type\n", __func__);
+		goto ERROR;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s - set image type\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	//wait ready status
 	wait_cnt = 50;
 	while (wait_cnt--) {
+<<<<<<< HEAD
 		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY)
 			break;
 
@@ -699,12 +970,32 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	}
 
 	input_dbg(true, &info->client->dev, "%s - ready\n", __func__);
+=======
+		if (mms_get_ready_status(info) == MIP_CTRL_STATUS_READY) {
+			break;
+		}
+		msleep(10);
+
+		tsp_debug_dbg(true, &info->client->dev, "%s - wait [%d]\n", __func__, wait_cnt);
+	}
+
+	if (wait_cnt <= 0) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Wait timeout\n", __func__);
+		goto ERROR;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s - ready\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	//data format
 	wbuf[0] = MIP_R0_IMAGE;
 	wbuf[1] = MIP_R1_IMAGE_DATA_FORMAT;
 	if (mms_i2c_read(info, wbuf, 2, rbuf, 6)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Read data format\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Read data format\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto ERROR;
 	}
 	row_num = rbuf[0];
@@ -717,10 +1008,17 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	data_type_sign = (data_type & 0x80) >> 7;
 	data_type_size = data_type & 0x7F;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev,
 		"%s - row_num[%d] col_num[%d] buffer_col_num[%d] rotate[%d] key_num[%d]\n",
 		__func__, row_num, col_num, buffer_col_num, rotate, key_num);
 	input_dbg(true, &info->client->dev,
+=======
+	tsp_debug_dbg(true, &info->client->dev,
+		"%s - row_num[%d] col_num[%d] buffer_col_num[%d] rotate[%d] key_num[%d]\n",
+		__func__, row_num, col_num, buffer_col_num, rotate, key_num);
+	tsp_debug_dbg(true, &info->client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		"%s - data_type[0x%02X] data_sign[%d] data_size[%d]\n",
 		__func__, data_type, data_type_sign, data_type_size);
 
@@ -728,19 +1026,31 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	wbuf[0] = MIP_R0_IMAGE;
 	wbuf[1] = MIP_R1_IMAGE_BUF_ADDR;
 	if (mms_i2c_read(info, wbuf, 2, rbuf, 2)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Read buf addr\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Read buf addr\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto ERROR;
 	}
 
 	buf_addr_l = rbuf[0];
 	buf_addr_h = rbuf[1];
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s - buf_addr[0x%02X 0x%02X]\n",
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s - buf_addr[0x%02X 0x%02X]\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		__func__, buf_addr_h, buf_addr_l);
 
 	//print data
 	if (mms_proc_table_data(info, size, data_type_size, data_type_sign,
 		buf_addr_h, buf_addr_l, row_num, col_num, buffer_col_num, rotate, key_num)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] mms_proc_table_data\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_proc_table_data\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto ERROR;
 	}
 
@@ -749,7 +1059,11 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	wbuf[1] = MIP_R1_IMAGE_TYPE;
 	wbuf[2] = MIP_IMG_TYPE_NONE;
 	if (mms_i2c_write(info, wbuf, 3)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] Clear image type\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Clear image type\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto ERROR;
 	}
 
@@ -758,7 +1072,11 @@ int mms_get_image(struct mms_ts_info *info, u8 image_type)
 	info->test_busy = false;
 	mutex_unlock(&info->lock);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 
 ERROR:
@@ -766,7 +1084,11 @@ ERROR:
 	info->test_busy = false;
 	mutex_unlock(&info->lock);
 
+<<<<<<< HEAD
 	input_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+=======
+	tsp_debug_err(true, &info->client->dev, "%s [ERROR]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 1;
 }
 
@@ -786,16 +1108,27 @@ static ssize_t mms_sys_fw_version(struct device *dev,
 	memset(info->print_buf, 0, PAGE_SIZE);
 
 	if (mms_get_fw_version(info, rbuf)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] mms_get_fw_version\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_get_fw_version\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		sprintf(data, "F/W Version : ERROR\n");
 		goto ERROR;
 	}
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev,
 		"%s - F/W Version : %02X.%02X %02X.%02X %02X.%02X %02X.%02X\n",
 		__func__, rbuf[0], rbuf[1], rbuf[2], rbuf[3],
 		rbuf[4], rbuf[5], rbuf[6], rbuf[7]);
+=======
+	tsp_debug_info(true, &info->client->dev,
+		"%s - F/W Version : %02X.%02X %02X.%02X %02X.%02X %02X.%02X\n",
+		__func__, rbuf[0], rbuf[1], rbuf[2], rbuf[3],
+		rbuf[4],rbuf[5], rbuf[6], rbuf[7]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sprintf(data, "F/W Version : %02X.%02X %02X.%02X %02X.%02X %02X.%02X\n",
 		rbuf[0], rbuf[1], rbuf[2], rbuf[3], rbuf[4], rbuf[5], rbuf[6], rbuf[7]);
 
@@ -861,6 +1194,7 @@ static ssize_t mms_sys_device_enable(struct device *dev,
 	u8 data[255];
 	int ret;
 
+<<<<<<< HEAD
 	memset(info->print_buf, 0, PAGE_SIZE);
 
 	mms_enable(info);
@@ -871,6 +1205,18 @@ static ssize_t mms_sys_device_enable(struct device *dev,
 	strcat(info->print_buf, data);
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
+=======
+	memset(info->print_buf,0,PAGE_SIZE);
+
+	mms_enable(info);
+
+	tsp_debug_info(true, &client->dev, "%s", __func__);
+
+	sprintf(data, "Device : Enabled\n");
+	strcat(info->print_buf,data);
+
+	ret = snprintf(buf,PAGE_SIZE,"%s\n",info->print_buf);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 
 }
@@ -886,6 +1232,7 @@ static ssize_t mms_sys_device_disable(struct device *dev,
 	u8 data[255];
 	int ret;
 
+<<<<<<< HEAD
 	memset(info->print_buf, 0, PAGE_SIZE);
 
 	mms_disable(info);
@@ -897,6 +1244,20 @@ static ssize_t mms_sys_device_disable(struct device *dev,
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
+=======
+	memset(info->print_buf,0,PAGE_SIZE);
+
+	mms_disable(info);
+
+	tsp_debug_info(true, &client->dev, "%s", __func__);
+
+	sprintf(data, "Device : Disabled\n");
+	strcat(info->print_buf,data);
+
+	ret = snprintf(buf,PAGE_SIZE,"%s\n",info->print_buf);
+	return ret;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -910,6 +1271,7 @@ static ssize_t mms_sys_irq_enable(struct device *dev,
 	u8 data[255];
 	int ret;
 
+<<<<<<< HEAD
 	memset(info->print_buf, 0, PAGE_SIZE);
 
 	enable_irq(info->irq);
@@ -921,6 +1283,20 @@ static ssize_t mms_sys_irq_enable(struct device *dev,
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
+=======
+	memset(info->print_buf,0,PAGE_SIZE);
+
+	enable_irq(info->irq);
+
+	tsp_debug_info(true, &client->dev, "%s\n", __func__);
+
+	sprintf(data, "IRQ : Enabled\n");
+	strcat(info->print_buf,data);
+
+	ret = snprintf(buf,PAGE_SIZE,"%s\n",info->print_buf);
+	return ret;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -934,11 +1310,16 @@ static ssize_t mms_sys_irq_disable(struct device *dev,
 	u8 data[255];
 	int ret;
 
+<<<<<<< HEAD
 	memset(info->print_buf, 0, PAGE_SIZE);
+=======
+	memset(info->print_buf,0,PAGE_SIZE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	disable_irq(info->irq);
 	mms_clear_input(info);
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s\n", __func__);
 
 	sprintf(data, "IRQ : Disabled\n");
@@ -946,6 +1327,16 @@ static ssize_t mms_sys_irq_disable(struct device *dev,
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
+=======
+	tsp_debug_info(true, &client->dev, "%s\n", __func__);
+
+	sprintf(data, "IRQ : Disabled\n");
+	strcat(info->print_buf,data);
+
+	ret = snprintf(buf,PAGE_SIZE,"%s\n",info->print_buf);
+	return ret;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -959,6 +1350,7 @@ static ssize_t mms_sys_power_on(struct device *dev,
 	u8 data[255];
 	int ret;
 
+<<<<<<< HEAD
 	memset(info->print_buf, 0, PAGE_SIZE);
 
 	mms_power_control(info, 1);
@@ -970,6 +1362,20 @@ static ssize_t mms_sys_power_on(struct device *dev,
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
+=======
+	memset(info->print_buf,0,PAGE_SIZE);
+
+	mms_power_control(info, 1);
+
+	tsp_debug_info(true, &client->dev, "%s", __func__);
+
+	sprintf(data, "Power : On\n");
+	strcat(info->print_buf,data);
+
+	ret = snprintf(buf,PAGE_SIZE,"%s\n",info->print_buf);
+	return ret;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -983,6 +1389,7 @@ static ssize_t mms_sys_power_off(struct device *dev,
 	u8 data[255];
 	int ret;
 
+<<<<<<< HEAD
 	memset(info->print_buf, 0, PAGE_SIZE);
 
 	mms_power_control(info, 0);
@@ -994,6 +1401,20 @@ static ssize_t mms_sys_power_off(struct device *dev,
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
+=======
+	memset(info->print_buf,0,PAGE_SIZE);
+
+	mms_power_control(info, 0);
+
+	tsp_debug_info(true, &client->dev, "%s", __func__);
+
+	sprintf(data, "Power : Off\n");
+	strcat(info->print_buf,data);
+
+	ret = snprintf(buf,PAGE_SIZE,"%s\n",info->print_buf);
+	return ret;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -1009,7 +1430,11 @@ static ssize_t mms_sys_reboot(struct device *dev,
 
 	memset(info->print_buf, 0, PAGE_SIZE);
 
+<<<<<<< HEAD
 	input_info(true, &client->dev, "%s", __func__);
+=======
+	tsp_debug_info(true, &client->dev, "%s", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	disable_irq(info->irq);
 	mms_clear_input(info);
@@ -1017,9 +1442,15 @@ static ssize_t mms_sys_reboot(struct device *dev,
 	enable_irq(info->irq);
 
 	sprintf(data, "Reboot\n");
+<<<<<<< HEAD
 	strcat(info->print_buf, data);
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
+=======
+	strcat(info->print_buf,data);
+
+	ret = snprintf(buf,PAGE_SIZE,"%s\n",info->print_buf);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 
 }
@@ -1033,7 +1464,11 @@ static ssize_t mms_sys_glove_mode_store(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	u8 wbuf[8];
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_GLOVE_MODE;
@@ -1041,6 +1476,7 @@ static ssize_t mms_sys_glove_mode_store(struct device *dev,
 
 	if ((buf[0] == 0) || (buf[0] == 1)) {
 		if (mms_i2c_write(info, wbuf, 3))
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
 		else
 			input_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
@@ -1048,6 +1484,15 @@ static ssize_t mms_sys_glove_mode_store(struct device *dev,
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+		else
+			tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
+	} else
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return count;
 }
@@ -1066,12 +1511,17 @@ static ssize_t mms_sys_glove_mode_show(struct device *dev,
 
 	memset(info->print_buf, 0, PAGE_SIZE);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_GLOVE_MODE;
 
 	if (mms_i2c_read(info, wbuf, 2, rbuf, 1)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
 		sprintf(data, "\nGlove Mode : ERROR\n");
 	} else {
@@ -1080,6 +1530,16 @@ static ssize_t mms_sys_glove_mode_show(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
+		sprintf(data, "\nGlove Mode : ERROR\n");
+	} else {
+		tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, rbuf[0]);
+		sprintf(data, "\nGlove Mode : %d\n", rbuf[0]);
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	strcat(info->print_buf, data);
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
@@ -1095,7 +1555,11 @@ static ssize_t mms_sys_charger_mode_store(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	u8 wbuf[8];
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_CHARGER_MODE;
@@ -1103,6 +1567,7 @@ static ssize_t mms_sys_charger_mode_store(struct device *dev,
 
 	if ((buf[0] == 0) || (buf[0] == 1)) {
 		if (mms_i2c_write(info, wbuf, 3))
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
 		else
 			input_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
@@ -1110,6 +1575,15 @@ static ssize_t mms_sys_charger_mode_store(struct device *dev,
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+		else
+			tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
+	} else
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return count;
 }
@@ -1128,12 +1602,17 @@ static ssize_t mms_sys_charger_mode_show(struct device *dev,
 
 	memset(info->print_buf, 0, PAGE_SIZE);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_CHARGER_MODE;
 
 	if (mms_i2c_read(info, wbuf, 2, rbuf, 1)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
 		sprintf(data, "\nCharger Mode : ERROR\n");
 	} else {
@@ -1142,6 +1621,16 @@ static ssize_t mms_sys_charger_mode_show(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
+		sprintf(data, "\nCharger Mode : ERROR\n");
+	} else {
+		tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, rbuf[0]);
+		sprintf(data, "\nCharger Mode : %d\n", rbuf[0]);
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	strcat(info->print_buf, data);
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
@@ -1157,7 +1646,11 @@ static ssize_t mms_sys_window_mode_store(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	u8 wbuf[8];
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_WINDOW_MODE;
@@ -1165,6 +1658,7 @@ static ssize_t mms_sys_window_mode_store(struct device *dev,
 
 	if ((buf[0] == 0) || (buf[0] == 1)) {
 		if (mms_i2c_write(info, wbuf, 3))
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
 		else
 			input_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
@@ -1172,6 +1666,15 @@ static ssize_t mms_sys_window_mode_store(struct device *dev,
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+		else
+			tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
+	} else
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return count;
 }
@@ -1190,12 +1693,17 @@ static ssize_t mms_sys_window_mode_show(struct device *dev,
 
 	memset(info->print_buf, 0, PAGE_SIZE);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_WINDOW_MODE;
 
 	if (mms_i2c_read(info, wbuf, 2, rbuf, 1)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
 		sprintf(data, "\nWindow Mode : ERROR\n");
 	} else {
@@ -1204,6 +1712,16 @@ static ssize_t mms_sys_window_mode_show(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
+		sprintf(data, "\nWindow Mode : ERROR\n");
+	} else {
+		tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, rbuf[0]);
+		sprintf(data, "\nWindow Mode : %d\n", rbuf[0]);
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	strcat(info->print_buf, data);
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
@@ -1219,7 +1737,11 @@ static ssize_t mms_sys_palm_rejection_mode_store(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	u8 wbuf[8];
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_PALM_REJECTION;
@@ -1227,6 +1749,7 @@ static ssize_t mms_sys_palm_rejection_mode_store(struct device *dev,
 
 	if ((buf[0] == 0) || (buf[0] == 1)) {
 		if (mms_i2c_write(info, wbuf, 3))
+<<<<<<< HEAD
 			input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
 		else
 			input_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
@@ -1234,6 +1757,15 @@ static ssize_t mms_sys_palm_rejection_mode_store(struct device *dev,
 		input_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+			tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_write\n", __func__);
+		else
+			tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, buf[0]);
+	} else
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] Unknown value\n", __func__);
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return count;
 }
@@ -1252,12 +1784,17 @@ static ssize_t mms_sys_palm_rejection_mode_show(struct device *dev,
 
 	memset(info->print_buf, 0, PAGE_SIZE);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_PALM_REJECTION;
 
 	if (mms_i2c_read(info, wbuf, 2, rbuf, 1)) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
 		sprintf(data, "\nPalm Rejection Mode : ERROR\n");
 	} else {
@@ -1266,6 +1803,16 @@ static ssize_t mms_sys_palm_rejection_mode_show(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_i2c_read\n", __func__);
+		sprintf(data, "\nPalm Rejection Mode : ERROR\n");
+	} else {
+		tsp_debug_info(true, &info->client->dev, "%s - value[%d]\n", __func__, rbuf[0]);
+		sprintf(data, "\nPalm Rejection Mode : %d\n", rbuf[0]);
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	strcat(info->print_buf, data);
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
@@ -1281,6 +1828,7 @@ static ssize_t mms_sys_intensity(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (mms_get_image(info, MIP_IMG_TYPE_INTENSITY)) {
@@ -1289,6 +1837,16 @@ static ssize_t mms_sys_intensity(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+
+	if (mms_get_image(info, MIP_IMG_TYPE_INTENSITY)) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_get_image\n", __func__);
+		return -1;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
@@ -1303,6 +1861,7 @@ static ssize_t mms_sys_rawdata(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (mms_get_image(info, MIP_IMG_TYPE_RAWDATA)) {
@@ -1311,6 +1870,16 @@ static ssize_t mms_sys_rawdata(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+
+	if (mms_get_image(info, MIP_IMG_TYPE_RAWDATA)) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_get_image\n", __func__);
+		return -1;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
@@ -1325,6 +1894,7 @@ static ssize_t mms_sys_test_cm_delta(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (mms_run_test(info, MIP_TEST_TYPE_CM_DELTA)) {
@@ -1333,6 +1903,16 @@ static ssize_t mms_sys_test_cm_delta(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+
+	if (mms_run_test(info, MIP_TEST_TYPE_CM_DELTA)) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_run_test\n", __func__);
+		return -1;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
@@ -1347,6 +1927,7 @@ static ssize_t mms_sys_test_cm_abs(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (mms_run_test(info, MIP_TEST_TYPE_CM_ABS)) {
@@ -1355,6 +1936,16 @@ static ssize_t mms_sys_test_cm_abs(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+
+	if (mms_run_test(info, MIP_TEST_TYPE_CM_ABS)) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_run_test\n", __func__);
+		return -1;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
@@ -1369,6 +1960,7 @@ static ssize_t mms_sys_test_cm_jitter(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (mms_run_test(info, MIP_TEST_TYPE_CM_JITTER)) {
@@ -1377,6 +1969,16 @@ static ssize_t mms_sys_test_cm_jitter(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+
+	if (mms_run_test(info, MIP_TEST_TYPE_CM_JITTER)) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_run_test\n", __func__);
+		return -1;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
@@ -1391,6 +1993,7 @@ static ssize_t mms_sys_test_short(struct device *dev,
 	struct mms_ts_info *info = dev_get_drvdata(dev);
 	int ret;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (mms_run_test(info, MIP_TEST_TYPE_SHORT)) {
@@ -1399,6 +2002,16 @@ static ssize_t mms_sys_test_short(struct device *dev,
 	}
 
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START] \n", __func__);
+
+	if (mms_run_test(info, MIP_TEST_TYPE_SHORT)) {
+		tsp_debug_err(true, &info->client->dev, "%s [ERROR] mms_run_test\n", __func__);
+		return -1;
+	}
+
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE] \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = snprintf(buf, PAGE_SIZE, "%s\n", info->print_buf);
 	return ret;
@@ -1470,10 +2083,17 @@ int mms_sysfs_create(struct mms_ts_info *info)
 {
 	struct i2c_client *client = info->client;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
 
 	if (sysfs_create_group(&client->dev.kobj, &mms_test_attr_group)) {
 		input_err(true, &client->dev, "%s [ERROR] sysfs_create_group\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+
+	if (sysfs_create_group(&client->dev.kobj, &mms_test_attr_group)) {
+		tsp_debug_err(true, &client->dev, "%s [ERROR] sysfs_create_group\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EAGAIN;
 	}
 
@@ -1484,7 +2104,11 @@ int mms_sysfs_create(struct mms_ts_info *info)
 		kzalloc(sizeof(int) * ((info->node_x * info->node_y) + info->node_key),
 			GFP_KERNEL);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -1494,7 +2118,11 @@ int mms_sysfs_create(struct mms_ts_info *info)
  */
 void mms_sysfs_remove(struct mms_ts_info *info)
 {
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	sysfs_remove_group(&info->client->dev.kobj, &mms_test_attr_group);
 
@@ -1503,7 +2131,13 @@ void mms_sysfs_remove(struct mms_ts_info *info)
 #endif
 	kfree(info->image_buf);
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+
+	return;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #endif

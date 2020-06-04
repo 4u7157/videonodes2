@@ -224,4 +224,16 @@ source "drivers/media/mtv/Kconfig"
 # TDMB drivers
 source "drivers/media/tdmb/Kconfig"
 
+#
+# TDMB drivers
+#
+
+source "drivers/media/tdmb/Kconfig"
+
+# ISDBT Drivers
+source "drivers/media/isdbt/Kconfig"
+
+# MTV driver support
+source "drivers/media/mtv/Kconfig"
+
 endif # MEDIA_SUPPORT

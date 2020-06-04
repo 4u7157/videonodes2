@@ -18,6 +18,7 @@
 
 #include <asm/core_regs.h>
 #include <asm/cputype.h>
+<<<<<<< HEAD
 #include <asm/io.h>
 
 #ifdef CONFIG_PMUCAL_MOD
@@ -25,6 +26,10 @@
 #else
 #include <soc/samsung/exynos-pmu.h>
 #endif
+=======
+
+#include <soc/samsung/exynos-pmu.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define CS_READ(base, offset)		__raw_readl(base + offset)
 #define CS_READQ(base, offset)		__raw_readq(base + offset)
@@ -62,7 +67,12 @@ static struct cs_dbg dbg;
 
 static DEFINE_SPINLOCK(debug_lock);
 static unsigned int cs_arm_arch;
+<<<<<<< HEAD
 bool FLAG_T32_EN = true;
+=======
+static unsigned int cs_reg_base;
+bool FLAG_T32_EN = false;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static inline void get_arm_arch_version(void)
 {
@@ -109,6 +119,7 @@ unsigned long exynos_cs_get_pcval(int cpu)
 {
 	unsigned long valLo, valHi;
 	void __iomem *base = dbg.cpu[cpu].base;
+<<<<<<< HEAD
 	int cpu_is_enabled;
 
 #ifdef CONFIG_PMUCAL_MOD
@@ -118,6 +129,10 @@ unsigned long exynos_cs_get_pcval(int cpu)
 #endif
 
 	if(!cpu_online(cpu) || !cpu_is_enabled)
+=======
+
+	if(!cpu_online(cpu) || !exynos_cpu.power_state(cpu))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 0;
 
 	DBG_UNLOCK(base);
@@ -138,7 +153,10 @@ void exynos_cs_show_pcval(void)
 	unsigned long val = 0, valHi = 0;
 	void __iomem *base;
 	char buf[KSYM_SYMBOL_LEN];
+<<<<<<< HEAD
 	int cpu_is_enabled;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (exynos_cs_stat < 0)
 		return;
@@ -152,12 +170,17 @@ void exynos_cs_show_pcval(void)
 			exynos_cs_pc[cpu][iter] = 0;
 			if (base == NULL || cpu == curr_cpu)
 				continue;
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 			cpu_is_enabled = cal_cpu_status(cpu);
 #else
 			cpu_is_enabled = exynos_cpu.power_state(cpu);
 #endif
 			if (!cpu_is_enabled)
+=======
+
+			if (!exynos_cpu.power_state(cpu))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				continue;
 
 			DBG_UNLOCK(base);
@@ -195,6 +218,36 @@ void exynos_cs_show_pcval(void)
 	}
 }
 EXPORT_SYMBOL(exynos_cs_show_pcval);
+<<<<<<< HEAD
+=======
+
+/* check sjtag status */
+static int __init exynos_cs_sjtag_init(void)
+{
+	void __iomem *sjtag_base;
+	unsigned int sjtag;
+
+	/* Check Secure JTAG */
+	sjtag_base = ioremap(cs_reg_base + CS_SJTAG_OFFSET, SZ_8);
+	if (!sjtag_base) {
+		pr_err("%s: cannot ioremap cs base.\n", __func__);
+		exynos_cs_stat = -ENOMEM;
+		goto err_func;
+	}
+
+	sjtag = __raw_readl(sjtag_base + SJTAG_STATUS);
+	iounmap(sjtag_base);
+
+	if (sjtag & SJTAG_SOFT_LOCK) {
+		exynos_cs_stat = -EIO;
+		goto err_func;
+	}
+
+	pr_info("exynos-coresight Secure Jtag state is soft unlock.\n");
+err_func:
+	return exynos_cs_stat;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifdef CONFIG_EXYNOS_CORESIGHT_MAINTAIN_DBG_REG
@@ -488,6 +541,7 @@ static const struct of_device_id of_exynos_cs_matches[] __initconst= {
 
 static int exynos_cs_init_dt(void)
 {
+<<<<<<< HEAD
 	unsigned int cs_reg_base, offset, sjtag, i = 0;
 	struct device_node *np = NULL;
 
@@ -530,6 +584,39 @@ static int exynos_cs_init_dt(void)
 err_func:
 	pr_err("[Coresight] Fail PC print function.\n");
 	return exynos_cs_stat;
+=======
+	struct device_node *np = NULL;
+	const unsigned int *cs_reg, *offset;
+	unsigned int cs_offset;
+	int len, i = 0;
+
+	np = of_find_matching_node(NULL, of_exynos_cs_matches);
+
+	cs_reg = of_get_property(np, "base", &len);
+	if (!cs_reg)
+		return -ESPIPE;
+
+	cs_reg_base = be32_to_cpup(cs_reg);
+
+	while ((np = of_find_node_by_type(np, "cs"))) {
+		if (i >= CORE_CNT)
+			break;
+
+		offset = of_get_property(np, "dbg-offset", &len);
+		if (!offset)
+			return -ESPIPE;
+
+		cs_offset = be32_to_cpup(offset);
+		dbg.cpu[i].base = ioremap(cs_reg_base + cs_offset, SZ_4K);
+		if (!dbg.cpu[i].base) {
+			pr_err("%s: cannot ioremap cs base.\n", __func__);
+			return -ENOMEM;
+		}
+
+		i++;
+	}
+	return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int __init exynos_cs_init(void)
@@ -542,6 +629,14 @@ static int __init exynos_cs_init(void)
 
 	get_arm_arch_version();
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_EXYNOS_CORESIGHT_PC_INFO
+	ret = exynos_cs_sjtag_init();
+	if (ret < 0)
+		goto err;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_EXYNOS_CORESIGHT_MAINTAIN_DBG_REG
 	ret = exynos_cs_debug_init();
 	if (ret < 0)

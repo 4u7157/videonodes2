@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2012-2019 Samsung Electronics, Inc.
+=======
+ * Copyright (C) 2012-2016 Samsung Electronics, Inc.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -49,7 +53,10 @@
 #include "tz_iw_boot_log.h"
 #include "tz_iwio.h"
 #include "tz_iwlog.h"
+<<<<<<< HEAD
 #include "tz_kernel_api_internal.h"
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "tzlog.h"
 #include "tz_mem.h"
 #include "tz_panic_dump.h"
@@ -339,7 +346,10 @@ static int tzdev_run_init_sequence(void)
 
 		tzdev_register_iwis();
 		tz_iwnotify_initialize();
+<<<<<<< HEAD
 		tzdev_kapi_init();
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (atomic_cmpxchg(&tzdev_swd_state, TZDEV_SWD_DOWN, TZDEV_SWD_UP)) {
 			ret = -ESHUTDOWN;
@@ -385,9 +395,12 @@ static int tzdev_get_access_info(struct tzio_access_info *s)
 		return -ESRCH;
 
 	strncpy(s->ca_name, exe_file->f_path.dentry->d_name.name, CA_ID_LEN);
+<<<<<<< HEAD
 	if (s->ca_name[CA_ID_LEN - 1])
 		return -ENAMETOOLONG;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	fput(exe_file);
 
 	return 0;
@@ -739,6 +752,13 @@ static struct tz_cdev tzdev_cdev = {
 	.owner = THIS_MODULE,
 };
 
+<<<<<<< HEAD
+=======
+static struct syscore_ops tzdev_syscore_ops = {
+	.shutdown = tzdev_shutdown
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int __init init_tzdev(void)
 {
 	int rc;
@@ -775,6 +795,11 @@ static int __init init_tzdev(void)
 	}
 #endif /* CONFIG_TZDEV_EARLY_SWD_INIT */
 
+<<<<<<< HEAD
+=======
+	register_syscore_ops(&tzdev_syscore_ops);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return rc;
 
 #if defined(CONFIG_TZDEV_EARLY_SWD_INIT)
@@ -800,6 +825,11 @@ static void __exit exit_tzdev(void)
 
 	tzdev_cma_mem_release(tzdev_cdev.device);
 
+<<<<<<< HEAD
+=======
+	unregister_syscore_ops(&tzdev_syscore_ops);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	tzdev_shutdown();
 
 	tzdev_exit_hotplug();

@@ -57,16 +57,28 @@ obj-$(CONFIG_GENWQE)		+= genwqe/
 obj-$(CONFIG_ECHO)		+= echo/
 obj-$(CONFIG_VEXPRESS_SYSCFG)	+= vexpress-syscfg.o
 obj-$(CONFIG_CXL_BASE)		+= cxl/
+<<<<<<< HEAD
 obj-$(CONFIG_MCU_IPC)		+= mcu_ipc/
 obj-$(CONFIG_UART_SEL)	+= uart_sel/
 obj-$(CONFIG_USIM_DETECT)	+= usim_det/
 obj-$(CONFIG_SEC_SIPC_MODEM_IF)	+= modem_v1/
 obj-$(CONFIG_UID_SYS_STATS) += uid_sys_stats.o
+=======
+obj-$(CONFIG_UID_SYS_STATS) += uid_sys_stats.o
+obj-$(CONFIG_MCU_IPC)		+= mcu_ipc/
+obj-$(CONFIG_UART_SEL)	+= uart_sel/
+obj-$(CONFIG_SEC_SIPC_MODEM_IF)	+= modem_v1/
+obj-$(CONFIG_GNSS_SHMEM_IF)	+= gnss_if/
+obj-$(CONFIG_MEMORY_STATE_TIME) += memory_state_time.o
+obj-$(CONFIG_SD8XXX_RFKILL)	+= sd8x_rfkill.o
+obj-$(CONFIG_SENSORS_BHI)       += bhy/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 # TEEGRIS kernel driver
 ccflags-$(CONFIG_TZDEV) += -I$(srctree)/drivers/misc/tzdev/include
 obj-$(CONFIG_TZDEV)		+= tzdev/
 
+<<<<<<< HEAD
 # Secure OS Mobicore Interface
 obj-y				+= tzic64.o
 
@@ -74,6 +86,13 @@ obj-$(CONFIG_SEC_MODEM_IF) += modem_if/
 obj-$(CONFIG_GNSS_SHMEM_IF)	+= gnss_if/
 obj-y += samsung/
 obj-$(CONFIG_MEMORY_STATE_TIME) += memory_state_time.o
+=======
+# TZIC
+obj-y				+= tzic64.o
+
+# Samsung Jack Support
+obj-$(CONFIG_SAMSUNG_JACK)	+= sec_jack.o
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 # TIMA
 obj-$(CONFIG_TIMA)		+= tima_debug_test.o
@@ -82,3 +101,8 @@ obj-$(CONFIG_TIMA_LOG)		+= tima_debug_log.o
 # for DMVerity
 obj-$(CONFIG_DM_VERITY)		+= dmverity_query.o
 
+<<<<<<< HEAD
+=======
+# FPGA for IRIS
+obj-$(CONFIG_LEDS_IRIS_FPGA_ICE40XX)  += ice40xx_iris.o
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

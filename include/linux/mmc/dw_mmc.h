@@ -42,6 +42,131 @@ enum {
 struct mmc_data;
 
 /**
+ * struct dw_mci_slot - MMC slot state
+ * @mmc: The mmc_host representing this slot.
+ * @host: The MMC controller this slot is using.
+ * @quirks: Slot-level quirks (DW_MCI_SLOT_QUIRK_XXX)
+ * @ctype: Card type for this slot.
+ * @mrq: mmc_request currently being processed or waiting to be
+ *	processed, or NULL when the slot is idle.
+ * @queue_node: List node for placing this node in the @queue list of
+ *	&struct dw_mci.
+ * @clock: Clock rate configured by set_ios(). Protected by host->lock.
+ * @__clk_old: The last updated clock with reflecting clock divider.
+ *	Keeping track of this helps us to avoid spamming the console
+ *	with CONFIG_MMC_CLKGATE.
+ * @flags: Random state bits associated with the slot.
+ * @id: Number of this slot.
+ * @last_detect_state: Most recently observed card detect state.
+ */
+struct dw_mci_slot {
+	struct mmc_host		*mmc;
+	struct dw_mci		*host;
+
+	int			quirks;
+
+	u32			ctype;
+
+	struct mmc_request	*mrq;
+	struct list_head	queue_node;
+
+	unsigned int		clock;
+	unsigned int		__clk_old;
+
+	unsigned long		flags;
+#define DW_MMC_CARD_PRESENT	0
+#define DW_MMC_CARD_NEED_INIT	1
+	int			id;
+	int			last_detect_state;
+};
+
+/**
+ * struct dw_mci_debug_data - DwMMC debugging infomation
+ * @host_count: a number of all hosts
+ * @info_count: a number of set of debugging information
+ * @info_index: index of debugging information for each host
+ * @host: pointer of each dw_mci structure
+ * @debug_info: debugging information structure
+ */
+
+struct dw_mci_cmd_log {
+	u64	send_time;
+	u64	done_time;
+	u8	cmd;
+	u32	arg;
+	u8	data_size;
+	/* no data CMD = CD, data CMD = DTO */
+	/*
+	 * 0b1000 0000	: new_cmd with without send_cmd
+	 * 0b0000 1000	: error occurs
+	 * 0b0000 0100	: data_done : DTO(Data Transfer Over)
+	 * 0b0000 0010	: resp : CD(Command Done)
+	 * 0b0000 0001	: send_cmd : set 1 only start_command
+	 */
+	u8	seq_status;	/* 0bxxxx xxxx : error data_done resp send */
+#define DW_MCI_FLAG_SEND_CMD	BIT(0)
+#define DW_MCI_FLAG_CD		BIT(1)
+#define DW_MCI_FLAG_DTO		BIT(2)
+#define DW_MCI_FLAG_ERROR	BIT(3)
+#define DW_MCI_FLAG_NEW_CMD_ERR	BIT(7)
+
+	u16	rint_sts;	/* RINTSTS value in case of error */
+	u8	status_count;	/* TBD : It can be changed */
+};
+
+enum dw_mci_req_log_state {
+	STATE_REQ_START = 0,
+	STATE_REQ_CMD_PROCESS,
+	STATE_REQ_DATA_PROCESS,
+	STATE_REQ_END,
+};
+
+struct dw_mci_req_log {
+	u64				timestamp;
+	u32				info0;
+	u32				info1;
+	u32				info2;
+	u32				info3;
+	unsigned long			pending_events;
+	unsigned long			completed_events;
+	enum dw_mci_state		state;
+	enum dw_mci_state		state_cmd;
+	enum dw_mci_state		state_dat;
+	enum dw_mci_req_log_state	log_state;
+};
+
+#define DWMCI_LOG_MAX		0x80
+#define DWMCI_REQ_LOG_MAX	0x40
+struct dw_mci_debug_info {
+	struct dw_mci_cmd_log		cmd_log[DWMCI_LOG_MAX];
+	atomic_t			cmd_log_count;
+	struct dw_mci_req_log		req_log[DWMCI_REQ_LOG_MAX];
+	atomic_t			req_log_count;
+	unsigned char			en_logging;
+#define DW_MCI_DEBUG_ON_CMD	BIT(0)
+#define DW_MCI_DEBUG_ON_REQ	BIT(1)
+};
+
+#define DWMCI_DBG_NUM_HOST	3
+
+#define DWMCI_DBG_NUM_INFO	3			/* configurable */
+#define DWMCI_DBG_MASK_INFO	(BIT(0) | BIT(1) | BIT(2))	/* configurable */
+#define DWMCI_DBG_BIT_HOST(x)	BIT(x)
+
+struct dw_mci_debug_data {
+	unsigned char			host_count;
+	unsigned char			info_count;
+	unsigned char			info_index[DWMCI_DBG_NUM_HOST];
+	struct dw_mci			*host[DWMCI_DBG_NUM_HOST];
+	struct dw_mci_debug_info	debug_info[DWMCI_DBG_NUM_INFO];
+};
+
+struct dw_mci_tuning_data {
+	const u8 *blk_pattern;
+	unsigned int blksz;
+};
+
+/**
  * struct dw_mci - MMC controller state shared between all slots
  * @lock: Spinlock protecting the queue and associated data.
  * @regs: Pointer to MMIO registers.
@@ -211,6 +336,12 @@ struct dw_mci {
 	unsigned long		irq_flags; /* IRQ flags */
 	int			irq;
 
+<<<<<<< HEAD
+=======
+	/* Interrupt count for interrupt storming case */
+	unsigned int 		int_count;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Save request status */
 #define DW_MMC_REQ_IDLE		0
 #define DW_MMC_REQ_BUSY		1
@@ -222,12 +353,20 @@ struct dw_mci {
 
 	/* Support system power mode */
 	int idle_ip_index;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MMC_DW_EXYNOS_EMMC_SHUTDOWN_POWERCTRL
+	struct regulator	*vemmc;
+	struct regulator	*vqemmc;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* For argos */
 	unsigned int transferred_cnt;
 
 	/* Sfr dump */
 	struct dw_mci_sfe_ram_dump	*sfr_dump;
+<<<<<<< HEAD
 
 #ifdef CONFIG_MMC_DW_EXYNOS_EMMC_POWERCTRL
 	struct regulator        *vemmc;
@@ -239,6 +378,11 @@ struct dw_mci {
 	
 	/* Card Clock In */
 	u32			cclk_in;
+=======
+	struct buffer_head *self_test_bh;
+	int self_test_mode;
+	struct idmac_desc_64addr *desc_st;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /* DMA ops for Internal/External DMAC interface */
@@ -277,7 +421,11 @@ struct dw_mci_dma_ops {
 /* Use the security management unit */
 #define DW_MCI_QUIRK_USE_SMU			BIT(10)
 /* Switching transfer */
+<<<<<<< HEAD
 #define DW_MCI_SW_TRANS				BIT(11)
+=======
+#define DW_MCI_SW_TRANS					BIT(11)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* Slot level quirks */
 /* This slot has no write protect */
@@ -330,6 +478,24 @@ struct dw_mci_board {
 	unsigned char io_mode;
 
 	enum dw_mci_cd_types cd_type;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_BCM4343)  || defined(CONFIG_BCM4343_MODULE) || \
+	defined(CONFIG_BCM43454) || defined(CONFIG_BCM43454_MODULE) || \
+	defined(CONFIG_BCM43455) || defined(CONFIG_BCM43455_MODULE) || \
+	defined(CONFIG_BCM43456) || defined(CONFIG_BCM43456_MODULE)
+	int (*ext_cd_init)(void (*notify_func)
+		(void *dev_id, int state), void *dev_id, struct mmc_host *mmc);
+#else
+	int (*ext_cd_init)(void (*notify_func)
+			(void *dev_id, int state), void *dev_id);
+#endif /* CONFIG_BCM4343 || CONFIG_BCM4343_MODULE || \
+	CONFIG_BCM43454 || CONFIG_BCM43454_MODULE || \
+	CONFIG_BCM43455 || CONFIG_BCM43455_MODULE || \
+	CONFIG_BCM43456 || CONFIG_BCM43456_MODULE */
+	int (*ext_cd_cleanup)(void (*notify_func)
+			(void *dev_id, int state), void *dev_id);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct dw_mci_dma_ops *dma_ops;
 	struct dma_pdata *data;
 	struct block_settings *blk_settings;
@@ -340,6 +506,10 @@ struct dw_mci_board {
 	u32 hto_timeout;
 	bool use_gate_clock;
 	bool use_biu_gate_clock;
+<<<<<<< HEAD
+=======
+	bool use_gpio_invert;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	bool enable_cclk_on_suspend;
 	bool on_suspend;
 
@@ -353,7 +523,11 @@ struct dw_mci_board {
 				 SDMMC_IDMAC_INT_FBE | SDMMC_IDMAC_INT_RI | \
 				 SDMMC_IDMAC_INT_TI)
 
+<<<<<<< HEAD
 #if defined(CONFIG_MMC_DW_FMP_DM_CRYPT) || defined(CONFIG_MMC_DW_FMP_ECRYPT_FS)
+=======
+#if defined(CONFIG_MMC_DW_FMP_DM_CRYPT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct idmac_desc_64addr {
 	u32		des0;	/* Control Descriptor */
 #define IDMAC_DES0_DIC	BIT(1)
@@ -415,6 +589,7 @@ do {			\
 	(d)->des6 = ((u32)(a) & 0xffffffff); \
 	(d)->des7 = ((u32)((a) >> 32));	\
 } while(0)
+<<<<<<< HEAD
 };
 #else
 struct idmac_desc_64addr {
@@ -445,6 +620,38 @@ do {			\
 	(d)->des7 = ((u32)((a) >> 32));	\
 } while(0)
 };
+=======
+};
+#else
+struct idmac_desc_64addr {
+	u32		des0;	/* Control Descriptor */
+
+	u32		des1;	/* Reserved */
+
+	u32		des2;	/*Buffer sizes */
+#define IDMAC_64ADDR_SET_BUFFER1_SIZE(d, s) \
+	((d)->des2 = ((d)->des2 & 0x03ffe000) | ((s) & 0x1fff))
+
+	u32		des3;	/* Reserved */
+
+	u32		des4;	/* Lower 32-bits of Buffer Address Pointer 1*/
+	u32		des5;	/* Upper 32-bits of Buffer Address Pointer 1*/
+
+	u32		des6;	/* Lower 32-bits of Next Descriptor Address */
+	u32		des7;	/* Upper 32-bits of Next Descriptor Address */
+#define IDMAC_64ADDR_SET_DESC_CLEAR(d) \
+do {			\
+	(d)->des1 = 0;	\
+	(d)->des2 = 0;	\
+	(d)->des3 = 0;	\
+} while(0)
+#define IDMAC_64ADDR_SET_DESC_ADDR(d, a) \
+do {			\
+	(d)->des6 = ((u32)(a) & 0xffffffff); \
+	(d)->des7 = ((u32)((a) >> 32));	\
+} while(0)
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 struct idmac_desc {

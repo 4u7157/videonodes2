@@ -89,6 +89,7 @@ static ssize_t dw_mci_debug_log_show(struct device *dev,
 	int j = 0, k = 0;
 	struct dw_mci_cmd_log *cmd_log;
 	unsigned int offset;
+<<<<<<< HEAD
 
 	struct mmc_host *mmc = container_of(dev, struct mmc_host, class_dev);
 	struct dw_mci *host = dw_mci_debug.host[mmc->index];
@@ -361,6 +362,280 @@ static int dw_mci_biu_clk_en(struct dw_mci *host, bool force_gating)
 {
 	int ret = 0;
 
+=======
+
+	struct mmc_host *mmc = container_of(dev, struct mmc_host, class_dev);
+	struct dw_mci *host = dw_mci_debug.host[mmc->index];
+
+	/*
+	 * print cmd_log from prev. 14 to last
+	 */
+	 if (host->debug_info->en_logging & DW_MCI_DEBUG_ON_CMD) {
+		 offset = atomic_read(&host->debug_info->cmd_log_count) - 13;
+		 offset &= DWMCI_LOG_MAX - 1;
+		 total_len += snprintf(buf, PAGE_SIZE, "HOST%1d\n", mmc->index);
+		 buf += (sizeof(char) * 6);
+		 cmd_log = host->debug_info->cmd_log;
+		 for (j = 0; j < 14; j++) {
+			 total_len += snprintf(buf+(sizeof(char)*71*j)+
+				 (sizeof(char)*(2*k+6*(k+1))), PAGE_SIZE,
+				 "%04d:%2d,0x%08x,%04d,%016llu,%016llu,%02x,%04x,%03d.\n",
+				 offset,
+				 cmd_log[offset].cmd, cmd_log[offset].arg,
+				 cmd_log[offset].data_size, cmd_log[offset].send_time,
+				 cmd_log[offset].done_time, cmd_log[offset].seq_status,
+				 cmd_log[offset].rint_sts, cmd_log[offset].status_count);
+			 offset++;
+		 }
+		 total_len += snprintf(buf + (sizeof(char)*2), PAGE_SIZE, "\n\n");
+		 k++;
+	 }
+
+	return total_len;
+}
+
+static ssize_t dw_mci_debug_log_control(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf,
+		size_t len)
+{
+	int enable = 0;
+	int ret = 0;
+	struct mmc_host *mmc = container_of(dev, struct mmc_host, class_dev);
+	struct dw_mci *host = dw_mci_debug.host[mmc->index];
+
+	ret = kstrtoint(buf, 0, &enable);
+	if (ret)
+		goto out;
+
+	host->debug_info->en_logging = enable;
+	printk("%s: en_logging is %d.\n",
+			mmc_hostname(host->cur_slot->mmc),
+			host->debug_info->en_logging);
+
+ out:
+	return len;
+}
+static DEVICE_ATTR(dwmci_debug, 0644, dw_mci_debug_log_show, dw_mci_debug_log_control);
+
+/*
+ * new_cmd : has to be true Only send_command.(except CMD13)
+ * flags :
+ * 0x1 : send_cmd : start_command(all)
+ * 0x2 : resp(CD) : set done_time without data case
+ * 0x4 : data_done(DTO) : set done_time with data case
+ * 0x8 : error interrupt occurs : set rint_sts read from RINTSTS
+ */
+static void dw_mci_debug_cmd_log(struct mmc_command *cmd, struct dw_mci *host,
+		bool new_cmd, u8 flags, u32 rintsts)
+{
+	int cpu = raw_smp_processor_id();
+	unsigned int count;
+	struct dw_mci_cmd_log *cmd_log;
+
+	if (!host->debug_info || !(host->debug_info->en_logging & DW_MCI_DEBUG_ON_CMD))
+		return;
+
+	cmd_log = host->debug_info->cmd_log;
+
+	if (!new_cmd) {
+		count = atomic_read(&host->debug_info->cmd_log_count) &
+							(DWMCI_LOG_MAX - 1);
+		if (flags & DW_MCI_FLAG_SEND_CMD)	/* CMD13 */
+			cmd_log[count].status_count++;
+		if (flags & DW_MCI_FLAG_CD) {
+			cmd_log[count].seq_status |= DW_MCI_FLAG_CD;
+			cmd_log[count].done_time = cpu_clock(cpu);
+		}
+		if (flags & DW_MCI_FLAG_DTO) {
+			cmd_log[count].seq_status |= DW_MCI_FLAG_DTO;
+			cmd_log[count].done_time = cpu_clock(cpu);
+		}
+		if (flags & DW_MCI_FLAG_ERROR) {
+			cmd_log[count].seq_status |= DW_MCI_FLAG_ERROR;
+			cmd_log[count].rint_sts |= (rintsts & 0xFFFF);
+		}
+	} else {
+		count = atomic_inc_return(&host->debug_info->cmd_log_count) &
+							(DWMCI_LOG_MAX - 1);
+		cmd_log[count].cmd = cmd->opcode;
+		cmd_log[count].arg = cmd->arg;
+		if (cmd->data)
+			cmd_log[count].data_size = cmd->data->blocks;
+		else
+			cmd_log[count].data_size = 0;
+
+		cmd_log[count].send_time = cpu_clock(cpu);
+
+		cmd_log[count].done_time = 0x0;
+		cmd_log[count].seq_status = DW_MCI_FLAG_SEND_CMD;
+		if (!flags & DW_MCI_FLAG_SEND_CMD)
+			cmd_log[count].seq_status |= DW_MCI_FLAG_NEW_CMD_ERR;
+
+		cmd_log[count].rint_sts = 0x0;
+		cmd_log[count].status_count = 0;
+	}
+}
+
+static void dw_mci_debug_req_log(struct dw_mci *host, struct mmc_request *mrq,
+		enum dw_mci_req_log_state log_state, enum dw_mci_state state)
+{
+	int cpu = raw_smp_processor_id();
+	unsigned int count;
+	struct dw_mci_req_log *req_log;
+
+	if (!host->debug_info || !(host->debug_info->en_logging & DW_MCI_DEBUG_ON_REQ))
+		return;
+
+	req_log = host->debug_info->req_log;
+
+	count = atomic_inc_return(&host->debug_info->req_log_count)
+					& (DWMCI_REQ_LOG_MAX - 1);
+	if (log_state == STATE_REQ_START) {
+		req_log[count].info0 = mrq->cmd->opcode;
+		req_log[count].info1 = mrq->cmd->arg;
+		if (mrq->data) {
+			req_log[count].info2 = (u32)mrq->data->blksz;
+			req_log[count].info3 = (u32)mrq->data->blocks;
+		} else {
+			req_log[count].info2 = 0;
+			req_log[count].info3 = 0;
+		}
+	} else {
+		req_log[count].info0 = host->cmd_status;
+		req_log[count].info1 = host->data_status;
+		req_log[count].info2 = 0;
+		req_log[count].info3 = 0;
+	}
+	req_log[count].log_state = log_state;
+	req_log[count].pending_events = host->pending_events;
+	req_log[count].completed_events = host->completed_events;
+	req_log[count].timestamp = cpu_clock(cpu);
+	req_log[count].state = state;
+}
+
+static void dw_mci_debug_init(struct dw_mci *host)
+{
+	unsigned int host_index;
+	unsigned int info_index;
+
+	host_index = dw_mci_debug.host_count++;
+	if (host_index < DWMCI_DBG_NUM_HOST) {
+		dw_mci_debug.host[host_index] = host;
+		if (DWMCI_DBG_MASK_INFO & DWMCI_DBG_BIT_HOST(host_index)) {
+			static atomic_t temp_cmd_log_count = ATOMIC_INIT(-1);
+			static atomic_t temp_req_log_count = ATOMIC_INIT(-1);
+			int sysfs_err = 0;
+
+			info_index = dw_mci_debug.info_count++;
+			dw_mci_debug.info_index[host_index] = info_index;
+			host->debug_info = &dw_mci_debug.debug_info[info_index];
+			host->debug_info->en_logging = DW_MCI_DEBUG_ON_CMD
+					| DW_MCI_DEBUG_ON_REQ;
+			host->debug_info->cmd_log_count = temp_cmd_log_count;
+			host->debug_info->req_log_count = temp_req_log_count;
+
+			sysfs_err = sysfs_create_file(&(host->slot[0]->mmc->class_dev.kobj),
+						&(dev_attr_dwmci_debug.attr));
+			pr_info("%s: create debug_log sysfs : %s.....\n", __func__,
+					sysfs_err ? "failed" : "successed");
+			dev_info(host->dev, "host %d debug On\n", host_index);
+		} else {
+			dw_mci_debug.info_index[host_index] = 0xFF;
+		}
+	}
+}
+#else
+static inline int dw_mci_debug_cmd_log(struct mmc_command *cmd,
+		struct dw_mci *host, bool new_cmd, u8 flags, u32 rintsts)
+{
+	return 0;
+}
+
+static inline int dw_mci_debug_req_log(struct dw_mci *host,
+		struct mmc_request *mrq, enum dw_mci_req_log_state log_state,
+		enum dw_mci_state state)
+{
+	return 0;
+}
+
+static inline int dw_mci_debug_init(struct dw_mci *host)
+{
+	return 0;
+}
+#endif /* defined (CONFIG_MMC_DW_DEBUG) */
+
+/* Add sysfs for argos */
+static ssize_t dw_mci_transferred_cnt_show(struct device *dev,
+		struct device_attribute *attr,
+		char *buf)
+{
+	struct mmc_host *mmc = container_of(dev, struct mmc_host, class_dev);
+	struct dw_mci_slot *slot = mmc_priv(mmc);
+	struct dw_mci *host = slot->host;
+
+	return sprintf(buf, "%u\n" , host->transferred_cnt);
+}
+
+DEVICE_ATTR(trans_count, 0444, dw_mci_transferred_cnt_show, NULL);
+
+static void dw_mci_transferred_cnt_init(struct dw_mci *host, struct mmc_host *mmc)
+{
+	int sysfs_err = 0;
+	sysfs_err = sysfs_create_file(&(mmc->class_dev.kobj),
+			&(dev_attr_trans_count.attr));
+	pr_info("%s: trans_count: %s.....\n", __func__,
+			sysfs_err ? "failed" : "successed");
+}
+
+static int dw_mci_ciu_clk_en(struct dw_mci *host, bool force_gating)
+{
+	int ret = 0;
+
+	if (!host->pdata->use_gate_clock && !force_gating)
+		return 0;
+
+	if (!host->ciu_clk) {
+		dev_err(host->dev, "no available CIU gating clock\n");
+		return 1;
+	}
+
+	if (!atomic_cmpxchg(&host->ciu_clk_cnt, 0, 1)) {
+		ret = clk_prepare_enable(host->ciu_clk);
+		if (ret)
+			dev_err(host->dev, "failed to enable ciu clock\n");
+	}
+
+	return ret;
+}
+
+static void dw_mci_ciu_clk_dis(struct dw_mci *host)
+{
+
+	if (!host->pdata->use_gate_clock)
+		return;
+
+	if (host->pdata->enable_cclk_on_suspend && host->pdata->on_suspend)
+		return;
+
+	if (atomic_read(&host->ciu_en_win)) {
+		dev_err(host->dev, "Not available CIU off: %d\n",
+				atomic_read(&host->ciu_en_win));
+		return;
+	}
+
+	if (host->req_state == DW_MMC_REQ_BUSY)
+		return;
+
+	if (atomic_cmpxchg(&host->ciu_clk_cnt, 1, 0))
+		clk_disable_unprepare(host->ciu_clk);
+}
+
+static int dw_mci_biu_clk_en(struct dw_mci *host, bool force_gating)
+{
+	int ret = 0;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!host->pdata->use_biu_gate_clock && !force_gating)
 		return 0;
 
@@ -716,6 +991,19 @@ static void dw_mci_start_command(struct dw_mci *host,
 		"start command: ARGR=0x%08x CMDR=0x%08x\n",
 		cmd->arg, cmd_flags);
 
+<<<<<<< HEAD
+=======
+#if 1 /* 20160326 AI 1 */
+	if (cmd->opcode == SD_IO_RW_EXTENDED) {
+		u32 ctrl;
+		ctrl = mci_readl(host, CTRL);
+		ctrl |= SDMMC_CTRL_FIFO_RESET;
+		mci_writel(host, CTRL, ctrl);
+
+		while (mci_readl(host, CTRL) & SDMMC_CTRL_FIFO_RESET);
+	}
+#endif /* 20160326 AI 1 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* needed to
 	 * add get node parse_dt for check to enable logging
 	 * if defined(CMD_LOGGING)
@@ -854,6 +1142,7 @@ static void get_enc_mode_from_bio(struct dw_mci *host, struct bio *bio,
 
         return;
 }
+<<<<<<< HEAD
 
 static void get_enc_mode_from_page(struct page *page, int *enc_mode, uint32_t *rw_size)
 {
@@ -876,6 +1165,8 @@ static void get_enc_mode_from_page(struct page *page, int *enc_mode, uint32_t *r
 
         return;
 }
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 static void dw_mci_translate_sglist(struct dw_mci *host, struct mmc_data *data,
@@ -909,6 +1200,7 @@ static void dw_mci_translate_sglist(struct dw_mci *host, struct mmc_data *data,
 			u64 mem_addr = sg_dma_address(&data->sg[i]);
 			unsigned int sz_per_desc;
 			unsigned int left = length;
+<<<<<<< HEAD
 
 #if defined(CONFIG_FMP_MMC)
 			if (enc_mode != MMC_FMP_SELF_TEST_MODE)
@@ -1000,6 +1292,94 @@ static void dw_mci_translate_sglist(struct dw_mci *host, struct mmc_data *data,
 		desc = host->sg_cpu;
 		desc->des0 |= IDMAC_DES0_FD;
 
+=======
+
+			for (j = 0; j < (length + rw_size - 1) / rw_size; j++) {
+
+				/*
+				 * Set the OWN bit and disable interrupts for this
+				 * descriptor
+				 */
+				desc->des0 = IDMAC_DES0_OWN | IDMAC_DES0_DIC |
+							IDMAC_DES0_CH;
+				/* Buffer length */
+				sz_per_desc = min(left, rw_size);
+				desc->des1 = 0;
+				desc->des2 = length;
+				IDMAC_64ADDR_SET_BUFFER1_SIZE(desc, sz_per_desc);
+
+				/* Physical address to DMA to/from */
+				desc->des4 = mem_addr & 0xffffffff;
+				desc->des5 = mem_addr >> 32;
+				desc->des7 = 0;
+
+#if defined(CONFIG_FMP_MMC)
+				if (!enc_mode) {
+					IDMAC_SET_DAS(desc, CLEAR);
+					IDMAC_SET_FAS(desc, CLEAR);
+				} else {
+					int ret;
+#if defined(CONFIG_FIPS_FMP)
+					if (enc_mode == MMC_FMP_SELF_TEST_MODE)
+						ret = fmp_mmc_map_sg_st(host, desc);
+					else
+#endif
+						ret = fmp_mmc_map_sg(host, desc, i, enc_mode, sector, data,
+								mq_rq->req->bio);
+					if (ret) {
+						dev_err(host->dev,
+							"Failed to make mmc fmp descriptor. ret = 0x%x\n",
+							ret);
+						host->mrq->cmd->error = -ENOKEY;
+						dw_mci_request_end(host, host->mrq);
+						host->state = STATE_IDLE;
+						return;
+					}
+				}
+				sector += rw_size / DW_MMC_SECTOR_SIZE;
+#endif
+				desc++;
+				desc_cnt++;
+				mem_addr += sz_per_desc;
+				left -= sz_per_desc;
+			}
+		}
+
+		/* Set first descriptor */
+		desc = host->sg_cpu;
+		desc->des0 |= IDMAC_DES0_FD;
+
+		/* Set last descriptor */
+		desc = host->sg_cpu + (desc_cnt - 1) *
+				sizeof(struct idmac_desc_64addr);
+		desc->des0 &= ~(IDMAC_DES0_CH | IDMAC_DES0_DIC);
+		desc->des0 |= IDMAC_DES0_LD;
+
+	} else {
+		struct idmac_desc *desc = host->sg_cpu;
+
+		for (i = 0; i < sg_len; i++, desc++) {
+			unsigned int length = sg_dma_len(&data->sg[i]);
+			u32 mem_addr = sg_dma_address(&data->sg[i]);
+
+			/*
+			 * Set the OWN bit and disable interrupts for this
+			 * descriptor
+			 */
+			desc->des0 = IDMAC_DES0_OWN | IDMAC_DES0_DIC |
+						IDMAC_DES0_CH;
+			/* Buffer length */
+			IDMAC_SET_BUFFER1_SIZE(desc, length);
+
+			/* Physical address to DMA to/from */
+			desc->des2 = mem_addr;
+		}
+
+		/* Set first descriptor */
+		desc = host->sg_cpu;
+		desc->des0 |= IDMAC_DES0_FD;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* Set last descriptor */
 		desc = host->sg_cpu + (i - 1) * sizeof(struct idmac_desc);
 		desc->des0 &= ~(IDMAC_DES0_CH | IDMAC_DES0_DIC);
@@ -1106,7 +1486,10 @@ static const struct dw_mci_dma_ops dw_mci_idmac_ops = {
 };
 #endif /* CONFIG_MMC_DW_IDMAC */
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void dw_mci_sfr_save(struct dw_mci *host, unsigned int *sfr_backup)
 {
 	sfr_backup[0] = mci_readl(host, CTRL);
@@ -1199,7 +1582,11 @@ static int dw_mci_pre_dma_transfer(struct dw_mci *host,
 	struct dw_mci_slot *slot = host->cur_slot;
 	struct mmc_card *card = slot->mmc->card;
 	unsigned int i, sg_len;
+<<<<<<< HEAD
 	unsigned int align_mask = ((host->data_shift == 3) ? 8 : 4) - 1;
+=======
+	unsigned int align_mask = ((host->data_shift == 3) ? 8 : 4) -1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (host->quirks & DW_MCI_SW_TRANS) {
 		if (mci_readl(host, MPSTAT) & 0x1)
@@ -1344,16 +1731,23 @@ disable:
 
 inline u32 dw_mci_calc_hto_timeout(struct dw_mci *host)
 {
+<<<<<<< HEAD
 	struct dw_mci_slot *slot = host->cur_slot;
 	u32 target_timeout, count;
 	u32 max_time, max_ext_time;
 	u32 host_clock = host->cclk_in;
 	u32 tmout_value;
 	int ext_cnt = 0;
+=======
+	u32 target_timeout;
+	u32 count;
+	u32 host_clock = host->cur_slot->clock;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!host->pdata->hto_timeout)
 		return 0xFFFFFFFF; /* timeout maximum */
 
+<<<<<<< HEAD
 	target_timeout = host->pdata->data_timeout;
 
 	if (host->timing == MMC_TIMING_MMC_HS400 ||
@@ -1393,6 +1787,21 @@ inline u32 dw_mci_calc_hto_timeout(struct dw_mci *host)
 pass:
 	/* Set return value */
 	return tmout_value;
+=======
+	target_timeout = host->pdata->hto_timeout;
+
+	/* Calculating Timeout value */
+	count = (target_timeout * (host_clock / 1000)) /
+		(SDMMC_DATA_TMOUT_CRT * SDMMC_DATA_TMOUT_EXT);
+
+	if (count > 0x1FFFFF)
+		count = 0x1FFFFF;
+
+	/* Set return value */
+	return ((count << SDMMC_DATA_TMOUT_SHIFT)
+		| (SDMMC_DATA_TMOUT_EXT << SDMMC_DATA_TMOUT_EXT_SHIFT)
+		| SDMMC_RESP_TMOUT);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int dw_mci_submit_data_dma(struct dw_mci *host, struct mmc_data *data)
@@ -1642,16 +2051,21 @@ inline u32 dw_mci_calc_timeout(struct dw_mci *host)
 {
 	u32 target_timeout;
 	u32 count;
+<<<<<<< HEAD
 	u32 max_time;
 	u32 max_ext_time;
 	int ext_cnt = 0;
 	u32 host_clock = host->cclk_in;
+=======
+	u32 host_clock = host->cur_slot->clock;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!host->pdata->data_timeout)
 		return 0xFFFFFFFF; /* timeout maximum */
 
 	target_timeout = host->pdata->data_timeout;
 
+<<<<<<< HEAD
 	if (host->timing == MMC_TIMING_MMC_HS400 ||
 				host->timing == MMC_TIMING_MMC_HS400_ES) {
 		if (host->pdata->quirks & DW_MCI_QUIRK_ENABLE_ULP)
@@ -1670,6 +2084,18 @@ inline u32 dw_mci_calc_timeout(struct dw_mci *host)
 	/* Set return value */
 	return ((count << SDMMC_DATA_TMOUT_SHIFT)
 		| ((ext_cnt + SDMMC_DATA_TMOUT_EXT) << SDMMC_DATA_TMOUT_EXT_SHIFT)
+=======
+	/* Calculating Timeout value */
+	count = (target_timeout * (host_clock / 1000)) /
+		(SDMMC_DATA_TMOUT_CRT * SDMMC_DATA_TMOUT_EXT);
+
+	if (count > 0x1FFFFF)
+		count = 0x1FFFFF;
+
+	/* Set return value */
+	return ((count << SDMMC_DATA_TMOUT_SHIFT)
+		| (SDMMC_DATA_TMOUT_EXT << SDMMC_DATA_TMOUT_EXT_SHIFT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		| SDMMC_RESP_TMOUT);
 }
 
@@ -1683,12 +2109,20 @@ static void __dw_mci_start_request(struct dw_mci *host,
 
 	mrq = slot->mrq;
 
+<<<<<<< HEAD
+=======
+	/* WA : set S/W timeout 500msec for tuning cmd */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (mrq->cmd->opcode == MMC_SEND_TUNING_BLOCK ||
 			mrq->cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
 		mod_timer(&host->timer, jiffies + msecs_to_jiffies(500));
 	else if (host->pdata->sw_timeout)
+<<<<<<< HEAD
 		mod_timer(&host->timer,
 		jiffies + msecs_to_jiffies(host->pdata->sw_timeout));
+=======
+		mod_timer(&host->timer, jiffies + msecs_to_jiffies(host->pdata->sw_timeout));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	else
 		mod_timer(&host->timer, jiffies + msecs_to_jiffies(10000));
 
@@ -1885,6 +2319,13 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 	if (!(slot->host->quirks & DW_MMC_QUIRK_FIXED_VOLTAGE)) {
 		switch (ios->power_mode) {
 		case MMC_POWER_UP:
+<<<<<<< HEAD
+=======
+			if (drv_data && drv_data->misc_control) {
+				drv_data->misc_control(slot->host, CTRL_SET_ETC_GPIO, NULL);
+			}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (!IS_ERR(mmc->supply.vmmc)) {
 				ret = mmc_regulator_set_ocr(mmc, mmc->supply.vmmc,
 						ios->vdd);
@@ -1910,6 +2351,13 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 			mci_writel(slot->host, PWREN, regs);
 			break;
 		case MMC_POWER_OFF:
+<<<<<<< HEAD
+=======
+			if (drv_data && drv_data->misc_control) {
+				drv_data->misc_control(slot->host, CTRL_SET_ETC_GPIO, NULL);
+			}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (!IS_ERR(mmc->supply.vmmc))
 				mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, 0);
 
@@ -1927,7 +2375,11 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 			break;
 		}
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (cclk_request_turn_off) {
 		dw_mci_ciu_clk_dis(slot->host);
 		if (!IS_ERR(slot->host->biu_clk))
@@ -2152,6 +2604,7 @@ static int dw_mci_execute_tuning(struct mmc_host *mmc, u32 opcode)
 	return err;
 }
 
+<<<<<<< HEAD
 static void dw_mci_emmc_pwr_control(struct mmc_host *mmc, unsigned int power_mode)
 {
 #ifdef CONFIG_MMC_DW_EXYNOS_EMMC_POWERCTRL
@@ -2189,10 +2642,29 @@ static void dw_mci_emmc_pwr_control(struct mmc_host *mmc, unsigned int power_mod
 			mdelay(30);	/* discharging time */
 			break;
 	}
+=======
+static void dw_mci_shutdown(struct mmc_host *mmc)
+{
+#ifdef CONFIG_MMC_DW_EXYNOS_EMMC_SHUTDOWN_POWERCTRL
+	int ret;
+	struct dw_mci_slot *slot = mmc_priv(mmc);
+	struct dw_mci *host = slot->host;
+	/* Notice : Powers are not turned off if EMMC_EN stays high */
+
+	if (regulator_is_enabled(host->vemmc))
+		ret = regulator_disable(host->vemmc);
+
+	if (regulator_is_enabled(host->vqemmc))
+		ret = regulator_disable(host->vqemmc);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	return;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const struct mmc_host_ops dw_mci_ops = {
 	.request		= dw_mci_request,
 	.pre_req		= dw_mci_pre_req,
@@ -2204,7 +2676,11 @@ static const struct mmc_host_ops dw_mci_ops = {
 	.execute_tuning		= dw_mci_execute_tuning,
 	.card_busy		= dw_mci_card_busy,
 	.start_signal_voltage_switch = dw_mci_switch_voltage,
+<<<<<<< HEAD
 	.emmc_pwr		= dw_mci_emmc_pwr_control,
+=======
+	.shutdown		= dw_mci_shutdown,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 };
 
@@ -2982,6 +3458,26 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
 	status = mci_readl(host, RINTSTS);
 	pending = mci_readl(host, MINTSTS); /* read-only mask reg */
 
+#if defined(CONFIG_QCOM_WIFI)  
+	if ((!strcmp("mmc1", mmc_hostname(host->cur_slot->mmc)))){
+		/* If same interrupt was occur continously */
+		u32 temp;
+		if (pending & SDMMC_INT_TXDR) {
+			host->int_count++;
+			if (host->int_count > 1000) {
+				/* Disable RX/TX IRQs, let DMA handle it */
+				mci_writel(host, RINTSTS, SDMMC_INT_TXDR | SDMMC_INT_RXDR);
+				temp = mci_readl(host, INTMASK);
+				temp  &= ~(SDMMC_INT_RXDR | SDMMC_INT_TXDR);
+				mci_writel(host, INTMASK, temp);
+				dev_err(host->dev, "Interrupt storming by FIFO threshold !!!\n");
+			}
+		} else
+		{
+			host->int_count = 0;
+			}
+	}
+#endif
 	/*
 	 * DTO fix - version 2.10a and below, and only if internal DMA
 	 * is configured.
@@ -3108,6 +3604,7 @@ static void dw_mci_timeout_timer(unsigned long data)
 	if (host && host->mrq) {
 		mrq = host->mrq;
 
+<<<<<<< HEAD
 		if (!(mrq->cmd->opcode == MMC_SEND_TUNING_BLOCK ||
 				mrq->cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)) {
 			dev_err(host->dev,
@@ -3115,6 +3612,13 @@ static void dw_mci_timeout_timer(unsigned long data)
 					" state = %d\n", host->state);
 			dw_mci_reg_dump(host);
 		}
+=======
+		dev_err(host->dev,
+			"Timeout waiting for hardware interrupt."
+			" state = %d\n", host->state);
+		dw_mci_reg_dump(host);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		spin_lock(&host->lock);
 
 		host->sg = NULL;
@@ -3256,13 +3760,52 @@ static void dw_mci_work_routine_card(struct work_struct *work)
 			mmc_detect_change(slot->mmc,
 				msecs_to_jiffies(host->pdata->detect_delay_ms));
 		else {
+<<<<<<< HEAD
 			mmc_detect_change(slot->mmc,
 					msecs_to_jiffies(host->pdata->detect_delay_ms));
 			if (host->pdata->only_once_tune)
 				host->pdata->tuned = false;
 		}
+=======
+			/* Add 200ms detect delay only for the SD Card Slot */
+			if (host->pdata->cd_type == DW_MCI_CD_GPIO)
+				mmc_detect_change(slot->mmc,
+						msecs_to_jiffies(host->pdata->detect_delay_ms));
+			else		
+				mmc_detect_change(slot->mmc, 0);
+			if (host->pdata->only_once_tune)
+				host->pdata->tuned = false;
+		}
 	}
 }
+
+#if defined(CONFIG_QCOM_WIFI) || defined(CONFIG_BCM4343)  || defined(CONFIG_BCM4343_MODULE)|| \
+	defined(CONFIG_BCM43454)  || defined(CONFIG_BCM43454_MODULE) || \
+	defined(CONFIG_BCM43455)  || defined(CONFIG_BCM43455_MODULE) || \
+	defined(CONFIG_BCM43456)  || defined(CONFIG_BCM43456_MODULE)
+static void dw_mci_notify_change(void *dev, int state)
+{
+	struct dw_mci *host = (struct dw_mci *)dev;
+	unsigned long flags;
+
+	if (host) {
+		spin_lock_irqsave(&host->lock, flags);
+		if (state) {
+			printk(KERN_ERR "card inserted\n");
+			host->pdata->quirks |= DW_MCI_QUIRK_BROKEN_CARD_DETECTION;
+		} else {
+			printk(KERN_ERR "card removed\n");
+			host->pdata->quirks &= ~DW_MCI_QUIRK_BROKEN_CARD_DETECTION;
+		}
+		queue_work(host->card_workqueue, &host->card_work);
+		spin_unlock_irqrestore(&host->lock, flags);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+	}
+}
+#endif /* CONFIG_QCOM_WIFI || CONFIG_BCM4343 || CONFIG_BCM4343_MODULE || \
+	CONFIG_BCM43454 || CONFIG_BCM43454_MODULE || \
+	CONFIG_BCM43455 || CONFIG_BCM43455_MODULE || \
+	CONFIG_BCM43456 || CONFIG_BCM43456_MODULE */
 
 #ifdef CONFIG_OF
 /* given a slot id, find out the device node representing that slot */
@@ -3324,7 +3867,10 @@ static irqreturn_t dw_mci_detect_interrupt(int irq, void *dev_id)
 
 	if (host->card_detect_cnt < 0x7FFFFFF0)
 		host->card_detect_cnt++;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	queue_work(host->card_workqueue, &host->card_work);
 
 	return IRQ_HANDLED;
@@ -3344,10 +3890,15 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 	if (!mmc)
 		return -ENOMEM;
 	dump = devm_kzalloc(host->dev, sizeof(*dump), GFP_KERNEL);
+<<<<<<< HEAD
 	if (!dump) {
 		dev_err(host->dev,"sfr dump memory alloc faile!\n");
 		return -ENOMEM;
 	}
+=======
+	if (!dump)
+		dev_err(host->dev,"sfr dump memory alloc faile!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	host->sfr_dump = dump;
 	slot = mmc_priv(mmc);
 	slot->id = id;
@@ -3443,6 +3994,27 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
 	/* Card initially undetected */
 	slot->last_detect_state = 0;
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_QCOM_WIFI)  
+	if ((!strcmp("mmc1", mmc_hostname(mmc))) && host->pdata->cd_type == DW_MCI_CD_EXTERNAL) {
+		printk("%s, set DW_MCI_CD_EXTERNAL \n",mmc_hostname(mmc));
+		host->pdata->ext_cd_init(&dw_mci_notify_change, (void*)host);
+	}
+#endif /* CONFIG_QCOM_WIFI */
+
+#if defined(CONFIG_BCM4343) || defined(CONFIG_BCM4343_MODULE) || \
+	defined(CONFIG_BCM43454)  || defined(CONFIG_BCM43454_MODULE) || \
+	defined(CONFIG_BCM43455)  || defined(CONFIG_BCM43455_MODULE) || \
+	defined(CONFIG_BCM43456)  || defined(CONFIG_BCM43456_MODULE)
+	if (host->pdata->cd_type == DW_MCI_CD_EXTERNAL)
+		host->pdata->ext_cd_init(&dw_mci_notify_change, (void *)host, mmc);
+#endif /* CONFIG_BCM4343 || CONFIG_BCM4343_MODULE || \
+	CONFIG_BCM43454 || CONFIG_BCM43454_MODULE || \
+	CONFIG_BCM43455 || CONFIG_BCM43455_MODULE || \
+	CONFIG_BCM43456 || CONFIG_BCM43456_MODULE */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* For argos */
 	dw_mci_transferred_cnt_init(host, mmc);
 
@@ -3559,6 +4131,7 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
 
 	if (!ret)
 		dev_err(host->dev, "Timeout resetting block (ctrl %#x)\n", ctrl);
+<<<<<<< HEAD
 
 	/* restore Rx timing */
 	mci_writel(host, CLKSEL, clksel_saved);
@@ -3616,6 +4189,64 @@ bool dw_mci_fifo_reset(struct device *dev, struct dw_mci *host)
 
 				return true;
 			}
+=======
+
+	/* restore Rx timing */
+	mci_writel(host, CLKSEL, clksel_saved);
+
+	return ret;
+
+}
+
+void dw_mci_ciu_reset(struct device *dev, struct dw_mci *host) {
+	struct dw_mci_slot *slot = host->cur_slot;
+	unsigned long timeout = jiffies + msecs_to_jiffies(10);
+	int retry = 10;
+	u32 status;
+	if (slot) {
+		dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET);
+		/* Check For DATA busy */
+		do {
+			while (time_before(jiffies, timeout)) {
+				status = mci_readl(host, STATUS);
+				if (!(status & SDMMC_STATUS_BUSY))
+					goto out;
+			}
+			dw_mci_ctrl_reset(host, SDMMC_CTRL_RESET);
+			timeout = jiffies + msecs_to_jiffies(10);
+		} while (--retry);
+out:
+
+	/* After a CTRL reset we need to have CIU set clock registers  */
+	        dw_mci_update_clock(slot);
+        }
+}
+
+bool dw_mci_fifo_reset(struct device *dev, struct dw_mci *host)
+{
+	unsigned long timeout = jiffies + msecs_to_jiffies(1000);
+	unsigned int ctrl;
+	bool result;
+
+	do {
+		result = dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+		if (!result)
+			break;
+
+		ctrl = mci_readl(host, STATUS);
+		if (!(ctrl & SDMMC_STATUS_DMA_REQ)) {
+			result = dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+			if (result) {
+				/* clear exception raw interrupts can not be handled
+				   ex) fifo full => RXDR interrupt rising */
+				ctrl = mci_readl(host, RINTSTS);
+				ctrl = ctrl & ~(mci_readl(host, MINTSTS));
+				if (ctrl)
+					mci_writel(host, RINTSTS, ctrl);
+
+				return true;
+			}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	} while (time_before(jiffies, timeout));
 
@@ -3653,9 +4284,74 @@ static struct dw_mci_of_quirks {
 		.id	= DW_MCI_QUIRK_USE_SMU,
 	}, {
 		.quirk  = "switch_transfer",
+<<<<<<< HEAD
 		.id	= DW_MCI_SW_TRANS,
+=======
+		.id = DW_MCI_SW_TRANS,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	},
 };
+
+
+#if defined(CONFIG_QCOM_WIFI) || defined(CONFIG_BCM4343)  || defined(CONFIG_BCM4343_MODULE) || \
+	defined(CONFIG_BCM43454)  || defined(CONFIG_BCM43454_MODULE) || \
+	defined(CONFIG_BCM43455)  || defined(CONFIG_BCM43455_MODULE) || \
+	defined(CONFIG_BCM43456)  || defined(CONFIG_BCM43456_MODULE) 
+void (*notify_func_callback)(void *dev_id, int state);
+void *mmc_host_dev = NULL;
+static DEFINE_MUTEX(notify_mutex_lock);
+EXPORT_SYMBOL(notify_func_callback);
+EXPORT_SYMBOL(mmc_host_dev);
+#if  defined(CONFIG_BCM4343)  || defined(CONFIG_BCM4343_MODULE) || \
+	defined(CONFIG_BCM43454)  || defined(CONFIG_BCM43454_MODULE) || \
+	defined(CONFIG_BCM43455)  || defined(CONFIG_BCM43455_MODULE) || \
+	defined(CONFIG_BCM43456)  || defined(CONFIG_BCM43456_MODULE)
+struct mmc_host *wlan_mmc = NULL;
+static int ext_cd_init_callback(
+	void (*notify_func)(void *dev_id, int state), void *dev_id,struct mmc_host *mmc)
+{
+	mutex_lock(&notify_mutex_lock);
+	WARN_ON(notify_func_callback);
+	notify_func_callback = notify_func;
+	mmc_host_dev = dev_id;
+    wlan_mmc = mmc;
+	mutex_unlock(&notify_mutex_lock);
+
+	return 0;
+}
+#else
+static int ext_cd_init_callback(
+	void (*notify_func)(void *dev_id, int state), void *dev_id)
+{
+	printk("Enter %s\n",__FUNCTION__);
+	mutex_lock(&notify_mutex_lock);
+	WARN_ON(notify_func_callback);
+	notify_func_callback = notify_func;
+	mmc_host_dev = dev_id;
+	mutex_unlock(&notify_mutex_lock);
+
+	return 0;
+}
+#endif /* CONFIG_BCM4343 || CONFIG_BCM4343_MODULE || \
+	CONFIG_BCM43454 || CONFIG_BCM43454_MODULE || \
+	CONFIG_BCM43455 || CONFIG_BCM43455_MODULE || \
+	CONFIG_BCM43456 || CONFIG_BCM43456_MODULE */
+static int ext_cd_cleanup_callback(
+	void (*notify_func)(void *dev_id, int state), void *dev_id)
+{
+	printk("Enter %s\n",__FUNCTION__);
+	mutex_lock(&notify_mutex_lock);
+	WARN_ON(notify_func_callback);
+	notify_func_callback = NULL;
+	mmc_host_dev = NULL;
+	mutex_unlock(&notify_mutex_lock);
+
+	return 0;
+}
+#endif /* CONFIG_QCOM_WIFI || CONFIG_BCM4343 || CONFIG_BCM4343_MODULE || \
+	CONFIG_BCM43454 || CONFIG_BCM43454_MODULE || \
+	CONFIG_BCM43455 || CONFIG_BCM43455_MODULE || \
+	CONFIG_BCM43456 || CONFIG_BCM43456_MODULE */
 
 static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
 {
@@ -3729,6 +4425,7 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
 
 	if (of_find_property(np, "pm-skip-mmc-resume-init", NULL))
 		pdata->pm_caps |= MMC_PM_SKIP_MMC_RESUME_INIT;
+<<<<<<< HEAD
 	if (of_find_property(np, "card-detect-invert-gpio", NULL))
 		pdata->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
 	if (of_find_property(np, "card-detect-gpio", NULL)) {
@@ -3757,6 +4454,51 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
 			dev_info(host->dev,"vqemmc regulators failed\n");
 	}
 #endif
+=======
+	
+#if defined(CONFIG_QCOM_WIFI) || defined(CONFIG_BCM4343)  || defined(CONFIG_BCM4343_MODULE) || \
+	defined(CONFIG_BCM43454)  || defined(CONFIG_BCM43454_MODULE) || \
+	defined(CONFIG_BCM43455)  || defined(CONFIG_BCM43455_MODULE) || \
+	defined(CONFIG_BCM43456)  || defined(CONFIG_BCM43456_MODULE) 
+	if (of_find_property(np, "pm-ignore-notify", NULL))
+		pdata->pm_caps |= MMC_PM_IGNORE_PM_NOTIFY;
+
+	if (of_find_property(np, "card-detect-type-external", NULL)) {
+		pdata->cd_type = DW_MCI_CD_EXTERNAL;
+		pdata->ext_cd_init = ext_cd_init_callback;
+		pdata->ext_cd_cleanup = ext_cd_cleanup_callback;
+	}
+#endif /* CONFIG_QCOM_WIFI || CONFIG_BCM4343 || CONFIG_BCM4343_MODULE || \
+	CONFIG_BCM43454 || CONFIG_BCM43454_MODULE || \
+	CONFIG_BCM43455 || CONFIG_BCM43455_MODULE || \
+	CONFIG_BCM43456 || CONFIG_BCM43456_MODULE */
+	
+	if (of_find_property(np, "card-detect-invert-gpio", NULL)) {
+		pdata->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
+		pdata->use_gpio_invert = true;
+	}
+
+	if (of_find_property(np, "card-detect-gpio", NULL)) {
+		pdata->cd_type = DW_MCI_CD_GPIO;
+		pdata->caps2 |= MMC_CAP2_DETECT_ON_ERR;
+		/* to remove power on period without tray, default enable */
+		pdata->caps2 |= MMC_CAP2_NO_PRESCAN_POWERUP;
+	}
+
+#ifdef CONFIG_MMC_DW_EXYNOS_EMMC_SHUTDOWN_POWERCTRL
+	/* enable once to prevent power off use_cnt 0 regulators */
+	if (of_find_property(np, "mmc-shutdown-poweroff", NULL)) {
+		host->vemmc = devm_regulator_get_optional(dev, "vemmc");
+		if (!IS_ERR(host->vemmc))
+			ret = regulator_enable(host->vemmc);
+
+		host->vqemmc = devm_regulator_get_optional(dev, "vqemmc");
+		if (!IS_ERR(host->vqemmc))
+			ret = regulator_enable(host->vqemmc);
+	}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return pdata;
 }
 
@@ -4052,12 +4794,19 @@ int dw_mci_probe(struct dw_mci *host)
 				 dw_mci_detect_interrupt);
 	if (drv_data && drv_data->misc_control)
 		 drv_data->misc_control(host, CTRL_ADD_SYSFS, NULL);
+<<<<<<< HEAD
 	 
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
 		dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
 
 	host->card_detect_cnt = 0;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 
 err_workqueue:
@@ -4086,6 +4835,17 @@ void dw_mci_remove(struct dw_mci *host)
 
 	mci_writel(host, RINTSTS, 0xFFFFFFFF);
 	mci_writel(host, INTMASK, 0); /* disable all mmc interrupt first */
+
+#if defined(CONFIG_QCOM_WIFI) || defined(CONFIG_BCM4343)  || defined(CONFIG_BCM4343_MODULE) || \
+	defined(CONFIG_BCM43454) || defined(CONFIG_BCM43454_MODULE) || \
+	defined(CONFIG_BCM43455) || defined(CONFIG_BCM43455_MODULE) || \
+	defined(CONFIG_BCM43456) || defined(CONFIG_BCM43456_MODULE)
+	if ((!strcmp("mmc1", mmc_hostname(host->cur_slot->mmc))) && host->pdata->cd_type == DW_MCI_CD_EXTERNAL)
+		host->pdata->ext_cd_cleanup(&dw_mci_notify_change, (void *)host);
+#endif /* CONFIG_QCOM_WIFI || CONFIG_BCM4343 || CONFIG_BCM4343_MODULE || \
+	CONFIG_BCM43454 || CONFIG_BCM43454_MODULE || \
+	CONFIG_BCM43455 || CONFIG_BCM43455_MODULE || \
+	CONFIG_BCM43456 || CONFIG_BCM43456_MODULE */
 
 	for (i = 0; i < host->num_slots; i++) {
 		dev_dbg(host->dev, "remove slot %d\n", i);
@@ -4131,6 +4891,10 @@ int dw_mci_resume(struct dw_mci *host)
 #if defined(CONFIG_MMC_DW_FMP_DM_CRYPT)
 	int id;
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = dw_mci_ciu_clk_en(host, false);
 	if (ret) {
 		dev_err(host->dev, "failed to enable ciu clock\n");

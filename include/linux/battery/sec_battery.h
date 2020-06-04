@@ -42,15 +42,23 @@
 #define SEC_BAT_CURRENT_EVENT_AFC					0x0001
 #define SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING		0x0010
 #define SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING	0x0020
+<<<<<<< HEAD
 #define SEC_BAT_CURRENT_EVENT_LOW_TEMP			0x0080
+=======
+#define SEC_BAT_CURRENT_EVENT_LOW_TEMP				0x0080
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define SIOP_EVENT_NONE 	0x0000
 #define SIOP_EVENT_WPC_CALL 	0x0001
 
+<<<<<<< HEAD
 #if defined(CONFIG_SEC_FACTORY)
 #define STORE_MODE_CHARGING_MAX 80
 #define STORE_MODE_CHARGING_MIN 70
 #elif defined(CONFIG_CHARGING_VZWCONCEPT)
+=======
+#if defined(CONFIG_CHARGING_VZWCONCEPT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define STORE_MODE_CHARGING_MAX 35
 #define STORE_MODE_CHARGING_MIN 30
 #else
@@ -81,6 +89,7 @@ enum swelling_mode_state {
 	SWELLING_MODE_CHARGING,
 	SWELLING_MODE_FULL,
 };
+<<<<<<< HEAD
 
 #define DEFAULT_SWELLING_HIGH_TEMP_BLOCK	410
 #define DEFAULT_SWELLING_HIGH_TEMP_RECOV	390
@@ -88,6 +97,8 @@ enum swelling_mode_state {
 #define DEFAULT_SWELLING_LOW_TEMP_RECOV_1ST	200
 #define DEFAULT_SWELLING_LOW_TEMP_BLOCK_2ND	50
 #define DEFAULT_SWELLING_LOW_TEMP_RECOV_2ND	100
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 struct adc_sample_info {
@@ -128,8 +139,14 @@ struct sec_battery_info {
 	int current_avg;		/* average current (mA) */
 	int current_max;		/* input current limit (mA) */
 	int current_adc;
+<<<<<<< HEAD
 	unsigned int input_voltage;		/* CHGIN/WCIN input voltage (V) */
 	unsigned int capacity;			/* SOC (%) */
+=======
+
+	unsigned int capacity;			/* SOC (%) */
+	unsigned int input_voltage;		/* CHGIN/WCIN input voltage (V) */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	struct mutex adclock;
 	struct adc_sample_info	adc_sample[ADC_CH_COUNT];
@@ -171,9 +188,12 @@ struct sec_battery_info {
 	unsigned long wc_heating_passed_time;
 	unsigned int wc_heat_limit;
 
+<<<<<<< HEAD
 	unsigned long sleep_start_time;
 	unsigned long sleep_passed_time;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* chg temperature check */
 	bool chg_limit;
 
@@ -249,6 +269,10 @@ struct sec_battery_info {
 	struct mutex iolock;
 	int wired_input_current;
 	int wireless_input_current;
+<<<<<<< HEAD
+=======
+	int input_current;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int charging_current;
 	int topoff_current;
 	unsigned int current_event;
@@ -283,10 +307,13 @@ struct sec_battery_info {
 	int stability_test;
 	int eng_not_full_status;
 
+<<<<<<< HEAD
 	bool stop_timer;
 	unsigned long prev_safety_time;
 	unsigned long expired_time;
 	unsigned long cal_safety_time;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	bool skip_chg_temp_check;
 	bool skip_wpc_temp_check;
 	bool wpc_temp_mode;
@@ -298,10 +325,19 @@ struct sec_battery_info {
 	int discharging_ntc_adc;
 	int self_discharging_adc;
 #endif
+<<<<<<< HEAD
 	bool charging_block;
 	bool charging_by_single;
 #if defined(CONFIG_BATTERY_SWELLING)
 	bool skip_swelling;
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	bool sw_self_discharging;
+	struct wake_lock self_discharging_wake_lock;
+#endif
+	bool charging_block;
+#if defined(CONFIG_BATTERY_SWELLING)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int swelling_mode;
 	int swelling_full_check_cnt;
 #endif
@@ -321,15 +357,29 @@ struct sec_battery_info {
 	int step_charging_step;
 #endif
 
+<<<<<<< HEAD
 	int battery_type;
 
+=======
+	bool stop_timer;
+	unsigned long prev_safety_time;
+	unsigned long expired_time;
+	unsigned long cal_safety_time;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct mutex misclock;
 	unsigned int misc_event;
 	unsigned int prev_misc_event;
 	struct delayed_work misc_event_work;
 	struct wake_lock misc_event_wake_lock;
+<<<<<<< HEAD
 
 	bool block_water_event;
+=======
+#if defined(CONFIG_CONDITIONAL_SAFETY_TIMER)
+	unsigned long lcd_on_total_time;
+	unsigned long lcd_on_time;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 ssize_t sec_bat_show_attrs(struct device *dev,
@@ -442,6 +492,12 @@ enum {
 	BATT_DISCHARGING_NTC_ADC,
 	BATT_SELF_DISCHARGING_CONTROL,
 #endif
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	BATT_SW_SELF_DISCHARGING,
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	BATT_INBAT_WIRELESS_CS100,
 	HMT_TA_CONNECTED,
 	HMT_TA_CHARGE,
@@ -496,11 +552,15 @@ enum {
 	FACTORY_MODE_RELIEVE,
 	FACTORY_MODE_BYPASS,
 	BATT_WDT_CONTROL,
+<<<<<<< HEAD
 #if defined(CONFIG_BATTERY_SWELLING)
 	BATT_SWELLING_CONTROL,
 #endif
 	SAFETY_TIMER_SET,
 	SAFETY_TIMER_INFO,
+=======
+	SAFETY_TIMER_SET,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #ifdef CONFIG_OF

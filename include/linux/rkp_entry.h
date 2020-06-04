@@ -21,7 +21,10 @@
 #define _RKP_ENTRY_H
 
 #ifndef __ASSEMBLY__
+<<<<<<< HEAD
 #ifdef CONFIG_TIMA_RKP
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define RKP_PREFIX  UL(0x83800000)
 #define RKP_CMDID(CMD_ID)  ((UL(CMD_ID) << 12 ) | RKP_PREFIX)
 
@@ -39,8 +42,11 @@
 /*** TODO: We need to export this so it is hard coded
      at one place*/
 
+<<<<<<< HEAD
 #define RKP_PGT_BITMAP_LEN 0x18000
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define   TIMA_VMM_START        0x4dd00000
 #define   TIMA_VMM_SIZE         1<<20
 
@@ -50,17 +56,37 @@
 #define   TIMA_SEC_LOG          0x52400000
 #define   TIMA_SEC_LOG_SIZE     0x7000
 
+<<<<<<< HEAD
 #define   TIMA_PHYS_MAP         0x4da00000
 #define   TIMA_PHYS_MAP_SIZE    3<<20
+=======
+#ifdef CONFIG_TIMA_RKP_4G
+#define   TIMA_PHYS_MAP         0x4d900000
+#define   TIMA_PHYS_MAP_SIZE    (4<<20)
+#define	  RKP_PGT_BITMAP_LEN	0x20000
+#else
+//Support 3G
+#define   TIMA_PHYS_MAP         0x4da00000
+#define   TIMA_PHYS_MAP_SIZE    3<<20
+#define	  RKP_PGT_BITMAP_LEN	0x18000
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define   TIMA_DASHBOARD_START  0x52407000
 #define   TIMA_DASHBOARD_SIZE    0x1000
 
 #define   TIMA_ROBUF_START      0x52408000
+<<<<<<< HEAD
 #define   TIMA_ROBUF_SIZE       0x3f8000 /* 4MB - RKP_SEC_LOG_SIZE - RKP_DASHBOARD_SIZE)*/
 
 #define RKP_RBUF_VA      (phys_to_virt(TIMA_ROBUF_START))
 #define RO_PAGES  (TIMA_ROBUF_SIZE >> PAGE_SHIFT) // (TIMA_ROBUF_SIZE/PAGE_SIZE)
+=======
+#define   TIMA_ROBUF_SIZE       0x5f8000 /* 6MB - RKP_SEC_LOG_SIZE - RKP_DASHBOARD_SIZE)*/
+
+#define RKP_RBUF_VA      (phys_to_virt(TIMA_ROBUF_START))
+#define RO_PAGES  0x5f8 // (TIMA_ROBUF_SIZE/PAGE_SIZE)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 
 extern u8 rkp_pgt_bitmap[];
@@ -70,7 +96,10 @@ typedef struct rkp_init rkp_init_t;
 extern u8 rkp_started;
 extern void *rkp_ro_alloc(void);
 extern void rkp_ro_free(void *free_addr);
+<<<<<<< HEAD
 extern unsigned int is_rkp_ro_page(u64 addr);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_KNOX_KAP
 extern int boot_mode_security;
 #endif  //CONFIG_KNOX_KAP
@@ -93,9 +122,12 @@ struct rkp_init {
 	u64 _srodata;
 	u64 _erodata;
 	u32 large_memory;
+<<<<<<< HEAD
 #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
 	u64 tramp_pgd;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 } __attribute__((packed));
 
 #ifdef CONFIG_RKP_KDP
@@ -152,7 +184,11 @@ static inline u8 rkp_is_pg_dbl_mapped(u64 pa)
 	val = (((*p) & (1ULL<<rindex))?1:0);
 	return val;
 }
+<<<<<<< HEAD
 #endif // CONFIG_TIMA_RKP
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif //__ASSEMBLY__
 
 #endif //_RKP_ENTRY_H

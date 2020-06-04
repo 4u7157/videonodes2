@@ -59,7 +59,11 @@ struct timer_work {
 	struct kthread_work work;
 };
 
+<<<<<<< HEAD
 static struct pm_qos_request secos_booster_cluster1_qos;
+=======
+static struct pm_qos_request secos_booster_cluster0_qos;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct hrtimer timer;
 static int max_cpu_freq;
 
@@ -84,7 +88,10 @@ static void mc_timer_work_func(struct kthread_work *work)
 
 int secos_booster_request_pm_qos(struct pm_qos_request *req, s32 freq)
 {
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	static ktime_t recent_qos_req_time;
 	ktime_t current_time;
 	unsigned long long ns;
@@ -98,12 +105,15 @@ int secos_booster_request_pm_qos(struct pm_qos_request *req, s32 freq)
 		msleep((WAIT_TIME - ns) / NS_DIV_MS + 1);
 	}
 
+<<<<<<< HEAD
 	if (freq != 0 && is_suspend_prepared) {
 		pr_err("%s: PM_SUSPEND_PREPARE state\n", __func__);
 		ret = -EINVAL;
 		return ret;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pm_qos_update_request(req, freq);
 
 	recent_qos_req_time = ktime_get();
@@ -207,37 +217,63 @@ int secos_booster_start(enum secos_boost_policy policy)
 		freq = max_cpu_freq;
 	else
 		freq = 0;
+<<<<<<< HEAD
 
 	if (secos_booster_request_pm_qos(&secos_booster_cluster1_qos, freq)) { /* KHz */
 		ret = -EPERM;
 		goto error;
 	}
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!cpu_online(MIGRATE_TARGET_CORE)) {
 		pr_debug("%s: %d core is offline\n", __func__, MIGRATE_TARGET_CORE);
 		udelay(100);
 		if (!cpu_online(MIGRATE_TARGET_CORE)) {
 			pr_debug("%s: %d core is offline\n", __func__, MIGRATE_TARGET_CORE);
+<<<<<<< HEAD
 			secos_booster_request_pm_qos(&secos_booster_cluster1_qos, 0);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = -EPERM;
 			goto error;
 		}
 		pr_debug("%s: %d core is online\n", __func__, MIGRATE_TARGET_CORE);
 	}
+<<<<<<< HEAD
 	ret = mc_switch_core(MIGRATE_TARGET_CORE);
 	if (ret) {
 		pr_err("%s: mc switch failed : err:%d\n", __func__, ret);
 		secos_booster_request_pm_qos(&secos_booster_cluster1_qos, 0);
+=======
+
+	if (secos_booster_request_pm_qos(&secos_booster_cluster0_qos, freq)) { /* KHz */
+		ret = -EPERM;
+		goto error;
+	}
+	
+	ret = mc_switch_core(MIGRATE_TARGET_CORE);
+	if (ret) {
+		pr_err("%s: mc switch failed : err:%d\n", __func__, ret);
+		secos_booster_request_pm_qos(&secos_booster_cluster0_qos, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EPERM;
 		goto error;
 	}
 
 	if (boost_policy == STB_PERFORMANCE) {
+<<<<<<< HEAD
 		/* Restore origin performance policy after default boost time */
 		if (boost_time == 0)
 			boost_time = DEFAULT_SECOS_BOOST_TIME;
 		else if (boost_time > MAX_SECOS_BOOST_TIME)
 			boost_time = MAX_SECOS_BOOST_TIME;
+=======
+		/* Restore origin performance policy after spend default boost time */
+		if (boost_time == 0)
+			boost_time = DEFAULT_SECOS_BOOST_TIME;		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		hrtimer_cancel(&timer);
 		hrtimer_start(&timer, ns_to_ktime((u64)boost_time * NSEC_PER_MSEC),
@@ -274,7 +310,11 @@ int secos_booster_stop(void)
 		if (ret)
 			pr_err("%s: mc switch core failed. err:%d\n", __func__, ret);
 
+<<<<<<< HEAD
 		secos_booster_request_pm_qos(&secos_booster_cluster1_qos, 0);
+=======
+		secos_booster_request_pm_qos(&secos_booster_cluster0_qos, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		/* mismatched usage count */
 		pr_warn("boost usage count sync mismatched. count : %d\n", mc_boost_usage_count);
@@ -311,7 +351,10 @@ static int __init secos_booster_init(void)
 {
 	int ret;
 
+<<<<<<< HEAD
 	mc_boost_usage_count = 0;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_init(&boost_lock);
 
 	ret = mc_timer_init();
@@ -325,7 +368,11 @@ static int __init secos_booster_init(void)
 
 	max_cpu_freq = cpufreq_quick_get_max(MIGRATE_TARGET_CORE);
 
+<<<<<<< HEAD
 	pm_qos_add_request(&secos_booster_cluster1_qos, PM_QOS_CLUSTER1_FREQ_MIN, 0);
+=======
+	pm_qos_add_request(&secos_booster_cluster0_qos, PM_QOS_CLUSTER0_FREQ_MIN, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	register_pm_notifier(&secos_booster_pm_notifier_block);
 

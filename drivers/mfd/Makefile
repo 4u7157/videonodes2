@@ -63,6 +63,10 @@ obj-$(CONFIG_MFD_WM8350)	+= wm8350.o
 obj-$(CONFIG_MFD_WM8350_I2C)	+= wm8350-i2c.o
 obj-$(CONFIG_MFD_WM8994)	+= wm8994-core.o wm8994-irq.o wm8994-regmap.o
 
+obj-$(CONFIG_MFD_CS35L40)	+= cs35l40-core.o cs35l40-tables.o cs35l40-cal.o cs35l40-bd.o
+obj-$(CONFIG_MFD_CS35L40_SPI)	+= cs35l40-spi.o
+obj-$(CONFIG_MFD_CS35L40_I2C)	+= cs35l40-i2c.o
+
 obj-$(CONFIG_TPS6105X)		+= tps6105x.o
 obj-$(CONFIG_TPS65010)		+= tps65010.o
 obj-$(CONFIG_TPS6507X)		+= tps6507x.o
@@ -168,11 +172,23 @@ obj-$(CONFIG_MFD_RC5T583)	+= rc5t583.o rc5t583-irq.o
 obj-$(CONFIG_MFD_RK808)		+= rk808.o
 obj-$(CONFIG_MFD_RN5T618)	+= rn5t618.o
 obj-$(CONFIG_MFD_SEC_CORE)	+= sec-core.o sec-irq.o
+<<<<<<< HEAD
 obj-$(CONFIG_MFD_S2MPU06)	+= s2mpu06-core.o s2mpu06-irq.o
 obj-$(CONFIG_MFD_S2MPW01)	+= s2mpw01-core.o s2mpw01-irq.o
 obj-$(CONFIG_MFD_S2MPB02)	+= s2mpb02-core.o s2mpb02-irq.o
 obj-$(CONFIG_MFD_S2MU003)	+= s2mu003_core.o s2mu003_irq.o
 obj-$(CONFIG_MFD_S2MU005)	+= s2mu005_core.o s2mu005_irq.o
+=======
+obj-$(CONFIG_MFD_S2MPB02)	+= s2mpb02-core.o s2mpb02-irq.o
+obj-$(CONFIG_MFD_S2MU003)	+= s2mu003_core.o s2mu003_irq.o
+obj-$(CONFIG_MFD_S2MU005)	+= s2mu005_core.o s2mu005_irq.o
+#modified by khoonk on 2018.01.04
+ifndef CONFIG_IFPMIC_SUPPORT
+obj-$(CONFIG_MFD_S2MU004)	+= s2mu004_core.o s2mu004_irq.o
+endif
+obj-$(CONFIG_MFD_SM5703)	+= sm5703_core.o sm5703_irq.o
+obj-$(CONFIG_MFD_SM5705)	+= sm5705.o sm5705-irq.o
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 obj-$(CONFIG_MFD_SYSCON)	+= syscon.o
 obj-$(CONFIG_MFD_LM3533)	+= lm3533-core.o lm3533-ctrlbank.o
 obj-$(CONFIG_MFD_VEXPRESS_SYSREG)	+= vexpress-sysreg.o

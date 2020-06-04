@@ -21,6 +21,7 @@
 #include <linux/of_gpio.h>
 #include <linux/mcu_ipc.h>
 #include <soc/samsung/exynos-pmu.h>
+<<<<<<< HEAD
 #include <soc/samsung/pmu-cp.h>
 #include <soc/samsung/exynos-devfreq.h>
 #include <soc/samsung/tmu.h>
@@ -33,6 +34,15 @@
 #include <linux/modem_notifier.h>
 #include "../../../drivers/soc/samsung/pwrcal/pwrcal.h"
 #include "../../../drivers/soc/samsung/pwrcal/S5E7570/S5E7570-vclk.h"
+=======
+#include <linux/modem_notifier.h>
+#include <soc/samsung/pmu-cp.h>
+
+#include "modem_prj.h"
+#include "modem_utils.h"
+
+#include <linux/modem_notifier.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_EXYNOS_BUSMONITOR
 #include <linux/exynos-busmon.h>
@@ -56,8 +66,11 @@ extern void cp_recheck_uart_dir(void);
 
 static struct modem_ctl *g_mc;
 
+<<<<<<< HEAD
 static int sys_rev;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static irqreturn_t cp_wdt_handler(int irq, void *arg)
 {
 	struct modem_ctl *mc = (struct modem_ctl *)arg;
@@ -113,8 +126,12 @@ static void cp_active_handler(void *arg)
 	struct modem_ctl *mc = (struct modem_ctl *)arg;
 	struct io_device *iod;
 	int cp_on = exynos_get_cp_power_status();
+<<<<<<< HEAD
 	int cp_active = mbox_extract_value(MCU_CP, mc->mbx_cp_status,
 					mc->sbi_lte_active_mask, mc->sbi_lte_active_pos);
+=======
+	int cp_active = mbox_get_value(MCU_CP, mc->mbx_phone_active);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enum modem_state old_state = mc->phone_state;
 	enum modem_state new_state = mc->phone_state;
 
@@ -143,6 +160,7 @@ static void cp_active_handler(void *arg)
 	}
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_HW_REV_DETECT
 static int __init console_setup(char *str)
 {
@@ -179,6 +197,8 @@ static int get_system_rev(struct device_node *np)
 }
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_GPIO_DS_DETECT
 static int get_ds_detect(struct device_node *np)
 {
@@ -204,6 +224,7 @@ static int get_ds_detect(struct device_node *np)
 }
 #endif
 
+<<<<<<< HEAD
 #define CP_CPU_FREQ_700	(700000)
 #define CP_CPU_FREQ_830	(830000)
 static int get_cp_volt_information(u32 *volt700, u32 *volt830)
@@ -249,11 +270,22 @@ static int get_cp_volt_information(u32 *volt700, u32 *volt830)
 
 	return 0;
 }
+=======
+static int sys_rev = 0;
+
+static int __init mif_get_hw_rev(char *arg)
+{
+    get_option(&arg, &sys_rev);
+    return 0;
+}
+early_param("androidboot.revision", mif_get_hw_rev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int init_mailbox_regs(struct modem_ctl *mc)
 {
 	struct platform_device *pdev = to_platform_device(mc->dev);
 	struct device_node *np = pdev->dev.of_node;
+<<<<<<< HEAD
 	unsigned int mbx_ap_status;
 	unsigned int mbx_cp_vol_700;
 	unsigned int mbx_cp_vol_830;
@@ -298,11 +330,16 @@ static int init_mailbox_regs(struct modem_ctl *mc)
 		cp_cpu_freq_asv = mbox_extract_value(MCU_CP, mbx_ap_status,
 			sbi_cp_cpu_freq_asv_mask, sbi_cp_cpu_freq_asv_pos);
         }
+=======
+	unsigned int info_val, val;
+	int ds_det, i;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	for (i = 0; i < MAX_MBOX_NUM; i++)
 		mbox_set_value(MCU_CP, i, 0);
 
 	if (np) {
+<<<<<<< HEAD
 		mif_dt_read_u32(np, "mbx_ap2cp_united_status", mbx_ap_status);
 		mif_dt_read_u32(np, "sbi_sys_rev_mask", sbi_sys_rev_mask);
 		mif_dt_read_u32(np, "sbi_sys_rev_pos", sbi_sys_rev_pos);
@@ -344,6 +381,19 @@ static int init_mailbox_regs(struct modem_ctl *mc)
 		mbox_update_value(MCU_CP, mbx_ap_status, cp_cpu_freq_asv,
 			sbi_cp_cpu_freq_asv_mask, sbi_cp_cpu_freq_asv_pos);
 
+=======
+		mif_dt_read_u32(np, "mbx_ap2cp_info_value", info_val);
+
+		ds_det = get_ds_detect(np);
+		if (sys_rev < 0 || ds_det < 0)
+			return -EINVAL;
+
+		val = sys_rev | (ds_det & 0x1) << 8;
+		mbox_set_value(MCU_CP, info_val, val);
+
+		mif_info("sys_rev:%d, ds_det:%u (0x%x)\n",
+				sys_rev, ds_det, mbox_get_value(MCU_CP, info_val));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		mif_info("non-DT project, can't set system_rev\n");
 	}
@@ -351,6 +401,7 @@ static int init_mailbox_regs(struct modem_ctl *mc)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int init_mailbox_regs_volt_info(struct modem_ctl *mc)
 {
 	struct platform_device *pdev = to_platform_device(mc->dev);
@@ -400,6 +451,13 @@ static int ss310ap_on(struct modem_ctl *mc)
 						mc->sbi_lte_active_mask, mc->sbi_lte_active_pos);
 	int cp_status = mbox_extract_value(MCU_CP, mc->mbx_cp_status,
 						mc->sbi_cp_status_mask, mc->sbi_cp_status_pos);
+=======
+static int ss310ap_on(struct modem_ctl *mc)
+{
+	int ret;
+	int cp_active = mbox_get_value(MCU_CP, mc->mbx_phone_active);
+	int cp_status = mbox_get_value(MCU_CP, mc->mbx_cp_status);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct modem_data __maybe_unused *modem = mc->mdm_data;
 
 	mif_info("+++\n");
@@ -412,12 +470,19 @@ static int ss310ap_on(struct modem_ctl *mc)
 
 	if (init_mailbox_regs(mc))
 		mif_err("Failed to initialize mbox regs\n");
+<<<<<<< HEAD
 #if !defined(CONFIG_SOC_EXYNOS7570)
 	memmove(modem->ipc_base + 0x1000, mc->sysram_alive, 0x800);
 #endif
 
 	mbox_update_value(MCU_CP, mc->mbx_ap_status, 1,
 			mc->sbi_pda_active_mask, mc->sbi_pda_active_pos);
+=======
+
+	memmove(modem->ipc_base + 0x1000, mc->sysram_alive, 0x800);
+
+	mbox_set_value(MCU_CP, mc->mbx_pda_active, 1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (exynos_get_cp_power_status() > 0) {
 		mif_info("CP aleady Power on, Just start!\n");
@@ -483,8 +548,11 @@ static int ss310ap_reset(struct modem_ctl *mc)
 	mif_info("+++\n");
 
 	//mc->phone_state = STATE_OFFLINE;
+<<<<<<< HEAD
 	if (mc->phone_state == STATE_OFFLINE)
 		return 0;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (*(unsigned int *)(mc->mdm_data->ipc_base + 0xF80)
 			== 0xDEB)
@@ -521,14 +589,19 @@ static int ss310ap_boot_on(struct modem_ctl *mc)
 			iod->modem_state_changed(iod, STATE_BOOTING);
 	}
 
+<<<<<<< HEAD
 	while (mbox_extract_value(MCU_CP, mc->mbx_cp_status,
 				mc->sbi_cp_status_mask, mc->sbi_cp_status_pos) == 0) {
+=======
+	while (mbox_get_value(MCU_CP, mc->mbx_cp_status) == 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (--cnt > 0)
 			usleep_range(10000, 20000);
 		else
 			return -EACCES;
 	}
 
+<<<<<<< HEAD
 	/* sim_det gpio owner to cp */
 	if (!IS_ERR(sim_det_to_cp)) {
 		pinctrl_select_state(sim_det_pinctrl, sim_det_to_cp);
@@ -541,6 +614,12 @@ static int ss310ap_boot_on(struct modem_ctl *mc)
 	mif_info("cp_status=%u\n",
 			mbox_extract_value(MCU_CP, mc->mbx_cp_status,
 					mc->sbi_cp_status_mask, mc->sbi_cp_status_pos));
+=======
+	mif_disable_irq(&mc->irq_cp_wdt);
+	mif_enable_irq(&mc->irq_cp_fail);
+
+	mif_info("cp_status=%u\n", mbox_get_value(MCU_CP, mc->mbx_cp_status));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mif_info("---\n");
 	return 0;
@@ -589,6 +668,14 @@ static int ss310ap_force_crash_exit(struct modem_ctl *mc)
 	/* Make DUMP start */
 	ld->force_dump(ld, mc->bootd);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_UART_SEL
+	mif_err("Recheck UART direction.\n");
+	cp_recheck_uart_dir();
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mif_err("---\n");
 	return 0;
 }
@@ -600,6 +687,7 @@ int ss310ap_force_crash_exit_ext(void)
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(ss310ap_force_crash_exit_ext);
 
 u32 ss310ap_get_evs_mode_ext(void)
@@ -623,6 +711,8 @@ u32 ss310ap_get_evs_mode_ext(void)
 	return requested_mif_clk;
 }
 EXPORT_SYMBOL(ss310ap_get_evs_mode_ext);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int ss310ap_dump_start(struct modem_ctl *mc)
 {
@@ -641,8 +731,12 @@ static int ss310ap_dump_start(struct modem_ctl *mc)
 
 	exynos_cp_release();
 
+<<<<<<< HEAD
 	mbox_update_value(MCU_CP, mc->mbx_ap_status, 1,
 			mc->sbi_ap_status_mask, mc->sbi_ap_status_pos);
+=======
+	mbox_set_value(MCU_CP, mc->mbx_ap_status, 1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mif_err("---\n");
 	return err;
@@ -650,11 +744,16 @@ static int ss310ap_dump_start(struct modem_ctl *mc)
 
 static void ss310ap_modem_boot_confirm(struct modem_ctl *mc)
 {
+<<<<<<< HEAD
 	mbox_update_value(MCU_CP,mc->mbx_ap_status, 1,
 			mc->sbi_ap_status_mask, mc->sbi_ap_status_pos);
 	mif_info("ap_status=%u\n",
 			mbox_extract_value(MCU_CP, mc->mbx_ap_status,
 					mc->sbi_ap_status_mask, mc->sbi_ap_status_pos));
+=======
+	mbox_set_value(MCU_CP, mc->mbx_ap_status, 1);
+	mif_info("ap_status=%u\n", mbox_get_value(MCU_CP, mc->mbx_ap_status));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void ss310ap_get_ops(struct modem_ctl *mc)
@@ -675,14 +774,22 @@ static void ss310ap_get_pdata(struct modem_ctl *mc, struct modem_data *modem)
 {
 	struct modem_mbox *mbx = modem->mbx;
 
+<<<<<<< HEAD
 	mc->int_pda_active = mbx->int_ap2cp_active;
 
+=======
+	mc->mbx_pda_active = mbx->mbx_ap2cp_active;
+	mc->int_pda_active = mbx->int_ap2cp_active;
+
+	mc->mbx_phone_active = mbx->mbx_cp2ap_active;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mc->irq_phone_active = mbx->irq_cp2ap_active;
 
 	mc->mbx_ap_status = mbx->mbx_ap2cp_status;
 	mc->mbx_cp_status = mbx->mbx_cp2ap_status;
 
 	mc->mbx_perf_req = mbx->mbx_cp2ap_perf_req;
+<<<<<<< HEAD
 
 	mc->int_uart_noti = mbx->int_ap2cp_uart_noti;
 
@@ -700,6 +807,9 @@ static void ss310ap_get_pdata(struct modem_ctl *mc, struct modem_data *modem)
 
 	mc->sbi_uart_noti_mask = mbx->sbi_uart_noti_mask;
 	mc->sbi_uart_noti_pos = mbx->sbi_uart_noti_pos;
+=======
+	mc->irq_perf_req = mbx->irq_cp2ap_perf_req;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #ifdef CONFIG_EXYNOS_BUSMONITOR
@@ -781,7 +891,11 @@ int ss310ap_init_modemctl_device(struct modem_ctl *mc, struct modem_data *pdata)
 	}
 #endif
 
+<<<<<<< HEAD
 #if defined (CONFIG_SOC_EXYNOS7870)
+=======
+#ifdef CONFIG_SOC_EXYNOS7870
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mc->sysram_alive = shm_request_region(shm_get_sysram_base(),
 					shm_get_sysram_size());
 	if (!mc->sysram_alive)
@@ -830,6 +944,7 @@ int ss310ap_init_modemctl_device(struct modem_ctl *mc, struct modem_data *pdata)
 	busmon_notifier_chain_register(&mc->busmon_nfb);
 #endif
 
+<<<<<<< HEAD
 	sim_det_pinctrl = devm_pinctrl_get(&pdev->dev);
 	if (!IS_ERR(sim_det_pinctrl))
 		sim_det_to_cp = pinctrl_lookup_state(sim_det_pinctrl, 
@@ -838,6 +953,8 @@ int ss310ap_init_modemctl_device(struct modem_ctl *mc, struct modem_data *pdata)
 	if (init_mailbox_regs_volt_info(mc))
 		mif_err("Failed to initialize mbox regs\n");
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mif_info("---\n");
 	return 0;
 }

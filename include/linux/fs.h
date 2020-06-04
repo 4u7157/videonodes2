@@ -428,6 +428,7 @@ struct address_space {
 	spinlock_t		private_lock;	/* for use by the address_space */
 	struct list_head	private_list;	/* ditto */
 	void			*private_data;	/* ditto */
+<<<<<<< HEAD
 #if defined(CONFIG_MMC_DW_FMP_ECRYPT_FS) || defined(CONFIG_UFS_FMP_ECRYPT_FS)
 	unsigned char		*iv;		/* iv */
 	unsigned char		key[KEY_MAX_SIZE];	/* key */
@@ -442,6 +443,8 @@ struct address_space {
 	int			private_algo_mode;	/* private algo mode */
 	bool			plain_text;	/* plain_text flag */
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_SDP
 	int userid;
 #endif

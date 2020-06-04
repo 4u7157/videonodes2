@@ -83,8 +83,15 @@
 #define F51_HAND_EDGE_DATA_SIZE 9
 #define F51_HAS_DELTA_INFO (1 << 3)
 #define F51_HAS_HAND_EDGE (1 << 4)
+<<<<<<< HEAD
 #define F54_DATA14_ADDR 0X0109
 #define F54_DATA16_ADDR 0x010a
+=======
+#define F54_DATA10_ADDR 0x0108
+#define F54_DATA14_ADDR 0X0109
+#define F54_DATA16_ADDR 0x010a
+#define F54_DATA17_ADDR 0x010bf
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #define F54_DATA06_ADDR 0x0104
 #define F54_DATA10_ADDR 0x0108

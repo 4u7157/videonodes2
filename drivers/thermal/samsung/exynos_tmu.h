@@ -51,7 +51,10 @@ enum soc_type {
 	SOC_ARCH_EXYNOS5440,
 	SOC_ARCH_EXYNOS7580,
 	SOC_ARCH_EXYNOS7870,
+<<<<<<< HEAD
 	SOC_ARCH_EXYNOS7570,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	SOC_ARCH_EXYNOS8890,
 };
 

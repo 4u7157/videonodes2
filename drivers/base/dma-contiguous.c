@@ -22,6 +22,7 @@
 #include <asm/compat.h>
 #include <asm/page.h>
 #include <asm/dma-contiguous.h>
+#include <linux/cma.h>
 
 #include <linux/memblock.h>
 #include <linux/err.h>
@@ -33,7 +34,17 @@
 #include <linux/swap.h>
 #include <linux/mm_types.h>
 #include <linux/dma-contiguous.h>
-#include <linux/cma.h>
+
+struct cma {
+	unsigned long	base_pfn;
+	unsigned long	count;
+	unsigned long	free_count;
+	unsigned long	*bitmap;
+	unsigned long	carved_out_count;
+	bool isolated;
+};
+
+struct cma *dma_contiguous_default_area;
 
 struct cma {
 	unsigned long	base_pfn;
@@ -309,6 +320,7 @@ int __init dma_contiguous_reserve_area(phys_addr_t size, phys_addr_t base,
 
 	if (!size)
 		return -EINVAL;
+<<<<<<< HEAD
 
 	cma->base_pfn = PFN_DOWN(base);
 	cma->count = size >> PAGE_SHIFT;
@@ -316,6 +328,15 @@ int __init dma_contiguous_reserve_area(phys_addr_t size, phys_addr_t base,
 	*res_cma = cma;
 	cma_area_count++;
 
+=======
+
+	cma->base_pfn = PFN_DOWN(base);
+	cma->count = size >> PAGE_SHIFT;
+	cma->free_count = cma->count;
+	*res_cma = cma;
+	cma_area_count++;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_info("CMA: reserved %ld MiB at %08lx\n", (unsigned long)size / SZ_1M,
 		(unsigned long)base);
 

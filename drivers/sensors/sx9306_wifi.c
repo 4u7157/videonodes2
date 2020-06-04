@@ -461,6 +461,7 @@ static ssize_t sx9306_wifi_register_store(struct device *dev,
 	}
 
 	for (idx = 0; idx < (int)(sizeof(setup_reg) >> 1); idx++) {
+<<<<<<< HEAD
 		if (setup_reg[idx].reg == regist)
 			break;
 	}
@@ -469,6 +470,16 @@ static ssize_t sx9306_wifi_register_store(struct device *dev,
 	setup_reg[idx].val = val;
 	SENSOR_INFO("Register(0x%4x) data(0x%4x)\n", regist, val);
 
+=======
+		if (setup_reg[idx].reg == regist) {
+			sx9306_wifi_i2c_write(data, (unsigned char)regist, (unsigned char)val);
+			setup_reg[idx].val = val;
+			SENSOR_INFO("Register(0x%4x) data(0x%4x)\n", regist, val);
+			break;
+		}
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return count;
 }
 

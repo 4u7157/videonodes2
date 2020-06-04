@@ -1,5 +1,9 @@
 #
+<<<<<<< HEAD
 # MobiCore configuration
+=======
+# Trustonic drivers configuration
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #
 config TRUSTONIC_TEE
     tristate "Trustonic TEE Driver"
@@ -16,6 +20,7 @@ config TRUSTONIC_TEE_LPAE
     ---help---
       Enable Trustonic TEE 64-bit physical addresses support
 
+<<<<<<< HEAD
 config MOBICORE_DEBUG
     bool "MobiCore Module debug mode"
     depends on TRUSTONIC_TEE
@@ -32,9 +37,37 @@ config TRUSTONIC_TRUSTED_UI
 
 config TRUSTONIC_TRUSTED_UI_FB_BLANK
     bool "<t-base TUI with fb_blank"
+=======
+config TRUSTONIC_TEE_DEBUG
+    bool "Trustonic TEE driver debug mode"
+    depends on TRUSTONIC_TEE
+    default n
+    ---help---
+      Enable the debug mode in the Trustonic TEE Driver.
+
+config TRUSTONIC_TRUSTED_UI
+    tristate "Trustonic Trusted UI"
+    depends on TRUSTONIC_TEE
+    ---help---
+      Enable Trustonic Trusted User Interface
+
+config TRUSTONIC_TRUSTED_UI_FB_BLANK
+    bool "Trustonic Trusted UI with fb_blank"
+	default y
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
     depends on TRUSTONIC_TRUSTED_UI
     ---help---
     Blank the framebuffer before starting a TUI session
 
+<<<<<<< HEAD
 source "drivers/gud/gud-exynos7870/sec-os-ctrl/Kconfig"
 source "drivers/gud/gud-exynos7870/sec-os-booster/Kconfig"
+=======
+config TRUSTED_UI_TOUCH_ENABLE
+	bool "TBase Trusted UI use touch related code"
+	default y
+	depends on TRUSTONIC_TRUSTED_UI
+
+source "drivers/gud/gud-exynos7870/sec-os-ctrl/Kconfig"
+source "drivers/gud/gud-exynos7870/sec-os-booster/Kconfig"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

@@ -189,6 +189,7 @@ TRACE_EVENT(sched_cpu_hotplug,
 	TP_ARGS(affected_cpu, error, status),
 
 	TP_STRUCT__entry(
+<<<<<<< HEAD
 		__field(	int,	affected_cpu		)
 		__field(	int,	error			)
 		__field(	int,	status			)
@@ -199,6 +200,18 @@ TRACE_EVENT(sched_cpu_hotplug,
 		__entry->error		= error;
 		__entry->status		= status;
 	),
+=======
+		__field(        int,    affected_cpu            )
+		__field(        int,    error                   )
+		__field(        int,    status                  )
+		),
+
+	TP_fast_assign(
+		__entry->affected_cpu   = affected_cpu;
+		__entry->error          = error;
+		__entry->status         = status;
+		),
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	TP_printk("cpu %d %s error=%d", __entry->affected_cpu,
 		__entry->status ? "online" : "offline", __entry->error)

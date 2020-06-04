@@ -1,5 +1,9 @@
 #ifndef __PWRCAL_H__
 #define __PWRCAL_H__
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,6 +26,7 @@ extern int cal_pm_enter(int mode);
 extern int cal_pm_exit(int mode);
 extern int cal_pm_earlywakeup(int mode);
 
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 extern int cal_cpu_enable(unsigned int cpu);
 extern int cal_cpu_disable(unsigned int cpu);
@@ -30,6 +35,8 @@ extern int cal_cluster_enable(unsigned int cluster);
 extern int cal_cluster_disable(unsigned int cluster);
 extern int cal_cluster_status(unsigned int cluster);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 extern unsigned int cal_dfs_get(char *name);
 extern unsigned long cal_dfs_get_max_freq(unsigned int id);
@@ -88,8 +95,11 @@ extern int is_sicd_factory(void);
 /* It is for debugging. */
 extern void cal_vclk_dbg_info(unsigned int id);
 
+<<<<<<< HEAD
 extern int cal_get_cp_cpu_freq(void);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef __cplusplus
 }
 #endif

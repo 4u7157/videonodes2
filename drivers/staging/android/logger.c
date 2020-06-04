@@ -34,7 +34,11 @@
 #include <asm/ioctls.h>
 #ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+<<<<<<< HEAD
 #define ANDROID_M_GETLOG_TOOL
+=======
+#define SUPPORT_GETLOG_TOOL
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #ifdef CONFIG_SEC_EXT
@@ -66,7 +70,11 @@ struct logger_log {
 	size_t			w_off;
 	size_t			head;
 	size_t			size;
+<<<<<<< HEAD
 #ifdef ANDROID_M_GETLOG_TOOL
+=======
+#ifdef CONFIG_EXYNOS_SNAPSHOT_HOOK_LOGGER
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	bool			ess_hook;
 	char			*ess_buf;
 	char			*ess_sync_buf;
@@ -426,17 +434,29 @@ static void fix_up_readers(struct logger_log *log, size_t len)
 			reader->r_off = get_next_entry(log, reader->r_off, len);
 }
 
+<<<<<<< HEAD
 #ifdef ANDROID_M_GETLOG_TOOL
+=======
+#ifdef CONFIG_EXYNOS_SNAPSHOT_HOOK_LOGGER
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define ESS_MAX_BUF_SIZE	(SZ_4K)
 #define ESS_MAX_SYNC_BUF_SIZE	(SZ_1K)
 #define ESS_MAX_TIMEBUF_SIZE	(20)
 
 static void (*func_hook_logger)(const char *name, const char *buf, size_t size);
+<<<<<<< HEAD
 void register_hook_logger(void (*func)(const char *name, const char *buf, size_t size))
 {
 	func_hook_logger = func;
 }
 EXPORT_SYMBOL(register_hook_logger);
+=======
+void register_hook_logger_sec(void (*func)(const char *name, const char *buf, size_t size))
+{
+	func_hook_logger = func;
+}
+EXPORT_SYMBOL(register_hook_logger_sec);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int reparse_hook_logger_header(struct logger_log *log,
 				      struct logger_entry *entry)
@@ -511,6 +531,7 @@ static size_t copy_hook_logger(struct logger_log *log, char *buf, size_t count,
 }
 #endif
 
+<<<<<<< HEAD
 /*
  * do_write_log - writes 'len' bytes from 'buf' to 'log'
  *
@@ -596,6 +617,93 @@ static ssize_t do_write_log_from_user(struct logger_log *log,
 }
 
 /*
+=======
+/*
+ * do_write_log - writes 'len' bytes from 'buf' to 'log'
+ *
+ * The caller needs to hold log->mutex.
+ */
+static void do_write_log(struct logger_log *log, const void *buf, size_t count)
+{
+	size_t len;
+
+	len = min(count, log->size - log->w_off);
+	memcpy(log->buffer + log->w_off, buf, len);
+
+	if (count != len)
+		memcpy(log->buffer, buf + len, count - len);
+
+#ifdef CONFIG_EXYNOS_SNAPSHOT_HOOK_LOGGER
+	if (func_hook_logger && log->ess_buf)
+		log->ess_size = reparse_hook_logger_header(log,
+					(struct logger_entry *)buf);
+#endif
+	log->w_off = logger_offset(log, log->w_off + count);
+}
+
+/*
+ * do_write_log_user - writes 'len' bytes from the user-space buffer 'buf' to
+ * the log 'log'
+ *
+ * The caller needs to hold log->mutex.
+ *
+ * Returns 'count' on success, negative error code on failure.
+ */
+static ssize_t do_write_log_from_user(struct logger_log *log,
+				      const void __user *buf, size_t count)
+{
+	size_t len;
+
+	len = min(count, log->size - log->w_off);
+	if (len && copy_from_user(log->buffer + log->w_off, buf, len))
+		return -EFAULT;
+
+	if (count != len)
+		if (copy_from_user(log->buffer, buf + len, count - len))
+			/*
+			 * Note that by not updating w_off, this abandons the
+			 * portion of the new entry that *was* successfully
+			 * copied, just above.  This is intentional to avoid
+			 * message corruption from missing fragments.
+			 */
+			return -EFAULT;
+
+#ifdef CONFIG_EXYNOS_SNAPSHOT_HOOK_LOGGER
+	/*
+	 *  There are times when log buffer is just 1 bytes
+	 *  for sync with kernel log buffer
+	 */
+	if (log->ess_sync_buf && len > 1 &&
+		log->ess_sync_size < ESS_MAX_SYNC_BUF_SIZE - 1 &&
+		strncmp(log->buffer + log->w_off, "!@", 2) == 0) {
+		log->ess_sync_size = copy_hook_logger(log,
+						      log->ess_sync_buf,
+						      count,
+						      log->ess_sync_size,
+						      ESS_MAX_SYNC_BUF_SIZE);
+#ifdef CONFIG_SEC_BOOTSTAT
+	if (strncmp(log->buffer + log->w_off, "!@Boot", 6) == 0) {
+		sec_bootstat_add(log->buffer + log->w_off);
+	}
+#endif
+	}
+	if (func_hook_logger && log->ess_hook) {
+		if (log->ess_size < ESS_MAX_BUF_SIZE - 1) {
+			log->ess_size = copy_hook_logger(log,
+							 log->ess_buf,
+							 count,
+							 log->ess_size,
+							 ESS_MAX_BUF_SIZE);
+		}
+	}
+#endif
+	log->w_off = logger_offset(log, log->w_off + count);
+
+	return count;
+}
+
+/*
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * logger_aio_write - our write method, implementing support for write(),
  * writev(), and aio_write(). Writes are our fast path, and we try to optimize
  * them above all else.
@@ -658,7 +766,11 @@ static ssize_t logger_aio_write(struct kiocb *iocb, const struct iovec *iov,
 		iov++;
 		ret += nr;
 	}
+<<<<<<< HEAD
 #ifdef ANDROID_M_GETLOG_TOOL
+=======
+#ifdef CONFIG_EXYNOS_SNAPSHOT_HOOK_LOGGER
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (func_hook_logger && log->ess_hook) {
 		/* it is allowed to hook if ess_size < ESS_MAX_BUF_SIZE */
 		if (log->ess_size < ESS_MAX_BUF_SIZE) {
@@ -915,6 +1027,10 @@ static const struct file_operations logger_fops = {
 	.release = logger_release,
 };
 
+<<<<<<< HEAD
+=======
+#ifdef SUPPORT_GETLOG_TOOL
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* Use the old way because the new logger gets log buffers by means of vmalloc().
     getlog tool considers that log buffers lie on physically contiguous memory area. */
 
@@ -923,8 +1039,15 @@ static const struct file_operations logger_fops = {
  * must be a power of two, and greater than
  * (LOGGER_ENTRY_MAX_PAYLOAD + sizeof(struct logger_entry)).
  */
+<<<<<<< HEAD
 #define DEFINE_LOGGER_DEVICE(VAR, NAME) \
 static struct logger_log VAR = { \
+=======
+#define DEFINE_LOGGER_DEVICE(VAR, NAME, SIZE) \
+static unsigned char _buf_ ## VAR[SIZE]; \
+static struct logger_log VAR = { \
+	.buffer = _buf_ ## VAR, \
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.misc = { \
 		.minor = MISC_DYNAMIC_MINOR, \
 		.name = NAME, \
@@ -936,6 +1059,7 @@ static struct logger_log VAR = { \
 	.mutex = __MUTEX_INITIALIZER(VAR .mutex), \
 	.w_off = 0, \
 	.head = 0, \
+<<<<<<< HEAD
 	.logs = LIST_HEAD_INIT(VAR .logs), \
 };
 
@@ -943,6 +1067,16 @@ DEFINE_LOGGER_DEVICE(log_main, LOGGER_LOG_MAIN)
 DEFINE_LOGGER_DEVICE(log_events, LOGGER_LOG_EVENTS)
 DEFINE_LOGGER_DEVICE(log_radio, LOGGER_LOG_RADIO)
 DEFINE_LOGGER_DEVICE(log_system, LOGGER_LOG_SYSTEM)
+=======
+	.size = SIZE, \
+	.logs = LIST_HEAD_INIT(VAR .logs), \
+};
+
+DEFINE_LOGGER_DEVICE(log_main, LOGGER_LOG_MAIN, 2*1024*1024)
+DEFINE_LOGGER_DEVICE(log_events, LOGGER_LOG_EVENTS,256*1024)
+DEFINE_LOGGER_DEVICE(log_radio, LOGGER_LOG_RADIO, 1024*1024)
+DEFINE_LOGGER_DEVICE(log_system, LOGGER_LOG_SYSTEM, 256*1024)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct logger_log * log_buffers[]={
 	&log_main,
@@ -965,6 +1099,10 @@ struct logger_log *sec_get_log_buffer(char *log_name, int size)
 	}
 	return NULL;
 }
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /*
  * Log size must must be a power of two, and greater than
@@ -976,16 +1114,78 @@ static int __init create_log(char *log_name, int size)
 	struct logger_log *log;
 	unsigned char *buffer;
 
+<<<<<<< HEAD
 	log = sec_get_log_buffer(log_name, size);
+=======
+#ifdef SUPPORT_GETLOG_TOOL
+	log = sec_get_log_buffer(log_name,size);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!log) {
 		pr_err("No \"%s\" buffer registered\n",log_name);
 		return -1;
 	}
 
+<<<<<<< HEAD
 	if (dynsyslog_on)
 		buffer = (unsigned char *)kmalloc(size, GFP_KERNEL);
 	else
 		buffer = (unsigned char *)vmalloc(size);
+=======
+	list_add_tail(&log->logs, &log_list);
+
+	/* finally, initialize the misc device for this log */
+	ret = misc_register(&log->misc);
+	if (unlikely(ret)) {
+		pr_err("failed to register misc device for log '%s'!\n",
+			log->misc.name);
+		return ret;
+	}
+
+	pr_info("created %luK log '%s'\n",
+		(unsigned long) log->size >> 10, log->misc.name);
+
+#ifdef CONFIG_EXYNOS_SNAPSHOT_HOOK_LOGGER
+	buffer = vmalloc(ESS_MAX_SYNC_BUF_SIZE);
+	if (buffer)
+		log->ess_sync_buf = buffer;
+	else
+		pr_err("failed to vmalloc ess_sync_buf %s log\n",
+				log->misc.name);
+
+	if (exynos_ss_get_enable(log->misc.name, true) == true) {
+		buffer = vmalloc(ESS_MAX_BUF_SIZE);
+		if (buffer)
+			log->ess_buf = buffer;
+		else
+			pr_err("failed to vmalloc ess_buf %s log\n",
+					log->misc.name);
+
+		if (log->ess_sync_buf) {
+			if (log->ess_buf)
+				log->ess_hook = true;
+			else
+				vfree(log->ess_sync_buf);
+		}
+		if (!log->ess_hook)
+			pr_err("failed to use hooking platform %s log\n",
+					log->misc.name);
+		else
+			pr_info("Enable to hook %s, Buffer:%p\n", log->misc.name, buffer);
+	}
+#endif
+
+#ifdef CONFIG_SEC_DEBUG
+	sec_getlog_supply_platform(log->buffer, log->misc.name);
+#endif
+
+	return ret;
+#else /* SUPPORT_GETLOG_TOOL */
+#ifdef CONFIG_SEC_DEBUG
+	buffer = kmalloc(size, GFP_KERNEL);
+#else
+	buffer = vmalloc(size);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (buffer == NULL)
 		return -ENOMEM;
 
@@ -1012,6 +1212,7 @@ static int __init create_log(char *log_name, int size)
 		pr_err("failed to vmalloc ess_sync_buf %s log\n",
 				log->misc.name);
 
+<<<<<<< HEAD
 	if (exynos_ss_get_enable(log->misc.name, true)) {
 		buffer = vmalloc(ESS_MAX_BUF_SIZE);
 		if (buffer)
@@ -1035,18 +1236,64 @@ static int __init create_log(char *log_name, int size)
 #endif
 	sec_getlog_supply_platform(log->buffer, log->misc.name);
 
+=======
+#ifdef CONFIG_EXYNOS_SNAPSHOT_HOOK_LOGGER
+	buffer = vmalloc(ESS_MAX_SYNC_BUF_SIZE);
+	if (buffer)
+		log->ess_sync_buf = buffer;
+	else
+		pr_err("failed to vmalloc ess_sync_buf %s log\n",
+				log->misc.name);
+
+	if (exynos_ss_get_enable(log->misc.name, true) == true) {
+		buffer = vmalloc(ESS_MAX_BUF_SIZE);
+		if (!buffer) {
+			pr_err("failed to use hooking platform %s log\n", log->misc.name);
+		} else {
+			log->ess_buf = buffer;
+			log->ess_hook = true;
+			pr_info("Enable to hook %s, Buffer:%p\n",
+					log->misc.name, log->ess_buf);
+		}
+	}
+#endif
+
+#ifdef CONFIG_SEC_DEBUG
+		sec_getlog_supply_platform(log->buffer, log->misc.name);
+#endif
+	return 0;
+
+out_free_misc_name:
+	kfree(log->misc.name);
+
+out_free_log:
+	kfree(log);
+
+out_free_buffer:
+#ifdef CONFIG_SEC_DEBUG
+	kfree(buffer);
+#else
+	vfree(buffer);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
+#endif /* SUPPORT_GETLOG_TOOL */
 }
 
 static int __init logger_init(void)
 {
 #ifdef CONFIG_SEC_DEBUG
 	int ret;
+<<<<<<< HEAD
 
 	if (dynsyslog_on)
 		ret = create_log(LOGGER_LOG_MAIN, 2*1024*1024);
 	else
 		ret = create_log(LOGGER_LOG_MAIN, 256*1024);
+=======
+	
+	ret = create_log(LOGGER_LOG_MAIN, 2*1024*1024);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (unlikely(ret))
 		goto out;
 
@@ -1054,10 +1301,14 @@ static int __init logger_init(void)
 	if (unlikely(ret))
 		goto out;
 
+<<<<<<< HEAD
 	if (dynsyslog_on)
 		ret = create_log(LOGGER_LOG_RADIO, 1024*1024);
 	else
 		ret = create_log(LOGGER_LOG_RADIO, 256*1024);
+=======
+	ret = create_log(LOGGER_LOG_RADIO, 1024*1024);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (unlikely(ret))
 		goto out;
 

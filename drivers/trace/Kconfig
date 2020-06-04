@@ -15,8 +15,13 @@ config EXYNOS_DRAMTEST
 	help
 	  This driver is to test DRAM. It write all 2MB with data 1.
 
+<<<<<<< HEAD
 config EXYNOS_ITM
 	bool "Exynos IPs Traffic Monitor support - (logging / timeout)"
+=======
+config EXYNOS_BUSMONITOR
+	bool "Exynos BUS Monitor support(logging / timeout)"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default y
 	depends on ARCH_EXYNOS
 
@@ -31,12 +36,15 @@ config EXYNOS_SNAPSHOT_CALLSTACK
 	range 1 4
 	default 4
 
+<<<<<<< HEAD
 config EXYNOS_SNAPSHOT_LOG_KEVENT_SIZE
 	int "size of log_kevent (MB)"
 	depends on EXYNOS_SNAPSHOT
 	range 2 8
 	default 8
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config EXYNOS_SNAPSHOT_IRQ_EXIT
 	bool "Enable debugging of interrupt exit event by kevent"
 	depends on EXYNOS_SNAPSHOT && !EXYNOS_SNAPSHOT_MINIMIZED_MODE
@@ -46,7 +54,11 @@ config EXYNOS_SNAPSHOT_IRQ_EXIT_THRESHOLD
 	int "threshold of detection(microsecond)"
 	depends on EXYNOS_SNAPSHOT_IRQ_EXIT && !EXYNOS_SNAPSHOT_MINIMIZED_MODE
 	range 0 1000000
+<<<<<<< HEAD
 	default 5000
+=======
+	default 0
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config EXYNOS_SNAPSHOT_IRQ_DISABLED
 	bool "Enable debugging of interrupt disable event by kevent(EXPERIMENTAL)"
@@ -83,11 +95,14 @@ config EXYNOS_SNAPSHOT_REGULATOR
 	depends on EXYNOS_SNAPSHOT && !EXYNOS_SNAPSHOT_MINIMIZED_MODE
 	default y
 
+<<<<<<< HEAD
 config EXYNOS_SNAPSHOT_ACPM
 	bool "Enable debugging of acpm framework"
 	depends on EXYNOS_SNAPSHOT && !EXYNOS_SNAPSHOT_MINIMIZED_MODE
 	default y
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config EXYNOS_SNAPSHOT_THERMAL
 	bool "Enable debugging of thermal driver"
 	depends on EXYNOS_SNAPSHOT && !EXYNOS_SNAPSHOT_MINIMIZED_MODE && EXYNOS_THERMAL
@@ -228,5 +243,14 @@ config EXYNOS_CORESIGHT_STM
 	help
 	  STM driver is a driver for H/W event and S/W event debugging.
 
+<<<<<<< HEAD
+=======
+config EXYNOS_SNAPSHOT_SAVE_SLUGGISHINFO
+	bool "Support saving scheduling-history and irq-history"
+	depends on EXYNOS_SNAPSHOT	
+	default n
+	help
+	  Support saving scheduling-history and irq-history
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 endif
 #

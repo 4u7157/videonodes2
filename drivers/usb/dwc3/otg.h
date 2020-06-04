@@ -56,10 +56,14 @@ struct dwc3_otg {
 
 	struct regulator	*vbus_reg;
 
+<<<<<<< HEAD
 	struct dwc3_ext_otg_ops *ext_otg_ops;
 #if defined(CONFIG_TYPEC)
 	struct intf_typec	*typec;
 #endif
+=======
+	struct dwc3_ext_otg_ops	*ext_otg_ops;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static inline int dwc3_ext_otg_setup(struct dwc3_otg *dotg)

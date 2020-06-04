@@ -20,7 +20,11 @@
 #include <linux/stringify.h>
 #include <linux/version.h>
 
+<<<<<<< HEAD
 #include "public/mc_linux.h"
+=======
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "main.h"
 #include "fastcall.h"
@@ -29,6 +33,10 @@
 #include "scheduler.h"
 
 #define SCHEDULING_FREQ		5   /**< N-SIQ every n-th time */
+<<<<<<< HEAD
+=======
+#define DEFAULT_TIMEOUT_MS	60000
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct sched_ctx {
 	struct task_struct	*thread;
@@ -129,6 +137,7 @@ static int tee_scheduler(void *arg)
 
 		if (sched_ctx.suspended || mcp_get_idle_timeout(&timeout_ms)) {
 			/* If timeout is 0 we keep scheduling the SWd */
+<<<<<<< HEAD
 			if (!timeout_ms)
 				mc_scheduler_command(NSIQ);
 			else if (timeout_ms < 0)
@@ -139,6 +148,22 @@ static int tee_scheduler(void *arg)
 				/* Timed out, force SWd schedule */
 				mc_scheduler_command(NSIQ);
 		}
+=======
+			if (!timeout_ms) {
+				mc_scheduler_command(NSIQ);
+			} else {
+				if (timeout_ms < 0)
+					timeout_ms = DEFAULT_TIMEOUT_MS;
+
+				if (!wait_for_completion_timeout(
+					&sched_ctx.idle_complete,
+					msecs_to_jiffies(timeout_ms))) {
+				/* Timed out, force SWd schedule */
+				mc_scheduler_command(NSIQ);
+		}
+			}
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (kthread_should_stop() || !sched_ctx.thread_run)
 			break;

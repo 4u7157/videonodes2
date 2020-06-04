@@ -259,7 +259,11 @@ typec_altmode_active_store(struct device *dev, struct device_attribute *attr,
 	if (!port->cap->activate_mode)
 		return -EOPNOTSUPP;
 
+<<<<<<< HEAD
 	ret = strtobool(buf, &activate);
+=======
+	ret = kstrtobool(buf, &activate);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret)
 		return ret;
 
@@ -1045,7 +1049,11 @@ static ssize_t vconn_source_store(struct device *dev,
 		return -EOPNOTSUPP;
 	}
 
+<<<<<<< HEAD
 	ret = strtobool(buf, &source);
+=======
+	ret = kstrtobool(buf, &source);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret)
 		return ret;
 

@@ -64,8 +64,12 @@ enum vpp_bw_type {
 	BW_FULLHD_ROT,
 };
 
+<<<<<<< HEAD
 #if defined(CONFIG_EXYNOS8890_BTS) || defined(CONFIG_EXYNOS7870_BTS) \
 	||defined(CONFIG_EXYNOS7570_BTS)
+=======
+#if defined(CONFIG_EXYNOS8890_BTS) || defined(CONFIG_EXYNOS7870_BTS)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void exynos_update_media_scenario(enum bts_media_type media_type,
 		unsigned int bw, int bw_type);
 #else
@@ -82,6 +86,10 @@ int exynos7_bts_unregister_notifier(struct notifier_block *nb);
 int exynos_update_bts_param(int target_idx, int work);
 int exynos_bts_register_notifier(struct notifier_block *nb);
 int exynos_bts_unregister_notifier(struct notifier_block *nb);
+<<<<<<< HEAD
+=======
+int exynos_update_overlay_wincnt(int cnt);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define exynos7_update_media_scenario(a, b, c) do {} while (0)
 #define exynos7_update_bts_param(a, b) do {} while (0)
@@ -95,7 +103,11 @@ int exynos_bts_unregister_notifier(struct notifier_block *nb);
 #if defined(CONFIG_EXYNOS5430_BTS) || defined(CONFIG_EXYNOS5422_BTS)	\
 	|| defined(CONFIG_EXYNOS5433_BTS)|| defined(CONFIG_EXYNOS7420_BTS) \
 	|| defined(CONFIG_EXYNOS7890_BTS) || defined(CONFIG_EXYNOS8890_BTS) \
+<<<<<<< HEAD
 	|| defined(CONFIG_EXYNOS7870_BTS) || defined(CONFIG_EXYNOS7570_BTS)
+=======
+	|| defined(CONFIG_EXYNOS7870_BTS)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void bts_initialize(const char *pd_name, bool on);
 #else
 #define bts_initialize(a, b) do {} while (0)
@@ -121,8 +133,12 @@ void bts_otf_initialize(unsigned int id, bool on);
 
 #if defined(CONFIG_EXYNOS5422_BTS) || defined(CONFIG_EXYNOS5433_BTS)	\
 	|| defined(CONFIG_EXYNOS7420_BTS) || defined(CONFIG_EXYNOS7890_BTS) \
+<<<<<<< HEAD
 	|| defined(CONFIG_EXYNOS8890_BTS) || defined(CONFIG_EXYNOS7870_BTS) \
 	|| defined(CONFIG_EXYNOS7570_BTS)
+=======
+	|| defined(CONFIG_EXYNOS8890_BTS) || defined(CONFIG_EXYNOS7870_BTS)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum bts_scen_type {
 	TYPE_MFC_UD_ENCODING = 0,
 	TYPE_MFC_UD_DECODING,

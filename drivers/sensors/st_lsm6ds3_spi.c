@@ -40,10 +40,15 @@ static int st_lsm6ds3_spi_read(struct st_lsm6ds3_transfer_buffer *tb,
 	tb->tx_buf[0] = reg_addr | ST_SENSORS_SPI_READ;
 
 	err = spi_sync_transfer(to_spi_device(dev), xfers, ARRAY_SIZE(xfers));
+<<<<<<< HEAD
 	if (err) {
 		SENSOR_INFO("failed err=%d\n", err);
 		goto acc_spi_read_error;
 	}
+=======
+	if (err)
+		goto acc_spi_read_error;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	memcpy(data, tb->rx_buf, len*sizeof(u8));
 	mutex_unlock(&tb->buf_lock);
@@ -74,9 +79,12 @@ static int st_lsm6ds3_spi_write(struct st_lsm6ds3_transfer_buffer *tb,
 	memcpy(&tb->tx_buf[1], data, len);
 
 	err = spi_sync_transfer(to_spi_device(dev), &xfers, 1);
+<<<<<<< HEAD
 	if (err)
 		SENSOR_INFO("failed err=%d\n", err);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&tb->buf_lock);
 
 	return err;
@@ -113,6 +121,7 @@ free_data:
 	return err;
 }
 
+<<<<<<< HEAD
 static void st_lsm6ds3_spi_shutdown(struct spi_device *spi)
 {
 	struct lsm6ds3_data *cdata = spi_get_drvdata(spi);
@@ -121,6 +130,8 @@ static void st_lsm6ds3_spi_shutdown(struct spi_device *spi)
 	kfree(cdata);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int st_lsm6ds3_spi_remove(struct spi_device *spi)
 {
 	struct lsm6ds3_data *cdata = spi_get_drvdata(spi);
@@ -168,7 +179,10 @@ static struct spi_driver st_lsm6ds3_driver = {
 		.pm = ST_LSM6DS3_PM_OPS,
 	},
 	.probe = st_lsm6ds3_spi_probe,
+<<<<<<< HEAD
 	.shutdown = st_lsm6ds3_spi_shutdown,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.remove = st_lsm6ds3_spi_remove,
 	.id_table = st_lsm6ds3_id_table,
 };

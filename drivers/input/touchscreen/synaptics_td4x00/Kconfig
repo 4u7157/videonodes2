@@ -8,13 +8,23 @@ config TOUCHSCREEN_SYNAPTICS_I2C_TD4X00
 	help
 	  This enables support for Synaptics DSX2 over I2C based touchscreens.
 	  
+<<<<<<< HEAD
 config TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+config TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	tristate "Synaptics DSX2 i2c touchscreen base on bootloader Ver7"
 	depends on I2C
 	help
 	  This enables support for Synaptics DSX2 over I2C based touchscreens.
 
 config TOUCHSCREEN_SYNAPTICS_FB_OPEN_CLOSE
+<<<<<<< HEAD
 	tristate "Synaptics touchscreen for Project J260G J2 Core"
 	help
 	  This enables support for Synaptics.
+=======
+	tristate "Synaptics touchscreen for Project A260 A2 Core"
+	help
+	  This enables support for Synaptics.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

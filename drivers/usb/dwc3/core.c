@@ -37,7 +37,10 @@
 #include <linux/usb/gadget.h>
 #include <linux/usb/of.h>
 #include <linux/usb/otg.h>
+<<<<<<< HEAD
 #include <linux/usb/samsung_usb.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/phy/phy.h>
 
 #include "platform_data.h"
@@ -271,7 +274,11 @@ int dwc3_udc_reset(struct dwc3 *dwc)
 			break;
 		}
 
+<<<<<<< HEAD
 		udelay(1);
+=======
+		cpu_relax();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} while (true);
 
 	return ret;
@@ -561,16 +568,27 @@ int dwc3_core_init(struct dwc3 *dwc)
 	/* Adjust SOF accuracy only for revisions >= 2.50a */
 	if (dwc->revision < DWC3_REVISION_250A)
 		dwc->adj_sof_accuracy = 0;
-
-	ret = dwc3_core_soft_reset(dwc);
-	if (ret)
-		goto err0;
+<<<<<<< HEAD
+=======
 
 	/* issue device SoftReset too */
 	ret = dwc3_udc_reset(dwc);
 	if (ret < 0)
 		goto err0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
+	ret = dwc3_core_soft_reset(dwc);
+	if (ret)
+		goto err0;
+
+<<<<<<< HEAD
+	/* issue device SoftReset too */
+	ret = dwc3_udc_reset(dwc);
+	if (ret < 0)
+		goto err0;
+
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (dwc->usb3_phy) {
 		/*
 		 * The state of usb phy was set by otg state machine.
@@ -701,8 +719,11 @@ void dwc3_core_exit(struct dwc3 *dwc)
 	phy_exit(dwc->usb3_generic_phy);
 	phy_power_off(dwc->usb2_generic_phy);
 	phy_power_off(dwc->usb3_generic_phy);
+<<<<<<< HEAD
 	phy_set(dwc->usb2_generic_phy, SET_EXTREFCLK_RELEASE, NULL);
 	phy_set(dwc->usb3_generic_phy, SET_EXTREFCLK_RELEASE, NULL);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int dwc3_core_get_phy(struct dwc3 *dwc)
@@ -791,6 +812,7 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
 		break;
 	case USB_DR_MODE_OTG:
 		dwc3_set_mode(dwc, DWC3_GCTL_PRTCAP_OTG);
+<<<<<<< HEAD
 		break;
 	default:
 		dev_err(dev, "Unsupported mode %d\n", dwc->dr_mode);
@@ -814,6 +836,22 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
 		if (ret) {
 			dev_err(dev, "failed to initialize host\n");
 			goto err1;
+=======
+		ret = dwc3_otg_init(dwc);
+		if (ret) {
+			dev_err(dev, "failed to initialize otg\n");
+			return ret;
+		}
+
+		/* turn off PHYs to save power */
+		dwc3_core_exit(dwc);
+
+		ret = dwc3_host_init(dwc);
+		if (ret) {
+			dev_err(dev, "failed to initialize host\n");
+			dwc3_otg_exit(dwc);
+			return ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 	/* init device mode */
@@ -822,8 +860,33 @@ static int dwc3_core_init_mode(struct dwc3 *dwc)
 		ret = dwc3_gadget_init(dwc);
 		if (ret) {
 			dev_err(dev, "failed to initialize gadget\n");
+<<<<<<< HEAD
 			goto err2;
 		}
+=======
+			dwc3_host_exit(dwc);
+			dwc3_otg_exit(dwc);
+			return ret;
+		}
+
+		/* Now we are ready to start OTG */
+		ret = dwc3_otg_start(dwc);
+		if (ret) {
+			dev_err(dev, "failed to start otg\n");
+			dwc3_host_exit(dwc);
+			dwc3_gadget_exit(dwc);
+			dwc3_otg_exit(dwc);
+			return ret;
+		}
+
+		/* Unblock runtime PM for OTG */
+		pm_runtime_put_sync(dev);
+
+		break;
+	default:
+		dev_err(dev, "Unsupported mode of operation %d\n", dwc->dr_mode);
+		return -EINVAL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	ret = dwc3_otg_start(dwc);
@@ -871,8 +934,10 @@ static void dwc3_core_exit_mode(struct dwc3 *dwc)
 		dwc3_host_exit(dwc);
 		break;
 	case USB_DR_MODE_OTG:
+		dwc3_otg_stop(dwc);
 		dwc3_host_exit(dwc);
 		dwc3_gadget_exit(dwc);
+		dwc3_otg_exit(dwc);
 		break;
 	default:
 		/* do nothing */
@@ -955,6 +1020,17 @@ static int dwc3_probe(struct platform_device *pdev)
 		dwc->sparse_transfer_control = of_property_read_bool(node, "enable_sprs_transfer");
 		dwc->dr_mode = of_usb_get_dr_mode(node);
 		dwc->suspend_clk_freq = of_usb_get_suspend_clk_freq(node);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARGOS
+		/*
+		 * read irq affinity cpu mask from DT
+		 * default value is 1 (cpu1)
+		 */
+		if (of_property_read_u32(node, "irq_affinity_cpu", &dwc->irq_affinity_cpu_mask))
+			dwc->irq_affinity_cpu_mask = 1;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else if (pdata) {
 		dwc->maximum_speed = pdata->maximum_speed;
 
@@ -1011,18 +1087,25 @@ static int dwc3_probe(struct platform_device *pdev)
 		goto err0;
 	}
 
+<<<<<<< HEAD
 	phy_set(dwc->usb2_generic_phy, SET_EXTREFCLK_REQUEST, NULL);
 	phy_set(dwc->usb3_generic_phy, SET_EXTREFCLK_REQUEST, (void *)&ret);
 	if (ret)
 		goto err1;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	usb_phy_set_suspend(dwc->usb2_phy, 0);
 	usb_phy_set_suspend(dwc->usb3_phy, 0);
 
 	ret = dwc3_event_buffers_setup(dwc);
 	if (ret) {
 		dev_err(dwc->dev, "failed to setup event buffers\n");
+<<<<<<< HEAD
 		goto err2;
+=======
+		goto err1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	ret = dwc3_core_init_mode(dwc);
@@ -1048,7 +1131,11 @@ err4:
 err3:
 	dwc3_event_buffers_cleanup(dwc);
 
+<<<<<<< HEAD
 err2:
+=======
+err1:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	usb_phy_set_suspend(dwc->usb2_phy, 1);
 	usb_phy_set_suspend(dwc->usb3_phy, 1);
 
@@ -1077,6 +1164,11 @@ static int dwc3_remove(struct platform_device *pdev)
 
 	dwc3_core_exit(dwc);
 
+<<<<<<< HEAD
+=======
+	if (dwc->dr_mode != USB_DR_MODE_OTG)
+		pm_runtime_put(&pdev->dev);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pm_runtime_disable(&pdev->dev);
 
 	return 0;
@@ -1091,11 +1183,30 @@ static int dwc3_prepare(struct device *dev)
 	/* bring to full power */
 	pm_runtime_get_sync(dev);
 
+<<<<<<< HEAD
 	dwc3_otg_stop(dwc);
 
 	spin_lock_irqsave(&dwc->lock, flags);
 
 	dwc3_event_buffers_cleanup(dwc);
+=======
+	if (dwc->dr_mode == USB_DR_MODE_OTG)
+		dwc3_otg_stop(dwc);
+
+	spin_lock_irqsave(&dwc->lock, flags);
+
+	switch (dwc->dr_mode) {
+	case USB_DR_MODE_PERIPHERAL:
+		dwc3_gadget_prepare(dwc);
+		break;
+	case USB_DR_MODE_OTG:
+		/* FALLTHROUGH */
+	case USB_DR_MODE_HOST:
+	default:
+		dwc3_event_buffers_cleanup(dwc);
+		break;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	spin_unlock_irqrestore(&dwc->lock, flags);
 
@@ -1110,10 +1221,28 @@ static void dwc3_complete(struct device *dev)
 	spin_lock_irqsave(&dwc->lock, flags);
 
 	dwc3_event_buffers_setup(dwc);
+<<<<<<< HEAD
 
 	spin_unlock_irqrestore(&dwc->lock, flags);
 
 	dwc3_otg_start(dwc);
+=======
+	switch (dwc->dr_mode) {
+	case USB_DR_MODE_PERIPHERAL:
+		dwc3_gadget_complete(dwc);
+		break;
+	case USB_DR_MODE_OTG:
+		/* FALLTHROUGH */
+	case USB_DR_MODE_HOST:
+	default:
+		break;
+	}
+
+	spin_unlock_irqrestore(&dwc->lock, flags);
+
+	if (dwc->dr_mode == USB_DR_MODE_OTG)
+		dwc3_otg_start(dwc);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Compensate usage count incremented during prepare */
 	pm_runtime_put_sync(dev);
@@ -1121,16 +1250,106 @@ static void dwc3_complete(struct device *dev)
 
 static int dwc3_suspend(struct device *dev)
 {
+<<<<<<< HEAD
+=======
+	struct dwc3	*dwc = dev_get_drvdata(dev);
+	unsigned long	flags;
+
+	spin_lock_irqsave(&dwc->lock, flags);
+
+	switch (dwc->dr_mode) {
+	case USB_DR_MODE_PERIPHERAL:
+		dwc3_gadget_suspend(dwc);
+		break;
+	case USB_DR_MODE_OTG:
+		break;
+	case USB_DR_MODE_HOST:
+		usb_phy_shutdown(dwc->usb3_phy);
+		usb_phy_shutdown(dwc->usb2_phy);
+		phy_exit(dwc->usb2_generic_phy);
+		phy_exit(dwc->usb3_generic_phy);
+		phy_power_off(dwc->usb2_generic_phy);
+		phy_power_off(dwc->usb3_generic_phy);
+	default:
+		/* do nothing */
+		break;
+	}
+
+	/* backup GCTL only in non-OTG modes */
+	if (dwc->dr_mode != USB_DR_MODE_OTG)
+		dwc->gctl = dwc3_readl(dwc->regs, DWC3_GCTL);
+
+	spin_unlock_irqrestore(&dwc->lock, flags);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
 static int dwc3_resume(struct device *dev)
 {
+<<<<<<< HEAD
+=======
+	struct dwc3	*dwc = dev_get_drvdata(dev);
+	unsigned long	flags;
+	int		ret;
+
+	spin_lock_irqsave(&dwc->lock, flags);
+
+	if (dwc->dr_mode != USB_DR_MODE_OTG)
+		dwc3_writel(dwc->regs, DWC3_GCTL, dwc->gctl);
+
+	switch (dwc->dr_mode) {
+	case USB_DR_MODE_PERIPHERAL:
+		dwc3_gadget_resume(dwc);
+		break;
+	case USB_DR_MODE_OTG:
+		break;
+	case USB_DR_MODE_HOST:
+		ret = phy_power_on(dwc->usb3_generic_phy);
+		if (ret < 0) {
+			spin_unlock_irqrestore(&dwc->lock, flags);
+			return ret;
+		}
+		ret = phy_power_on(dwc->usb2_generic_phy);
+		if (ret < 0)
+			goto err_usb3phy_power;
+		usb_phy_init(dwc->usb3_phy);
+		usb_phy_init(dwc->usb2_phy);
+		ret = phy_init(dwc->usb3_generic_phy);
+		if (ret < 0)
+			goto err_usb2phy_power;
+		ret = phy_init(dwc->usb2_generic_phy);
+		if (ret < 0)
+			goto err_usb3phy_init;
+	default:
+		/* do nothing */
+		break;
+	}
+
+	spin_unlock_irqrestore(&dwc->lock, flags);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pm_runtime_disable(dev);
 	pm_runtime_set_active(dev);
 	pm_runtime_enable(dev);
 
 	return 0;
+<<<<<<< HEAD
+=======
+
+err_usb3phy_init:
+	phy_exit(dwc->usb3_generic_phy);
+
+err_usb2phy_power:
+	phy_power_off(dwc->usb2_generic_phy);
+
+err_usb3phy_power:
+	phy_power_off(dwc->usb3_generic_phy);
+
+	spin_unlock_irqrestore(&dwc->lock, flags);
+
+	return ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static const struct dev_pm_ops dwc3_dev_pm_ops = {

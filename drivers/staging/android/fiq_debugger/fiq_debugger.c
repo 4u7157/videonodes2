@@ -396,7 +396,11 @@ static void fiq_debugger_work(struct work_struct *work)
 		cmd += 6;
 		while (*cmd == ' ')
 			cmd++;
+<<<<<<< HEAD
 		if ((*cmd != '\0') && sysrq_on())
+=======
+		if ((cmd != '\0') && sysrq_on())
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			kernel_restart(cmd);
 		else
 			kernel_restart(NULL);

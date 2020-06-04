@@ -12,7 +12,10 @@
  * GNU General Public License for more details.
  */
 
+<<<<<<< HEAD
 #include <asm/atomic.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/slab.h>
 #include <linux/device.h>
 #include <linux/mutex.h>
@@ -26,8 +29,14 @@
 #include <linux/module.h>
 #include <linux/random.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 
 #include "public/mc_linux.h"
+=======
+#include <linux/freezer.h>
+
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "public/mc_admin.h"
 
 #include "mci/mcloadformat.h"
@@ -39,7 +48,12 @@
 #include "admin.h"
 
 static struct admin_ctx {
+<<<<<<< HEAD
 	atomic_t daemon_counter;
+=======
+	struct mutex admin_tgid_mutex;	/* Lock for admin_tgid below */
+	pid_t admin_tgid;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int (*tee_start_cb)(void);
 	void (*tee_stop_cb)(void);
 	int last_start_ret;
@@ -70,8 +84,73 @@ static struct mc_admin_driver_request {
 	struct completion server_complete;
 	void *buffer;			/* Reception buffer (pre-allocated) */
 	size_t size;			/* Size of the reception buffer */
+<<<<<<< HEAD
 } g_request;
 
+=======
+	bool lock_channel_during_freeze;/* Is freezing ongoing ? */
+} g_request;
+
+/* The mutex around the channel communication has to be wrapped in order
+ * to handle this use case :
+ * client 1 calls request_send()
+ *	    wait on wait_for_completion_interruptible (with channel mutex taken)
+ * client 2 calls request_send()
+ *	    waits on mutex_lock(channel mutex)
+ * kernel starts freezing tasks (suspend or reboot ongoing)
+ * if we do nothing, then the freezing will be aborted because client 1
+ * and 2 have to enter the refrigerator by themselves.
+ * Note : mutex cannot be held during freezing, so client 1 has release it
+ * => step 1 : client 1 sets a bool that says that the channel is still in use
+ * => step 2 : client 1 release the lock and enter the refrigerator
+ * => now any client trying to use the channel will face the bool preventing
+ * to use the channel. They also have to enter the refrigerator.
+ *
+ * These 3 functions handle this
+ */
+static void check_freezing_ongoing(void)
+{
+	/* We don't want to let the channel be used. Let everyone know
+	 * that we're using it
+	 */
+	g_request.lock_channel_during_freeze = 1;
+	/* Now we can safely release the lock */
+	mutex_unlock(&g_request.mutex);
+	/* Let's try to freeze */
+	try_to_freeze();
+	/* Either freezing happened or was canceled.
+	 * In both cases, reclaim the lock
+	 */
+	mutex_lock(&g_request.mutex);
+	g_request.lock_channel_during_freeze = 0;
+}
+
+static void channel_lock(void)
+{
+	while (1) {
+		mutex_lock(&g_request.mutex);
+		/* We took the lock, but is there any freezing ongoing? */
+		if (g_request.lock_channel_during_freeze == 0)
+			break;
+
+		/* yes, so let's freeze */
+		mutex_unlock(&g_request.mutex);
+		try_to_freeze();
+		/* Either freezing succeeded or was canceled.
+		 * In both case, try again to get the lock.
+		 * Give some CPU time to let the contender
+		 * finish his channel operation
+		 */
+		msleep(500);
+	};
+}
+
+static void channel_unlock(void)
+{
+	mutex_unlock(&g_request.mutex);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct tee_object *tee_object_alloc(bool is_sp_trustlet, size_t length)
 {
 	struct tee_object *obj;
@@ -85,14 +164,28 @@ static struct tee_object *tee_object_alloc(bool is_sp_trustlet, size_t length)
 		size += header_length + 3 * MAX_SO_CONT_SIZE;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Check size for overflow */
+	if (size < length) {
+		mc_dev_err("cannot allocate object of size %zu", length);
+		return NULL;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Allocate memory */
 	obj = vzalloc(size);
 	if (!obj)
 		return NULL;
 
 	/* A non-zero header_length indicates that we have a SP trustlet */
+<<<<<<< HEAD
 	obj->header_length = header_length;
 	obj->length = length;
+=======
+	obj->header_length = (u32)header_length;
+	obj->length = (u32)length;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return obj;
 }
 
@@ -141,7 +234,11 @@ static int request_send(u32 command, const struct mc_uuid_t *uuid, bool is_gp,
 			u32 spid)
 {
 	int counter = 10;
+<<<<<<< HEAD
 	int ret;
+=======
+	int ret = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Prepare request */
 	mutex_lock(&g_request.states_mutex);
@@ -152,7 +249,11 @@ static int request_send(u32 command, const struct mc_uuid_t *uuid, bool is_gp,
 		mutex_lock(&g_request.states_mutex);
 	}
 
+<<<<<<< HEAD
 	BUG_ON(g_request.client_state != IDLE);
+=======
+	WARN_ON(g_request.client_state != IDLE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (g_request.server_state != READY) {
 		mutex_unlock(&g_request.states_mutex);
 		if (g_request.server_state != NOT_CONNECTED) {
@@ -169,7 +270,11 @@ static int request_send(u32 command, const struct mc_uuid_t *uuid, bool is_gp,
 
 	memset(&g_request.request, 0, sizeof(g_request.request));
 	memset(&g_request.response, 0, sizeof(g_request.response));
+<<<<<<< HEAD
 	g_request.request.request_id = g_request.request_id++;
+=======
+	g_request.request.request_id = g_request.request_id;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	g_request.request.command = command;
 	if (uuid)
 		memcpy(&g_request.request.uuid, uuid, sizeof(*uuid));
@@ -184,8 +289,24 @@ static int request_send(u32 command, const struct mc_uuid_t *uuid, bool is_gp,
 	/* Send request */
 	complete(&g_request.client_complete);
 
+<<<<<<< HEAD
 	/* Wait for header (could be interruptible, but then needs more work) */
 	wait_for_completion(&g_request.server_complete);
+=======
+	/* Wait for header */
+	do {
+		ret = wait_for_completion_interruptible(
+						&g_request.server_complete);
+		if (!ret)
+			break;
+		/* we may have to freeze now */
+		check_freezing_ongoing();
+		/* freezing happened or was canceled,
+		 * let's sleep and try again
+		 */
+		msleep(500);
+	} while (1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Server should be waiting with some data for us */
 	mutex_lock(&g_request.states_mutex);
@@ -203,7 +324,11 @@ static int request_send(u32 command, const struct mc_uuid_t *uuid, bool is_gp,
 		/* Normal case, data to come */
 		ret = 0;
 		break;
+<<<<<<< HEAD
 	default:
+=======
+	case REQUEST_RECEIVED:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* Should not happen as complete means the state changed */
 		mc_dev_err("daemon is in a bad state: %d\n",
 			   g_request.server_state);
@@ -235,6 +360,11 @@ static int request_receive(void *address, u32 size)
 		    (g_request.server_state == DATA_SENT);
 	mutex_unlock(&g_request.states_mutex);
 	if (!server_ok) {
+<<<<<<< HEAD
+=======
+		mc_dev_err("expected server state %d or %d, not %d\n",
+			   RESPONSE_SENT, DATA_SENT, g_request.server_state);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		request_cancel();
 		return -EPIPE;
 	}
@@ -247,8 +377,26 @@ static int request_receive(void *address, u32 size)
 	/* Unlock write of data */
 	complete(&g_request.client_complete);
 
+<<<<<<< HEAD
 	/* Wait for data (far too late to be interruptible) */
 	wait_for_completion(&g_request.server_complete);
+=======
+	/* Wait for data */
+	do {
+		int ret = 0;
+
+		ret = wait_for_completion_interruptible(
+					     &g_request.server_complete);
+		if (!ret)
+			break;
+		/* We may have to freeze now */
+		check_freezing_ongoing();
+		/* freezing happened or was canceled,
+		 * let's sleep and try again
+		 */
+		msleep(500);
+	} while (1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Reset reception buffer */
 	g_request.buffer = NULL;
@@ -277,7 +425,11 @@ static int admin_get_root_container(void *address)
 	int ret = 0;
 
 	/* Lock communication channel */
+<<<<<<< HEAD
 	mutex_lock(&g_request.mutex);
+=======
+	channel_lock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Send request and wait for header */
 	ret = request_send(MC_DRV_GET_ROOT_CONTAINER, 0, 0, 0);
@@ -298,7 +450,11 @@ static int admin_get_root_container(void *address)
 		ret = g_request.response.length;
 
 end:
+<<<<<<< HEAD
 	mutex_unlock(&g_request.mutex);
+=======
+	channel_unlock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -307,7 +463,11 @@ static int admin_get_sp_container(void *address, u32 spid)
 	int ret = 0;
 
 	/* Lock communication channel */
+<<<<<<< HEAD
 	mutex_lock(&g_request.mutex);
+=======
+	channel_lock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Send request and wait for header */
 	ret = request_send(MC_DRV_GET_SP_CONTAINER, 0, 0, spid);
@@ -328,7 +488,11 @@ static int admin_get_sp_container(void *address, u32 spid)
 		ret = g_request.response.length;
 
 end:
+<<<<<<< HEAD
 	mutex_unlock(&g_request.mutex);
+=======
+	channel_unlock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -338,7 +502,11 @@ static int admin_get_trustlet_container(void *address,
 	int ret = 0;
 
 	/* Lock communication channel */
+<<<<<<< HEAD
 	mutex_lock(&g_request.mutex);
+=======
+	channel_lock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Send request and wait for header */
 	ret = request_send(MC_DRV_GET_TRUSTLET_CONTAINER, uuid, 0, spid);
@@ -359,7 +527,11 @@ static int admin_get_trustlet_container(void *address,
 		ret = g_request.response.length;
 
 end:
+<<<<<<< HEAD
 	mutex_unlock(&g_request.mutex);
+=======
+	channel_unlock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -371,7 +543,11 @@ static struct tee_object *admin_get_trustlet(const struct mc_uuid_t *uuid,
 	int ret = 0;
 
 	/* Lock communication channel */
+<<<<<<< HEAD
 	mutex_lock(&g_request.mutex);
+=======
+	channel_lock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Send request and wait for header */
 	ret = request_send(MC_DRV_GET_TRUSTLET, uuid, is_gp, 0);
@@ -392,7 +568,11 @@ static struct tee_object *admin_get_trustlet(const struct mc_uuid_t *uuid,
 	*spid = g_request.response.spid;
 
 end:
+<<<<<<< HEAD
 	mutex_unlock(&g_request.mutex);
+=======
+	channel_unlock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret)
 		return ERR_PTR(ret);
 
@@ -403,8 +583,17 @@ static void mc_admin_sendcrashdump(void)
 {
 	int ret = 0;
 
+<<<<<<< HEAD
 	/* Lock communication channel */
 	mutex_lock(&g_request.mutex);
+=======
+	/* ExySp: to be updated in official release */
+	/* Prevent daemon reconnection */
+	admin_ctx.last_start_ret = -EHOSTUNREACH;
+
+	/* Lock communication channel */
+	channel_lock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Send request and wait for header */
 	ret = request_send(MC_DRV_SIGNAL_CRASH, NULL, false, 0);
@@ -415,7 +604,11 @@ static void mc_admin_sendcrashdump(void)
 	request_cancel();
 
 end:
+<<<<<<< HEAD
 	mutex_unlock(&g_request.mutex);
+=======
+	channel_unlock();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int tee_object_make(u32 spid, struct tee_object *obj)
@@ -558,7 +751,11 @@ static inline int load_driver(struct tee_client *client,
 	struct tee_object *obj;
 	struct mclf_header_v2 *thdr;
 	struct mc_identity identity = {
+<<<<<<< HEAD
 		.login_type = TEEC_LOGIN_PUBLIC,
+=======
+		.login_type = LOGIN_PUBLIC,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	};
 	uintptr_t dci = 0;
 	u32 dci_len = 0;
@@ -642,6 +839,10 @@ static ssize_t admin_write(struct file *file, const char __user *user,
 
 	/* No offset allowed [yet] */
 	if (*off) {
+<<<<<<< HEAD
+=======
+		mc_dev_err("offset not supported\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		g_request.response.error_no = EPIPE;
 		ret = -ECOMM;
 		goto err;
@@ -650,6 +851,11 @@ static ssize_t admin_write(struct file *file, const char __user *user,
 	if (server_state_is(REQUEST_RECEIVED)) {
 		/* Check client state */
 		if (!client_state_is(REQUEST_SENT)) {
+<<<<<<< HEAD
+=======
+			mc_dev_err("expected client state %d, not %d\n",
+				   REQUEST_SENT, g_request.client_state);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			g_request.response.error_no = EPIPE;
 			ret = -EPIPE;
 			goto err;
@@ -658,6 +864,10 @@ static ssize_t admin_write(struct file *file, const char __user *user,
 		/* Receive response header */
 		if (copy_from_user(&g_request.response, user,
 				   sizeof(g_request.response))) {
+<<<<<<< HEAD
+=======
+			mc_dev_err("failed to get response from daemon\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			g_request.response.error_no = EPIPE;
 			ret = -ECOMM;
 			goto err;
@@ -666,6 +876,12 @@ static ssize_t admin_write(struct file *file, const char __user *user,
 		/* Check request ID */
 		if (g_request.request.request_id !=
 						g_request.response.request_id) {
+<<<<<<< HEAD
+=======
+			mc_dev_err("expected id %d, not %d\n",
+				   g_request.request.request_id,
+				   g_request.response.request_id);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			g_request.response.error_no = EPIPE;
 			ret = -EBADE;
 			goto err;
@@ -695,6 +911,11 @@ static ssize_t admin_write(struct file *file, const char __user *user,
 
 		/* Check client state */
 		if (!client_state_is(BUFFERS_READY)) {
+<<<<<<< HEAD
+=======
+			mc_dev_err("expected client state %d, not %d\n",
+				   BUFFERS_READY, g_request.client_state);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			g_request.response.error_no = EPIPE;
 			ret = -EPIPE;
 			goto err;
@@ -706,6 +927,10 @@ static ssize_t admin_write(struct file *file, const char __user *user,
 
 		ret = copy_from_user(g_request.buffer, user, len);
 		if (ret) {
+<<<<<<< HEAD
+=======
+			mc_dev_err("failed to get data from daemon\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			g_request.response.error_no = EPIPE;
 			ret = -ECOMM;
 			goto err;
@@ -736,6 +961,16 @@ static long admin_ioctl(struct file *file, unsigned int cmd,
 
 	switch (cmd) {
 	case MC_ADMIN_IO_GET_DRIVER_REQUEST: {
+<<<<<<< HEAD
+=======
+		/* Update TGID as it may change (when becoming a daemon) */
+		if (admin_ctx.admin_tgid != current->tgid) {
+			admin_ctx.admin_tgid = current->tgid;
+			mc_dev_info("admin PID changed to %d\n",
+				    admin_ctx.admin_tgid);
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* Block until a request is available */
 		ret = wait_for_completion_interruptible(
 						&g_request.client_complete);
@@ -745,6 +980,11 @@ static long admin_ioctl(struct file *file, unsigned int cmd,
 
 		/* Check client state */
 		if (!client_state_is(REQUEST_SENT)) {
+<<<<<<< HEAD
+=======
+			mc_dev_err("expected client state %d, not %d\n",
+				   REQUEST_SENT, g_request.client_state);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			g_request.response.error_no = EPIPE;
 			complete(&g_request.server_complete);
 			ret = -EPIPE;
@@ -761,6 +1001,12 @@ static long admin_ioctl(struct file *file, unsigned int cmd,
 			break;
 		}
 
+<<<<<<< HEAD
+=======
+		/* Now that the daemon got it, update the request ID */
+		g_request.request_id++;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		server_state_change(REQUEST_RECEIVED);
 		break;
 	}
@@ -837,13 +1083,22 @@ static long admin_ioctl(struct file *file, unsigned int cmd,
  */
 static int admin_release(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
+=======
+	/* ExySp: print close process info */
+	mc_dev_info("closed by PID(%d), name(%s)\n", current->pid, current->comm);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Close client if any */
 	if (file->private_data)
 		client_close((struct tee_client *)file->private_data);
 
 	/* Requests from driver to daemon */
 	mutex_lock(&g_request.states_mutex);
+<<<<<<< HEAD
 	mc_dev_info("daemon disconnected\n");
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	g_request.server_state = NOT_CONNECTED;
 	/* A non-zero command indicates that a thread is waiting */
 	if (g_request.client_state != IDLE) {
@@ -852,7 +1107,12 @@ static int admin_release(struct inode *inode, struct file *file)
 	}
 
 	mutex_unlock(&g_request.states_mutex);
+<<<<<<< HEAD
 	atomic_set(&admin_ctx.daemon_counter, 0);
+=======
+	mc_dev_info("admin connection closed, PID %d\n", admin_ctx.admin_tgid);
+	admin_ctx.admin_tgid = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/*
 	 * ret is quite irrelevant here as most apps don't care about the
 	 * return value from close() and it's quite difficult to recover
@@ -862,6 +1122,7 @@ static int admin_release(struct inode *inode, struct file *file)
 
 static int admin_open(struct inode *inode, struct file *file)
 {
+<<<<<<< HEAD
 	/*
 	 * If the daemon is already set we can't allow anybody else to open
 	 * the admin interface.
@@ -870,6 +1131,24 @@ static int admin_open(struct inode *inode, struct file *file)
 		mc_dev_err("Daemon is already connected\n");
 		return -EPROTO;
 	}
+=======
+	int ret = 0;
+	/* ExySp: print open process info */
+	mc_dev_info("opened by PID(%d), name(%s)\n", current->pid, current->comm);
+
+	/* Only one connection allowed to admin interface */
+	mutex_lock(&admin_ctx.admin_tgid_mutex);
+	if (admin_ctx.admin_tgid) {
+		mc_dev_err("admin connection already open, PID %d\n",
+			   admin_ctx.admin_tgid);
+		ret = -EBUSY;
+	} else {
+		admin_ctx.admin_tgid = current->tgid;
+	}
+	mutex_unlock(&admin_ctx.admin_tgid_mutex);
+	if (ret)
+		return ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Any value will do */
 	g_request.request_id = 42;
@@ -886,13 +1165,23 @@ static int admin_open(struct inode *inode, struct file *file)
 
 	/* Failed to start the TEE, either now or before */
 	if (admin_ctx.last_start_ret) {
+<<<<<<< HEAD
 		atomic_set(&admin_ctx.daemon_counter, 0);
+=======
+		mutex_lock(&admin_ctx.admin_tgid_mutex);
+		admin_ctx.admin_tgid = 0;
+		mutex_unlock(&admin_ctx.admin_tgid_mutex);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return admin_ctx.last_start_ret;
 	}
 
 	/* Requests from driver to daemon */
 	server_state_change(READY);
+<<<<<<< HEAD
 	mc_dev_info("daemon connected\n");
+=======
+	mc_dev_info("admin connection open, PID %d\n", admin_ctx.admin_tgid);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -908,10 +1197,27 @@ static const struct file_operations mc_admin_fops = {
 	.write = admin_write,
 };
 
+<<<<<<< HEAD
 int mc_admin_init(struct cdev *cdev, int (*tee_start_cb)(void),
 		  void (*tee_stop_cb)(void))
 {
 	atomic_set(&admin_ctx.daemon_counter, 0);
+=======
+bool mc_is_admin_tgid(pid_t tgid)
+{
+	bool match;
+
+	mutex_lock(&admin_ctx.admin_tgid_mutex);
+	match = admin_ctx.admin_tgid == tgid;
+	mutex_unlock(&admin_ctx.admin_tgid_mutex);
+	return match;
+}
+
+int mc_admin_init(struct cdev *cdev, int (*tee_start_cb)(void),
+		  void (*tee_stop_cb)(void))
+{
+	mutex_init(&admin_ctx.admin_tgid_mutex);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Requests from driver to daemon */
 	mutex_init(&g_request.mutex);
 	mutex_init(&g_request.states_mutex);

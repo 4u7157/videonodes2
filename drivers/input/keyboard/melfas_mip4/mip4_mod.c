@@ -52,6 +52,7 @@ int mip4_tk_regulator_control(struct mip4_tk_info *info, int enable)
 
 			goto ERROR;
 		}
+<<<<<<< HEAD
 
 		if (info->pinctrl) {
 			ret = pinctrl_select_state(info->pinctrl, info->pins_default);
@@ -67,6 +68,11 @@ int mip4_tk_regulator_control(struct mip4_tk_info *info, int enable)
 			if (ret < 0)
 				input_err(true, dev, "%s: Failed to configure tsp_attn pin\n", __func__);
 		}
+=======
+	} else {
+		if (regulator_is_enabled(regulator_avdd))
+			regulator_disable(regulator_avdd);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	on = enable;
@@ -174,12 +180,19 @@ void mip4_tk_input_event_handler(struct mip4_tk_info *info, u8 sz, u8 *buf)
 		type = (packet[0] & 0x40) >> 6;
 		state = (packet[0] & 0x80) >> 7;
 
+<<<<<<< HEAD
 		if ((id >= 1) && (id <= info->key_num)) {
 			if (type == 0) { /* KEY event */
+=======
+		if (type == 0) {
+			if ((id >= 1) && (id <= info->key_num)) {
+				//Key event				
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				keycode = info->key_code[id - 1];
 
 				input_report_key(info->input_dev, keycode, state);
 #ifdef CONFIG_SAMSUNG_PRODUCT_SHIP				
+<<<<<<< HEAD
 				input_info(true, &info->client->dev, "%s - Key : Event[%d] ver 0x%02x\n",
 							__func__, state, info->fw_version[7]);
 #else
@@ -200,6 +213,52 @@ void mip4_tk_input_event_handler(struct mip4_tk_info *info, u8 sz, u8 *buf)
 			}
 		} else {
 			input_err(true, &info->client->dev, "%s [ERROR] Unknown Key ID [%d]\n", __func__, id);
+=======
+				input_info(true, &info->client->dev, "%s - Key : Event[%d] ver 0x%02x%02x\n",
+							__func__, state, info->fw_version[6], info->fw_version[7]);
+#else
+				input_info(true, &info->client->dev, "%s - Key : Code[%d] Event[%d] Strength[%d] ver 0x%02x%02x\n",
+							__func__, keycode, state, strength, info->fw_version[6], info->fw_version[7]);
+#endif
+#ifdef CONFIG_SEC_FACTORY
+				if(info->irq_checked){
+					info->irq_key_count[id-1]++;
+				}
+#endif			
+			} else {
+				input_err(true, &info->client->dev, "%s [ERROR] Unknown Key ID [%d]\n", __func__, id);
+				continue;
+			}
+		}
+#ifdef CONFIG_TOUCHKEY_GRIP
+		else if (type == 1) { /*Grip event*/
+			input_report_key(info->input_dev, KEY_CP_GRIP, state);
+			info->grip_event = state;
+			input_info(true, &info->client->dev,
+				"%s - Grip : ID[%d] Event[%d] Strength[%d]\n",
+				__func__, id, state, strength);
+#ifdef CONFIG_SEC_FACTORY
+			if(info->abnormal_mode){
+				if(info->grip_event ){
+					if (mip4_tk_get_image(info, MIP_IMG_TYPE_INTENSITY)) {
+						input_err(true,&info->client->dev, "%s [ERROR] mip_get_image\n", __func__);
+						continue;
+					}
+					info->diff = info->image_buf[2];
+
+					if(info->max_diff < info->diff)
+						info->max_diff = info->diff;
+					info->irq_count++;
+				}
+			}
+#endif
+		}
+#endif			
+		else {
+			input_err(true, &info->client->dev,
+				"%s [ERROR] Unknown input type [%d]\n",
+				__func__, type);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			continue;
 		}
 	}
@@ -234,6 +293,19 @@ int mip4_tk_parse_devicetree(struct device *dev, struct mip4_tk_info *info)
 	else
 		info->key_num = val;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TOUCHKEY_GRIP
+	ret = of_property_read_u32(np, MIP_DEV_NAME",grip_ch", &val);
+	if (ret)
+		input_err(true, dev,
+			"%s [ERROR] of_property_read_u32 : grip_ch\n",
+			__func__);
+	else
+		info->grip_ch = val;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Get key code */
 	ret = of_property_read_u32_array(
 				np, MIP_DEV_NAME",keycode",
@@ -364,8 +436,15 @@ void mip4_tk_config_input(struct mip4_tk_info *info)
 	set_bit(EV_SYN, input_dev->evbit);
 	set_bit(EV_KEY, input_dev->evbit);
 
+<<<<<<< HEAD
 	set_bit(EV_LED, input_dev->evbit);
 	set_bit(LED_MISC, input_dev->ledbit);
+=======
+#ifdef MIP_USE_LED	
+	set_bit(EV_LED, input_dev->evbit);
+	set_bit(LED_MISC, input_dev->ledbit);
+#endif	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if(info->key_code_loaded == false){
 		info->key_code[0] = KEY_RECENT;
@@ -376,6 +455,13 @@ void mip4_tk_config_input(struct mip4_tk_info *info)
 	for(i = 0; i < info->key_num; i++)
 		set_bit(info->key_code[i], input_dev->keybit);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TOUCHKEY_GRIP
+	set_bit(KEY_CP_GRIP, input_dev->keybit);
+#endif	
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_info(true, &info->client->dev, "%s [DONE]\n", __func__);
 
 	return;

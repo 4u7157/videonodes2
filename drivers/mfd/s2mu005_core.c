@@ -32,17 +32,27 @@
 #include <linux/mfd/samsung/s2mu005-private.h>
 #include <linux/regulator/machine.h>
 
+<<<<<<< HEAD
 #if defined(CONFIG_OF)
+=======
+//#include <linux/muic/muic.h>
+//#include <linux/muic/s2mu005-muic.h>
+
+#if defined (CONFIG_OF)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
 #endif /* CONFIG_OF */
 
+<<<<<<< HEAD
 #if defined(CONFIG_SEC_CHARGER_S2MU005)
 #include <linux/power/sec_charging_common.h>
 #else
 #include <linux/battery/sec_charging_common.h>
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if 0
 #define I2C_ADDR_PMIC	(0x92 >> 1)	/* Top sys, Haptic */
 #define I2C_ADDR_MUIC	(0x4A >> 1)
@@ -57,10 +67,14 @@ static struct mfd_cell s2mu005_devs[] = {
 #if defined(CONFIG_REGULATOR_S2MU005)
 	{ .name = "s2mu005-safeout", },
 #endif /* CONFIG_REGULATOR_S2MU005 */
+<<<<<<< HEAD
 #if defined(CONFIG_FUELGAUGE_S2MU005) || defined(CONFIG_SEC_FUELGUAGE_S2MU005)
 	{ .name = "s2mu005-fuelgauge", },
 #endif
 #if defined(CONFIG_CHARGER_S2MU005) || defined(CONFIG_SEC_CHARGER_S2MU005)
+=======
+#if defined(CONFIG_CHARGER_S2MU005)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{ .name = "s2mu005-charger", },
 #endif
 #if defined(CONFIG_MOTOR_DRV_S2MU005)
@@ -83,6 +97,7 @@ int s2mu005_read_reg(struct i2c_client *i2c, u8 reg, u8 *dest)
 	ret = i2c_smbus_read_byte_data(i2c, reg);
 	mutex_unlock(&s2mu005->i2c_lock);
 	if (ret < 0) {
+<<<<<<< HEAD
 		pr_info("%s:%s reg(0x%x), ret(%d)\n", MFD_DEV_NAME,
 						 __func__, reg, ret);
 		return ret;
@@ -90,6 +105,13 @@ int s2mu005_read_reg(struct i2c_client *i2c, u8 reg, u8 *dest)
 
 	ret &= 0xff;
 	*dest = ret;
+=======
+		pr_info("%s:%s reg(0x%x), ret(%d)\n", MFD_DEV_NAME, __func__, reg, ret);
+		return ret;
+	}
+
+	*dest = ret & 0xff;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 EXPORT_SYMBOL_GPL(s2mu005_read_reg);
@@ -173,13 +195,21 @@ int s2mu005_update_reg(struct i2c_client *i2c, u8 reg, u8 val, u8 mask)
 {
 	struct s2mu005_dev *s2mu005 = i2c_get_clientdata(i2c);
 	int ret;
+<<<<<<< HEAD
 	u8 old_val, new_val;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mutex_lock(&s2mu005->i2c_lock);
 	ret = i2c_smbus_read_byte_data(i2c, reg);
 	if (ret >= 0) {
+<<<<<<< HEAD
 		old_val = ret & 0xff;
 		new_val = (val & mask) | (old_val & (~mask));
+=======
+		u8 old_val = ret & 0xff;
+		u8 new_val = (val & mask) | (old_val & (~mask));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = i2c_smbus_write_byte_data(i2c, reg, new_val);
 	}
 	mutex_unlock(&s2mu005->i2c_lock);
@@ -188,24 +218,40 @@ int s2mu005_update_reg(struct i2c_client *i2c, u8 reg, u8 val, u8 mask)
 EXPORT_SYMBOL_GPL(s2mu005_update_reg);
 
 #if defined(CONFIG_OF)
+<<<<<<< HEAD
 static int of_s2mu005_dt(struct device *dev,
 				struct s2mu005_platform_data *pdata)
 {
 	struct device_node *np_s2mu005 = dev->of_node;
 
 	if (!np_s2mu005)
+=======
+static int of_s2mu005_dt(struct device *dev, struct s2mu005_platform_data *pdata)
+{
+	struct device_node *np_s2mu005 = dev->of_node;
+
+	if(!np_s2mu005)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EINVAL;
 
 	pdata->irq_gpio = of_get_named_gpio(np_s2mu005, "s2mu005,irq-gpio", 0);
 	pdata->wakeup = of_property_read_bool(np_s2mu005, "s2mu005,wakeup");
 
+<<<<<<< HEAD
 	pr_info("%s: irq-gpio: %u\n", __func__, pdata->irq_gpio);
+=======
+	pr_info("%s: irq-gpio: %u \n", __func__, pdata->irq_gpio);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
 #else
+<<<<<<< HEAD
 static int of_s2mu005_dt(struct device *dev,
 				struct max77834_platform_data *pdata)
+=======
+static int of_s2mu005_dt(struct device *dev, struct max77834_platform_data *pdata)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	return 0;
 }
@@ -225,23 +271,39 @@ static int s2mu005_i2c_probe(struct i2c_client *i2c,
 
 	s2mu005 = kzalloc(sizeof(struct s2mu005_dev), GFP_KERNEL);
 	if (!s2mu005) {
+<<<<<<< HEAD
 		dev_err(&i2c->dev, "%s: Failed to alloc mem for s2mu005\n",
 								__func__);
+=======
+		dev_err(&i2c->dev, "%s: Failed to alloc mem for s2mu005\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -ENOMEM;
 	}
 
 	if (i2c->dev.of_node) {
+<<<<<<< HEAD
 		pdata = devm_kzalloc(&i2c->dev,
 			 sizeof(struct s2mu005_platform_data), GFP_KERNEL);
 		if (!pdata) {
 			dev_err(&i2c->dev, "Failed to allocate memory\n");
+=======
+		pdata = devm_kzalloc(&i2c->dev, sizeof(struct s2mu005_platform_data),
+				GFP_KERNEL);
+		if (!pdata) {
+			dev_err(&i2c->dev, "Failed to allocate memory \n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = -ENOMEM;
 			goto err;
 		}
 
 		ret = of_s2mu005_dt(&i2c->dev, pdata);
+<<<<<<< HEAD
 		if (ret < 0) {
 			dev_err(&i2c->dev, "Failed to get device of_node\n");
+=======
+		if (ret < 0){
+			dev_err(&i2c->dev, "Failed to get device of_node \n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			goto err;
 		}
 
@@ -258,7 +320,11 @@ static int s2mu005_i2c_probe(struct i2c_client *i2c,
 		pdata->irq_base = irq_alloc_descs(-1, 0, S2MU005_IRQ_NR, -1);
 		if (pdata->irq_base < 0) {
 			pr_err("%s:%s irq_alloc_descs Fail! ret(%d)\n",
+<<<<<<< HEAD
 				MFD_DEV_NAME, __func__, pdata->irq_base);
+=======
+					MFD_DEV_NAME, __func__, pdata->irq_base);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = -EINVAL;
 			goto err;
 		} else
@@ -275,11 +341,19 @@ static int s2mu005_i2c_probe(struct i2c_client *i2c,
 	i2c_set_clientdata(i2c, s2mu005);
 
 	s2mu005_read_reg(s2mu005->i2c, S2MU005_REG_REV_ID, &temp);
+<<<<<<< HEAD
 	if (temp < 0)
 		pr_err("[s2mu005 mfd] %s : i2c read error\n", __func__);
 
 	s2mu005->pmic_ver = temp & 0x0F;
 	pr_err("[s2mu005 mfd] %s : ver=0x%x\n", __func__, s2mu005->pmic_ver);
+=======
+	if(temp < 0)
+		pr_err( "[s2mu005 mfd] %s : i2c read error\n", __func__);
+
+	s2mu005->pmic_ver = temp & 0x0F;
+	pr_err( "[s2mu005 mfd] %s : ver=0x%x\n", __func__, s2mu005->pmic_ver);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = s2mu005_irq_init(s2mu005);
 
@@ -324,9 +398,16 @@ MODULE_DEVICE_TABLE(i2c, s2mu005_i2c_id);
 
 #if defined(CONFIG_OF)
 static struct of_device_id s2mu005_i2c_dt_ids[] = {
+<<<<<<< HEAD
 	{.compatible = "samsung,s2mu005mfd"},
 	{ },
 };
+=======
+	{ .compatible = "samsung,s2mu005mfd" },
+	{ },
+};
+//MODULE_DEVICE_TABLE(of, s2mu005_i2c_dt_ids);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* CONFIG_OF */
 
 #if defined(CONFIG_PM)

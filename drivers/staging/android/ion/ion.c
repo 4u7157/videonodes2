@@ -411,6 +411,7 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 	struct sg_table *table;
 	struct scatterlist *sg;
 	int i, ret;
+	long nr_alloc_cur, nr_alloc_peak;
 
 	buffer = kzalloc(sizeof(struct ion_buffer), GFP_KERNEL);
 	if (!buffer)
@@ -444,6 +445,7 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 		ret = -EINVAL;
 		goto err1;
 	}
+
 	buffer->sg_table = table;
 	if (ion_buffer_fault_user_mappings(buffer)) {
 		int num_pages = PAGE_ALIGN(buffer->size) / PAGE_SIZE;
@@ -482,6 +484,10 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 	mutex_lock(&dev->buffer_lock);
 	ion_buffer_add(dev, buffer);
 	mutex_unlock(&dev->buffer_lock);
+	nr_alloc_cur = atomic_long_add_return(len, &heap->total_allocated);
+	nr_alloc_peak = atomic_long_read(&heap->total_allocated_peak);
+	if (nr_alloc_cur > nr_alloc_peak)
+		atomic_long_set(&heap->total_allocated_peak, nr_alloc_cur);
 	return buffer;
 
 err:
@@ -511,6 +517,10 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
 		kfree(iovm_map);
 	}
 
+<<<<<<< HEAD
+=======
+	atomic_long_sub(buffer->size, &buffer->heap->total_allocated);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	buffer->heap->ops->unmap_dma(buffer->heap, buffer);
 	buffer->heap->ops->free(buffer);
 	if (buffer->pages)
@@ -552,6 +562,9 @@ static int ion_buffer_put(struct ion_buffer *buffer)
 static void ion_buffer_add_to_handle(struct ion_buffer *buffer)
 {
 	mutex_lock(&buffer->lock);
+	if (buffer->handle_count == 0)
+		atomic_long_add(buffer->size, &buffer->heap->total_handles);
+	
 	buffer->handle_count++;
 	mutex_unlock(&buffer->lock);
 }
@@ -577,6 +590,7 @@ static void ion_buffer_remove_from_handle(struct ion_buffer *buffer)
 		get_task_comm(buffer->task_comm, task);
 		buffer->pid = task_pid_nr(task);
 	}
+	atomic_long_sub(buffer->size, &buffer->heap->total_handles);
 	mutex_unlock(&buffer->lock);
 }
 
@@ -669,6 +683,10 @@ int ion_handle_put(struct ion_handle *handle)
 		mutex_unlock(&handle->client->lock);
 		return -EINVAL;
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = ion_handle_put_nolock(handle);
 	mutex_unlock(&handle->client->lock);
 
@@ -1699,6 +1717,7 @@ static int ion_sync_for_device(struct ion_client *client, int fd)
 		dma_buf_put(dmabuf);
 		return 0;
 	}
+<<<<<<< HEAD
 
 	trace_ion_sync_start(_RET_IP_, buffer->dev->dev.this_device,
 				DMA_BIDIRECTIONAL, buffer->size,
@@ -1731,6 +1750,40 @@ static int ion_sync_for_device(struct ion_client *client, int fd)
 	return 0;
 }
 
+=======
+
+	trace_ion_sync_start(_RET_IP_, buffer->dev->dev.this_device,
+				DMA_BIDIRECTIONAL, buffer->size,
+				buffer->vaddr, 0, false);
+
+	if (IS_ENABLED(CONFIG_HIGHMEM)) {
+		ion_device_sync(buffer->dev, buffer->sg_table->sgl,
+				buffer->sg_table->nents, DMA_BIDIRECTIONAL,
+				ion_buffer_flush, false);
+	} else {
+		struct scatterlist *sg, *sgl;
+		int nelems;
+		void *vaddr;
+		int i = 0;
+
+		sgl = buffer->sg_table->sgl;
+		nelems = buffer->sg_table->nents;
+
+		for_each_sg(sgl, sg, nelems, i) {
+			vaddr = phys_to_virt(sg_phys(sg));
+			__dma_flush_range(vaddr, vaddr + sg->length);
+		}
+	}
+
+	trace_ion_sync_end(_RET_IP_, buffer->dev->dev.this_device,
+				DMA_BIDIRECTIONAL, buffer->size,
+				buffer->vaddr, 0, false);
+
+	dma_buf_put(dmabuf);
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int ion_sync_partial_for_device(struct ion_client *client, int fd,
 					off_t offset, size_t len)
 {
@@ -2133,6 +2186,8 @@ static int ion_debug_heap_show(struct seq_file *s, void *unused)
 	seq_printf(s, "%16.s %16zu\n", "total orphaned",
 		   total_orphaned_size);
 	seq_printf(s, "%16.s %16zu\n", "total ", total_size);
+	seq_printf(s, "%16.s %16lu\n", "peak allocated",
+		   atomic_long_read(&heap->total_allocated_peak));
 	if (heap->flags & ION_HEAP_FLAG_DEFER_FREE)
 		seq_printf(s, "%16.s %16zu\n", "deferred free",
 				heap->free_list_size);
@@ -2440,6 +2495,7 @@ static void ion_buffer_dump_tasks(struct ion_buffer *buffer, char *str)
 	}
 }
 
+<<<<<<< HEAD
 static int ion_oomdebug_notify(struct notifier_block *self,
 			  unsigned long dummy, void *parm)
 {
@@ -2488,6 +2544,8 @@ static struct notifier_block ion_oom_nb = {
 	.notifier_call = ion_oom_notify,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int ion_debug_buffer_show(struct seq_file *s, void *unused)
 {
 	struct ion_device *dev = s->private;
@@ -2740,11 +2798,14 @@ debugfs_done:
 	/* backup of ion device: assumes there is only one ion device */
 	g_idev = idev;
 
+<<<<<<< HEAD
 #ifdef CONFIG_ION_EXYNOS_STAT_LOG
 	/* register out-of-memory notifier */
 	register_oom_notifier(&ion_oom_nb);
 	register_oomdebug_notifier(&ion_oomdebug_nb);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return idev;
 }
 

@@ -93,9 +93,29 @@ config DECON_USE_BOOTLOADER_FB
         depends on EXYNOS7870_DISPLAY_VIDEO_MODE
         default n
 
+<<<<<<< HEAD
+=======
+config EXYNOS_SUPPORT_FB_HANDOVER
+	bool "Samsung Exynos Framebuffer handover support"
+        depends on EXYNOS7870_DISPLAY_VIDEO_MODE
+        default n
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config DECON_EVENT_LOG
 	bool "Display sub-system event logger (DECON/DSIM)"
         depends on DEBUG_INFO && EXYNOS_DECON_7870
         default y
 
+<<<<<<< HEAD
+=======
+config DECON_COLORMAP_PROTECT_SWITCH
+	bool "DECON use colormap to switch secure"
+        depends on EXYNOS_DECON_7870 && EXYNOS7870_DISPLAY_VIDEO_MODE
+        default n
+
+config EXYNOS_MIPI_DSI_ENABLE_EARLY
+	bool "Samsung Exynos MIPI-DSI Driver ENABLE EARLY"
+	default n
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 source "drivers/video/fbdev/exynos/decon_7870/panels/Kconfig"

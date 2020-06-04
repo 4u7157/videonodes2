@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * s2mu005_fuelgauge.h - Header of S2MU005 Fuel Gauge
  *
  * Copyright (C) 2017 Samsung Electronics, Inc.
@@ -7,15 +8,28 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+=======
+ * s2mu005_fuelgauge.h
+ * Samsung S2MU005 Fuel Gauge Header
+ *
+ * Copyright (C) 2015 Samsung Electronics, Inc.
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
+<<<<<<< HEAD
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #ifndef __S2MU005_FUELGAUGE_H
@@ -53,6 +67,15 @@ enum {
 	END_MODE,
 };
 
+<<<<<<< HEAD
+=======
+enum s2mu005_vbatl_mode {
+	VBATL_MODE_NORMAL = 0,
+	VBATL_MODE_SW_VALERT,
+	VBATL_MODE_SW_RECOVERY,
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct sec_fg_info {
 	/* test print count */
 	int pr_cnt;
@@ -87,6 +110,10 @@ struct sec_fg_info {
 	unsigned long fullcap_check_interval;
 	int full_check_flag;
 	bool is_first_check;
+<<<<<<< HEAD
+=======
+	int data_ver;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
@@ -106,6 +133,10 @@ struct s2mu005_platform_data {
 	int capacity_max;
 	int capacity_max_margin;
 	int capacity_min;
+<<<<<<< HEAD
+=======
+	int capacity_full;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int capacity_calculation_type;
 	int evt2_val;
 	int fuel_alert_soc;
@@ -114,8 +145,11 @@ struct s2mu005_platform_data {
 	int fg_log_enable;
 	int fuel_alert_vol;
 
+<<<<<<< HEAD
 	unsigned int capacity_full;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	char *fuelgauge_name;
 
 	bool repeated_fuelalert;
@@ -129,21 +163,37 @@ struct s2mu005_fuelgauge_data {
 	struct i2c_client       *pmic;
 	struct mutex            fuelgauge_mutex;
 	struct s2mu005_platform_data *pdata;
+<<<<<<< HEAD
 	struct power_supply	*psy_fg;
+=======
+	struct power_supply	psy_fg;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* struct delayed_work isr_work; */
 
 	int cable_type;
 	bool is_charging;
 	int mode;
+<<<<<<< HEAD
 	u8 revision;
 
 	/* HW-dedicated fuel guage info structure
 	 * used in individual fuel gauge file only
+=======
+	int revision;
+	int change_step;
+
+	/* HW-dedicated fuelgauge info structure
+	 * used in individual fuelgauge file only
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	 * (ex. dummy_fuelgauge.c)
 	 */
 	struct sec_fg_info      info;
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
+<<<<<<< HEAD
 	fg_age_data_info_t*	age_data_info;
+=======
+	fg_age_data_info_t	*age_data_info;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int fg_num_age_step;
 	int fg_age_step;
 	int age_reset_status;
@@ -154,17 +204,33 @@ struct s2mu005_fuelgauge_data {
 	unsigned int capacity_old;      /* only for atomic calculation */
 	unsigned int capacity_max;      /* only for dynamic calculation */
 	unsigned int standard_capacity;
+<<<<<<< HEAD
+=======
+	int raw_capacity;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	bool initial_update_of_soc;
 	bool sleep_initial_update_of_soc;
 	struct mutex fg_lock;
+<<<<<<< HEAD
+=======
+	bool wa_flag;	/*Prevent WA_0_issue_at_init1 overlap*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct delayed_work isr_work;
 
 	/* register programming */
 	int reg_addr;
 	u8 reg_data[2];
+<<<<<<< HEAD
 	u8 reg_OTP_53;
 	u8 reg_OTP_52;
+=======
+
+	unsigned int vbatl_mode;
+	int sw_vbat_l_recovery_vol;
+	int low_temp_limit;
+	int temperature;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	unsigned int pre_soc;
 	int fg_irq;
@@ -174,6 +240,9 @@ struct s2mu005_fuelgauge_data {
 	bool cc_on;
 	u16 coffset_old;
 	bool coffset_flag;
+<<<<<<< HEAD
 	bool probe_done;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 #endif /* __S2MU005_FUELGAUGE_H */

@@ -119,7 +119,11 @@ static inline void circ_write(void *dst, void *src, u32 qsize, u32 in, u32 len)
 {
 	u32 space;
 
+<<<<<<< HEAD
 	if ((in + len) <= qsize) {
+=======
+	if ((in + len) < qsize) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/*       (in) ----------- (out)   */
 		/* 00 7e      -----------   7f 00 */
 		memcpy((dst + in), src, len);
@@ -129,10 +133,18 @@ static inline void circ_write(void *dst, void *src, u32 qsize, u32 in, u32 len)
 
 		/* 1) space start (in) ~ buffer end */
 		space = qsize - in;
+<<<<<<< HEAD
 		memcpy((dst + in), src, space);
 
 		/* 2) buffer start ~ data end */
 		memcpy(dst, (src + space), (len - space));
+=======
+		memcpy((dst + in), src, ((len > space) ? space : len));
+
+		/* 2) buffer start ~ data end */
+		if (len > space)
+			memcpy(dst, (src + space), (len - space));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 

@@ -1173,6 +1173,7 @@ err_alloc_inbuf:
 
 static int alg_test_sha256(void)
 {
+<<<<<<< HEAD
 	int i;
 	unsigned char buf[SHA256_DIGEST_LENGTH];
 
@@ -1193,18 +1194,45 @@ static int alg_test_sha256(void)
 	}
 
 	return 0;
+=======
+        int i;
+        unsigned char buf[SHA256_DIGEST_LENGTH];
+
+	for (i = 0; i < SHA256_TEST_VECTORS; i++) {
+		if (0 != sha256(sha256_tv_template[i].plaintext, sha256_tv_template[i].psize, buf))
+			return -EINVAL;
+
+                if (memcmp(buf, sha256_tv_template[i].digest, SHA256_DIGEST_LENGTH)) {
+                        print_hex_dump_bytes("FIPS SHA256 REQ: ", DUMP_PREFIX_NONE,
+                                                        sha256_tv_template[i].digest,
+                                                        SHA256_DIGEST_LENGTH);
+                        print_hex_dump_bytes("FIPS SHA256 RES: ", DUMP_PREFIX_NONE,
+                                                        buf,
+                                                        SHA256_DIGEST_LENGTH);
+                        return -EINVAL;
+                }
+        }
+
+        return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int alg_test_hmac_sha256(void)
 {
+<<<<<<< HEAD
 	int i;
 	unsigned char buf[SHA256_DIGEST_LENGTH];
+=======
+        int i;
+        unsigned char buf[SHA256_DIGEST_LENGTH];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	for (i = 0; i < HMAC_SHA256_TEST_VECTORS; i++) {
 		if (0 != hmac_sha256(hmac_sha256_tv_template[i].key,
 			hmac_sha256_tv_template[i].ksize,
 			hmac_sha256_tv_template[i].plaintext,
 			hmac_sha256_tv_template[i].psize, buf))
+<<<<<<< HEAD
 		return -EINVAL;
 
 		if (memcmp(buf, hmac_sha256_tv_template[i].digest, SHA256_DIGEST_LENGTH)) {
@@ -1220,6 +1248,22 @@ static int alg_test_hmac_sha256(void)
 	}
 
 	return 0;
+=======
+			return -EINVAL;
+
+                if (memcmp(buf, hmac_sha256_tv_template[i].digest, SHA256_DIGEST_LENGTH)) {
+                        print_hex_dump_bytes("FIPS HMAC-SHA256 REQ: ", DUMP_PREFIX_NONE,
+                                                        hmac_sha256_tv_template[i].digest,
+                                                        SHA256_DIGEST_LENGTH);
+                        print_hex_dump_bytes("FIPS HMAC-SHA256 RES: ", DUMP_PREFIX_NONE,
+                                                        buf,
+                                                        SHA256_DIGEST_LENGTH);
+                        return -EINVAL;
+                }
+        }
+
+        return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int do_fips_fmp_selftest(struct device *dev)

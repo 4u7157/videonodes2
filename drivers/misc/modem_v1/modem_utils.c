@@ -39,7 +39,10 @@
 #include <linux/gpio.h>
 #include <linux/delay.h>
 #include <linux/wakelock.h>
+<<<<<<< HEAD
 #include <linux/exynos-ss.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "modem_prj.h"
 #include "modem_utils.h"
@@ -620,14 +623,22 @@ void netif_tx_flowctl(struct modem_shared *msd, bool tx_stop)
 	spin_lock(&msd->active_list_lock);
 	list_for_each_entry(iod, &msd->activated_ndev_list, node_ndev) {
 		if (tx_stop) {
+<<<<<<< HEAD
 			netif_stop_queue(iod->ndev);
+=======
+			netif_stop_subqueue(iod->ndev, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef DEBUG_MODEM_IF_FLOW_CTRL
 			mif_info("tx_stop:%s, iod->ndev->name:%s\n",
 				tx_stop ? "suspend" : "resume",
 				iod->ndev->name);
 #endif
 		} else {
+<<<<<<< HEAD
 			netif_wake_queue(iod->ndev);
+=======
+			netif_wake_subqueue(iod->ndev, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef DEBUG_MODEM_IF_FLOW_CTRL
 			mif_info("tx_stop:%s, iod->ndev->name:%s\n",
 				tx_stop ? "suspend" : "resume",

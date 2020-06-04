@@ -197,6 +197,10 @@ struct sysmmu_drvdata {
 	spinlock_t lock;
 	struct sysmmu_prefbuf pbufs[MAX_NUM_PBUF];
 	short qos;
+<<<<<<< HEAD
+=======
+	short num_pbufs;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int runtime_active;
 	enum sysmmu_property prop; /* mach/sysmmu.h */
 #ifdef CONFIG_EXYNOS_IOMMU_EVENT_LOG
@@ -204,6 +208,7 @@ struct sysmmu_drvdata {
 #endif
 	struct atomic_notifier_head fault_notifiers;
 	unsigned char event_cnt;
+<<<<<<< HEAD
 	struct _tlbprops {
 		u32 axid;
 		u32 attr;
@@ -212,6 +217,8 @@ struct sysmmu_drvdata {
 	u32 hw_ver;
 	u32 securebase;
 	bool is_suspended;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct exynos_iommu_domain {
@@ -342,7 +349,11 @@ static inline bool set_sysmmu_inactive(struct sysmmu_drvdata *data)
 
 static inline bool is_sysmmu_active(struct sysmmu_drvdata *data)
 {
+<<<<<<< HEAD
 	return !data->is_suspended && data->activations > 0;
+=======
+	return data->activations > 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static inline bool is_sysmmu_really_enabled(struct sysmmu_drvdata *data)
@@ -353,10 +364,16 @@ static inline bool is_sysmmu_really_enabled(struct sysmmu_drvdata *data)
 #define MMU_MAJ_VER(val)	((val) >> 11)
 #define MMU_MIN_VER(val)	((val >> 4) & 0x7F)
 #define MMU_REV_VER(val)	((val) & 0xF)
+<<<<<<< HEAD
 #define MMU_RAW_VER(reg)	(((reg) >> 17) & 0x7FFF) /* upper 15 bits */
 
 #define MAKE_MMU_VER(maj, min)	((((maj) & 0xF) << 11) | \
 					(((min) & 0x7F) << 4))
+=======
+#define MMU_RAW_VER(reg)	(((reg) >> 17) & ((1 << 15) - 1)) /* 11 bits */
+
+#define MAKE_MMU_VER(maj, min)	((((maj) & 0xF) << 7) | ((min) & 0x7F))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static inline unsigned int __raw_sysmmu_version(void __iomem *sfrbase)
 {

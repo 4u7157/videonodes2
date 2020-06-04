@@ -48,7 +48,11 @@ static ssize_t migrate_os_store(struct kobject *kobj,
 	if (buf[0] == 'L') {
 		if ((buf[1] == 0xA) || (buf[1] == 0x0)) {	/* if LF(Line Feed, 0xA) or NULL(0x0) */
 			new_core = DEFAULT_LITTLE_CORE;
+<<<<<<< HEAD
 		} else if ((core_num >= 0) && (core_num < 4)) {	/* From core 0 to core 3 */
+=======
+		} else if (core_num < 4) {	/* From core 0 to core 3 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			new_core = core_num;
 		} else {
 			pr_err("[LITTLE] Enter correct core number(0~3)\n");
@@ -57,13 +61,24 @@ static ssize_t migrate_os_store(struct kobject *kobj,
 	} else if (buf[0] == 'b') {
 		if ((buf[1] == 0xA) || (buf[1] == 0x0)) {	/* if LF(Line Feed, 0xA) or NULL(0x0) */
 			new_core = DEFAULT_BIG_CORE;
+<<<<<<< HEAD
 		} else if ((core_num >= 0) && (core_num < 4)) {	/* From core 0 to core 3 */
+=======
+		} else if (core_num < 4) {	/* From core 0 to core 3 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			new_core = core_num + 4;
 		} else {
 			pr_err("[big] Enter correct core number(0~3)\n");
 			return count;
 		}
 	}
+<<<<<<< HEAD
+=======
+	
+	if(new_core == 4)
+		new_core = 3;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_info("Secure OS will be migrated into core [%d]\n", new_core);
 
 	if (mutex_lock_interruptible(&sec_os_ctrl_lock)) {

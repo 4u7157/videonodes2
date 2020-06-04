@@ -35,7 +35,16 @@
 
 #define DM_MSG_PREFIX "crypt"
 #define FMP_KEY_STORAGE_OFFSET 0x0FC0
+<<<<<<< HEAD
 #define EXYNOS7570_PA_SRAM_NS		0x02042000
+=======
+#ifdef CONFIG_SOC_EXYNOS8890_EVT1
+#define EXYNOS8890_PA_SRAM_NS		0x0206F000
+#else
+#define EXYNOS8890_PA_SRAM_NS		0x0207A000
+#endif
+#define EXYNOS7870_PA_SRAM_NS		0x0206B000
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define FMP_SYSRAM_NS(soc)	EXYNOS##soc##_PA_SRAM_NS
 
 volatile unsigned int disk_key_flag;
@@ -1203,11 +1212,31 @@ static void kcryptd_io_read_work(struct work_struct *work)
 	crypt_dec_pending(io);
 }
 
+<<<<<<< HEAD
+=======
+static void kcryptd_fmp_io(struct work_struct *work)
+{
+	struct dm_crypt_io *io = container_of(work, struct dm_crypt_io, work);
+
+	crypt_inc_pending(io);
+	if (kcryptd_io_rw(io, GFP_NOIO))
+		io->error = -ENOMEM;
+	crypt_dec_pending(io);
+}	
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void kcryptd_queue_read(struct dm_crypt_io *io)
 {
 	struct crypt_config *cc = io->cc;
+	if (cc->hw_fmp == 1)
+		INIT_WORK(&io->work, kcryptd_fmp_io);
+	else
+		INIT_WORK(&io->work, kcryptd_io_read_work);
 
+<<<<<<< HEAD
 	INIT_WORK(&io->work, kcryptd_io_read_work);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	queue_work(cc->io_queue, &io->work);
 }
 
@@ -1506,7 +1535,18 @@ static int crypt_setkey_allcpus(struct crypt_config *cc)
 		uint32_t base;
 		volatile u8 __iomem *key_storage;
 
+<<<<<<< HEAD
 		base = FMP_SYSRAM_NS(7570);
+=======
+#if defined(CONFIG_SOC_EXYNOS8890)
+		base = FMP_SYSRAM_NS(8890);
+#elif defined(CONFIG_SOC_EXYNOS7870)
+		base = FMP_SYSRAM_NS(7870);
+#else
+		printk("Error for SoC NS base\n");
+		return -1;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		key_storage = ioremap(base + FMP_KEY_STORAGE_OFFSET, SZ_4K);
 		if (!key_storage) {
 			pr_err("dm-crypt: Failure of ioremap for FMP key\n");
@@ -1629,6 +1669,11 @@ static void crypt_dtr(struct dm_target *ti)
 
 #if defined(CONFIG_FIPS_FMP)
 	if (cc->hw_fmp) {
+<<<<<<< HEAD
+=======
+		int r;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		r = fmp_clear_disk_key();
 		if (r)
 			pr_err("dm-crypt: Fail to clear FMP disk key. r = 0x%x\n", r);
@@ -1710,8 +1755,13 @@ static int crypt_ctr_cipher(struct dm_target *ti,
 	}
 
 	if ((strcmp(chainmode, "xts") == 0) &&
+<<<<<<< HEAD
 		(strcmp(cipher, "aes") == 0) &&
 		((strcmp(ivmode, "fmp") == 0) || (strcmp(ivmode, "disk") == 0))) {
+=======
+			(strcmp(cipher, "aes") == 0) &&
+			((strcmp(ivmode, "fmp") == 0) || (strcmp(ivmode, "disk") == 0))) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_info("%s: H/W FMP disk encryption\n", __func__);
 		cc->hw_fmp = 1;
 
@@ -1875,6 +1925,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 			iv_size_padding = crypto_ablkcipher_alignmask(any_tfm(cc));
 		}
 
+<<<<<<< HEAD
 		ret = -ENOMEM;
 		cc->req_pool = mempool_create_kmalloc_pool(MIN_IOS, cc->dmreq_start +
 				sizeof(struct dm_crypt_request) + iv_size_padding + cc->iv_size);
@@ -1889,6 +1940,23 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 			      ARCH_KMALLOC_MINALIGN);
 
 		cc->page_pool = mempool_create_page_pool(BIO_MAX_PAGES, 0);
+=======
+	ret = -ENOMEM;
+	cc->req_pool = mempool_create_kmalloc_pool(MIN_IOS, cc->dmreq_start +
+			sizeof(struct dm_crypt_request) + iv_size_padding + cc->iv_size);
+	if (!cc->req_pool) {
+		ti->error = "Cannot allocate crypt request mempool";
+		goto bad;
+	}
+
+	cc->per_bio_data_size = ti->per_bio_data_size =
+		ALIGN(sizeof(struct dm_crypt_io) + cc->dmreq_start +
+				sizeof(struct dm_crypt_request) + iv_size_padding + cc->iv_size,
+				ARCH_KMALLOC_MINALIGN);
+
+		cc->page_pool = mempool_create_page_pool(BIO_MAX_PAGES, 0);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!cc->page_pool) {
 			ti->error = "Cannot allocate page mempool";
 			goto bad;
@@ -1902,6 +1970,10 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 	}
 
 	if (cc->hw_fmp == 0) {
+<<<<<<< HEAD
+=======
+		mutex_init(&cc->bio_alloc_lock);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EINVAL;
 		memset(tmp, 0, sizeof(tmp));
 		snprintf(tmp, sizeof(tmp) - 1, "%s", argv[2]);
@@ -1957,14 +2029,29 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
 			goto bad;
 		}
 	} else {
+<<<<<<< HEAD
 		cc->io_queue = alloc_workqueue("kcryptd_io", WQ_MEM_RECLAIM, 1);
+=======
+		cc->io_queue = alloc_workqueue("kcryptd_io",
+				WQ_HIGHPRI |
+		                WQ_MEM_RECLAIM,
+		                1);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!cc->io_queue) {
 			ti->error = "Couldn't create kcryptd io queue";
 			goto bad;
 		}
 
 		cc->crypt_queue = alloc_workqueue("kcryptd",
+<<<<<<< HEAD
 						  WQ_CPU_INTENSIVE | WQ_MEM_RECLAIM, 1);
+=======
+				WQ_HIGHPRI |
+		                WQ_MEM_RECLAIM |
+                                WQ_UNBOUND, num_online_cpus());
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!cc->crypt_queue) {
 			ti->error = "Couldn't create kcryptd queue";
 			goto bad;

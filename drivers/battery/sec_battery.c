@@ -14,8 +14,17 @@
 #include <linux/ccic/ccic_notifier.h>
 #endif /* CONFIG_CCIC_NOTIFIER */
 
+<<<<<<< HEAD
 bool sleep_mode = false;
 
+=======
+#define SEC_INPUT_VOLTAGE_5V	5
+#define SEC_INPUT_VOLTAGE_9V	9
+
+bool sleep_mode = false;
+
+bool slate_mode_state;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct device_attribute sec_battery_attrs[] = {
 	SEC_BATTERY_ATTR(batt_reset_soc),
 	SEC_BATTERY_ATTR(batt_read_raw_soc),
@@ -96,6 +105,12 @@ static struct device_attribute sec_battery_attrs[] = {
 	SEC_BATTERY_ATTR(batt_discharging_ntc_adc),
 	SEC_BATTERY_ATTR(batt_self_discharging_control),
 #endif
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	SEC_BATTERY_ATTR(batt_sw_self_discharging),
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	SEC_BATTERY_ATTR(batt_inbat_wireless_cs100),
 	SEC_BATTERY_ATTR(hmt_ta_connected),
 	SEC_BATTERY_ATTR(hmt_ta_charge),
@@ -146,11 +161,15 @@ static struct device_attribute sec_battery_attrs[] = {
 	SEC_BATTERY_ATTR(factory_mode_relieve),
 	SEC_BATTERY_ATTR(factory_mode_bypass),
 	SEC_BATTERY_ATTR(batt_wdt_control),
+<<<<<<< HEAD
 #if defined(CONFIG_BATTERY_SWELLING)
 	SEC_BATTERY_ATTR(batt_swelling_control),
 #endif
 	SEC_BATTERY_ATTR(safety_timer_set),
 	SEC_BATTERY_ATTR(safety_timer_info),
+=======
+	SEC_BATTERY_ATTR(safety_timer_set),
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static enum power_supply_property sec_battery_props[] = {
@@ -224,7 +243,11 @@ char *sec_bat_health_str[] = {
 	"Cold",
 	"Cool",
 	"WatchdogTimerExpire",
+<<<<<<< HEAD
 	"SafetyTimerExpire",
+=======
+	"SafetyTimerExpired",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	"UnderVoltage",
 	"OverheatLimit"
 };
@@ -334,11 +357,16 @@ static void sec_bat_get_charging_current_by_siop(struct sec_battery_info *batter
 				*charging_current = battery->pdata->siop_charging_limit_current;
 		}
 	} else if (battery->siop_level < 100) {
+<<<<<<< HEAD
 		/* screen off in call : siop level 5 */
 		int temp_siop_level = (battery->siop_level == 5) ?
 			battery->pdata->call_event_siop_level : battery->siop_level;
 		/* decrease the charging current according to siop level */
 		*charging_current = *charging_current * temp_siop_level / 100;
+=======
+		/* decrease the charging current according to siop level */
+		*charging_current = *charging_current * battery->siop_level / 100;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		/* do forced set charging current */
 		if (*charging_current > 0 && *charging_current < usb_charging_current)
@@ -380,8 +408,12 @@ static int sec_bat_set_charging_current(struct sec_battery_info *battery)
 	    topoff_current = battery->pdata->charging_current[battery->cable_type].full_check_current_1st;
 
 	mutex_lock(&battery->iolock);
+<<<<<<< HEAD
 	if (battery->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
 		battery->cable_type == POWER_SUPPLY_TYPE_WATER) {
+=======
+	if (battery->cable_type == POWER_SUPPLY_TYPE_BATTERY) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		battery->wireless_input_current =
 			battery->pdata->charging_current[POWER_SUPPLY_TYPE_BATTERY].input_current_limit;
 	} else {
@@ -437,8 +469,13 @@ static int sec_bat_set_charging_current(struct sec_battery_info *battery)
 			topoff_current = (topoff_current > battery->pdata->swelling_high_temp_topoff) ?
 				battery->pdata->swelling_high_temp_topoff : topoff_current;
 		} else if (battery->current_event & SEC_BAT_CURRENT_EVENT_LOW_TEMP) {
+<<<<<<< HEAD
 			charging_current = (charging_current > battery->pdata->swelling_low_temp_current) ?
 				battery->pdata->swelling_low_temp_current : charging_current;
+=======
+				charging_current = (charging_current > battery->pdata->swelling_low_temp_current) ?
+					battery->pdata->swelling_low_temp_current : charging_current;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -470,7 +507,17 @@ static int sec_bat_set_charging_current(struct sec_battery_info *battery)
 			battery->wired_input_current = input_current;
 		}
 		/* set charging current */
+<<<<<<< HEAD
 		if (battery->charging_current != charging_current) {
+=======
+#ifdef CONFIG_CHARGER_S2MU005
+		psy_do_property(battery->pdata->charger_name, get,
+		POWER_SUPPLY_PROP_CURRENT_NOW, value);
+		if (value.intval != ((charging_current / 50) * 50) || battery->charging_current != charging_current) {
+#else
+		if (battery->charging_current != charging_current) {
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			value.intval = charging_current;
 			psy_do_property(battery->pdata->charger_name, set,
 				POWER_SUPPLY_PROP_CURRENT_NOW, value);
@@ -497,7 +544,12 @@ static int sec_bat_set_charge(
 	ktime_t current_time;
 	struct timespec ts;
 
+<<<<<<< HEAD
 	if (battery->cable_type == POWER_SUPPLY_TYPE_HMT_CONNECTED)
+=======
+	if ((battery->cable_type == POWER_SUPPLY_TYPE_HMT_CONNECTED) ||
+		(battery->cable_type == POWER_SUPPLY_TYPE_OTG))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 0;
 
 	val.intval = battery->status;
@@ -542,8 +594,11 @@ static int sec_bat_set_charge(
 		battery->charging_fullcharged_time = 0;
 		battery->full_check_cnt = 0;
 		battery->charging_block = true;
+<<<<<<< HEAD
 		battery->sleep_start_time = 0;
 		battery->sleep_passed_time = 0;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_STEP_CHARGING)
 		sec_bat_reset_step_charging(battery);
 #endif
@@ -561,6 +616,10 @@ static int sec_bat_set_charge(
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#if 0 //temp block
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void sec_bat_set_misc_event(struct sec_battery_info *battery,
 	const int misc_event_type, bool do_clear) {
 
@@ -572,15 +631,26 @@ static void sec_bat_set_misc_event(struct sec_battery_info *battery,
 	} else {
 		battery->misc_event |= misc_event_type;
 	}
+<<<<<<< HEAD
+=======
+	mutex_unlock(&battery->misclock);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (battery->prev_misc_event != battery->misc_event) {
 		cancel_delayed_work(&battery->misc_event_work);
 		wake_lock(&battery->misc_event_wake_lock);
 		queue_delayed_work_on(0, battery->monitor_wqueue,
+<<<<<<< HEAD
 			&battery->misc_event_work, msecs_to_jiffies(500));
 	}
 	mutex_unlock(&battery->misclock);
 }
+=======
+			&battery->misc_event_work, 0);
+	}
+}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int sec_bat_get_adc_data(struct sec_battery_info *battery,
 			int adc_ch, int count)
@@ -807,15 +877,23 @@ static bool sec_bat_check(struct sec_battery_info *battery)
 
 	switch (battery->pdata->battery_check_type) {
 	case SEC_BATTERY_CHECK_ADC:
+<<<<<<< HEAD
 		if(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
 				battery->cable_type == POWER_SUPPLY_TYPE_WATER)
+=======
+		if(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = battery->present;
 		else
 			ret = sec_bat_check_vf_adc(battery);
 		break;
 	case SEC_BATTERY_CHECK_INT:
+<<<<<<< HEAD
 		if(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
 				battery->cable_type == POWER_SUPPLY_TYPE_WATER)
+=======
+		if(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = battery->present;
 		else {
 			msleep(50);
@@ -824,8 +902,12 @@ static bool sec_bat_check(struct sec_battery_info *battery)
 		}
 		break;
 	case SEC_BATTERY_CHECK_CALLBACK:
+<<<<<<< HEAD
 		if(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
 				battery->cable_type == POWER_SUPPLY_TYPE_WATER) {
+=======
+		if(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = battery->present;
 		} else {
 			if (battery->pdata->check_battery_callback)
@@ -900,6 +982,14 @@ static void sec_bat_set_charging_status(struct sec_battery_info *battery,
 		int status) {
 	union power_supply_propval value;
 	switch (status) {
+<<<<<<< HEAD
+=======
+		case POWER_SUPPLY_STATUS_CHARGING:
+		if (battery->siop_level != 100)
+			battery->stop_timer = true;
+		break;
+		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		case POWER_SUPPLY_STATUS_NOT_CHARGING:
 		case POWER_SUPPLY_STATUS_DISCHARGING:
 			if (battery->status == POWER_SUPPLY_STATUS_FULL ||
@@ -955,8 +1045,11 @@ static bool sec_bat_battery_cable_check(struct sec_battery_info *battery)
 				POWER_SUPPLY_STATUS_DISCHARGING) {
 				sec_bat_set_charging_status(battery,
 						POWER_SUPPLY_STATUS_NOT_CHARGING);
+<<<<<<< HEAD
 				if(battery->siop_level != 100)
 					battery->stop_timer = true ;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_BUCK_OFF);
 			}
 
@@ -1036,8 +1129,11 @@ static bool sec_bat_ovp_uvlo_result(
 			dev_info(battery->dev, "%s: is_recharging : %d\n", __func__, battery->is_recharging);
 			sec_bat_set_charging_status(battery,
 					POWER_SUPPLY_STATUS_CHARGING);
+<<<<<<< HEAD
 			if (battery->siop_level != 100)
 				battery->stop_timer = true;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			battery->charging_mode = SEC_BATTERY_CHARGING_1ST;
 #if defined(CONFIG_BATTERY_SWELLING)
 			if (!battery->swelling_mode)
@@ -1113,7 +1209,10 @@ static bool sec_bat_ovp_uvlo(struct sec_battery_info *battery)
 
 static bool sec_bat_check_recharge(struct sec_battery_info *battery)
 {
+<<<<<<< HEAD
 	int recharging_voltage;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_BATTERY_SWELLING)
 	if (battery->swelling_mode == SWELLING_MODE_CHARGING ||
 		battery->swelling_mode == SWELLING_MODE_FULL) {
@@ -1134,12 +1233,23 @@ static bool sec_bat_check_recharge(struct sec_battery_info *battery)
 
 	if (battery->status == POWER_SUPPLY_STATUS_FULL &&
 			battery->charging_mode == SEC_BATTERY_CHARGING_NONE) {
+<<<<<<< HEAD
 		recharging_voltage = battery->pdata->recharge_condition_vcell;
 		if ((battery->current_event & SEC_BAT_CURRENT_EVENT_LOW_TEMP) && battery->pdata->swelling_low_temp_2step_mode) {
 			recharging_voltage = battery->pdata->chg_float_voltage - 150; // float voltage - 150mV
 			dev_info(battery->dev, "%s: recharge voltage changed by low temp(%d)\n",
 					__func__, recharging_voltage);
 		}
+=======
+		int recharging_voltage = battery->pdata->recharge_condition_vcell;
+		if ((battery->current_event & SEC_BAT_CURRENT_EVENT_LOW_TEMP)
+			&& (battery->pdata->swelling_low_temp_2step_mode)) {
+			recharging_voltage = battery->pdata->chg_float_voltage - 150; // float voltage - 150mV
+			dev_info(battery->dev, "%s: recharging voltage changed by low temp(%d)\n",
+					__func__, recharging_voltage);
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if ((battery->pdata->recharge_condition_type &
 					SEC_BATTERY_RECHARGE_CONDITION_SOC) &&
 				(battery->capacity <=
@@ -1154,8 +1264,12 @@ static bool sec_bat_check_recharge(struct sec_battery_info *battery)
 
 		if ((battery->pdata->recharge_condition_type &
 					SEC_BATTERY_RECHARGE_CONDITION_AVGVCELL) &&
+<<<<<<< HEAD
 				(battery->voltage_avg <=
 				 recharging_voltage)) {
+=======
+				 (battery->voltage_avg <= recharging_voltage)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			battery->expired_time = battery->pdata->recharging_expired_time;
 			battery->prev_safety_time = 0;
 			dev_info(battery->dev,
@@ -1166,8 +1280,12 @@ static bool sec_bat_check_recharge(struct sec_battery_info *battery)
 
 		if ((battery->pdata->recharge_condition_type &
 					SEC_BATTERY_RECHARGE_CONDITION_VCELL) &&
+<<<<<<< HEAD
 				(battery->voltage_now <=
 				 recharging_voltage)) {
+=======
+				 (battery->voltage_now <= recharging_voltage)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			battery->expired_time = battery->pdata->recharging_expired_time;
 			battery->prev_safety_time = 0;
 			dev_info(battery->dev,
@@ -1215,11 +1333,19 @@ static bool sec_bat_voltage_check(struct sec_battery_info *battery)
 
 	if ((battery->status == POWER_SUPPLY_STATUS_FULL) &&
 #if defined(CONFIG_BATTERY_SWELLING)
+<<<<<<< HEAD
 		(battery->charging_mode == SEC_BATTERY_CHARGING_2ND ||
 		battery->is_recharging || battery->swelling_mode)) {
 #else
 		(battery->charging_mode == SEC_BATTERY_CHARGING_2ND ||
 		battery->is_recharging)) {
+=======
+	    (battery->charging_mode == SEC_BATTERY_CHARGING_2ND ||
+	     battery->is_recharging || battery->swelling_mode)) {
+#else
+		(battery->charging_mode == SEC_BATTERY_CHARGING_2ND ||
+		 battery->is_recharging)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 		value.intval = 0;
 		psy_do_property(battery->pdata->fuelgauge_name, get,
@@ -1230,8 +1356,11 @@ static bool sec_bat_voltage_check(struct sec_battery_info *battery)
 				(battery->pdata->recharge_condition_vcell - 50)) {
 			sec_bat_set_charging_status(battery,
 					POWER_SUPPLY_STATUS_CHARGING);
+<<<<<<< HEAD
 			if (battery->siop_level != 100)
 					 battery->stop_timer = true;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			battery->voltage_now = 1080;
 			battery->voltage_avg = 1080;
 			power_supply_changed(&battery->psy_bat);
@@ -1397,6 +1526,7 @@ static bool sec_bat_temperature(
 }
 
 #if defined(CONFIG_BATTERY_SWELLING)
+<<<<<<< HEAD
 static void sec_bat_swelling_check(struct sec_battery_info *battery)
 {
 	union power_supply_propval val;
@@ -1424,12 +1554,44 @@ static void sec_bat_swelling_check(struct sec_battery_info *battery)
 	if (!battery->swelling_mode) {
 		if (((battery->temperature >= battery->pdata->swelling_high_temp_block) ||
 			(battery->temperature <= battery->pdata->swelling_low_temp_block_2nd)) &&
+=======
+static void sec_bat_swelling_check(struct sec_battery_info *battery, int temperature)
+{
+	union power_supply_propval val = {0, };
+	int swelling_rechg_voltage = battery->pdata->swelling_high_rechg_voltage;
+	int float_voltage = battery->pdata->swelling_drop_float_voltage;
+	bool en_swelling = false, en_rechg = false;
+
+	psy_do_property(battery->pdata->charger_name, get,
+			POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+
+		pr_info("%s: status(%d), swell_mode(%d:%d:%d), cv(0x%02x)mV, temp(%d)\n",
+		__func__, battery->status, battery->swelling_mode,
+		battery->charging_block, (battery->current_event & SEC_BAT_CURRENT_EVENT_LOW_TEMP),
+		val.intval, temperature);
+
+	/* swelling_mode
+		under voltage over voltage, battery missing */
+	if ((battery->status == POWER_SUPPLY_STATUS_DISCHARGING) ||\
+		(battery->status == POWER_SUPPLY_STATUS_NOT_CHARGING)) {
+		pr_debug("%s: DISCHARGING or NOT-CHARGING. stop swelling mode\n", __func__);
+		battery->swelling_mode = SWELLING_MODE_NONE;
+		battery->current_event &=
+			~(SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING | SEC_BAT_CURRENT_EVENT_LOW_TEMP | SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING);
+		goto skip_swelling_chek;
+	}
+
+	if (!battery->swelling_mode) {
+		if (((temperature >= battery->pdata->swelling_high_temp_block) ||
+			(temperature <= battery->pdata->swelling_low_temp_block_2nd)) &&
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			battery->pdata->temp_check_type) {
 			pr_info("%s: swelling mode start. stop charging\n", __func__);
 			battery->swelling_mode = SWELLING_MODE_CHARGING;
 			battery->swelling_full_check_cnt = 0;
 			sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
 			en_swelling = true;
+<<<<<<< HEAD
 
 			if (battery->temperature >= battery->pdata->swelling_high_temp_block)
 				battery->current_event |= SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING;
@@ -1441,6 +1603,14 @@ static void sec_bat_swelling_check(struct sec_battery_info *battery)
 			battery->current_event |= SEC_BAT_CURRENT_EVENT_LOW_TEMP;
 			sec_bat_set_charging_current(battery);
 		} else if ((battery->temperature >= battery->pdata->swelling_low_temp_recov_1st) &&
+=======
+		} else if ((temperature <= battery->pdata->swelling_low_temp_block_1st) &&
+			!(battery->current_event & SEC_BAT_CURRENT_EVENT_LOW_TEMP)) {
+			pr_info("%s: low temperature reduce current\n", __func__);
+			battery->current_event |= SEC_BAT_CURRENT_EVENT_LOW_TEMP ;
+			sec_bat_set_charging_current(battery);
+		} else if ((temperature >= battery->pdata->swelling_low_temp_recov_1st) &&
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			(battery->current_event & SEC_BAT_CURRENT_EVENT_LOW_TEMP)) {
 			pr_info("%s: normal temperature temperature recover current\n", __func__);
 			battery->current_event &= ~SEC_BAT_CURRENT_EVENT_LOW_TEMP;
@@ -1452,6 +1622,7 @@ static void sec_bat_swelling_check(struct sec_battery_info *battery)
 		return;
 
 	if (battery->swelling_mode) {
+<<<<<<< HEAD
 		if (battery->temperature <= battery->pdata->swelling_low_temp_recov_2nd) {
 			swelling_rechg_voltage = battery->pdata->swelling_low_rechg_voltage;
 		}
@@ -1463,21 +1634,60 @@ static void sec_bat_swelling_check(struct sec_battery_info *battery)
 			battery->charging_mode = SEC_BATTERY_CHARGING_1ST;
 			battery->current_event &= ~(SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING |
 				SEC_BAT_CURRENT_EVENT_LOW_TEMP | SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING);
+=======
+		if (temperature <= battery->pdata->swelling_low_temp_recov_2nd) {
+			swelling_rechg_voltage = battery->pdata->swelling_low_rechg_voltage;
+		}
+
+		if (val.intval != float_voltage) {
+			pr_info("%s: float voltage change(%d -> %d)\n", __func__, val.intval, float_voltage);
+			if (!battery->charging_block) {
+				sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
+				val.intval = float_voltage;
+				psy_do_property(battery->pdata->charger_name, set,
+						POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+				sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING);
+			} else {
+				val.intval = float_voltage;
+				psy_do_property(battery->pdata->charger_name, set,
+						POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+			}
+		}
+
+		if ((temperature <= battery->pdata->swelling_high_temp_recov) &&
+		    (temperature >= battery->pdata->swelling_low_temp_recov_2nd)) {
+			pr_info("%s: swelling mode end. restart charging\n", __func__);
+			battery->swelling_mode = SWELLING_MODE_NONE;
+			battery->charging_mode = SEC_BATTERY_CHARGING_1ST;
+			battery->current_event &=
+				~(SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING | SEC_BAT_CURRENT_EVENT_LOW_TEMP | SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING);
 			/* restore 4.4V float voltage */
 			val.intval = battery->pdata->swelling_normal_float_voltage;
 			psy_do_property(battery->pdata->charger_name, set,
 					POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+<<<<<<< HEAD
 			/* check low temp flag */
 			if (battery->temperature <= battery->pdata->swelling_low_temp_block_1st)
 				battery->current_event |= SEC_BAT_CURRENT_EVENT_LOW_TEMP;
 			sec_bat_set_charging_current(battery);
 		} else if (battery->voltage_now < swelling_rechg_voltage &&
 			   battery->charging_block) {
+=======
+			/* restore charging current */
+			if (temperature <= battery->pdata->swelling_low_temp_block_1st) {
+					battery->current_event |= SEC_BAT_CURRENT_EVENT_LOW_TEMP;
+			}
+			sec_bat_set_charging_current(battery);
+		} else if (battery->voltage_now < swelling_rechg_voltage &&
+			battery->charging_block) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			pr_info("%s: swelling mode recharging start. Vbatt(%d)\n",
 				__func__, battery->voltage_now);
 			battery->charging_mode = SEC_BATTERY_CHARGING_1ST;
 			en_rechg = true;
+<<<<<<< HEAD
 
 			/* set swelling drop float voltage */
 			val.intval = battery->pdata->swelling_drop_float_voltage;
@@ -1494,19 +1704,42 @@ static void sec_bat_swelling_check(struct sec_battery_info *battery)
 			} else if (battery->temperature >= battery->pdata->swelling_high_temp_recov) {
 				pr_info("%s: swelling mode reduce charging current(HIGH-temp:%d)\n",
 					__func__, battery->temperature);
+=======
+			/* change 4.20V float voltage */
+			val.intval = battery->pdata->swelling_drop_float_voltage;
+			psy_do_property(battery->pdata->charger_name, set,
+					POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+			/* set charging enable */
+			sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING);
+			if (temperature <= battery->pdata->swelling_low_temp_recov_2nd) {
+				pr_info("%s: swelling mode reduce charging current(LOW-temp:%d)\n",
+					__func__, temperature);
+				battery->current_event |= SEC_BAT_CURRENT_EVENT_LOW_TEMP_SWELLING;
+				sec_bat_set_charging_current(battery);
+			} else if (temperature >= battery->pdata->swelling_high_temp_recov) {
+				pr_info("%s: swelling mode reduce charging current(HIGH-temp:%d)\n",
+					__func__, temperature);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				battery->current_event |= SEC_BAT_CURRENT_EVENT_HIGH_TEMP_SWELLING;
 				sec_bat_set_charging_current(battery);
 			}
 		}
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (en_swelling && !en_rechg) {
 		pr_info("%s : SAFETY TIME RESET (SWELLING MODE CHARING STOP!)\n", __func__);
 		battery->expired_time = battery->pdata->expired_time;
 		battery->prev_safety_time = 0;
 	}
+<<<<<<< HEAD
 
 skip_swelling_check:
+=======
+skip_swelling_chek:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	dev_dbg(battery->dev, "%s end\n", __func__);
 }
 #endif
@@ -1522,11 +1755,14 @@ static bool sec_bat_set_aging_step(struct sec_battery_info *battery, int step)
 		return false;
 	}
 
+<<<<<<< HEAD
 	if (battery->temperature < 50) {
 		pr_info("%s: [AGE] skip (temperature:%d)\n", __func__, battery->temperature < 50);
 		return false;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	battery->pdata->age_step = step;
 
 	/* float voltage */
@@ -1547,7 +1783,12 @@ static bool sec_bat_set_aging_step(struct sec_battery_info *battery, int step)
 		battery->pdata->age_data[battery->pdata->age_step].full_condition_soc;
 	battery->pdata->full_condition_vcell =
 		battery->pdata->age_data[battery->pdata->age_step].full_condition_vcell;
+<<<<<<< HEAD
 #if defined(CONFIG_FUELGAUGE_S2MU004) || defined(CONFIG_FUELGAUGE_S2MPU06)
+=======
+
+#if defined(CONFIG_FUELGAUGE_S2MU005)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	value.intval = battery->pdata->age_step;
 	psy_do_property(battery->pdata->fuelgauge_name, set,
 		POWER_SUPPLY_EXT_PROP_UPDATE_BATTERY_DATA, value);
@@ -1574,7 +1815,11 @@ static void sec_bat_aging_check(struct sec_battery_info *battery)
 	int calc_step = -1;
 	bool ret;
 
+<<<<<<< HEAD
 	if (battery->pdata->num_age_step <= 0)
+=======
+	if (battery->pdata->num_age_step <= 0 || battery->batt_cycle < 0)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 
 	if (battery->temperature < 50) {
@@ -1588,16 +1833,26 @@ static void sec_bat_aging_check(struct sec_battery_info *battery)
 	}
 
 	dev_info(battery->dev,
+<<<<<<< HEAD
 		 "%s: [AGE] prev_step = %d, calc_step = %d\n",  __func__, prev_step, calc_step);
+=======
+		"%s: [Long life] prev_step = %d, calc_step = %d\n",  __func__, prev_step, calc_step);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (calc_step == prev_step)
 		return;
 
 	ret = sec_bat_set_aging_step(battery, calc_step);
 	dev_info(battery->dev,
+<<<<<<< HEAD
 		 "%s: %s change step (%d->%d), Cycle(%d)\n",
 		 __func__, ret ? "Succeed in" : "Fail to",
 		 prev_step, battery->pdata->age_step, battery->batt_cycle);
+=======
+		"%s: %s change step (%d->%d), Cycle(%d)\n",
+		__func__, ret ? "Succeed in" : "Fail to",
+		prev_step, battery->pdata->age_step, battery->batt_cycle);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 #endif
 
@@ -1606,6 +1861,10 @@ static bool sec_bat_temperature_check(
 {
 	int temp_value;
 	int pre_health;
+<<<<<<< HEAD
+=======
+	union power_supply_propval val = {0, };
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (battery->status == POWER_SUPPLY_STATUS_DISCHARGING) {
 		battery->health_change = false;
@@ -1730,6 +1989,7 @@ static bool sec_bat_temperature_check(
 		if (battery->health == POWER_SUPPLY_HEALTH_OVERHEATLIMIT) {
 			battery->health = POWER_SUPPLY_HEALTH_OVERHEAT;
 		} else {
+<<<<<<< HEAD
 #if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING)
 			union power_supply_propval value;
 
@@ -1739,6 +1999,17 @@ static bool sec_bat_temperature_check(
 				value.intval = battery->pdata->swelling_normal_float_voltage;
 				psy_do_property(battery->pdata->charger_name, set,
 						POWER_SUPPLY_PROP_VOLTAGE_MAX, value);
+=======
+#if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING) || defined(CONFIG_SW_SELF_DISCHARGING)
+			//union power_supply_propval value;
+
+			psy_do_property(battery->pdata->charger_name, get,
+					POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+			if (val.intval <= battery->pdata->swelling_normal_float_voltage) {
+				val.intval = battery->pdata->swelling_normal_float_voltage;
+				psy_do_property(battery->pdata->charger_name, set,
+						POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 #endif
 			battery->health = POWER_SUPPLY_HEALTH_GOOD;
@@ -1756,10 +2027,17 @@ static bool sec_bat_temperature_check(
 		(battery->health == POWER_SUPPLY_HEALTH_COLD) ||
 		(battery->health == POWER_SUPPLY_HEALTH_OVERHEATLIMIT)) {
 		if (battery->status != POWER_SUPPLY_STATUS_NOT_CHARGING) {
+<<<<<<< HEAD
 #if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING)
 			if ((battery->health == POWER_SUPPLY_HEALTH_OVERHEAT) ||
 				(battery->health == POWER_SUPPLY_HEALTH_OVERHEATLIMIT)) {
 				union power_supply_propval val;
+=======
+#if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING) || defined(CONFIG_SW_SELF_DISCHARGING)
+			if ((battery->health == POWER_SUPPLY_HEALTH_OVERHEAT) ||
+				(battery->health == POWER_SUPPLY_HEALTH_OVERHEATLIMIT)) {
+				//union power_supply_propval val;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				/* change 4.20V float voltage */
 				val.intval = battery->pdata->swelling_drop_float_voltage;
 				psy_do_property(battery->pdata->charger_name, set,
@@ -1771,7 +2049,11 @@ static bool sec_bat_temperature_check(
 				battery->cable_type == POWER_SUPPLY_TYPE_PMA_WIRELESS ||
 				battery->cable_type == POWER_SUPPLY_TYPE_WIRELESS_PACK ||
 				battery->cable_type == POWER_SUPPLY_TYPE_WIRELESS_PACK_TA) {
+<<<<<<< HEAD
 				union power_supply_propval val;
+=======
+				//union power_supply_propval val;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				val.intval = battery->health;
 				psy_do_property(battery->pdata->wireless_charger_name, set,
 						POWER_SUPPLY_PROP_HEALTH, val);
@@ -1786,6 +2068,18 @@ static bool sec_bat_temperature_check(
 			} else {
 				sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
 			}
+<<<<<<< HEAD
+=======
+
+			psy_do_property(battery->pdata->charger_name, get,
+					POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+			if (val.intval != battery->pdata->swelling_drop_float_voltage) {
+				val.intval = battery->pdata->swelling_drop_float_voltage;
+				psy_do_property(battery->pdata->charger_name, set,
+						POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
+
+			}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return false;
 		}
 	} else {
@@ -1798,12 +2092,19 @@ static bool sec_bat_temperature_check(
 			if (battery->capacity >= 100)
 				sec_bat_set_charging_status(battery,
 						POWER_SUPPLY_STATUS_FULL);
+<<<<<<< HEAD
 			else{	/* Normal Charging */
 				sec_bat_set_charging_status(battery,
 						POWER_SUPPLY_STATUS_CHARGING);
 				if (battery->siop_level != 100)
 					battery->stop_timer = true;
 			}
+=======
+			else {	/* Normal Charging */
+				sec_bat_set_charging_status(battery,
+						POWER_SUPPLY_STATUS_CHARGING);
+				}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_BATTERY_SWELLING)
 			if ((temp_value >= battery->pdata->swelling_high_temp_recov) ||
 				(temp_value <= battery->pdata->swelling_low_temp_recov_2nd)) {
@@ -1812,18 +2113,27 @@ static bool sec_bat_temperature_check(
 				battery->swelling_full_check_cnt = 0;
 				sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
 			} else {
+<<<<<<< HEAD
 				union power_supply_propval val;
 				/* restore 4.4V float voltage */
+=======
+				//union power_supply_propval val = {0, };
+				/* restore float voltage */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				val.intval = battery->pdata->swelling_normal_float_voltage;
 				psy_do_property(battery->pdata->charger_name, set,
 						POWER_SUPPLY_PROP_VOLTAGE_MAX, val);
 				/* turn on charger by cable type */
+<<<<<<< HEAD
 				if((battery->status == POWER_SUPPLY_STATUS_FULL) &&
 		  			(battery->charging_mode == SEC_BATTERY_CHARGING_NONE)) {
 					sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
 				} else {
 					sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING);
 				}
+=======
+				sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 #else
 			/* turn on charger by cable type */
@@ -2251,6 +2561,7 @@ static bool sec_bat_wc_heating_time_management(
 	}
 	return true;
 }
+<<<<<<< HEAD
 
 #define HV_CHARGING_TOTAL_TIME		10800	/* 3 hours */
 #define NORMAL_CHARGING_TOTAL_TIME	18000	/* 5 hours */
@@ -2265,6 +2576,19 @@ static bool sec_bat_time_management(
 
 	if(battery->charging_start_time == 0 || !battery->safety_timer_set) {
 		pr_info("%s: Charging Disabled\n" ,__func__);
+=======
+static bool sec_bat_time_management(
+				struct sec_battery_info *battery)
+{
+	unsigned long charging_time = 0;
+	struct timespec ts = {0, };
+
+	get_monotonic_boottime(&ts);
+
+		if (battery->charging_start_time == 0 || !battery->safety_timer_set) {
+		dev_dbg(battery->dev,
+			"%s: Charging Disabled\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return true;
 	}
 
@@ -2272,6 +2596,7 @@ static bool sec_bat_time_management(
 		charging_time = ts.tv_sec - battery->charging_start_time;
 	else
 		charging_time = 0xFFFFFFFF - battery->charging_start_time
+<<<<<<< HEAD
 			+ ts.tv_sec;
 
 	battery->charging_passed_time = charging_time;
@@ -2279,6 +2604,42 @@ static bool sec_bat_time_management(
 	dev_info(battery->dev,
 		"%s: Charging Time : %ld secs\n", __func__,
 		battery->charging_passed_time);
+=======
+		    + ts.tv_sec;
+
+	battery->charging_passed_time = charging_time;
+
+	if (battery->pdata->chg_temp_check && battery->skip_chg_temp_check) {
+		if ((battery->cable_type == POWER_SUPPLY_TYPE_HV_MAINS ||
+			battery->cable_type == POWER_SUPPLY_TYPE_HV_ERR ||
+			battery->cable_type == POWER_SUPPLY_TYPE_HV_MAINS_12V) &&
+			battery->charging_passed_time >= battery->pdata->chg_skip_check_time) {
+				battery->skip_chg_temp_check = false;
+				dev_info(battery->dev,
+					"%s: skip_chg_temp_check(%d), Charging Time : %ld secs\n",
+					__func__,
+					battery->skip_chg_temp_check,
+					battery->charging_passed_time);
+		}
+	}
+
+	if (battery->pdata->wpc_temp_check && battery->skip_wpc_temp_check) {
+		if ((battery->cable_type == POWER_SUPPLY_TYPE_WIRELESS ||
+			battery->cable_type == POWER_SUPPLY_TYPE_HV_WIRELESS ||
+			battery->cable_type == POWER_SUPPLY_TYPE_PMA_WIRELESS ||
+			battery->cable_type == POWER_SUPPLY_TYPE_WIRELESS_PACK ||
+			battery->cable_type == POWER_SUPPLY_TYPE_WIRELESS_PACK_TA) &&
+			battery->charging_passed_time >= battery->pdata->wpc_skip_check_time) {
+				battery->skip_wpc_temp_check = false;
+				dev_info(battery->dev,
+					"%s: skip_wpc_temp_check(%d), Charging Time : %ld secs\n",
+					__func__,
+					battery->skip_wpc_temp_check,
+					battery->charging_passed_time);
+		}
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	switch (battery->status) {
 	case POWER_SUPPLY_STATUS_FULL:
 		if (battery->expired_time == 0) {
@@ -2301,12 +2662,20 @@ static bool sec_bat_time_management(
 	case POWER_SUPPLY_STATUS_CHARGING:
 		if ((battery->pdata->full_condition_type &
 			SEC_BATTERY_FULL_CONDITION_NOTIMEFULL) &&
+<<<<<<< HEAD
 			(battery->is_recharging &&  (battery->expired_time == 0))) {
+=======
+			(battery->is_recharging && (battery->expired_time == 0))) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			dev_info(battery->dev,
 			"%s: Recharging Timer Expired\n", __func__);
 			battery->charging_mode = SEC_BATTERY_CHARGING_NONE;
 			battery->health = POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE;
+<<<<<<< HEAD
 			sec_bat_set_charging_status(battery,
+=======
+				sec_bat_set_charging_status(battery,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					POWER_SUPPLY_STATUS_NOT_CHARGING);
 			battery->is_recharging = false;
 			if (sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF)) {
@@ -2315,13 +2684,22 @@ static bool sec_bat_time_management(
 				return true;
 			}
 			return false;
+<<<<<<< HEAD
 		} else if (!battery->is_recharging && (battery->expired_time == 0)) {
+=======
+		} else if (!battery->is_recharging &&
+			(battery->expired_time == 0)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			dev_info(battery->dev,
 				"%s: Charging Timer Expired\n", __func__);
 			battery->charging_mode = SEC_BATTERY_CHARGING_NONE;
 			battery->health = POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE;
 			sec_bat_set_charging_status(battery,
 					POWER_SUPPLY_STATUS_NOT_CHARGING);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF)) {
 				dev_err(battery->dev,
 					"%s: Fail to Set Charger\n", __func__);
@@ -2330,6 +2708,38 @@ static bool sec_bat_time_management(
 
 			return false;
 		}
+<<<<<<< HEAD
+=======
+		if (battery->pdata->charging_reset_time) {
+			if (charging_time > battery->charging_next_time) {
+				/*reset current in charging status */
+				battery->charging_next_time =
+					battery->charging_passed_time +
+					(battery->pdata->charging_reset_time);
+
+				dev_dbg(battery->dev,
+					"%s: Reset charging current\n",
+					__func__);
+#if defined(CONFIG_BATTERY_SWELLING)
+				if (!battery->swelling_mode) {
+					if (sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING)) {
+						dev_err(battery->dev,
+							"%s: Fail to Set Charger\n",
+							__func__);
+						return true;
+					}
+				}
+#else
+				if (sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING)) {
+					dev_err(battery->dev,
+						"%s: Fail to Set Charger\n",
+						__func__);
+					return true;
+				}
+#endif
+			}
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	default:
 		dev_err(battery->dev,
@@ -2554,6 +2964,7 @@ static void sec_bat_do_fullcharged(
 		battery->is_recharging = false;
 
 		if (!battery->wdt_kick_disable) {
+<<<<<<< HEAD
 			pr_info("%s : wdt kick enable -> Charger Off, %d\n",
 				__func__, battery->wdt_kick_disable);
 			sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
@@ -2562,6 +2973,15 @@ static void sec_bat_do_fullcharged(
 				__func__, battery->wdt_kick_disable);
 		}
 
+=======
+			pr_info("%s: wdt kick enable -> Charger Off, %d\n",
+					__func__, battery->wdt_kick_disable);
+			sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
+		} else {
+			pr_info("%s: wdt kick disabled -> skip charger off, %d\n",
+					__func__, battery->wdt_kick_disable);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
 		sec_bat_aging_check(battery);
 #endif
@@ -2763,9 +3183,13 @@ static void sec_bat_get_battery_info(
 		then ignore FG SOC, and report (previous SOC +1)% */
 	battery->capacity = value.intval;
 
+<<<<<<< HEAD
 	if (battery->capacity > 5 && battery->ignore_siop &&
 	    (battery->r_siop_level != battery->siop_level)) {
 		battery->siop_level = battery->r_siop_level;
+=======
+	if (battery->capacity > 5 && battery->ignore_siop) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		battery->ignore_siop = false;
 		if (battery->cable_type == POWER_SUPPLY_TYPE_WIRELESS ||
 			battery->cable_type == POWER_SUPPLY_TYPE_HV_WIRELESS ||
@@ -2787,6 +3211,7 @@ static void sec_bat_get_battery_info(
 		}
 	}
 
+<<<<<<< HEAD
 	dev_info(battery->dev,
 		"%s:Vnow(%dmV),Inow(%dmA),Imax(%dmA),SOC(%d%%),Tbat(%d),Tchg(%d),Twpc(%d)\n",
 		__func__,
@@ -2794,6 +3219,47 @@ static void sec_bat_get_battery_info(
 		battery->current_max, battery->capacity,
 		battery->temperature, battery->chg_temp,
 		battery->wpc_temp);
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	if (battery->temperature >= battery->pdata->self_discharging_temp_block &&
+			battery->voltage_now >= battery->pdata->self_discharging_volt_block) {
+		battery->sw_self_discharging = true;
+#if defined(CONFIG_CHARGER_S2MU005)
+		value.intval = 1;
+		pr_info("%s : start discharge\n",__func__);
+		psy_do_property(battery->pdata->charger_name, set,
+					POWER_SUPPLY_PROP_RESISTANCE, value);
+#endif
+		wake_lock(&battery->self_discharging_wake_lock);
+	} else if (battery->temperature <= battery->pdata->self_discharging_temp_recov ||
+			battery->voltage_now <= battery->pdata->swelling_drop_float_voltage) {
+		battery->sw_self_discharging = false;
+#if defined(CONFIG_CHARGER_S2MU005)
+		value.intval = 0;
+		pr_info("%s : stop discharge\n",__func__);
+		psy_do_property(battery->pdata->charger_name, set,
+					POWER_SUPPLY_PROP_RESISTANCE, value);
+#endif
+		wake_unlock(&battery->self_discharging_wake_lock);
+	}
+	pr_info("%s : sw_self_discharging (%d)\n",__func__, battery->sw_self_discharging);
+#endif
+
+	dev_info(battery->dev,
+		"%s:Vnow(%dmV),Inow(%dmA),Imax(%dmA),SOC(%d%%),Tbat(%d),Tchg(%d),Twpc(%d)"
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+		",sw_self_dis(%d)"
+#endif
+		"\n", __func__,
+		battery->voltage_now, battery->current_now,
+		battery->current_max, battery->capacity,
+		battery->temperature, battery->chg_temp,
+		battery->wpc_temp
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+		, battery->sw_self_discharging
+#endif
+		);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	dev_dbg(battery->dev,
 		"%s,Vavg(%dmV),Vocv(%dmV),Tamb(%d),"
 		"Iavg(%dmA),Iadc(%d)\n",
@@ -2842,6 +3308,17 @@ static unsigned int sec_bat_get_polling_time(
 		break;
 	case POWER_SUPPLY_STATUS_DISCHARGING:
 		if (battery->polling_in_sleep && (battery->ps_enable != true)) {
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+			if (battery->voltage_now > battery->pdata->self_discharging_volt_block) {
+				if(battery->temperature > battery->pdata->self_discharging_temp_pollingtime)
+					battery->polling_time = 300;
+				else
+					battery->polling_time = 600;
+			} else
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			battery->polling_time =
 				battery->pdata->polling_time[
 				SEC_BATTERY_POLLING_TIME_SLEEP];
@@ -2857,6 +3334,17 @@ static unsigned int sec_bat_get_polling_time(
 				SEC_BATTERY_FULL_CONDITION_NOSLEEPINFULL) &&
 				battery->charging_mode ==
 				SEC_BATTERY_CHARGING_NONE) {
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+			if (battery->voltage_now > battery->pdata->self_discharging_volt_block) {
+				if(battery->temperature > battery->pdata->self_discharging_temp_pollingtime)
+					battery->polling_time = 300;
+				else
+					battery->polling_time = 600;
+			} else
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				battery->polling_time =
 					battery->pdata->polling_time[
 					SEC_BATTERY_POLLING_TIME_SLEEP];
@@ -2983,18 +3471,27 @@ static void sec_bat_set_polling(
 	dev_dbg(battery->dev, "%s: End\n", __func__);
 }
 
+<<<<<<< HEAD
 /* We have to check VOUT(5V/9V) of RX to display full-charging time and charging UI
    depend on actual VOUT, not TX voltage */
+=======
+/* OTG during HV wireless charging or sleep mode have 4.5W normal wireless charging UI */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static bool sec_bat_hv_wc_normal_mode_check(struct sec_battery_info *battery)
 {
 	union power_supply_propval value;
 
 	psy_do_property(battery->pdata->charger_name, get,
 			POWER_SUPPLY_PROP_CHARGE_OTG_CONTROL, value);
+<<<<<<< HEAD
 	if (battery->pad_limit == SEC_BATTERY_WPC_TEMP_HIGH ||
 			value.intval || sleep_mode) {
 		pr_info("%s: pad_limit(%d), otg(%d), sleep_mode(%d)\n", __func__,
 				battery->pad_limit, value.intval, sleep_mode);
+=======
+	if (value.intval || sleep_mode) {
+		pr_info("%s: otg(%d), sleep_mode(%d)\n", __func__, value.intval, sleep_mode);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return true;
 	}
 	return false;
@@ -3004,6 +3501,7 @@ static bool sec_bat_hv_wc_normal_mode_check(struct sec_battery_info *battery)
 static void sec_bat_swelling_fullcharged_check(struct sec_battery_info *battery)
 {
 	union power_supply_propval value;
+<<<<<<< HEAD
 	int topoff_current;
 
 	if (battery->charging_block) {
@@ -3025,6 +3523,16 @@ static void sec_bat_swelling_fullcharged_check(struct sec_battery_info *battery)
 			battery->pdata->charging_current[
 			battery->cable_type].full_check_current_1st) &&
 			(battery->current_avg > 0 && battery->current_avg < topoff_current)) {
+=======
+
+	switch (battery->pdata->full_check_type_2nd) {
+	case SEC_BATTERY_FULLCHARGED_FG_CURRENT:
+		if ((battery->current_now > 0 && battery->current_now <
+			battery->pdata->charging_current[
+			battery->cable_type].full_check_current_1st) &&
+			(battery->current_avg > 0 &&
+			battery->current_avg < battery->topoff_current)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			value.intval = POWER_SUPPLY_STATUS_FULL;
 		}
 		break;
@@ -3056,13 +3564,36 @@ static void sec_bat_swelling_fullcharged_check(struct sec_battery_info *battery)
 
 static void sec_bat_calculate_safety_time(struct sec_battery_info *battery)
 {
+<<<<<<< HEAD
 	unsigned long expired_time = battery->expired_time;
+=======
+	unsigned long long expired_time = battery->expired_time;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct timespec ts = {0, };
 	int curr = 0;
 	int input_power = battery->current_max * battery->input_voltage * 1000;
 	int charging_power = battery->charging_current * battery->pdata->swelling_normal_float_voltage;
+<<<<<<< HEAD
 
 	if (battery->lcd_status && battery->stop_timer) {
+=======
+	static int discharging_cnt = 0;
+
+	if (battery->current_avg < 0) {
+		discharging_cnt++;
+	} else {
+		discharging_cnt = 0;
+	}
+
+	if (discharging_cnt >= 5) {
+		battery->expired_time = battery->pdata->expired_time;
+		battery->prev_safety_time = 0;
+		pr_info("%s : SAFETY TIME RESET! DISCHARGING CNT(%d)\n",
+			__func__, discharging_cnt);
+		discharging_cnt = 0;
+		return;
+	} else if (battery->lcd_status && battery->stop_timer) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		battery->prev_safety_time = 0;
 		return;
 	}
@@ -3086,7 +3617,11 @@ static void sec_bat_calculate_safety_time(struct sec_battery_info *battery)
 		battery->stop_timer = false;
 	}
 
+<<<<<<< HEAD
 	pr_info("%s : EXPIRED_TIME(%ld), IP(%d), CP(%d), CURR(%d), STANDARD(%d)\n",
+=======
+	pr_info("%s : EXPIRED_TIME(%llu), IP(%d), CP(%d), CURR(%d), STANDARD(%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		__func__, expired_time, input_power, charging_power, curr, battery->pdata->standard_curr);
 
 	if (curr == 0)
@@ -3094,12 +3629,21 @@ static void sec_bat_calculate_safety_time(struct sec_battery_info *battery)
 
 	expired_time = (expired_time * battery->pdata->standard_curr) / curr;
 
+<<<<<<< HEAD
 	pr_info("%s : CAL_EXPIRED_TIME(%ld) TIME NOW(%ld) TIME PREV(%ld)\n", __func__, expired_time, ts.tv_sec, battery->prev_safety_time);
 
 	if (expired_time <= ((ts.tv_sec - battery->prev_safety_time) * 100))
 		expired_time = 0;
 	else
 		expired_time -= ((ts.tv_sec - battery->prev_safety_time) * 100);
+=======
+	pr_info("%s : CAL_EXPIRED_TIME(%llu) TIME NOW(%ld) TIME PREV(%ld)\n", __func__, expired_time, ts.tv_sec, battery->prev_safety_time);
+
+	if (expired_time <= ((ts.tv_sec - battery->prev_safety_time) * 1000))
+		expired_time = 0;
+	else
+		expired_time -= ((ts.tv_sec - battery->prev_safety_time) * 1000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	battery->cal_safety_time = expired_time;
 	expired_time = (expired_time * curr) / battery->pdata->standard_curr;
@@ -3109,6 +3653,7 @@ static void sec_bat_calculate_safety_time(struct sec_battery_info *battery)
 	pr_info("%s : REMAIN_TIME(%ld) CAL_REMAIN_TIME(%ld)\n", __func__, battery->expired_time, battery->cal_safety_time);
 }
 
+<<<<<<< HEAD
 static void sec_bat_calculate_safety_time_by_single(struct sec_battery_info *battery)
 {
 	unsigned long expired_time = battery->expired_time;
@@ -3158,6 +3703,8 @@ static void sec_bat_calculate_safety_time_by_single(struct sec_battery_info *bat
 	pr_info("%s : REMAIN_TIME(%ld) CAL_REMAIN_TIME(%ld)\n", __func__, battery->expired_time, battery->cal_safety_time);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_CALC_TIME_TO_FULL)
 static void sec_bat_calc_time_to_full(struct sec_battery_info * battery)
 {
@@ -3488,14 +4035,31 @@ static void sec_bat_misc_event_work(struct work_struct *work)
 {
 	struct sec_battery_info *battery = container_of(work,
 				struct sec_battery_info, misc_event_work.work);
+<<<<<<< HEAD
 	//int xor_misc_event = battery->prev_misc_event ^ battery->misc_event;
 
 	mutex_lock(&battery->misclock);
+=======
+	int xor_misc_event = battery->prev_misc_event ^ battery->misc_event;
+
+	if ((xor_misc_event & BATT_MISC_EVENT_UNDEFINED_RANGE_TYPE) &&
+		(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY)) {
+		if (battery->misc_event & BATT_MISC_EVENT_UNDEFINED_RANGE_TYPE) {
+			sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_BUCK_OFF);
+		} else if (battery->prev_misc_event & BATT_MISC_EVENT_UNDEFINED_RANGE_TYPE) {
+			sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF);
+		}
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_info("%s: change misc event(0x%x --> 0x%x)\n",
 		__func__, battery->prev_misc_event, battery->misc_event);
 	battery->prev_misc_event = battery->misc_event;
 	wake_unlock(&battery->misc_event_wake_lock);
+<<<<<<< HEAD
 	mutex_unlock(&battery->misclock);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wake_lock(&battery->monitor_wake_lock);
 	queue_delayed_work_on(0, battery->monitor_wqueue, &battery->monitor_work, 0);
@@ -3587,6 +4151,7 @@ static void sec_bat_monitor_work(
 		goto continue_monitor;
 
 	/* 4. temperature check */
+<<<<<<< HEAD
 #if defined(CONFIG_BATTERY_SWELLING)
 	if (!sec_bat_temperature_check(battery) && !battery->swelling_mode)
 		goto continue_monitor;
@@ -3594,6 +4159,10 @@ static void sec_bat_monitor_work(
 	if (!sec_bat_temperature_check(battery))
 		goto continue_monitor;
 #endif
+=======
+	if (!sec_bat_temperature_check(battery))
+		goto continue_monitor;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!sec_bat_wc_heating_time_management(battery))
 		goto continue_monitor;
@@ -3602,7 +4171,11 @@ static void sec_bat_monitor_work(
 		(battery->cable_type == POWER_SUPPLY_TYPE_HV_WIRELESS)) {
 		psy_do_property(battery->pdata->wireless_charger_name, get,
 				POWER_SUPPLY_PROP_INPUT_VOLTAGE_REGULATION, value);
+<<<<<<< HEAD
 		pr_info("%s: soc(%d), cable(%d), vout(%d)-----------\n",
+=======
+		pr_info("%s: soc(%d), cable(%d), vout(%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__, battery->capacity, battery->cable_type, value.intval);
 
 		//if (value.intval != P9220_VOUT_9V_VAL) {
@@ -3617,7 +4190,11 @@ static void sec_bat_monitor_work(
 #endif
 
 #if defined(CONFIG_BATTERY_SWELLING)
+<<<<<<< HEAD
 	sec_bat_swelling_check(battery);
+=======
+	sec_bat_swelling_check(battery, battery->temperature);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if ((battery->swelling_mode == SWELLING_MODE_CHARGING || battery->swelling_mode == SWELLING_MODE_FULL) &&
 		(!battery->charging_block))
@@ -3647,12 +4224,17 @@ static void sec_bat_monitor_work(
 continue_monitor:
 #if 1
 	/* calculate safety time */
+<<<<<<< HEAD
 	if (!battery->charging_block) {
                 if (battery->charging_by_single)
 			sec_bat_calculate_safety_time_by_single(battery);
                 else
                 	sec_bat_calculate_safety_time(battery);
 	}
+=======
+	if (!battery->charging_block)
+		sec_bat_calculate_safety_time(battery);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	dev_info(battery->dev,
 		 "%s: Status(%s), mode(%s), Health(%s), Cable(%d), level(%d%%)"
@@ -3683,6 +4265,7 @@ continue_monitor:
 			"%s: battery->stability_test(%d), battery->eng_not_full_status(%d)\n",
 			__func__, battery->stability_test, battery->eng_not_full_status);
 #endif
+<<<<<<< HEAD
 
 #if defined(CONFIG_SEC_FACTORY)
 	if ((battery->cable_type != POWER_SUPPLY_TYPE_BATTERY) &&
@@ -3693,6 +4276,12 @@ continue_monitor:
 		(battery->cable_type != POWER_SUPPLY_TYPE_BATTERY) &&
 		(battery->cable_type != POWER_SUPPLY_TYPE_WATER) &&
 		(battery->cable_type != POWER_SUPPLY_TYPE_OTG)) {
+=======
+#if defined(CONFIG_SEC_FACTORY)
+	if (battery->pdata->factory_store_mode_en == true && (battery->cable_type != POWER_SUPPLY_TYPE_BATTERY) && (battery->cable_type != POWER_SUPPLY_TYPE_OTG)) {
+#else
+	if (battery->store_mode && battery->cable_type != POWER_SUPPLY_TYPE_BATTERY) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 		dev_info(battery->dev,
 			"%s: @battery->capacity = (%d), battery->status= (%d), battery->store_mode=(%d)\n",
@@ -3748,6 +4337,19 @@ static enum alarmtimer_restart sec_bat_alarm(
 	return ALARMTIMER_NORESTART;
 }
 
+<<<<<<< HEAD
+=======
+static void sec_bat_check_input_voltage(struct sec_battery_info *battery)
+{
+
+	if (battery->cable_type == POWER_SUPPLY_TYPE_HV_MAINS)
+		battery->input_voltage = SEC_INPUT_VOLTAGE_9V;
+	else
+		battery->input_voltage = SEC_INPUT_VOLTAGE_5V;
+
+	pr_info("%s: battery->input_voltage : %dV\n", __func__, battery->input_voltage);
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void sec_bat_cable_work(struct work_struct *work)
 {
@@ -3789,8 +4391,12 @@ static void sec_bat_cable_work(struct work_struct *work)
 
 #if defined(CONFIG_BATTERY_SWELLING)
 	if ((current_cable_type == POWER_SUPPLY_TYPE_BATTERY) ||
+<<<<<<< HEAD
 		(current_cable_type == POWER_SUPPLY_TYPE_WATER) ||
 		(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY)) {
+=======
+		(battery->cable_type == POWER_SUPPLY_TYPE_BATTERY && battery->swelling_mode == SWELLING_MODE_NONE)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		battery->swelling_mode = SWELLING_MODE_NONE;
 		/* restore 4.4V float voltage */
 		val.intval = battery->pdata->swelling_normal_float_voltage;
@@ -3830,8 +4436,12 @@ static void sec_bat_cable_work(struct work_struct *work)
 	 */
 	wake_lock_timeout(&battery->vbus_wake_lock, HZ * 10);
 
+<<<<<<< HEAD
 	if ((battery->cable_type == POWER_SUPPLY_TYPE_BATTERY) ||
 		(battery->cable_type == POWER_SUPPLY_TYPE_WATER) ||
+=======
+	if (battery->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		((battery->pdata->cable_check_type &
 		SEC_BATTERY_CABLE_CHECK_NOINCOMPATIBLECHARGE) &&
 		battery->cable_type == POWER_SUPPLY_TYPE_UNKNOWN)) {
@@ -3848,6 +4458,7 @@ static void sec_bat_cable_work(struct work_struct *work)
 		battery->skip_wpc_temp_check = false;
 		battery->wc_cv_mode = false;
 		battery->wc_pack_max_curr = false;
+<<<<<<< HEAD
 
 		if (battery->cable_type == POWER_SUPPLY_TYPE_WATER) {
 			if (sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_BUCK_OFF))
@@ -3856,6 +4467,10 @@ static void sec_bat_cable_work(struct work_struct *work)
 			if (sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF))
 				goto end_of_cable_work;
 		}
+=======
+		if (sec_bat_set_charge(battery, SEC_BAT_CHG_MODE_CHARGING_OFF))
+			goto end_of_cable_work;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else if (battery->slate_mode == true) {
 		sec_bat_set_charging_status(battery,
 				POWER_SUPPLY_STATUS_DISCHARGING);
@@ -3896,6 +4511,7 @@ static void sec_bat_cable_work(struct work_struct *work)
 			else
 				sec_bat_set_charging_status(battery,
 						POWER_SUPPLY_STATUS_CHARGING);
+<<<<<<< HEAD
 
 			if (battery->siop_level != 100)
 				battery->stop_timer = true;
@@ -3905,6 +4521,10 @@ static void sec_bat_cable_work(struct work_struct *work)
 			battery->input_voltage =
 				battery->cable_type == POWER_SUPPLY_TYPE_HV_MAINS ? 9 : 5;
 		}
+=======
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_AFC_CHARGER_MODE)
 		if (battery->cable_type == POWER_SUPPLY_TYPE_MAINS ||
 			battery->cable_type == POWER_SUPPLY_TYPE_WIRELESS ||
@@ -3967,6 +4587,7 @@ static void sec_bat_cable_work(struct work_struct *work)
 		POWER_SUPPLY_PROP_ONLINE, val);
 	psy_do_property(battery->pdata->fuelgauge_name, set,
 		POWER_SUPPLY_PROP_ONLINE, val);
+<<<<<<< HEAD
 	/* check input current */
 	psy_do_property(battery->pdata->charger_name, get,
 		POWER_SUPPLY_PROP_CURRENT_MAX, val);
@@ -3979,6 +4600,15 @@ static void sec_bat_cable_work(struct work_struct *work)
 	} else {
 		battery->wired_input_current = val.intval;
 	}
+=======
+	if (battery->status != POWER_SUPPLY_STATUS_DISCHARGING)
+		sec_bat_check_input_voltage(battery);
+
+	/* update charging current */
+	psy_do_property(battery->pdata->charger_name, get,
+		POWER_SUPPLY_PROP_CURRENT_NOW, val);
+	battery->charging_current = val.intval;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* set charging current */
 	sec_bat_set_charging_current(battery);
 
@@ -4424,6 +5054,7 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n", value.intval);
 		break;
 	case BATT_INBAT_VOLTAGE:
+<<<<<<< HEAD
 		if(battery->pdata->support_fgsrc_change == true) {
 			value.intval = 0;
 			psy_do_property(battery->pdata->fgsrc_switch_name, set,
@@ -4438,11 +5069,43 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 			psy_do_property(battery->pdata->fgsrc_switch_name, set,
 					POWER_SUPPLY_PROP_ENERGY_NOW, value);
 		} else {
+=======
+		if(battery->pdata->support_fgsrc_change == true) 
+		{
+			value.intval = 0;
+
+			if (strcmp(battery->pdata->fgsrc_switch_name, "sm5705-fuelgauge")==0)
+			{
+				pr_info("%s SM5705_FGSRC_SWITCH \n", __func__);
+				psy_do_property(battery->pdata->fuelgauge_name, get,
+						POWER_SUPPLY_PROP_INBAT_VOLTAGE_FGSRC_SWITCHING, value);
+				ret = value.intval;
+			}
+			else{
+				psy_do_property(battery->pdata->fgsrc_switch_name, set,
+						POWER_SUPPLY_PROP_ENERGY_NOW, value);
+				mdelay(200);
+				psy_do_property(battery->pdata->fuelgauge_name, get,
+						POWER_SUPPLY_PROP_VOLTAGE_NOW, value);
+				dev_info(battery->dev, "voltage(%d)\n", value.intval/10);
+				ret = value.intval /10;
+				mdelay(200);
+				value.intval = 1;
+				psy_do_property(battery->pdata->fgsrc_switch_name, set,
+						POWER_SUPPLY_PROP_ENERGY_NOW, value);
+			} 
+		}
+		else{
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = sec_bat_get_inbat_vol_by_adc(battery);
 		}
 		dev_info(battery->dev, "in-battery voltage(%d)\n", ret);
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
+<<<<<<< HEAD
 			       ret);
+=======
+				ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 #if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING)
 	case BATT_DISCHARGING_CHECK:
@@ -4468,11 +5131,27 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 	case BATT_SELF_DISCHARGING_CONTROL:
 		break;
 #endif
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	case BATT_SW_SELF_DISCHARGING:
+		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
+			       battery->sw_self_discharging);
+		break;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case BATT_INBAT_WIRELESS_CS100:
 		psy_do_property(battery->pdata->wireless_charger_name, get,
 			POWER_SUPPLY_PROP_STATUS, value);
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n", value.intval);
 		break;
+<<<<<<< HEAD
+=======
+	case SAFETY_TIMER_SET:
+		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
+			       battery->safety_timer_set);
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case HMT_TA_CONNECTED:
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
 			(battery->cable_type == POWER_SUPPLY_TYPE_HMT_CONNECTED) ? 1 : 0);
@@ -4711,6 +5390,7 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 		break;
 	case BATT_WDT_CONTROL:
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%d\n",
+<<<<<<< HEAD
 			       battery->wdt_kick_disable);
 		break;
 #if defined(CONFIG_BATTERY_SWELLING)
@@ -4726,6 +5406,9 @@ ssize_t sec_bat_show_attrs(struct device *dev,
 	case SAFETY_TIMER_INFO:
 		i += scnprintf(buf + i, PAGE_SIZE - i, "%ld\n",
 			       battery->cal_safety_time);
+=======
+				battery->wdt_kick_disable);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	default:
 		i = -EINVAL;
@@ -4748,6 +5431,14 @@ void update_external_temp_table(struct sec_battery_info *battery, int temp[])
 
 }
 
+<<<<<<< HEAD
+=======
+bool sec_bat_get_slate_mode(void)
+{
+	return slate_mode_state;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 ssize_t sec_bat_store_attrs(
 					struct device *dev,
 					struct device_attribute *attr,
@@ -4832,6 +5523,10 @@ ssize_t sec_bat_store_attrs(
 					__func__);
 				return -EINVAL;
 			}
+<<<<<<< HEAD
+=======
+			slate_mode_state = battery->slate_mode;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			wake_lock(&battery->cable_wake_lock);
 			queue_delayed_work_on(0, battery->monitor_wqueue,
 					   &battery->cable_work, 0);
@@ -4858,7 +5553,10 @@ ssize_t sec_bat_store_attrs(
 			} else {
 				battery->siop_level = 100;
 			}
+<<<<<<< HEAD
 			battery->r_siop_level = battery->siop_level;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			if (battery->siop_event == SIOP_EVENT_WPC_CALL_START ||
 				battery->siop_event == SIOP_EVENT_WPC_CALL_END)
@@ -4947,13 +5645,21 @@ ssize_t sec_bat_store_attrs(
 		if (sscanf(buf, "%d\n", &x) == 1) {
 			if (x == 0) {
 				battery->wc_enable = false;
+<<<<<<< HEAD
 				if (battery->pdata->wpc_en) {
+=======
+				if (battery->pdata->wpc_en >= 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					gpio_direction_output(battery->pdata->wpc_en, 1);
 					pr_info("%s: WC CONTROL: Disable", __func__);
 				}
 			} else if (x == 1) {
 				battery->wc_enable = true;
+<<<<<<< HEAD
 				if (battery->pdata->wpc_en) {
+=======
+				if (battery->pdata->wpc_en >= 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					gpio_direction_output(battery->pdata->wpc_en, 0);
 					pr_info("%s: WC CONTROL: Enable", __func__);
 				}
@@ -5115,12 +5821,19 @@ ssize_t sec_bat_store_attrs(
 		break;
 	case BATT_EVENT_LCD:
 		if (sscanf(buf, "%d\n", &x) == 1) {
+<<<<<<< HEAD
 			ret = count;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (x) {
 				battery->lcd_status = true;
 			} else {
 				battery->lcd_status = false;
 			}
+<<<<<<< HEAD
+=======
+			ret = count;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		break;
 	case BATT_EVENT_GPS:
@@ -5252,6 +5965,13 @@ ssize_t sec_bat_store_attrs(
 		}
 		break;
 #endif
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	case BATT_SW_SELF_DISCHARGING:
+		break;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case BATT_INBAT_WIRELESS_CS100:
 		if (sscanf(buf, "%d\n", &x) == 1) {
 			union power_supply_propval value;
@@ -5263,6 +5983,19 @@ ssize_t sec_bat_store_attrs(
 			ret = count;
 		}
 		break;
+<<<<<<< HEAD
+=======
+	case SAFETY_TIMER_SET:
+		if (sscanf(buf, "%10d\n", &x) == 1) {
+			if (x) {
+				battery->safety_timer_set = true;
+			} else {
+				battery->safety_timer_set = false;
+			}
+			ret = count;
+		}
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case HMT_TA_CONNECTED:
 		if (sscanf(buf, "%d\n", &x) == 1) {
 			union power_supply_propval value;
@@ -5342,6 +6075,7 @@ ssize_t sec_bat_store_attrs(
 #endif
 		if (sscanf(buf, "%d\n", &x) == 1) {
 			dev_info(battery->dev, "%s: %s(%d)\n", __func__,
+<<<<<<< HEAD
 				(offset == BATTERY_CYCLE) ?	"BATTERY_CYCLE" : "BATTERY_CYCLE(W)", x);
 
 			if (x >= 0) {
@@ -5352,6 +6086,19 @@ ssize_t sec_bat_store_attrs(
 
 				if (prev_battery_cycle < 0) {
 					dev_info(battery->dev, "%s: [AGE] do sec_bat_aging_check()\n", __func__);
+=======
+				(offset == BATTERY_CYCLE) ?
+				"BATTERY_CYCLE" : "BATTERY_CYCLE(W)", x);
+			if (x >= 0) {
+				int prev_battery_cycle = battery->batt_cycle;
+				battery->batt_cycle = x;
+				dev_info(battery->dev,
+					"%s: [Long life] prev_battery_cycle = %d, new bat. cycle = %d\n",
+					__func__, prev_battery_cycle, battery->batt_cycle);
+				if (prev_battery_cycle < 0) {
+					dev_info(battery->dev,
+						"%s: [Long life] Do sec_bat_aging_check()\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					sec_bat_aging_check(battery);
 				}
 			}
@@ -5714,6 +6461,7 @@ ssize_t sec_bat_store_attrs(
 		}
 		ret = count;
 		break;
+<<<<<<< HEAD
 #if defined(CONFIG_BATTERY_SWELLING)
 	case BATT_SWELLING_CONTROL:
 		if (sscanf(buf, "%10d\n", &x) == 1) {
@@ -5740,6 +6488,8 @@ ssize_t sec_bat_store_attrs(
 		break;
 	case SAFETY_TIMER_INFO:
 		break;	
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		ret = -EINVAL;
 	}
@@ -5818,7 +6568,11 @@ static int sec_bat_set_property(struct power_supply *psy,
 		} else {
 			battery->wire_status = current_cable_type;
 			if ((battery->wire_status == POWER_SUPPLY_TYPE_BATTERY) &&
+<<<<<<< HEAD
 				(battery->wc_status != SEC_WIRELESS_PAD_NONE))
+=======
+				(battery->wc_status != SEC_WIRELESS_PAD_NONE) )
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				current_cable_type = POWER_SUPPLY_TYPE_WIRELESS;
 		}
 		dev_info(battery->dev,
@@ -5870,7 +6624,11 @@ static int sec_bat_set_property(struct power_supply *psy,
 
 		wake_lock(&battery->monitor_wake_lock);
 		queue_delayed_work_on(0, battery->monitor_wqueue,
+<<<<<<< HEAD
 				   &battery->monitor_work, msecs_to_jiffies(200));
+=======
+				   &battery->monitor_work, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 #if defined(CONFIG_BATTERY_SWELLING)
 	case POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT:
@@ -5896,11 +6654,14 @@ static int sec_bat_set_property(struct power_supply *psy,
 		sec_bat_parse_dt(battery->dev, battery);
 		break;
 #endif
+<<<<<<< HEAD
 #if !defined(CONFIG_SAMSUNG_BATTERY_ENG_TEST) && !defined(CONFIG_SEC_FACTORY)
 	case POWER_SUPPLY_PROP_SCOPE:
 		battery->block_water_event = val->intval;
 		break;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		return -EINVAL;
 	}
@@ -5935,6 +6696,7 @@ static int sec_bat_get_property(struct power_supply *psy,
 					return 0;
 				}
 			}
+<<<<<<< HEAD
 			if (battery->store_mode && !lpcharge &&
 					battery->cable_type != POWER_SUPPLY_TYPE_BATTERY &&
 					battery->cable_type != POWER_SUPPLY_TYPE_WATER &&
@@ -5943,11 +6705,24 @@ static int sec_bat_get_property(struct power_supply *psy,
 			} else {
 				val->intval = battery->status;
 			}
+=======
+#if defined(CONFIG_STORE_MODE)
+			if (battery->store_mode &&
+					battery->cable_type != POWER_SUPPLY_TYPE_BATTERY &&
+					battery->status == POWER_SUPPLY_STATUS_DISCHARGING) {
+				val->intval = POWER_SUPPLY_STATUS_CHARGING;
+			} else
+#endif
+				val->intval = battery->status;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_TYPE:
 		if (battery->cable_type == POWER_SUPPLY_TYPE_BATTERY ||
+<<<<<<< HEAD
 			battery->cable_type == POWER_SUPPLY_TYPE_WATER ||
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			battery->cable_type == POWER_SUPPLY_TYPE_MHL_USB_100) {
 			val->intval = POWER_SUPPLY_CHARGE_TYPE_NONE;
 		} else {
@@ -6311,11 +7086,21 @@ static int sec_bat_cable_check(struct sec_battery_info *battery,
 	{
 	case ATTACHED_DEV_JIG_UART_OFF_MUIC:
 	case ATTACHED_DEV_JIG_UART_ON_MUIC:
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SEC_FACTORY) && defined(CONFIG_MUIC_S2MU005_DISCHARGING_WA)
+		current_cable_type = POWER_SUPPLY_TYPE_BATTERY;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		battery->is_jig_on = true;
 		break;
 	//case ATTACHED_DEV_UNDEFINED_RANGE_MUIC:
 	case ATTACHED_DEV_SMARTDOCK_MUIC:
 	case ATTACHED_DEV_DESKDOCK_MUIC:
+<<<<<<< HEAD
+=======
+	case ATTACHED_DEV_JIG_USB_ON_MUIC:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		current_cable_type = POWER_SUPPLY_TYPE_BATTERY;
 		break;
 	case ATTACHED_DEV_OTG_MUIC:
@@ -6323,17 +7108,44 @@ static int sec_bat_cable_check(struct sec_battery_info *battery,
 	case ATTACHED_DEV_HMT_MUIC:
 		current_cable_type = POWER_SUPPLY_TYPE_OTG;
 		break;
+<<<<<<< HEAD
 	case ATTACHED_DEV_USB_MUIC:
 	case ATTACHED_DEV_JIG_USB_OFF_MUIC:
 	case ATTACHED_DEV_SMARTDOCK_USB_MUIC:
 	case ATTACHED_DEV_UNOFFICIAL_ID_USB_MUIC:
 	case ATTACHED_DEV_JIG_USB_ON_MUIC:
+=======
+	case ATTACHED_DEV_JIG_USB_OFF_MUIC:
+#if defined(CONFIG_SEC_FACTORY) && defined(CONFIG_MUIC_S2MU005_DISCHARGING_WA)
+	case ATTACHED_DEV_CARKIT_MUIC:
+		current_cable_type = POWER_SUPPLY_TYPE_BATTERY;
+		val.intval = SEC_BAT_CHG_MODE_CHARGING_OFF;
+		psy_do_property(battery->pdata->charger_name, set,
+				POWER_SUPPLY_PROP_CHARGING_ENABLED, val);
+		break;
+#endif
+	case ATTACHED_DEV_USB_MUIC:
+	case ATTACHED_DEV_SMARTDOCK_USB_MUIC:
+	case ATTACHED_DEV_UNOFFICIAL_ID_USB_MUIC:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		current_cable_type = POWER_SUPPLY_TYPE_USB;
 		break;
 	case ATTACHED_DEV_JIG_UART_OFF_VB_MUIC:
 	case ATTACHED_DEV_JIG_UART_OFF_VB_FG_MUIC:
+<<<<<<< HEAD
 		current_cable_type = factory_mode ? POWER_SUPPLY_TYPE_BATTERY :
 			POWER_SUPPLY_TYPE_UARTOFF;
+=======
+#if defined(CONFIG_SEC_FACTORY) && defined(CONFIG_MUIC_S2MU005_DISCHARGING_WA)
+		current_cable_type = POWER_SUPPLY_TYPE_BATTERY;
+		val.intval = SEC_BAT_CHG_MODE_CHARGING_OFF;
+		psy_do_property(battery->pdata->charger_name, set,
+				POWER_SUPPLY_PROP_CHARGING_ENABLED, val);
+#else	
+		current_cable_type = factory_mode ? POWER_SUPPLY_TYPE_BATTERY :
+			POWER_SUPPLY_TYPE_UARTOFF;
+#endif			
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case ATTACHED_DEV_RDU_TA_MUIC:
 		battery->store_mode = true;
@@ -6380,7 +7192,18 @@ static int sec_bat_cable_check(struct sec_battery_info *battery,
 		current_cable_type = POWER_SUPPLY_TYPE_HV_ERR;
 		break;
 	case ATTACHED_DEV_UNDEFINED_CHARGING_MUIC:
+<<<<<<< HEAD
 		current_cable_type = POWER_SUPPLY_TYPE_MAINS;
+=======
+#if defined(CONFIG_SEC_FACTORY) && defined(CONFIG_MUIC_S2MU005_DISCHARGING_WA)
+		current_cable_type = POWER_SUPPLY_TYPE_BATTERY;
+		val.intval = SEC_BAT_CHG_MODE_CHARGING_OFF;
+		psy_do_property(battery->pdata->charger_name, set,
+				POWER_SUPPLY_PROP_CHARGING_ENABLED, val);
+#else
+		current_cable_type = POWER_SUPPLY_TYPE_MAINS;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case ATTACHED_DEV_HV_ID_ERR_UNDEFINED_MUIC:
 	case ATTACHED_DEV_HV_ID_ERR_UNSUPPORTED_MUIC:
@@ -6390,15 +7213,35 @@ static int sec_bat_cable_check(struct sec_battery_info *battery,
 	case ATTACHED_DEV_VZW_INCOMPATIBLE_MUIC:
 		current_cable_type = POWER_SUPPLY_TYPE_UNKNOWN;
 		break;
+<<<<<<< HEAD
+=======
+	case ATTACHED_DEV_MHL_MUIC:
+		current_cable_type = POWER_SUPPLY_TYPE_MHL_1500;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		pr_err("%s: invalid type for charger:%d\n",
 			__func__, attached_dev);
 	}
+<<<<<<< HEAD
 #ifndef CONFIG_FUELGAGUE_S2MU005
+=======
+#ifndef CONFIG_FUELGAUGE_S2MU005
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (battery->is_jig_on && !battery->pdata->support_fgsrc_change)
 		psy_do_property(battery->pdata->fuelgauge_name, set,
 			POWER_SUPPLY_PROP_ENERGY_NOW, val);
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_CHARGER_S2MU005
+	if (battery->is_jig_on) {
+		val.intval = SEC_BAT_CHG_MODE_CHARGING_OFF;
+		psy_do_property(battery->pdata->charger_name, set,
+				POWER_SUPPLY_PROP_CHARGING_ENABLED, val);
+	}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	val.intval = battery->is_jig_on;
 	psy_do_property(battery->pdata->charger_name, set,
@@ -6445,6 +7288,7 @@ static int batt_handle_notification(struct notifier_block *nb,
 		break;
 	}
 
+<<<<<<< HEAD
 {
 	/* Water Resistance Feature */
 	if (battery->pdata->enable_water_resistance) {
@@ -6482,6 +7326,12 @@ static int batt_handle_notification(struct notifier_block *nb,
 
 	if (attached_dev == ATTACHED_DEV_MHL_MUIC)
 		return 0;
+=======
+#if 0 //temp block
+	sec_bat_set_misc_event(battery, BATT_MISC_EVENT_UNDEFINED_RANGE_TYPE,
+		(battery->muic_cable_type != ATTACHED_DEV_UNDEFINED_RANGE_MUIC));
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (cable_type < 0) {
 		dev_info(battery->dev, "%s: ignore event(%d)\n",
@@ -6621,12 +7471,15 @@ static int vbus_handle_notification(struct notifier_block *nb,
 		battery->wire_status = POWER_SUPPLY_TYPE_OTG;
 		wake_lock(&battery->cable_wake_lock);
 		queue_delayed_work_on(0, battery->monitor_wqueue, &battery->cable_work, 0);
+<<<<<<< HEAD
 	} else if (battery->cable_type == POWER_SUPPLY_TYPE_OTG &&
 		vbus_status == STATUS_VBUS_LOW) {
 		value.intval = true;
 		psy_do_property("otg", set,
 				POWER_SUPPLY_PROP_CURRENT_MAX,
 				value);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	pr_info("%s: action=%d, vbus_status=%d\n", __func__, (int)action, vbus_status);
 	battery->muic_vbus_status = vbus_status;
@@ -6688,18 +7541,24 @@ static int sec_bat_parse_dt(struct device *dev,
 	if (ret)
 		pr_info("%s : technology is Empty\n", __func__);
 
+<<<<<<< HEAD
 	pdata->enable_water_resistance = of_property_read_bool(np,
 							"battery,enable_water_resistance");
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = of_property_read_u32(np,
 		"battery,wireless_cc_cv", &pdata->wireless_cc_cv);
 
 	pdata->fake_capacity = of_property_read_bool(np,
 						     "battery,fake_capacity");
 
+<<<<<<< HEAD
 	battery->charging_by_single = of_property_read_bool(np,
 							"battery,charging_by_single");
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	p = of_get_property(np, "battery,polling_time", &len);
 	if (!p)
 		return 1;
@@ -7119,10 +7978,14 @@ static int sec_bat_parse_dt(struct device *dev,
 		&pdata->cable_source_type);
 	if (ret)
 		pr_info("%s : Cable source type is Empty\n", __func__);
+<<<<<<< HEAD
 #if defined(CONFIG_CHARGING_VZWCONCEPT)
 	pdata->cable_check_type &= ~SEC_BATTERY_CABLE_CHECK_NOUSBCHARGE;
 	pdata->cable_check_type |= SEC_BATTERY_CABLE_CHECK_NOINCOMPATIBLECHARGE;
 #endif
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = of_property_read_u32(np, "battery,polling_type",
 		&pdata->polling_type);
 	if (ret)
@@ -7294,6 +8157,14 @@ static int sec_bat_parse_dt(struct device *dev,
 	if (ret)
 		pr_info("%s : Full condition soc is Empty\n", __func__);
 
+<<<<<<< HEAD
+=======
+	ret = of_property_read_u32(np, "battery,full_condition_vcell",
+		&pdata->full_condition_vcell);
+	if (ret)
+		pr_info("%s : Full condition vcell is Empty\n", __func__);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = of_property_read_u32(np, "battery,recharge_check_count",
 		&pdata->recharge_check_count);
 	if (ret)
@@ -7309,6 +8180,13 @@ static int sec_bat_parse_dt(struct device *dev,
 	if (ret)
 		pr_info("%s : Recharge condition soc is Empty\n", __func__);
 
+<<<<<<< HEAD
+=======
+	ret = of_property_read_u32(np, "battery,recharge_condition_vcell",
+		&pdata->recharge_condition_vcell);
+	if (ret)
+		pr_info("%s : Recharge condition vcell is Empty\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = of_property_read_u32(np, "battery,charging_total_time",
 		(unsigned int *)&pdata->charging_total_time);
@@ -7325,12 +8203,16 @@ static int sec_bat_parse_dt(struct device *dev,
 	if (ret)
 		pr_info("%s : Charging reset time is Empty\n", __func__);
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(np, "battery,charging_reset_time",
 		(unsigned int *)&pdata->charging_reset_time);
 	if (ret)
 		pr_info("%s : Charging reset time is Empty\n", __func__);
 
 		ret = of_property_read_u32(np,
+=======
+	ret = of_property_read_u32(np,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"battery,expired_time", &temp);
 	if (ret) {
 		pr_info("expired time is empty\n");
@@ -7338,7 +8220,11 @@ static int sec_bat_parse_dt(struct device *dev,
 	} else {
 		pdata->expired_time = (unsigned int) temp;
 	}
+<<<<<<< HEAD
 	pdata->expired_time *= 100;
+=======
+	pdata->expired_time *= 1000;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	battery->expired_time = pdata->expired_time;
 
 	ret = of_property_read_u32(np,
@@ -7349,7 +8235,11 @@ static int sec_bat_parse_dt(struct device *dev,
 	} else {
 		pdata->recharging_expired_time = (unsigned int) temp;
 	}
+<<<<<<< HEAD
 	pdata->recharging_expired_time *= 100;
+=======
+	pdata->recharging_expired_time *= 1000;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = of_property_read_u32(np,
 			"battery,standard_curr", &pdata->standard_curr);
@@ -7357,6 +8247,7 @@ static int sec_bat_parse_dt(struct device *dev,
 		pr_info("standard_curr is empty\n");
 		pdata->standard_curr = 2150;
 	}
+<<<<<<< HEAD
 
 	battery->battery_type = of_get_named_gpio(np, "battery,battery_type", 0);
 	if (battery->battery_type  < 0) {
@@ -7417,6 +8308,27 @@ static int sec_bat_parse_dt(struct device *dev,
 			pr_info("%s : 2400mAh %d voltage Battery\n", __func__, pdata->chg_float_voltage);
 		}
 	}
+=======
+	
+	ret = of_property_read_u32(np, "battery,charging_reset_time",
+		(unsigned int *)&pdata->charging_reset_time);
+	if (ret)
+		pr_info("%s : Charging reset time is Empty\n", __func__);
+
+	ret = of_property_read_u32(np, "battery,chg_float_voltage",
+		(unsigned int *)&pdata->chg_float_voltage);
+	if (ret) {
+		pr_info("%s: chg_float_voltage is Empty\n", __func__);
+		pdata->chg_float_voltage = 4350;
+	}
+
+	if( of_property_read_bool(np, "battery,factory_store_mode_en"))
+		pdata->factory_store_mode_en = true;
+	else
+		pdata->factory_store_mode_en = false;
+	pr_info("%s: Factory Store mode : %d \n",__func__,pdata->factory_store_mode_en);
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_BATTERY_SWELLING_SELF_DISCHARGING)
 	ret = of_property_read_u32(np, "battery,self_discharging_type",
 				(unsigned int *)&pdata->self_discharging_type);
@@ -7471,6 +8383,7 @@ static int sec_bat_parse_dt(struct device *dev,
 		pr_info("%s : Discharging NTC LIMIT is Empty", __func__);
 #endif
 #if defined(CONFIG_BATTERY_SWELLING)
+<<<<<<< HEAD
 	battery->battery_type = of_get_named_gpio(np, "battery,battery_type", 0);
 	if (battery->battery_type  < 0) {
 		ret = of_property_read_u32(np, "battery,chg_float_voltage",
@@ -7496,22 +8409,38 @@ static int sec_bat_parse_dt(struct device *dev,
 
 		}
 	}
+=======
+	ret = of_property_read_u32(np, "battery,chg_float_voltage",
+		(unsigned int *)&pdata->swelling_normal_float_voltage);
+	if (ret)
+		pr_info("%s: chg_float_voltage is Empty\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = of_property_read_u32(np, "battery,swelling_high_temp_block",
 				   &temp);
 	pdata->swelling_high_temp_block = (int)temp;
+<<<<<<< HEAD
 	if (ret) {
 		pr_info("%s: swelling high temp block is Empty\n", __func__);
 		pdata->swelling_high_temp_block = DEFAULT_SWELLING_HIGH_TEMP_BLOCK;
 	}
+=======
+	if (ret)
+		pr_info("%s: swelling high temp block is Empty\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = of_property_read_u32(np, "battery,swelling_high_temp_recov",
 				   &temp);
 	pdata->swelling_high_temp_recov = (int)temp;
+<<<<<<< HEAD
 	if (ret) {
 		pr_info("%s: swelling high temp recovery is Empty\n", __func__);
 		pdata->swelling_high_temp_recov = DEFAULT_SWELLING_HIGH_TEMP_RECOV;
 	}
+=======
+	if (ret)
+		pr_info("%s: swelling high temp recovery is Empty\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = of_property_read_u32(np, "battery,swelling_low_temp_2step_mode",
 				   &pdata->swelling_low_temp_2step_mode);
@@ -7519,6 +8448,7 @@ static int sec_bat_parse_dt(struct device *dev,
 		pr_info("%s: swelling_low_temp_2step_mode is Empty\n", __func__);
 		pdata->swelling_low_temp_2step_mode = 0;
 	}
+<<<<<<< HEAD
 
 	if(pdata->swelling_low_temp_2step_mode) {
 	ret = of_property_read_u32(np, "battery,swelling_low_temp_block_1st",
@@ -7552,6 +8482,33 @@ static int sec_bat_parse_dt(struct device *dev,
 		pr_info("%s: swelling low temp recovery 2nd is Empty\n", __func__);
 		pdata->swelling_low_temp_recov_2nd = DEFAULT_SWELLING_LOW_TEMP_RECOV_2ND;
 	}
+=======
+	
+	if(pdata->swelling_low_temp_2step_mode) {
+		ret = of_property_read_u32(np, "battery,swelling_low_temp_block_1st",
+				   &temp);
+		pdata->swelling_low_temp_block_1st = (int)temp;
+		if (ret)
+			pr_info("%s: swelling low temp block is Empty\n", __func__);
+			
+		ret = of_property_read_u32(np, "battery,swelling_low_temp_recov_1st",
+				   &temp);
+		pdata->swelling_low_temp_recov_1st = (int)temp;
+		if (ret)
+			pr_info("%s: swelling low temp recovery is Empty\n", __func__);
+		
+		ret = of_property_read_u32(np, "battery,swelling_low_temp_block_2nd",
+				   &temp);
+		pdata->swelling_low_temp_block_2nd = (int)temp;
+		if (ret)
+			pr_info("%s: swelling low temp block is Empty\n", __func__);
+
+		ret = of_property_read_u32(np, "battery,swelling_low_temp_recov_2nd",
+				   &temp);
+		pdata->swelling_low_temp_recov_2nd = (int)temp;
+		if (ret)
+			pr_info("%s: swelling low temp recovery is Empty\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	else {
 		ret = of_property_read_u32(np, "battery,swelling_low_temp_block",
@@ -7568,6 +8525,10 @@ static int sec_bat_parse_dt(struct device *dev,
 		if (ret)
 			pr_info("%s: swelling low temp recovery is Empty\n", __func__);	
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = of_property_read_u32(np, "battery,swelling_low_temp_current", 
 					&pdata->swelling_low_temp_current);
 	if (ret) {
@@ -7585,7 +8546,11 @@ static int sec_bat_parse_dt(struct device *dev,
 	ret = of_property_read_u32(np, "battery,swelling_high_temp_current", 
 					&pdata->swelling_high_temp_current);
 	if (ret) {
+<<<<<<< HEAD
 		pr_info("%s: swelling_low_temp_current is Empty, Defualt value 1300mA \n", __func__);
+=======
+		pr_info("%s: swelling_high_temp_current is Empty, Defualt value 1300mA \n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pdata->swelling_high_temp_current = 1300;
 	}
 
@@ -7601,12 +8566,22 @@ static int sec_bat_parse_dt(struct device *dev,
 	if (ret) {
 		pr_info("%s: swelling drop float voltage is Empty, Default value 4250mV \n", __func__);
 		pdata->swelling_drop_float_voltage = 4250;
+<<<<<<< HEAD
 		pdata->swelling_drop_voltage_condition = 4250;
 	} else {	
 		pdata->swelling_drop_voltage_condition = (pdata->swelling_drop_float_voltage > 10000) ?
 			(pdata->swelling_drop_float_voltage / 10) : (pdata->swelling_drop_float_voltage);
 		pr_info("%s : swelling drop voltage(set : %d, condition : %d)\n", __func__,
 			pdata->swelling_drop_float_voltage, pdata->swelling_drop_voltage_condition);
+=======
+	}
+
+	ret = of_property_read_u32(np, "battery,swelling_offset_voltage",
+		(unsigned int *)&pdata->swelling_offset_voltage);
+	if (ret) {
+		pr_info("%s: swelling offset voltage is Empty, Default value 0mV \n", __func__);
+		pdata->swelling_offset_voltage = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	ret = of_property_read_u32(np, "battery,swelling_high_rechg_voltage",
@@ -7626,14 +8601,22 @@ static int sec_bat_parse_dt(struct device *dev,
 	pr_info("%s : SWELLING_HIGH_TEMP(%d) SWELLING_HIGH_TEMP_RECOVERY(%d)\n"
 		"SWELLING_LOW_TEMP_1st(%d) SWELLING_LOW_TEMP_RECOVERY_1st(%d) "
 		"SWELLING_LOW_TEMP_2nd(%d) SWELLING_LOW_TEMP_RECOVERY_2nd(%d) "
+<<<<<<< HEAD
 		"SWELLING_LOW_CURRENT(%d, %d), SWELLING_HIGH_CURRENT(%d, %d)\n"
 		"SWELLING_LOW_RCHG_VOL(%d), SWELLING_HIGH_RCHG_VOL(%d)\n",
+=======
+		"SWELLING_LOW_CURRENT(%d, %d), SWELLING_HIGH_CURRENT(%d, %d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		__func__, pdata->swelling_high_temp_block, pdata->swelling_high_temp_recov,
 		pdata->swelling_low_temp_block_1st, pdata->swelling_low_temp_recov_1st,
 		pdata->swelling_low_temp_block_2nd, pdata->swelling_low_temp_recov_2nd,
 		pdata->swelling_low_temp_current, pdata->swelling_low_temp_topoff,
+<<<<<<< HEAD
 		pdata->swelling_high_temp_current, pdata->swelling_high_temp_topoff,
 		pdata->swelling_low_rechg_voltage, pdata->swelling_high_rechg_voltage);
+=======
+		pdata->swelling_high_temp_current, pdata->swelling_high_temp_topoff);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 #if defined(CONFIG_CALC_TIME_TO_FULL)
@@ -7653,6 +8636,31 @@ static int sec_bat_parse_dt(struct device *dev,
 	}
 #endif
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	ret = of_property_read_u32(np, "battery,self_discharging_temp_block",
+		(unsigned int *)&pdata->self_discharging_temp_block);
+	if (ret)
+		pr_info("%s: sw self_discharging_temp_block is Empty\n", __func__);
+
+	ret = of_property_read_u32(np, "battery,self_discharging_volt_block",
+		(unsigned int *)&pdata->self_discharging_volt_block);
+	if (ret)
+		pr_info("%s: sw self_discharging_volt_block is Empty\n", __func__);
+
+	ret = of_property_read_u32(np, "battery,self_discharging_temp_recov",
+		(unsigned int *)&pdata->self_discharging_temp_recov);
+	if (ret)
+		pr_info("%s: sw self_discharging_temp_recov is Empty\n", __func__);
+
+	ret = of_property_read_u32(np, "battery,self_discharging_temp_pollingtime",
+		(unsigned int *)&pdata->self_discharging_temp_pollingtime);
+	if (ret)
+		pr_info("%s: sw self_discharging_temp_pollingtime is Empty\n", __func__);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_WIRELESS_FIRMWARE_UPDATE)
 	/* wpc_det */
 	ret = pdata->wpc_det = of_get_named_gpio(np, "battery,wpc_det", 0);
@@ -7674,13 +8682,21 @@ static int sec_bat_parse_dt(struct device *dev,
 		ret = of_property_read_u32_array(np, "battery,age_data",
 				 (u32 *)battery->pdata->age_data, len/sizeof(u32));
 		if (ret) {
+<<<<<<< HEAD
 			pr_err("%s: [AGE] failed to read battery->pdata->age_data: %d\n",
+=======
+			pr_err("%s: [Long life] failed to read battery->pdata->age_data: %d\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					__func__, ret);
 			kfree(battery->pdata->age_data);
 			battery->pdata->age_data = NULL;
 			battery->pdata->num_age_step = 0;
 		}
+<<<<<<< HEAD
 		pr_err("%s: [AGE] num_age_step : %d\n", __func__, battery->pdata->num_age_step);
+=======
+		pr_err("%s: [Long life] num_age_step : %d\n", __func__, battery->pdata->num_age_step);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		for (len = 0; len < battery->pdata->num_age_step; ++len) {
 			pr_err("[%d/%d]cycle:%d, float:%d, full_v:%d, recharge_v:%d, soc:%d\n",
 				len, battery->pdata->num_age_step-1,
@@ -7692,6 +8708,7 @@ static int sec_bat_parse_dt(struct device *dev,
 		}
 	} else {
 		battery->pdata->num_age_step = 0;
+<<<<<<< HEAD
 		pr_err("%s: [AGE] there is not age_data\n", __func__);
 	}
 #endif
@@ -7703,6 +8720,12 @@ static int sec_bat_parse_dt(struct device *dev,
 		pdata->call_event_siop_level = 30;
 	}
 
+=======
+		pr_err("%s: [Long life] there is no age_data\n", __func__);
+	}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = of_property_read_u32(np, "battery,siop_event_check_type",
 			&pdata->siop_event_check_type);
 	ret = of_property_read_u32(np, "battery,siop_call_cc_current",
@@ -7712,6 +8735,7 @@ static int sec_bat_parse_dt(struct device *dev,
 
 	ret = of_property_read_u32(np, "battery,siop_input_limit_current",
 			&pdata->siop_input_limit_current);
+<<<<<<< HEAD
 	if (ret) {
 		pdata->siop_input_limit_current =
 			(pdata->charging_current[POWER_SUPPLY_TYPE_MAINS].input_current_limit > SIOP_INPUT_LIMIT_CURRENT) ?
@@ -7720,6 +8744,10 @@ static int sec_bat_parse_dt(struct device *dev,
 		pr_err("%s: set default siop input current limit(%d)\n",
 			__func__, pdata->siop_input_limit_current);
 	}
+=======
+	if (ret)
+		pdata->siop_input_limit_current = SIOP_INPUT_LIMIT_CURRENT;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = of_property_read_u32(np, "battery,siop_charging_limit_current",
 			&pdata->siop_charging_limit_current);
@@ -7889,6 +8917,13 @@ static int sec_battery_probe(struct platform_device *pdev)
 			"sec-battery-siop_event");
 	wake_lock_init(&battery->wc_headroom_wake_lock, WAKE_LOCK_SUSPEND,
 			"sec-battery-wc_headroom");
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	wake_lock_init(&battery->self_discharging_wake_lock, WAKE_LOCK_SUSPEND,
+			   "sec-battery-self-discharging");
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_UPDATE_BATTERY_DATA)
 	wake_lock_init(&battery->batt_data_wake_lock, WAKE_LOCK_SUSPEND,
 			"sec-battery-update-data");
@@ -7921,7 +8956,10 @@ static int sec_battery_probe(struct platform_device *pdev)
 	battery->charging_next_time = 0;
 	battery->charging_fullcharged_time = 0;
 	battery->siop_level = 100;
+<<<<<<< HEAD
 	battery->r_siop_level = 100;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	battery->siop_event = 0;
 	battery->wc_enable = 1;
 	battery->pre_chg_temp = 0;
@@ -7935,7 +8973,10 @@ static int sec_battery_probe(struct platform_device *pdev)
 	battery->wire_status = POWER_SUPPLY_TYPE_BATTERY;
 
 #if defined(CONFIG_BATTERY_SWELLING)
+<<<<<<< HEAD
 	battery->skip_swelling = false;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	battery->swelling_mode = SWELLING_MODE_NONE;
 #endif
 	battery->charging_block = false;
@@ -7964,14 +9005,23 @@ static int sec_battery_probe(struct platform_device *pdev)
 	battery->store_mode = false;
 	battery->ignore_store_mode = false;
 	battery->slate_mode = false;
+<<<<<<< HEAD
 	battery->is_hc_usb = false;
 	battery->ignore_siop = false;
 
+=======
+	slate_mode_state = battery->slate_mode;
+	battery->is_hc_usb = false;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	battery->safety_timer_set = true;
 	battery->stop_timer = false;
 	battery->prev_safety_time = 0;
 	battery->lcd_status = false;
 	battery->current_event = 0;
+<<<<<<< HEAD
+=======
+	battery->ignore_siop = false;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
 	battery->batt_cycle = -1;
@@ -7987,6 +9037,12 @@ static int sec_battery_probe(struct platform_device *pdev)
 	battery->force_discharging = false;
 	battery->factory_self_discharging_mode_on = false;
 #endif
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	battery->sw_self_discharging = false;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if 0 //temp block
 	if(charging_night_mode == 49)
@@ -8046,11 +9102,14 @@ static int sec_battery_probe(struct platform_device *pdev)
 	}
 #endif
 
+<<<<<<< HEAD
 #if !defined(CONFIG_SAMSUNG_BATTERY_ENG_TEST) && !defined(CONFIG_SEC_FACTORY)
 	battery->block_water_event = !(get_switch_sel() & SWITCH_SEL_RUSTPROOF_MASK) ? 0 : 1;
 	pr_info("%s: init block_water_event = %d\n", __func__, battery->block_water_event);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* create work queue */
 	battery->monitor_wqueue =
 	    alloc_workqueue(dev_name(&pdev->dev), WQ_MEM_RECLAIM, 1);
@@ -8275,6 +9334,12 @@ err_irq:
 	wake_lock_destroy(&battery->siop_level_wake_lock);
 	wake_lock_destroy(&battery->siop_event_wake_lock);
 	wake_lock_destroy(&battery->wc_headroom_wake_lock);
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	wake_lock_destroy(&battery->self_discharging_wake_lock);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_UPDATE_BATTERY_DATA)
 	wake_lock_destroy(&battery->batt_data_wake_lock);
 #endif
@@ -8318,6 +9383,12 @@ static int __devexit sec_battery_remove(struct platform_device *pdev)
 	wake_lock_destroy(&battery->siop_wake_lock);
 	wake_lock_destroy(&battery->siop_level_wake_lock);
 	wake_lock_destroy(&battery->siop_event_wake_lock);
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	wake_lock_destroy(&battery->self_discharging_wake_lock);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wake_lock_destroy(&battery->misc_event_wake_lock);
 	mutex_destroy(&battery->adclock);
 	mutex_destroy(&battery->iolock);
@@ -8378,6 +9449,7 @@ static int sec_battery_prepare(struct device *dev)
 
 static int sec_battery_suspend(struct device *dev)
 {
+<<<<<<< HEAD
 	struct sec_battery_info *battery
 			= dev_get_drvdata(dev);
 
@@ -8394,6 +9466,8 @@ static int sec_battery_suspend(struct device *dev)
 			__func__, battery->sleep_start_time);
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -8413,6 +9487,7 @@ static void sec_battery_complete(struct device *dev)
 	if (battery->pdata->polling_type == SEC_BATTERY_MONITOR_ALARM)
 		alarm_cancel(&battery->polling_alarm);
 
+<<<<<<< HEAD
 	if ((battery->status == POWER_SUPPLY_STATUS_CHARGING || battery->status == POWER_SUPPLY_STATUS_FULL) &&
 		(!battery->charging_block) && (battery->sleep_start_time > 0)) {
 		unsigned long charging_time;
@@ -8432,6 +9507,8 @@ static void sec_battery_complete(struct device *dev)
 	}
 	battery->sleep_start_time = 0;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wake_lock(&battery->monitor_wake_lock);
 	queue_delayed_work_on(0, battery->monitor_wqueue,
 		&battery->monitor_work, 0);

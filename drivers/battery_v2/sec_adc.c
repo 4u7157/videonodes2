@@ -2,6 +2,7 @@
  *  sec_adc.c
  *  Samsung Mobile Battery Driver
  *
+<<<<<<< HEAD
  * Copyright (C) 2017 Samsung Electronics, Inc.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,6 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+=======
+ *  Copyright (C) 2012 Samsung Electronics
+ *
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #include "include/sec_adc.h"
@@ -25,6 +34,10 @@ struct adc_list {
 	const char*	name;
 	struct iio_channel *channel;
 	bool is_used;
+<<<<<<< HEAD
+=======
+	int prev_value;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static struct adc_list batt_adc_list[] = {
@@ -36,9 +49,13 @@ static struct adc_list batt_adc_list[] = {
 	{.name = "adc-volt"},
 	{.name = "adc-chg-temp"},
 	{.name = "adc-in-bat"},
+<<<<<<< HEAD
 	{.name = "adc-dischg"},
 	{.name = "adc-dischg-ntc"},
 	{.name = "adc-wpc-temp"}, /* coil therm */
+=======
+	{.name = "adc-wpc-temp"},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{.name = "adc-slave-chg-temp"},
 	{.name = "adc-usb-temp"},
 };
@@ -59,9 +76,28 @@ static int sec_bat_adc_ap_read(int channel)
 {
 	int data = -1;
 	int ret = 0;
+<<<<<<< HEAD
 
 	ret = (batt_adc_list[channel].is_used) ?
 		iio_read_channel_raw(batt_adc_list[channel].channel, &data) : 0;
+=======
+	int retry_cnt = RETRY_CNT;
+
+	if (batt_adc_list[channel].is_used) {
+		do {
+			ret = (batt_adc_list[channel].is_used) ?
+			iio_read_channel_raw(batt_adc_list[channel].channel, &data) : 0;
+			retry_cnt--;
+		} while ((retry_cnt > 0) && (data < 0));
+	}
+
+	if (retry_cnt <= 0) {
+		pr_err("%s: Error in ADC\n", __func__);
+		data = batt_adc_list[channel].prev_value;
+	} else
+		batt_adc_list[channel].prev_value = data;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return data;
 }
 
@@ -120,7 +156,10 @@ static int adc_read_type(struct sec_battery_info *battery, int channel)
 	default :
 		break;
 	}
+<<<<<<< HEAD
 	dev_dbg(battery->dev, "[%s]adc = %d\n", __func__, adc);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return adc;
 }
 
@@ -165,6 +204,7 @@ static void adc_exit_type(struct sec_battery_info *battery)
 	}
 }
 
+<<<<<<< HEAD
 int sec_bat_get_adc_data(struct sec_battery_info *battery,
 			int adc_ch, int count)
 {
@@ -434,6 +474,17 @@ bool sec_bat_check_vf_adc(struct sec_battery_info *battery)
 			__func__, battery->check_adc_value);
 		return false;
 	}
+=======
+int adc_read(struct sec_battery_info *battery, int channel)
+{
+	int adc = 0;
+
+	adc = adc_read_type(battery, channel);
+
+	dev_dbg(battery->dev, "[%s]adc = %d\n", __func__, adc);
+
+	return adc;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void adc_init(struct platform_device *pdev, struct sec_battery_info *battery)

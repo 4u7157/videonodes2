@@ -85,10 +85,17 @@ int verity_handle_err_hex_debug(struct dm_verity *v, enum verity_block_type type
 	}
 
 	if(block == 0){
+<<<<<<< HEAD
         DMERR("%s: block 0 is superblock. Skipping verity_handle_err" , v->data_dev->name);
         return 0 ;
 	}
 	
+=======
+		DMERR("%s: block 0 is superblock. Skipping verity_handle_err" , v->data_dev->name);
+			return 0 ;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (v->corrupted_errs >= DM_VERITY_MAX_CORRUPTED_ERRS)
 		goto out;
 

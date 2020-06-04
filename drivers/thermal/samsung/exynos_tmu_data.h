@@ -351,6 +351,7 @@ extern struct exynos_tmu_init_data exynos7870_default_tmu_data;
 #else
 #define EXYNOS7870_TMU_DRV_DATA (NULL)
 #endif
+<<<<<<< HEAD
 
 #if defined(CONFIG_SOC_EXYNOS7570)
 extern struct exynos_tmu_init_data exynos7570_default_tmu_data;
@@ -358,4 +359,6 @@ extern struct exynos_tmu_init_data exynos7570_default_tmu_data;
 #else
 #define EXYNOS7570_TMU_DRV_DATA (NULL)
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /*_EXYNOS_TMU_DATA_H*/

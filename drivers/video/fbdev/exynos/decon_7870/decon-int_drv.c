@@ -49,7 +49,11 @@ static void decon_oneshot_underrun_log(struct decon_device *decon)
 		return;
 
 	if (decon->underrun_stat.underrun_cnt > DECON_UNDERRUN_THRESHOLD) {
+<<<<<<< HEAD
 		pr_err("underrun (level %d), bw(%llu), mif(%ld), chmap(0x%x), win(0x%lx), aclk(%ld)\n",
+=======
+		decon_err("underrun (level %d), bw(%llu), mif(%ld), chmap(0x%x), win(0x%lx), aclk(%ld)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			decon->underrun_stat.fifo_level,
 			decon->underrun_stat.prev_bw,
 			decon->underrun_stat.mif_pll / MHZ,
@@ -118,11 +122,19 @@ irqreturn_t decon_int_irq_handler(int irq, void *dev_data)
 					~0, VIDINTCON1_INT_FIFO);
 		/* TODO: underrun function */
 		/* s3c_fb_log_fifo_underflow_locked(decon, timestamp); */
+<<<<<<< HEAD
+=======
+		DISP_SS_DUMP(DISP_DUMP_DECON_UNDERRUN);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	if (irq_sts_reg & VIDINTCON1_INT_I80) {
 		DISP_SS_EVENT_LOG(DISP_EVT_DECON_FRAMEDONE, &decon->sd, ktime_set(0, 0));
 		decon_write_mask(DECON_INT, VIDINTCON1, ~0, VIDINTCON1_INT_I80);
 		decon->frame_done_cnt_cur++;
+<<<<<<< HEAD
+=======
+		decon_lpd_trig_reset(decon);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		wake_up_interruptible_all(&decon->wait_frmdone);
 	}
 
@@ -333,13 +345,21 @@ static u32 wincon(u32 bits_per_pixel, u32 transp_length)
 	case 32:
 		if (transp_length > 0) {
 			data |= WINCON_BLD_PIX;
+<<<<<<< HEAD
 			data |= WINCON_BPPMODE_ARGB8888;
+=======
+			data |= WINCON_BPPMODE_ABGR8888;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		} else {
 			data |= WINCON_BPPMODE_XRGB8888;
 		}
 		break;
 	default:
+<<<<<<< HEAD
 		pr_err("%d bpp doesn't support\n", bits_per_pixel);
+=======
+		decon_err("%d bpp doesn't support\n", bits_per_pixel);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	}
 
@@ -354,6 +374,7 @@ int decon_set_par(struct fb_info *info)
 	struct fb_var_screeninfo *var = &info->var;
 	struct decon_win *win = info->par;
 	struct decon_device *decon = win->decon;
+<<<<<<< HEAD
 	struct decon_regs_data win_regs;
 	int win_no = win->index;
 
@@ -367,6 +388,17 @@ int decon_set_par(struct fb_info *info)
 
 	decon_reg_shadow_protect_win(DECON_INT, win->index, 1);
 
+=======
+	int win_no = win->index;
+	struct decon_regs_data *win_regs;
+
+	win_regs = &decon->win_regs;
+	memset(win_regs, 0, sizeof(struct decon_regs_data));
+	//decon_warn("setting framebuffer parameters\n");
+
+	if (decon->state == DECON_STATE_OFF)
+		return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	info->fix.visual = fb_visual(var->bits_per_pixel, 0);
 
 	info->fix.line_length = fb_linelength(var->xres_virtual,
@@ -374,6 +406,7 @@ int decon_set_par(struct fb_info *info)
 	info->fix.xpanstep = fb_panstep(var->xres, var->xres_virtual);
 	info->fix.ypanstep = fb_panstep(var->yres, var->yres_virtual);
 
+<<<<<<< HEAD
 	if (decon_reg_is_win_enabled(DECON_INT, win_no))
 		win_regs.wincon = WINCON_ENWIN;
 	else
@@ -402,6 +435,26 @@ int decon_set_par(struct fb_info *info)
 
 	decon_reg_update_standalone(DECON_INT);
 	decon_lpd_unblock(decon);
+=======
+	win_regs->wincon = WINCON_ENWIN;
+	win_regs->wincon |= wincon(var->bits_per_pixel, var->transp.length);
+	win_regs->winmap = 0x0;
+	win_regs->vidosd_a = vidosd_a(0, 0);
+	win_regs->vidosd_b = vidosd_b(0, 0, var->xres, var->yres);
+	win_regs->vidosd_c = vidosd_c(0x0, 0x0, 0x0);
+	win_regs->vidosd_d = vidosd_d(0xff, 0xff, 0xff);
+	win_regs->vidw_buf_start = info->fix.smem_start;
+	win_regs->vidw_whole_w = var->xres;
+	win_regs->vidw_whole_h = var->yres;
+	win_regs->vidw_offset_x = 0;
+	win_regs->vidw_offset_y = 0;
+	if (win_no)
+		win_regs->blendeq = BLENDE_A_FUNC(BLENDE_COEF_ONE) |
+			BLENDE_B_FUNC(BLENDE_COEF_ZERO) |
+			BLENDE_P_FUNC(BLENDE_COEF_ZERO) |
+			BLENDE_Q_FUNC(BLENDE_COEF_ZERO);
+	win_regs->type = IDMA_G0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -563,6 +616,7 @@ static void decon_activate_window_dma(struct decon_device *decon, unsigned int i
 
 int decon_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
 {
+<<<<<<< HEAD
 	struct decon_win *win = info->par;
 	struct decon_device *decon = win->decon;
 	unsigned int start_boff, end_boff;
@@ -571,6 +625,21 @@ int decon_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
 	decon_lpd_block_exit(decon);
 
 	decon_set_par(info);
+=======
+	int ret = 0;
+	struct decon_win *win = info->par;
+	struct decon_device *decon = win->decon;
+	unsigned int start_boff, end_boff;
+
+	if (decon->state == DECON_STATE_OFF)
+		return ret;
+
+	decon_lpd_block_exit(decon);
+
+#if defined(CONFIG_EXYNOS_SUPPORT_FB_HANDOVER)
+	decon_fb_handover_color_map(decon);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Offset in bytes to the start of the displayed area */
 	start_boff = var->yoffset * info->fix.line_length;
@@ -601,6 +670,7 @@ int decon_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
 	 * both start and end addresses are updated to prevent corruption */
 	decon_reg_shadow_protect_win(DECON_INT, win->index, 1);
 
+<<<<<<< HEAD
 	decon_activate_window_dma(decon, win->index);
 	decon_reg_activate_window(DECON_INT, win->index);
 
@@ -622,6 +692,37 @@ int decon_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
 #endif
 
 pan_display_exit:
+=======
+	decon_reg_set_regs_data(DECON_INT, win->index, &decon->win_regs);
+
+	writel(info->fix.smem_start + start_boff, decon->regs + VIDW_ADD0(win->index));
+
+	decon_reg_shadow_protect_win(DECON_INT, win->index, 0);
+
+	decon_reg_activate_window(DECON_INT, win->index);
+	decon_activate_window_dma(decon, win->index);
+
+	if (decon->pdata->trig_mode == DECON_HW_TRIG) {
+		decon_reg_set_trigger(DECON_INT, decon->pdata->dsi_mode,
+			decon->pdata->trig_mode, DECON_TRIG_ENABLE);
+#ifdef CONFIG_DECON_MIPI_DSI_PKTGO
+			v4l2_subdev_call(decon->output_sd, core, ioctl, DSIM_IOC_PKT_GO_ENABLE, NULL); /* Don't care failure or success */
+#endif
+
+	}
+
+	ret = decon_wait_for_vsync(decon, VSYNC_TIMEOUT_MSEC);
+	if (ret) {
+		decon_err("%s:vsync time over\n", __func__);
+		goto pan_display_exit;
+	}
+
+pan_display_exit:
+	if (decon->pdata->trig_mode == DECON_HW_TRIG)
+		decon_reg_set_trigger(DECON_INT, decon->pdata->dsi_mode,
+			decon->pdata->trig_mode, DECON_TRIG_DISABLE);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	decon_lpd_unblock(decon);
 	return ret;
 }
@@ -682,6 +783,10 @@ static void decon_parse_lcd_info(struct decon_device *decon)
 		decon->windows[i]->win_mode.videomode.yres = lcd_info->yres;
 		decon->windows[i]->win_mode.width = lcd_info->width;
 		decon->windows[i]->win_mode.height = lcd_info->height;
+<<<<<<< HEAD
+=======
+		decon->windows[i]->win_mode.videomode.refresh = lcd_info->fps;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 
@@ -788,18 +893,38 @@ int decon_int_register_irq(struct platform_device *pdev, struct decon_device *de
 	/* Get IRQ resource and register IRQ handler. */
 	/* 0: FIFO irq */
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+<<<<<<< HEAD
 	ret = devm_request_irq(dev, res->start, decon_int_irq_handler, 0,
 			pdev->name, decon);
 	if (!res || ret) {
+=======
+	if (!res) {
+		decon_err("failed to get platform resource\n");
+		return -EINVAL;
+	}
+	ret = devm_request_irq(dev, res->start, decon_int_irq_handler, 0,
+			pdev->name, decon);
+	if (ret) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		decon_err("failed to install FIFO irq\n");
 		return ret;
 	}
 
 	/* 1: frame irq (Vsync) */
 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 1);
+<<<<<<< HEAD
 	ret = devm_request_irq(dev, res->start, decon_int_irq_handler,
 			0, pdev->name, decon);
 	if (!res || ret) {
+=======
+	if (!res) {
+		decon_err("failed to get platform resource\n");
+		return -EINVAL;
+	}
+	ret = devm_request_irq(dev, res->start, decon_int_irq_handler,
+			0, pdev->name, decon);
+	if (ret) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		decon_err("failed to install VSYNC irq\n");
 		return ret;
 	}
@@ -807,9 +932,19 @@ int decon_int_register_irq(struct platform_device *pdev, struct decon_device *de
 	if (decon->pdata->psr_mode == DECON_MIPI_COMMAND_MODE) {
 		/* 1: i80 irq (framedone) */
 		res = platform_get_resource(pdev, IORESOURCE_IRQ, 2);
+<<<<<<< HEAD
 		ret = devm_request_irq(dev, res->start, decon_int_irq_handler,
 				0, pdev->name, decon);
 		if (!res || ret) {
+=======
+		if (!res) {
+			decon_err("failed to get platform resource\n");
+			return -EINVAL;
+		}
+		ret = devm_request_irq(dev, res->start, decon_int_irq_handler,
+				0, pdev->name, decon);
+		if (ret) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			decon_err("failed to install FRAMEDONE irq\n");
 			return ret;
 		}
@@ -1040,6 +1175,11 @@ void decon_lpd_enable(void)
 int decon_lpd_block_exit(struct decon_device *decon)
 {
 	int ret = 0;
+<<<<<<< HEAD
+=======
+	if (!decon)
+		return ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	decon_lpd_block(decon);
 	ret = decon_exit_lpd(decon);

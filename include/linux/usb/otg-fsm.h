@@ -24,6 +24,18 @@
 #undef VERBOSE
 
 #ifdef VERBOSE
+<<<<<<< HEAD
+=======
+#define VDBG(fmt, args...) pr_debug("[%s]  " fmt , \
+				 __func__, ## args)
+/*
+#else
+#define VDBG(stuff...)	do {} while (0)
+*/
+#endif
+
+#ifdef VERBOSE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MPC_LOC printk("Current Location [%s]:[%d]\n", __FILE__, __LINE__)
 #else
 #define MPC_LOC do {} while (0)

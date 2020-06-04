@@ -71,6 +71,10 @@ static unsigned int cache_err_cnt;
 static unsigned int codediff_cnt;
 static unsigned long pcb_offset;
 static unsigned long smd_offset;
+<<<<<<< HEAD
+=======
+static unsigned int lpddr4_size;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int __init sec_hw_param_get_hw_rev(char *arg)
 {
@@ -128,6 +132,17 @@ static int __init sec_hw_param_smd_offset(char *arg)
 
 early_param("sec_debug.smd_offset", sec_hw_param_smd_offset);
 
+<<<<<<< HEAD
+=======
+static int __init sec_hw_param_lpddr4_size(char *arg)
+{
+	get_option(&arg, &lpddr4_size);
+	return 0;
+}
+
+early_param("sec_debug.lpddr4_size", sec_hw_param_lpddr4_size);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static u32 chipid_reverse_value(u32 value, u32 bitcnt)
 {
 	int tmp, ret = 0;
@@ -216,6 +231,12 @@ static ssize_t sec_hw_param_ddr_info_show(struct kobject *kobj,
 		     get_dram_manufacturer());
 	info_size +=
 	    snprintf((char *)(buf + info_size), DATA_SIZE - info_size,
+<<<<<<< HEAD
+=======
+			 "\"LPDDR4\":\"%dGB\",", lpddr4_size);
+	info_size +=
+	    snprintf((char *)(buf + info_size), DATA_SIZE - info_size,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		     "\"C2D\":\"\",");
 	info_size +=
 	    snprintf((char *)(buf + info_size), DATA_SIZE - info_size,

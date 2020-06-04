@@ -122,8 +122,11 @@ obj-$(CONFIG_RTC_DRV_RX8581)	+= rtc-rx8581.o
 obj-$(CONFIG_RTC_DRV_S35390A)	+= rtc-s35390a.o
 obj-$(CONFIG_RTC_DRV_S3C)	+= rtc-s3c.o
 obj-$(CONFIG_RTC_DRV_SEC)       += rtc-sec.o
+<<<<<<< HEAD
 obj-$(CONFIG_RTC_DRV_S2MP)      += rtc-s2mp.o
 obj-$(CONFIG_RTC_DRV_S2MPW01)   += rtc-s2mpw01.o
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 obj-$(CONFIG_RTC_DRV_S5M)	+= rtc-s5m.o
 obj-$(CONFIG_RTC_DRV_SA1100)	+= rtc-sa1100.o
 obj-$(CONFIG_RTC_DRV_SH)	+= rtc-sh.o

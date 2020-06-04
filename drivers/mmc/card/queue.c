@@ -55,9 +55,16 @@ static int mmc_queue_thread(void *d)
 	struct request_queue *q = mq->queue;
 	struct sched_param scheduler_params = {0};
 
+<<<<<<< HEAD
 	scheduler_params.sched_priority = 1;
 
 	sched_setscheduler(current, SCHED_FIFO, &scheduler_params);
+=======
+	if (mq->card && mq->card->type != MMC_TYPE_SD) {
+		scheduler_params.sched_priority = 1;
+		sched_setscheduler(current, SCHED_FIFO, &scheduler_params);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	current->flags |= PF_MEMALLOC;
 

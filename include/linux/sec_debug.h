@@ -1,7 +1,11 @@
 /*
 * Samsung debugging features for Samsung's SoC's.
 *
+<<<<<<< HEAD
 * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+=======
+* Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 *      http://www.samsung.com
 *
 * This program is free software; you can redistribute it and/or modify
@@ -24,7 +28,10 @@
 #define SEC_DEBUG_DUMPER_LOG_VA (SEC_DEBUG_MAGIC_VA + 0x800)
 
 #ifdef CONFIG_SEC_DEBUG
+<<<<<<< HEAD
 extern int dynsyslog_on;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern int  sec_debug_setup(void);
 extern void sec_debug_reboot_handler(void);
 extern void sec_debug_panic_handler(void *buf, bool dump);
@@ -41,7 +48,11 @@ extern void sec_gaf_supply_rqinfo(unsigned short curr_offset, unsigned short rq_
 #define sec_debug_setup()			(-1)
 #define sec_debug_reboot_handler()		do { } while(0)
 #define sec_debug_panic_handler(a,b)		do { } while(0)
+<<<<<<< HEAD
 #define sec_debug_post_panic_handler()		do { } while(0)
+=======
+#define sec_debug_post_panic_handler()		do { } while(0)	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define sec_debug_get_debug_level()		(0)
 #define sec_debug_disable_printk_process()	do { } while(0)
@@ -260,8 +271,15 @@ extern void sec_debug_tsp_log_msg(char *msg, char *fmt, ...);
 extern void sec_debug_tsp_raw_data(char *fmt, ...);
 extern void sec_debug_tsp_raw_data_msg(char *msg, char *fmt, ...);
 extern void sec_tsp_raw_data_clear(void);
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_FTS
 extern void tsp_dump(void);
+=======
+#if defined(CONFIG_TOUCHSCREEN_FTS)
+extern void tsp_dump(void);
+#elif defined(CONFIG_TOUCHSCREEN_SEC_TS)
+extern void tsp_dump_sec(void);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #else
 #define sec_debug_tsp_log(a, ...)			do { } while (0)
@@ -271,6 +289,15 @@ extern void tsp_dump(void);
 #define sec_tsp_raw_data_clear()			do { } while (0)
 #endif /* CONFIG_SEC_DEBUG_TSP_LOG */
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TOUCHSCREEN_DUMP_MODE
+struct tsp_dump_callbacks {
+	void (*inform_dump)(void);
+};
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern int sec_debug_force_error(const char *val, struct kernel_param *kp);
 
 #endif /* SEC_DEBUG_H */

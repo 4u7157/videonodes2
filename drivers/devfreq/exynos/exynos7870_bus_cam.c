@@ -27,7 +27,11 @@
 #include "../../../drivers/soc/samsung/pwrcal/S5E7870/S5E7870-vclk.h"
 #include "../governor.h"
 
+<<<<<<< HEAD
 #define DEVFREQ_CAM_REBOOT_FREQ	(400000)
+=======
+#define DEVFREQ_CAM_REBOOT_FREQ	(167000)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct exynos_devfreq_data *cam_data;
 

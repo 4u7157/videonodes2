@@ -4,3 +4,13 @@ config GNSS_SHMEM_IF
 	default n
 	---help---
 	  Samsung Shared Memory Interface for GNSS.
+<<<<<<< HEAD
+=======
+
+config GNSS_DISABLE
+	bool "Disable GNSS for WIFI only model"
+	depends on GNSS_SHMEM_IF
+	default n
+	---help---
+	  Disable GNSS for WIFI only model(Hibernation mode)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

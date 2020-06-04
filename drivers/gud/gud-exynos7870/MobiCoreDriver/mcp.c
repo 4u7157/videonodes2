@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2015 TRUSTONIC LIMITED
+=======
+ * Copyright (c) 2013-2017 TRUSTONIC LIMITED
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,15 +21,30 @@
 #include <linux/mutex.h>
 #include <linux/device.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
+=======
+#include <linux/kthread.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/completion.h>
 #include <linux/circ_buf.h>
 #include <linux/delay.h>
 #include <linux/interrupt.h>
 #include <linux/debugfs.h>
 #include <linux/of_irq.h>
+<<<<<<< HEAD
 #include <asm/barrier.h>
 
 #include "public/mc_linux.h"
+=======
+#include <linux/freezer.h>
+#include <asm/barrier.h>
+#include <linux/version.h>
+#if KERNEL_VERSION(4, 11, 0) <= LINUX_VERSION_CODE
+#include <linux/sched/clock.h>	/* local_clock */
+#endif
+
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "public/mc_admin.h"
 
 #include "mci/mcimcp.h"
@@ -45,9 +64,12 @@
 #define MCP_NF_QUEUE_SZ		8
 #define NQ_NUM_ELEMS		64
 
+<<<<<<< HEAD
 static void mc_irq_worker(struct work_struct *data);
 DECLARE_WORK(irq_work, mc_irq_worker);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const struct {
 	unsigned int index;
 	const char *msg;
@@ -99,6 +121,12 @@ static struct mcp_context {
 	struct mutex queue_lock;	/* Lock for MCP messages */
 	struct mcp_buffer *mcp_buffer;
 	struct completion complete;
+<<<<<<< HEAD
+=======
+	struct task_struct *irq_bh_thread;
+	struct completion irq_bh_complete;
+	bool irq_bh_active;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	bool mcp_dead;
 	int irq;
 	int (*scheduler_cb)(enum mcp_scheduler_commands);
@@ -130,13 +158,26 @@ static struct mcp_context {
 	struct kasnprintf_buf	dump;
 	/* Time */
 	struct mcp_time		*time;
+<<<<<<< HEAD
+=======
+	/* Wait timeout */
+	u32			timeout;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Log of last MCP commands */
 #define MCP_LOG_SIZE 256
 	struct mutex		last_mcp_cmds_mutex; /* Log protection */
 	struct mcp_command_info {
+<<<<<<< HEAD
 		pid_t		pid;	/* Caller PID */
 		enum cmd_id	id;	/* MCP command ID */
 		u32		session_id;
+=======
+		u64			cpu_clk;	/* Kernel time */
+		pid_t		pid;	/* Caller PID */
+		enum cmd_id	id;	/* MCP command ID */
+		u32		session_id;
+		char			uuid_str[34];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		enum state {
 			UNUSED,		/* Unused slot */
 			PENDING,	/* Previous command in progress */
@@ -174,7 +215,11 @@ static const char *mcp_cmd_to_string(enum cmd_id id)
 	case MC_MCP_CMD_LOAD_TOKEN:
 		return "load token";
 	case MC_MCP_CMD_CHECK_LOAD_TA:
+<<<<<<< HEAD
 		return "check TA";
+=======
+		return "check load TA";
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case MC_MCP_CMD_MULTIMAP:
 		return "multimap";
 	case MC_MCP_CMD_MULTIUNMAP:
@@ -228,6 +273,10 @@ static ssize_t debug_smclog_read(struct file *file, char __user *user_buf,
 static const struct file_operations mc_debug_smclog_ops = {
 	.read = debug_smclog_read,
 	.llseek = default_llseek,
+<<<<<<< HEAD
+=======
+	.open = debug_generic_open,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.release = debug_generic_release,
 };
 
@@ -235,13 +284,21 @@ static void mcp_dump_mobicore_status(void)
 {
 	char uuid_str[33];
 	int ret = 0;
+<<<<<<< HEAD
 	int i;
+=======
+	size_t i;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (mcp_ctx.dump.off)
 		ret = -EBUSY;
 
 	mc_dev_err("TEE halted. Status dump:");
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(status_map); i++) {
+=======
+	for (i = 0; i < (size_t)ARRAY_SIZE(status_map); i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		u32 info;
 
 		if (!mc_fc_info(status_map[i].index, NULL, &info)) {
@@ -257,7 +314,11 @@ static void mcp_dump_mobicore_status(void)
 	/* construct UUID string */
 	for (i = 0; i < 4; i++) {
 		u32 info;
+<<<<<<< HEAD
 		int j;
+=======
+		size_t j;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (mc_fc_info(MC_EXT_INFO_ID_MC_EXC_UUID + i, NULL, &info))
 			return;
@@ -316,7 +377,12 @@ static inline bool mcp_session_isrunning(struct mcp_session *session)
  * session remains valid thanks to the upper layers reference counters, but the
  * SWd session may have died, in which case we are informed.
  */
+<<<<<<< HEAD
 int mcp_session_waitnotif(struct mcp_session *session, s32 timeout)
+=======
+int mcp_session_waitnotif(struct mcp_session *session, s32 timeout,
+			  bool silent_expiry)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	int ret = 0;
 
@@ -371,6 +437,10 @@ int mcp_session_waitnotif(struct mcp_session *session, s32 timeout)
 		goto end;
 	}
 
+<<<<<<< HEAD
+=======
+end:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_lock(&mcp_ctx.notifications_mutex);
 	if (ret)
 		session->notif_state = MCP_NOTIF_DEAD;
@@ -378,11 +448,22 @@ int mcp_session_waitnotif(struct mcp_session *session, s32 timeout)
 		session->notif_state = MCP_NOTIF_CONSUMED;
 	mutex_unlock(&mcp_ctx.notifications_mutex);
 
+<<<<<<< HEAD
 end:
 	mutex_unlock(&session->notif_wait_lock);
 	if (ret)
 		mc_dev_info("session %x ec %d ret %d\n",
 			    session->id, session->exit_code, ret);
+=======
+	mutex_unlock(&session->notif_wait_lock);
+	if (ret && ((ret != -ETIME) || !silent_expiry)) {
+		if (ret == -ERESTARTSYS && system_freezing_cnt.counter == 1)
+			mc_dev_devel("freezing session %x\n", session->id);
+		else
+		mc_dev_info("session %x ec %d ret %d\n",
+			    session->id, session->exit_code, ret);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return ret;
 }
@@ -459,26 +540,45 @@ void mcp_reset_idle_timeout(void)
 
 static inline int wait_mcp_notification(void)
 {
+<<<<<<< HEAD
 	unsigned long timeout = msecs_to_jiffies(MCP_TIMEOUT * 1000);
 	int try;
 
 	/*
 	 * Total timeout is MCP_TIMEOUT * MCP_RETRIES, but we check for a crash
 	 * to try and terminate before then if things go wrong.
+=======
+	unsigned long timeout = msecs_to_jiffies(mcp_ctx.timeout * 1000);
+	int try;
+
+	/*
+	 * Total timeout is mcp_ctx.timeout * MCP_RETRIES, but we check for
+	 * a crash to try and terminate before then if things go wrong.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	 */
 	for (try = 1; try <= MCP_RETRIES; try++) {
 		u32 status;
 		int ret;
 
 		/*
+<<<<<<< HEAD
 		* Wait non-interruptible to keep MCP synchronised even if caller
 		* is interrupted by signal.
 		*/
+=======
+		 * Wait non-interruptible to keep MCP synchronised even if
+		 * caller is interrupted by signal.
+		 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = wait_for_completion_timeout(&mcp_ctx.complete, timeout);
 		if (ret > 0)
 			return 0;
 
+<<<<<<< HEAD
 		mc_dev_err("No answer after %ds\n", MCP_TIMEOUT * try);
+=======
+		mc_dev_err("No answer after %ds\n", mcp_ctx.timeout * try);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		/* If SWd halted, exit now */
 		if (!mc_fc_info(MC_EXT_INFO_ID_MCI_VERSION, &status, NULL) &&
@@ -487,16 +587,28 @@ static inline int wait_mcp_notification(void)
 	}
 
 	/* TEE halted or dead: dump status and SMC log */
+<<<<<<< HEAD
 	mark_mcp_dead();
 	mcp_dump_mobicore_status();
 
+=======
+	//mark_mcp_dead();
+	mcp_dump_mobicore_status();
+
+	panic("tbase halt");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return -ETIME;
 }
 
 static int mcp_cmd(union mcp_message *cmd,
 		   /* The fields below are for debug purpose only */
 		   u32 in_session_id,
+<<<<<<< HEAD
 		   u32 *out_session_id)
+=======
+		   u32 *out_session_id,
+		   struct mc_uuid_t *uuid)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	int err = 0, ret = -ENOTCONN;
 	union mcp_message *msg = &mcp_ctx.mcp_buffer->message;
@@ -506,11 +618,34 @@ static int mcp_cmd(union mcp_message *cmd,
 	/* Initialize MCP log */
 	mutex_lock(&mcp_ctx.last_mcp_cmds_mutex);
 	cmd_info = &mcp_ctx.last_mcp_cmds[mcp_ctx.last_mcp_cmds_index];
+<<<<<<< HEAD
 	cmd_info->pid = current->pid;
 	cmd_info->id = cmd_id;
 	cmd_info->session_id = in_session_id;
 	cmd_info->state = PENDING;
 	cmd_info->result = 0;
+=======
+	cmd_info->cpu_clk = local_clock();
+	cmd_info->pid = current->pid;
+	cmd_info->cpu_clk = local_clock();
+	cmd_info->id = cmd_id;
+	cmd_info->session_id = in_session_id;
+	if (uuid) {
+		/* display UUID because it's an openSession cmd */
+		size_t i;
+
+		cmd_info->uuid_str[0] = ' ';
+		for (i = 0; i < sizeof(uuid->value); i++) {
+			snprintf(&cmd_info->uuid_str[1 + i * 2], 3, "%02x",
+				 uuid->value[i]);
+		}
+	} else {
+		cmd_info->uuid_str[0] = '\0';
+	}
+
+	cmd_info->state = PENDING;
+	cmd_info->result = MC_MCP_RET_OK;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cmd_info->errno = 0;
 	if (++mcp_ctx.last_mcp_cmds_index >= MCP_LOG_SIZE)
 		mcp_ctx.last_mcp_cmds_index = 0;
@@ -550,6 +685,11 @@ static int mcp_cmd(union mcp_message *cmd,
 		err = 0;
 		break;
 	case MC_MCP_RET_ERR_CLOSE_TASK_FAILED:
+<<<<<<< HEAD
+=======
+		err = -EAGAIN;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case MC_MCP_RET_ERR_NO_MORE_SESSIONS:
 		err = -EBUSY;
 		break;
@@ -623,7 +763,11 @@ int mcp_get_version(struct mc_version_info *version_info)
 
 		memset(&cmd, 0, sizeof(cmd));
 		cmd.cmd_header.cmd_id = MC_MCP_CMD_GET_MOBICORE_VERSION;
+<<<<<<< HEAD
 		ret = mcp_cmd(&cmd, 0, NULL);
+=======
+		ret = mcp_cmd(&cmd, 0, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret)
 			return ret;
 
@@ -651,7 +795,11 @@ int mcp_load_token(uintptr_t data, const struct mcp_buffer_map *map)
 	cmd.cmd_load_token.adr_load_data = map->phys_addr;
 	cmd.cmd_load_token.ofs_load_data = map->offset;
 	cmd.cmd_load_token.len_load_data = map->length;
+<<<<<<< HEAD
 	return mcp_cmd(&cmd, 0, NULL);
+=======
+	return mcp_cmd(&cmd, 0, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int mcp_load_check(const struct tee_object *obj,
@@ -670,7 +818,11 @@ int mcp_load_check(const struct tee_object *obj,
 	/* Header */
 	header = (union mclf_header *)(obj->data + obj->header_length);
 	cmd.cmd_check_load.uuid = header->mclf_header_v2.uuid;
+<<<<<<< HEAD
 	return mcp_cmd(&cmd, 0, NULL);
+=======
+	return mcp_cmd(&cmd, 0, NULL, &cmd.cmd_check_load.uuid);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int mcp_open_session(struct mcp_session *session,
@@ -716,7 +868,15 @@ int mcp_open_session(struct mcp_session *session,
 	}
 
 	/* Send MCP open command */
+<<<<<<< HEAD
 	ret = mcp_cmd(&cmd, 0, &cmd.rsp_open.session_id);
+=======
+	ret = mcp_cmd(&cmd, 0, &cmd.rsp_open.session_id, &cmd.cmd_open.uuid);
+	/* Make sure we have a valid session ID */
+	if (!ret && !cmd.rsp_open.session_id)
+		ret = -EBADE;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!ret) {
 		session->id = cmd.rsp_open.session_id;
 		/* Add to list of sessions */
@@ -743,7 +903,11 @@ int mcp_open_session(struct mcp_session *session,
  * Legacy and GP TAs close differently:
  * - GP TAs always send a notification with payload, whether on close or crash
  * - Legacy TAs only send a notification with payload on crash
+<<<<<<< HEAD
  * - GP TAs may take time to close, and we get -EBUSY back from mcp_cmd
+=======
+ * - GP TAs may take time to close, and we get -EAGAIN back from mcp_cmd
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * - Legacy TAs always close when asked, unless they are driver in which case
  *   they just don't close at all
  */
@@ -764,7 +928,11 @@ int mcp_close_session(struct mcp_session *session)
 	memset(&cmd, 0, sizeof(cmd));
 	cmd.cmd_header.cmd_id = MC_MCP_CMD_CLOSE_SESSION;
 	cmd.cmd_close.session_id = session->id;
+<<<<<<< HEAD
 	ret = mcp_cmd(&cmd, session->id, NULL);
+=======
+	ret = mcp_cmd(&cmd, session->id, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_lock(&mcp_ctx.sessions_lock);
 	/*
 	 * The GP TA may already have sent its exit code, in which case the
@@ -776,7 +944,11 @@ int mcp_close_session(struct mcp_session *session)
 		mutex_lock(&mcp_ctx.notifications_mutex);
 		list_del(&session->notifications_list);
 		mutex_unlock(&mcp_ctx.notifications_mutex);
+<<<<<<< HEAD
 	} else if (ret == -EBUSY) {
+=======
+	} else if (ret == -EAGAIN) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (session->state == MCP_SESSION_CLOSE_NOTIFIED)
 			/* GP TA already closed */
 			schedule_work(&session->close_work);
@@ -788,6 +960,11 @@ int mcp_close_session(struct mcp_session *session)
 	}
 
 	mutex_unlock(&mcp_ctx.sessions_lock);
+<<<<<<< HEAD
+=======
+	mc_dev_devel("close session %x ret %d state %d", session->id, ret,
+		     session->state);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -816,7 +993,11 @@ int mcp_map(u32 session_id, struct mcp_buffer_map *map)
 	cmd.cmd_map.adr_buffer = map->phys_addr;
 	cmd.cmd_map.ofs_buffer = map->offset;
 	cmd.cmd_map.len_buffer = map->length;
+<<<<<<< HEAD
 	ret = mcp_cmd(&cmd, session_id, NULL);
+=======
+	ret = mcp_cmd(&cmd, session_id, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!ret)
 		map->secure_va = cmd.rsp_map.secure_va;
 
@@ -833,7 +1014,11 @@ int mcp_unmap(u32 session_id, const struct mcp_buffer_map *map)
 	cmd.cmd_unmap.wsm_type = map->type;
 	cmd.cmd_unmap.virtual_buffer_len = map->length;
 	cmd.cmd_unmap.secure_va = map->secure_va;
+<<<<<<< HEAD
 	return mcp_cmd(&cmd, session_id, NULL);
+=======
+	return mcp_cmd(&cmd, session_id, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int mcp_multimap(u32 session_id, struct mcp_buffer_map *maps)
@@ -855,7 +1040,11 @@ int mcp_multimap(u32 session_id, struct mcp_buffer_map *maps)
 		buf->len_buffer = map->length;
 	}
 
+<<<<<<< HEAD
 	ret = mcp_cmd(&cmd, session_id, NULL);
+=======
+	ret = mcp_cmd(&cmd, session_id, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret)
 		return ret;
 
@@ -882,7 +1071,11 @@ int mcp_multiunmap(u32 session_id, const struct mcp_buffer_map *maps)
 		buf->len_buffer = map->length;
 	}
 
+<<<<<<< HEAD
 	return mcp_cmd(&cmd, session_id, NULL);
+=======
+	return mcp_cmd(&cmd, session_id, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int mcp_close(void)
@@ -891,7 +1084,11 @@ static int mcp_close(void)
 
 	memset(&cmd, 0, sizeof(cmd));
 	cmd.cmd_header.cmd_id = MC_MCP_CMD_CLOSE_MCP;
+<<<<<<< HEAD
 	return mcp_cmd(&cmd, 0, NULL);
+=======
+	return mcp_cmd(&cmd, 0, NULL, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static inline bool notif_queue_full(void)
@@ -908,6 +1105,7 @@ static inline void notif_queue_push(u32 session_id)
 
 	mcp_ctx.nq.tx->notification[i].session_id = session_id;
 	mcp_ctx.nq.tx->notification[i].payload = 0;
+<<<<<<< HEAD
 	/* Ensure notification[] is written before we update the counter
 	 * We want a ARM dmb() / ARM64 dmb(sy) here */
 	smp_mb();
@@ -915,6 +1113,19 @@ static inline void notif_queue_push(u32 session_id)
 	hdr->write_cnt++;
 	/* Ensure write_cnt is written before new notification
 	 * We want a ARM dsb() / ARM64 dsb(sy) here */
+=======
+	/*
+	 * Ensure notification[] is written before we update the counter
+	 * We want a ARM dmb() / ARM64 dmb(sy) here
+	 */
+	smp_mb();
+
+	hdr->write_cnt++;
+	/*
+	 * Ensure write_cnt is written before new notification
+	 * We want a ARM dsb() / ARM64 dsb(sy) here
+	 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	rmb();
 }
 
@@ -1023,6 +1234,11 @@ static inline void handle_session_notif(u32 session_id, u32 exit_code)
 	if (session) {
 		/* TA has terminated */
 		if (exit_code) {
+<<<<<<< HEAD
+=======
+			mc_dev_devel("exit code %d for session %x state %d",
+				     session_id, exit_code, session->state);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			/* Update exit code, or not */
 			mutex_lock(&session->exit_code_lock);
 			/*
@@ -1061,14 +1277,25 @@ static inline void handle_session_notif(u32 session_id, u32 exit_code)
 	}
 }
 
+<<<<<<< HEAD
 static void mc_irq_worker(struct work_struct *data)
 {
 	struct notification_queue *rx = mcp_ctx.nq.rx;
 
+=======
+static int irq_bh_worker(void *arg)
+{
+	struct notification_queue *rx = mcp_ctx.nq.rx;
+
+	while (mcp_ctx.irq_bh_active) {
+		wait_for_completion(&mcp_ctx.irq_bh_complete);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Deal with all pending notifications in one go */
 	while ((rx->hdr.write_cnt - rx->hdr.read_cnt) > 0) {
 		struct notification nf;
 
+<<<<<<< HEAD
 		nf = rx->notification[rx->hdr.read_cnt % rx->hdr.queue_size];
 
 		 /* Ensure read_cnt writing happens after buffer read
@@ -1077,6 +1304,21 @@ static void mc_irq_worker(struct work_struct *data)
 		rx->hdr.read_cnt++;
 		/* Ensure read_cnt writing finishes before reader
 		 * We want a ARM dsb() / ARM64 dsb(sy) here */
+=======
+			nf = rx->notification[
+				rx->hdr.read_cnt % rx->hdr.queue_size];
+
+			/*
+			 * Ensure read_cnt writing happens after buffer read
+			 * We want a ARM dmb() / ARM64 dmb(sy) here
+			 */
+		smp_mb();
+		rx->hdr.read_cnt++;
+			/*
+			 * Ensure read_cnt writing finishes before reader
+			 * We want a ARM dsb() / ARM64 dsb(sy) here
+			 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		rmb();
 
 		if (nf.session_id == SID_MCP)
@@ -1085,6 +1327,7 @@ static void mc_irq_worker(struct work_struct *data)
 			handle_session_notif(nf.session_id, nf.payload);
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Finished processing notifications. It does not matter whether
 	 * there actually were any notification or not.  S-SIQs can also
@@ -1094,6 +1337,19 @@ static void mc_irq_worker(struct work_struct *data)
 	 */
 	if (mcp_ctx.scheduler_cb)
 		mcp_ctx.scheduler_cb(MCP_NSIQ);
+=======
+		/*
+		 * Finished processing notifications. It does not matter whether
+		 * there actually were any notification or not.  S-SIQs can also
+		 * be triggered by an SWd driver which was waiting for a FIQ.
+		 * In this case the S-SIQ tells NWd that SWd is no longer idle
+		 * an will need scheduling again.
+		 */
+		if (mcp_ctx.scheduler_cb)
+			mcp_ctx.scheduler_cb(MCP_NSIQ);
+	}
+	return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /*
@@ -1104,7 +1360,11 @@ static void mc_irq_worker(struct work_struct *data)
 static irqreturn_t irq_handler(int intr, void *arg)
 {
 	/* wake up thread to continue handling this interrupt */
+<<<<<<< HEAD
 	schedule_work(&irq_work);
+=======
+	complete(&mcp_ctx.irq_bh_complete);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return IRQ_HANDLED;
 }
 
@@ -1153,7 +1413,11 @@ int mcp_start(void)
 #endif
 	mcp_ctx.mcp_buffer->message.init_values.flags |= MC_IV_FLAG_TIME;
 	mcp_ctx.mcp_buffer->message.init_values.time_ofs =
+<<<<<<< HEAD
 			(uintptr_t)mcp_ctx.time - (uintptr_t)mcp_ctx.base;
+=======
+		(u32)((uintptr_t)mcp_ctx.time - (uintptr_t)mcp_ctx.base);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mcp_ctx.mcp_buffer->message.init_values.time_len =
 			sizeof(*mcp_ctx.time);
 	/* First empty N-SIQ to setup of the MCI structure */
@@ -1203,7 +1467,17 @@ int mcp_start(void)
 		}
 	} while (ret == EAGAIN);
 
+<<<<<<< HEAD
 	/* Set up S-SIQ interrupt handler */
+=======
+	/* Set up S-SIQ interrupt handler and its bottom-half */
+	mcp_ctx.irq_bh_active = true;
+	mcp_ctx.irq_bh_thread = kthread_run(irq_bh_worker, NULL, "tee_irq_bh");
+	if (IS_ERR(mcp_ctx.irq_bh_thread)) {
+		mc_dev_err("irq_bh_worker thread creation failed\n");
+		return PTR_ERR(mcp_ctx.irq_bh_thread);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return request_irq(mcp_ctx.irq, irq_handler, IRQF_TRIGGER_RISING,
 			   "trustonic", NULL);
 }
@@ -1213,7 +1487,12 @@ void mcp_stop(void)
 	mcp_close();
 	mcp_ctx.scheduler_cb = NULL;
 	free_irq(mcp_ctx.irq, NULL);
+<<<<<<< HEAD
 	flush_work(&irq_work);
+=======
+	mcp_ctx.irq_bh_active = false;
+	kthread_stop(mcp_ctx.irq_bh_thread);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int mcp_init(void)
@@ -1224,6 +1503,10 @@ int mcp_init(void)
 	mutex_init(&mcp_ctx.buffer_lock);
 	mutex_init(&mcp_ctx.queue_lock);
 	init_completion(&mcp_ctx.complete);
+<<<<<<< HEAD
+=======
+	init_completion(&mcp_ctx.irq_bh_complete);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Setup notification queue mutex */
 	mutex_init(&mcp_ctx.notifications_mutex);
 	INIT_LIST_HEAD(&mcp_ctx.notifications);
@@ -1264,6 +1547,13 @@ int mcp_init(void)
 
 	mcp_ctx.time = (void *)ALIGN(mci, 8);
 
+<<<<<<< HEAD
+=======
+	mcp_ctx.timeout = MCP_TIMEOUT;
+	debugfs_create_u32("mcp_timeout", 0600, g_ctx.debug_dir,
+			   &mcp_ctx.timeout);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -1334,10 +1624,17 @@ int mcp_debug_sessions(struct kasnprintf_buf *buf)
 				 exit_code, state_to_string(session->state),
 				 notif_state_to_string(session->notif_state));
 		if (ret < 0)
+<<<<<<< HEAD
 			return ret;
 	}
 	mutex_unlock(&mcp_ctx.sessions_lock);
 	return 0;
+=======
+			break;
+	}
+	mutex_unlock(&mcp_ctx.sessions_lock);
+	return ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static inline int show_mcp_log_entry(struct kasnprintf_buf *buf,
@@ -1363,10 +1660,18 @@ static inline int show_mcp_log_entry(struct kasnprintf_buf *buf,
 		break;
 	}
 
+<<<<<<< HEAD
 	return kasnprintf(buf, "%5d %-13s %4x %-8s %6d %5d\n",
 			  cmd_info->pid, mcp_cmd_to_string(cmd_info->id),
 			  cmd_info->session_id, state_str, cmd_info->result,
 			  cmd_info->errno);
+=======
+	return kasnprintf(buf, "%20llu %5d %-13s %4x %-8s %6d %5d%s\n",
+			  cmd_info->cpu_clk, cmd_info->pid,
+			  mcp_cmd_to_string(cmd_info->id), cmd_info->session_id,
+			  state_str, cmd_info->result, cmd_info->errno,
+			  cmd_info->uuid_str);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int mcp_debug_mcpcmds(struct kasnprintf_buf *buf)
@@ -1376,8 +1681,14 @@ int mcp_debug_mcpcmds(struct kasnprintf_buf *buf)
 
 	/* Initialize MCP log */
 	mutex_lock(&mcp_ctx.last_mcp_cmds_mutex);
+<<<<<<< HEAD
 	ret = kasnprintf(buf, "%5s %-13s %4s %-8s %6s %5s\n",
 			 "PID", "command", "S-ID", "state", "result", "errno");
+=======
+	ret = kasnprintf(buf, "%20s %5s %-13s %4s %-8s %6s %5s %s\n",
+			 "CPU clock", "PID", "command", "S-ID",
+			 "state", "result", "errno", "UUID");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		goto out;
 

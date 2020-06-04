@@ -67,6 +67,7 @@ static inline void fscrypt_restore_control_page(struct page *page)
 	return;
 }
 
+<<<<<<< HEAD
 static inline void fscrypt_set_d_op(struct dentry *dentry)
 {
 	return;
@@ -77,6 +78,8 @@ static inline void fscrypt_set_encrypted_dentry(struct dentry *dentry)
 	return;
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* policy.c */
 static inline int fscrypt_ioctl_set_policy(struct file *filp,
 					   const void __user *arg)

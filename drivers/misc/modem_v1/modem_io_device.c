@@ -750,7 +750,11 @@ static long misc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		char *buff = iod->msd->cp_crash_info + strlen(CP_CRASH_TAG);
 		void __user *user_buff = (void __user *)arg;
 
+<<<<<<< HEAD
 		mif_err("%s: IOCTL_MODEM_CP_UPLOAD\n", iod->name);
+=======
+		mif_err("%s: ERR! IOCTL_MODEM_CP_UPLOAD\n", iod->name);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		strcpy(iod->msd->cp_crash_info, CP_CRASH_TAG);
 		if (arg) {
 			if (copy_from_user(buff, user_buff, CP_CRASH_INFO_SIZE))
@@ -827,6 +831,7 @@ static long misc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		mif_err("%s: !ld->check_security\n", iod->name);
 		return -EINVAL;
 
+<<<<<<< HEAD
 	case IOCTL_MODEM_CRASH_REASON:
 		if (ld->crash_reason) {
 			mif_info("%s: IOCTL_MODEM_CRASH_REASON\n", iod->name);
@@ -843,6 +848,8 @@ static long misc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		mif_err("%s: !ld->airplane_mode\n", iod->name);
 		return -EINVAL;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		 /* If you need to handle the ioctl for specific link device,
 		  * then assign the link ioctl handler to ld->ioctl
@@ -1258,6 +1265,15 @@ drop:
 	return NETDEV_TX_OK;
 }
 
+<<<<<<< HEAD
+=======
+static u16 vnet_select_queue(struct net_device *dev, struct sk_buff *skb,
+		void *accel_priv, select_queue_fallback_t fallback)
+{
+	return (skb && skb->priomark == RAW_HPRIO) ? 1 : 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int dummy_net_open(struct net_device *ndev)
 {
 	return -EINVAL;
@@ -1271,6 +1287,10 @@ static struct net_device_ops vnet_ops = {
 	.ndo_open = vnet_open,
 	.ndo_stop = vnet_stop,
 	.ndo_start_xmit = vnet_xmit,
+<<<<<<< HEAD
+=======
+	.ndo_select_queue = vnet_select_queue,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static void vnet_setup(struct net_device *ndev)
@@ -1420,11 +1440,21 @@ int sipc5_init_io_device(struct io_device *iod)
 		INIT_LIST_HEAD(&iod->node_ndev);
 
 		if (iod->use_handover)
+<<<<<<< HEAD
 			iod->ndev = alloc_netdev(0, iod->name, NET_NAME_UNKNOWN,
 					vnet_setup_ether);
 		else
 			iod->ndev = alloc_netdev(0, iod->name, NET_NAME_UNKNOWN,
 					vnet_setup);
+=======
+			iod->ndev = alloc_netdev_mqs(sizeof(struct vnet),
+				iod->name, NET_NAME_UNKNOWN, vnet_setup_ether,
+				MAX_NDEV_TX_Q, MAX_NDEV_RX_Q);
+		else
+			iod->ndev = alloc_netdev_mqs(sizeof(struct vnet),
+				iod->name, NET_NAME_UNKNOWN, vnet_setup,
+				MAX_NDEV_TX_Q, MAX_NDEV_RX_Q);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (!iod->ndev) {
 			mif_info("%s: ERR! alloc_netdev fail\n", iod->name);

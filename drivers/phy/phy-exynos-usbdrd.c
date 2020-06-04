@@ -29,10 +29,13 @@
 #include <linux/usb/samsung_usb.h>
 #include <linux/usb/otg.h>
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_SCSC_CLK20MHZ)
 #include <scsc/scsc_mx.h>
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "phy-exynos-usbdrd.h"
 
 static const char *exynos8890_usbdrd_clk_names[] = {"aclk", "sclk", "phyclock",
@@ -42,6 +45,7 @@ static const char *exynos8890_usbhost_clk_names[] = {"aclk", "sclk", "phyclock",
 						"phy_ref", NULL};
 static const char *exynos7870_usbdrd_clk_names[] = {"usb_pll", "usbdrd20", NULL};
 static const char *exynos7870_usbphy_clk_names[] = {"phyumux", NULL};
+<<<<<<< HEAD
 static const char *exynos7570_usbdrd_clk_names[] = {"usb_pll", "usbdrd20", NULL};
 static const char *exynos7570_usbphy_clk_names[] = {"phyumux", NULL};
 
@@ -152,6 +156,8 @@ static int exynos_usbdrd_check_extrefclk(struct exynos_usbdrd_phy *phy_drd)
 
 	return 0;
 }
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int exynos_usbdrd_clk_prepare(struct exynos_usbdrd_phy *phy_drd)
 {
@@ -262,6 +268,7 @@ static int exynos_usbdrd_clk_get(struct exynos_usbdrd_phy *phy_drd)
 		phy_clk_count =
 			(int)ARRAY_SIZE(exynos7870_usbphy_clk_names);
 		break;
+<<<<<<< HEAD
 	case TYPE_EXYNOS7570:
 		clk_ids = exynos7570_usbdrd_clk_names;
 		clk_count =
@@ -271,6 +278,8 @@ static int exynos_usbdrd_clk_get(struct exynos_usbdrd_phy *phy_drd)
 			(int)ARRAY_SIZE(exynos7570_usbphy_clk_names);
 		break;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		dev_err(phy_drd->dev, "couldn't get clock: unknown cpu type\n");
 		return -EINVAL;
@@ -335,12 +344,17 @@ static unsigned int exynos_rate_to_clk(struct exynos_usbdrd_phy *phy_drd)
 	int ret, i;
 
 	switch (phy_drd->drv_data->cpu_type) {
+<<<<<<< HEAD
 	case TYPE_EXYNOS7570:
 	case TYPE_EXYNOS7870:
 		if (phy_drd->drv_data->cpu_type == TYPE_EXYNOS7570)
 			clk_ids = exynos7570_usbdrd_clk_names;
 		else
 			clk_ids = exynos7870_usbdrd_clk_names;
+=======
+	case TYPE_EXYNOS7870:
+		clk_ids = exynos7870_usbdrd_clk_names;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		for (i = 0; clk_ids[i] != NULL; i++) {
 			if (!strcmp("usb_pll", clk_ids[i])) {
 				phy_drd->ref_clk = phy_drd->clocks[i];
@@ -416,12 +430,16 @@ static unsigned int exynos_rate_to_clk(struct exynos_usbdrd_phy *phy_drd)
 static void exynos_usbdrd_pipe3_phy_isol(struct phy_usb_instance *inst,
 					unsigned int on, unsigned int mask)
 {
+<<<<<<< HEAD
 	struct exynos_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int val;
 
 	if (!inst->reg_pmu)
 		return;
 
+<<<<<<< HEAD
 	if (on && inst->uart_io_share_en) {
 		if (!regmap_read(inst->reg_pmu,
 				 inst->uart_io_share_offset, &val)) {
@@ -436,6 +454,8 @@ static void exynos_usbdrd_pipe3_phy_isol(struct phy_usb_instance *inst,
 		}
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	val = on ? 0 : mask;
 
 	regmap_update_bits(inst->reg_pmu, inst->pmu_offset,
@@ -522,7 +542,10 @@ exynos_usbdrd_utmi_set_refclk(struct phy_usb_instance *inst)
 /*
  * Sets the default PHY tuning values for high-speed connection.
  */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void exynos_usbdrd_fill_hstune(struct exynos_usbdrd_phy *phy_drd,
 				struct exynos_usbphy_hs_tune *hs_tune)
 {
@@ -531,7 +554,11 @@ static void exynos_usbdrd_fill_hstune(struct exynos_usbdrd_phy *phy_drd,
 		if (phy_drd->drv_data->ip_type == TYPE_USB3DRD) {
 			hs_tune->tx_vref	 = 0x3;
 			hs_tune->tx_pre_emp	 = 0x2;
+<<<<<<< HEAD
 			hs_tune->tx_pre_emp_puls = 0x0;
+=======
+			hs_tune->tx_pre_emp_plus = 0x0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			hs_tune->tx_res		 = 0x2;
 			hs_tune->tx_rise	 = 0x3;
 			hs_tune->tx_hsxv	 = 0x0;
@@ -539,6 +566,7 @@ static void exynos_usbdrd_fill_hstune(struct exynos_usbdrd_phy *phy_drd,
 			hs_tune->rx_sqrx	 = 0x7;
 			hs_tune->compdis	 = 0x0;
 			hs_tune->otg		 = 0x4;
+<<<<<<< HEAD
 			hs_tune->enable_user_imp = false;
 			hs_tune->utmi_clk	 = USBPHY_UTMI_PHYCLOCK;
 		}
@@ -547,6 +575,16 @@ static void exynos_usbdrd_fill_hstune(struct exynos_usbdrd_phy *phy_drd,
 			hs_tune->tx_vref	 = 0x3;
 			hs_tune->tx_pre_emp	 = 0x0;
 			hs_tune->tx_pre_emp_puls = 0x0;
+=======
+			hs_tune->enalbe_user_imp = false;
+			hs_tune->utim_clk	 = USBPHY_UTMI_PHYCLOCK;
+		}
+		break;
+	case TYPE_EXYNOS7870:
+			hs_tune->tx_vref	 = 0x3;
+			hs_tune->tx_pre_emp	 = 0x0;
+			hs_tune->tx_pre_emp_plus = 0x0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			hs_tune->tx_res		 = 0x2;
 			hs_tune->tx_rise	 = 0x1;
 			hs_tune->tx_hsxv	 = 0x0;
@@ -554,21 +592,94 @@ static void exynos_usbdrd_fill_hstune(struct exynos_usbdrd_phy *phy_drd,
 			hs_tune->rx_sqrx	 = 0x5;
 			hs_tune->compdis	 = 0x3;
 			hs_tune->otg		 = 0x2;
+<<<<<<< HEAD
 			hs_tune->enable_user_imp = false;
 			hs_tune->utmi_clk	 = USBPHY_UTMI_PHYCLOCK;
 		
 		break;
 		
+=======
+			hs_tune->enalbe_user_imp = false;
+			hs_tune->utim_clk	 = USBPHY_UTMI_PHYCLOCK;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		break;
 	}
 }
+<<<<<<< HEAD
+=======
+static int exynos_usbdrd_set_hstune_from_dt(struct exynos_usbdrd_phy *phy_drd,
+				enum exynos_usbphy_mode phy_mode)
+{
+	struct device *dev = phy_drd->dev;
+	struct device_node *node = dev->of_node;
+	struct exynos_usbphy_hs_tune *hs_tune = phy_drd->usbphy_info.hs_tune;
+	u8 usb_phy_tune_values[10] =  {0xff}; 
+	int ret, i;
+	if (phy_mode == USBPHY_MODE_DEV) {
+		ret = of_property_read_u8_array(node, "device_usbphy_hstune_parameter",
+					 &usb_phy_tune_values[0], 10);
+	} else {
+		ret = of_property_read_u8_array(node, "host_usbphy_hstune_parameter",
+					 &usb_phy_tune_values[0], 10);
+		
+	}
+	if (ret) {
+		pr_err("usb:%s dt devnode is not defined \n ",__func__);
+		return ret;
+	}
+	pr_err("usb: %s Updating tune values from dt for phy_mode %d\n", __func__, phy_mode);
+	/*tx_vref,tx_pre_emp,tx_pre_emp_plus,tx_res,tx_rise,tx_hsxv,tx_fsls,rx_sqrx,compdis,otg*/
+	/* 0        1          2              3       4       5       6       7       8      9*/
+	for (i = 0; i < 10; i++) {
+		if (usb_phy_tune_values[i] != 0xFF) {
+			switch(i) {
+				case 0:
+				 hs_tune->tx_vref = usb_phy_tune_values[i];
+				break;
+				case 1:
+				 hs_tune->tx_pre_emp = usb_phy_tune_values[i];
+				break;
+				case 2:
+				 hs_tune->tx_pre_emp_plus = usb_phy_tune_values[i];
+				break;
+				case 3:
+				 hs_tune->tx_res = usb_phy_tune_values[i];
+				break;
+				case 4:
+				 hs_tune->tx_rise = usb_phy_tune_values[i];
+				break;
+				case 5:
+				 hs_tune->tx_hsxv = usb_phy_tune_values[i];
+				break;
+				case 6:
+				 hs_tune->tx_fsls = usb_phy_tune_values[i];
+				break;
+				case 7:
+				 hs_tune->rx_sqrx = usb_phy_tune_values[i];
+				break;
+				case 8:
+				 hs_tune->compdis = usb_phy_tune_values[i];
+				break;
+				case 9:
+				 hs_tune->otg = usb_phy_tune_values[i];
+				break;
+				default:
+				break;	
+			} 
+		}
+	}
+	return ret;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void exynos_usbdrd_set_hstune(struct exynos_usbdrd_phy *phy_drd,
 				enum exynos_usbphy_mode phy_mode)
 {
 	struct exynos_usbphy_hs_tune *hs_tune = phy_drd->usbphy_info.hs_tune;
 
+<<<<<<< HEAD
 	printk("usb: exynos_usbdrd_set_hstune \n" );
 
 	if (phy_mode == USBPHY_MODE_DEV) {
@@ -582,6 +693,18 @@ static void exynos_usbdrd_set_hstune(struct exynos_usbdrd_phy *phy_drd,
 				break;				
 			}
 		
+=======
+	if (phy_mode == USBPHY_MODE_DEV) {
+		switch (phy_drd->drv_data->cpu_type) {
+		case TYPE_EXYNOS7870:
+			hs_tune->tx_vref	= 0xE;
+			hs_tune->tx_res		= 0x3;
+			hs_tune->rx_sqrx    = 0x6;
+			break;
+		default:
+			break;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else { /* USBPHY_MODE_HOST */
 		switch (phy_drd->drv_data->cpu_type) {
 		case TYPE_EXYNOS8890:
@@ -591,14 +714,26 @@ static void exynos_usbdrd_set_hstune(struct exynos_usbdrd_phy *phy_drd,
 				hs_tune->compdis	= 0x7;
 			}
 			break;
+<<<<<<< HEAD
 		 case TYPE_EXYNOS7570:
                         hs_tune->compdis        = 0x7;
                         break;
+=======
+		case TYPE_EXYNOS7870:
+			hs_tune->tx_vref	= 0x5;
+			hs_tune->tx_pre_emp	= 0x0;
+			hs_tune->compdis	= 0x7;
+			break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		default:
 			break;
 		}
 
 	}
+<<<<<<< HEAD
+=======
+	exynos_usbdrd_set_hstune_from_dt(phy_drd,phy_mode);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /*
@@ -652,7 +787,10 @@ static int exynos_usbdrd_get_phyinfo(struct exynos_usbdrd_phy *phy_drd)
 		}
 		break;
 	case TYPE_EXYNOS7870:
+<<<<<<< HEAD
 	case TYPE_EXYNOS7570:
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		phy_drd->usbphy_info.version = EXYNOS_USBCON_VER_02_1_0,
 		phy_drd->usbphy_info.refsel = USBPHY_REFSEL_CLKCORE,
 		phy_drd->usbphy_info.use_io_for_ovc = false;
@@ -676,6 +814,7 @@ static int exynos_usbdrd_get_phyinfo(struct exynos_usbdrd_phy *phy_drd)
 		goto done;
 	}
 
+<<<<<<< HEAD
 	/*
 	if (phy_drd->drv_data->cpu_type == TYPE_EXYNOS7870 ||
 		phy_drd->drv_data->cpu_type == TYPE_EXYNOS7570) {
@@ -685,6 +824,8 @@ static int exynos_usbdrd_get_phyinfo(struct exynos_usbdrd_phy *phy_drd)
 	}
 	*/
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	phy_drd->usbphy_info.hs_tune = devm_kmalloc(phy_drd->dev,
 			sizeof(struct exynos_usbphy_hs_tune), GFP_KERNEL);
 	if (!phy_drd->usbphy_info.hs_tune) {
@@ -725,6 +866,7 @@ static void exynos_usbdrd_pipe3_init(struct exynos_usbdrd_phy *phy_drd)
 	samsung_exynos_cal_usb3phy_enable(&phy_drd->usbphy_info);
 
 	if (phy_drd->drv_data->phy_usermux) {
+<<<<<<< HEAD
 		/* Check external reference clock supply */
 		if (phy_drd->request_extrefclk) {
 			ret = exynos_usbdrd_check_extrefclk(phy_drd);
@@ -734,6 +876,8 @@ static void exynos_usbdrd_pipe3_init(struct exynos_usbdrd_phy *phy_drd)
 				return;
 			}
 		}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/* USB User MUX enable */
 		ret = exynos_usbdrd_clk_enable(phy_drd, true);
 		if (ret) {
@@ -829,7 +973,10 @@ static void exynos_usbdrd_utmi_tune(struct exynos_usbdrd_phy *phy_drd,
 
 		samsung_exynos_cal_usb3phy_tune_dev(&phy_drd->usbphy_info);
 	}
+<<<<<<< HEAD
 	return;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int exynos_usbdrd_phy_tune(struct phy *phy, int phy_state)
@@ -845,8 +992,11 @@ static int exynos_usbdrd_phy_tune(struct phy *phy, int phy_state)
 static void exynos_usbdrd_pipe3_set(struct exynos_usbdrd_phy *phy_drd,
 						int option, void *info)
 {
+<<<<<<< HEAD
 	int *ret;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	switch (option) {
 	case SET_DPPULLUP_ENABLE:
 		samsung_exynos_cal_usb3phy_enable_dp_pullup(
@@ -859,6 +1009,7 @@ static void exynos_usbdrd_pipe3_set(struct exynos_usbdrd_phy *phy_drd,
 	case SET_DPDM_PULLDOWN:
 		samsung_exynos_cal_usb3phy_config_host_mode(
 					&phy_drd->usbphy_info);
+<<<<<<< HEAD
 		break;
 	case SET_EXTREFCLK_REQUEST:
 		ret = (int *)info;
@@ -867,6 +1018,8 @@ static void exynos_usbdrd_pipe3_set(struct exynos_usbdrd_phy *phy_drd,
 	case SET_EXTREFCLK_RELEASE:
 		exynos_usbdrd_release_extrefclk(phy_drd, NULL);
 		break;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		break;
 	}
@@ -914,7 +1067,10 @@ static int exynos_usbdrd_phy_power_on(struct phy *phy)
 			inst->phy_cfg->phy_isol(inst, 0, EXYNOS_USB2PHY_ENABLE);
 		break;
 	case TYPE_EXYNOS7870:
+<<<<<<< HEAD
 	case TYPE_EXYNOS7570:
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		inst->phy_cfg->phy_isol(inst, 0, EXYNOS_USB2PHY_ENABLE);
 		break;
 	default:
@@ -941,7 +1097,10 @@ static int exynos_usbdrd_phy_power_off(struct phy *phy)
 			inst->phy_cfg->phy_isol(inst, 1, EXYNOS_USB2PHY_ENABLE);
 		break;
 	case TYPE_EXYNOS7870:
+<<<<<<< HEAD
 	case TYPE_EXYNOS7570:
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		inst->phy_cfg->phy_isol(inst, 1, EXYNOS_USB2PHY_ENABLE);
 		break;
 	default:
@@ -1021,6 +1180,7 @@ static const struct exynos_usbdrd_phy_drvdata exynos7870_usbdrd_phy = {
 	.phy_usermux		= true,
 };
 
+<<<<<<< HEAD
 static const struct exynos_usbdrd_phy_drvdata exynos7570_usbdrd_phy = {
 	.phy_cfg		= phy_cfg_exynos,
 	.pmu_offset_usbdrd0_phy	= EXYNOS_USBDEV_PHY_CONTROL,
@@ -1028,6 +1188,8 @@ static const struct exynos_usbdrd_phy_drvdata exynos7570_usbdrd_phy = {
 	.phy_usermux		= true,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const struct of_device_id exynos_usbdrd_phy_of_match[] = {
 	{
 		.compatible = "samsung,exynos8890-usbdrd-phy",
@@ -1038,9 +1200,12 @@ static const struct of_device_id exynos_usbdrd_phy_of_match[] = {
 	}, {
 		.compatible = "samsung,exynos7870-usbdrd-phy",
 		.data = &exynos7870_usbdrd_phy
+<<<<<<< HEAD
 	}, {
 		.compatible = "samsung,exynos7570-usbdrd-phy",
 		.data = &exynos7570_usbdrd_phy
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	},
 	{ },
 };
@@ -1057,7 +1222,10 @@ static int exynos_usbdrd_phy_probe(struct platform_device *pdev)
 	const struct exynos_usbdrd_phy_drvdata *drv_data;
 	struct regmap *reg_pmu;
 	u32 pmu_offset;
+<<<<<<< HEAD
 	u32 uart_io_share_en, uart_io_share_offset, uart_io_share_mask;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int i, ret;
 	int channel;
 
@@ -1097,12 +1265,15 @@ static int exynos_usbdrd_phy_probe(struct platform_device *pdev)
 		goto err1;
 	}
 
+<<<<<<< HEAD
 	ret = exynos_usbdrd_ready_extrefclk(phy_drd);
 	if (ret) {
 		dev_err(dev, "%s: Failed to ready extrefclk\n", __func__);
 		return ret;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	reg_pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
 						   "samsung,pmu-syscon");
 	if (IS_ERR(reg_pmu)) {
@@ -1124,6 +1295,7 @@ static int exynos_usbdrd_phy_probe(struct platform_device *pdev)
 		break;
 	}
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(node, "uart_io_share_enable", &uart_io_share_en);
 	if (ret) {
 		dev_err(dev, "Failed to get UART IO Share info\n");
@@ -1143,6 +1315,8 @@ static int exynos_usbdrd_phy_probe(struct platform_device *pdev)
 			goto err1;
 		}
 	}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
 
 	ret = exynos_usbdrd_get_phyinfo(phy_drd);
@@ -1162,9 +1336,12 @@ static int exynos_usbdrd_phy_probe(struct platform_device *pdev)
 		phy_drd->phys[i].index = i;
 		phy_drd->phys[i].reg_pmu = reg_pmu;
 		phy_drd->phys[i].pmu_offset = pmu_offset;
+<<<<<<< HEAD
 		phy_drd->phys[i].uart_io_share_en = uart_io_share_en;
 		phy_drd->phys[i].uart_io_share_offset = uart_io_share_offset;
 		phy_drd->phys[i].uart_io_share_mask = uart_io_share_mask;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		phy_drd->phys[i].phy_cfg = &drv_data->phy_cfg[i];
 		phy_set_drvdata(phy, &phy_drd->phys[i]);
 	}

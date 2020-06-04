@@ -43,7 +43,10 @@ struct mcu_ipc_drv_data {
 
 	struct device *mcu_ipc_dev;
 	struct mcu_ipc_ipc_handler hd[16];
+<<<<<<< HEAD
 	spinlock_t lock;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static struct mcu_ipc_drv_data mcu_dat[MCU_MAX];

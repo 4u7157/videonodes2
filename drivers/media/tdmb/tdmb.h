@@ -156,6 +156,16 @@ struct tdmb_i2c_dev {
 struct tdmb_dt_platform_data {
 	int tdmb_irq;
 	int tdmb_en;
+<<<<<<< HEAD
+=======
+	int tdmb_1p2_en;
+	int tdmb_lna_en;
+	int fm_dtv_ctrl1;
+	int fm_dtv_ctrl2;
+	bool tdmb_lna_gpio_req;
+	bool fm_dtv_ctrl1_gpio_req;
+	bool fm_dtv_ctrl2_gpio_req;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int tdmb_rst;
 	int tdmb_use_rst;
 	int tdmb_use_irq;

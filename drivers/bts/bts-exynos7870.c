@@ -1081,6 +1081,19 @@ void exynos7_init_bts_ioremap(void)
 	base_bts_pmu_alive = ioremap(EXYNOS7870_PA_PMU_ALIVE, SZ_4K);
 }
 
+<<<<<<< HEAD
+=======
+int wincnt;
+int exynos_update_overlay_wincnt(int cnt)
+{
+	BTS_DBG("[BTS CNT] overlay window count: %d\n", cnt);
+
+	wincnt = cnt;
+
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void exynos_update_media_scenario(enum bts_media_type media_type,
 		unsigned int bw, int bw_type)
 {
@@ -1104,14 +1117,26 @@ void exynos_update_media_scenario(enum bts_media_type media_type,
 	/* MIF minimum frequency calculation as per BTS guide */
 	if (cam_bw && decon_bw) {
 		if (decon_bw <= (2 * FHD_BW))
+<<<<<<< HEAD
 			mif_freq = 667000;
+=======
+			mif_freq = 676000;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		else
 			mif_freq = 728000;
 	} else {
 		if (decon_bw <= (2 * FHD_BW))
+<<<<<<< HEAD
 			mif_freq = 416000;
 		else
 			mif_freq = 559000;
+=======
+			mif_freq = 451000;
+		else
+			mif_freq = 676000;
+		if (wincnt == 3 && decon_bw <= (2 *FHD_BW))
+			mif_freq = 676000;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	exynos7_bts_notify(mif_freq);
@@ -1144,7 +1169,12 @@ static int __init exynos7_bts_init(void)
 		if (IS_ERR(clk_table[i].clk)){
 			BTS_DBG("failed to get bts clk %s\n",
 					clk_table[i].clk_name);
+<<<<<<< HEAD
 			exynos7_bts[btstable_index].ct_ptr = NULL;
+=======
+			if (btstable_index != BTS_MAX)
+				exynos7_bts[btstable_index].ct_ptr = NULL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		else {
 			ret = clk_prepare(clk_table[i].clk);

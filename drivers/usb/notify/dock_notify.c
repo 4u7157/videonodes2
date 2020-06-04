@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2014 Samsung Electronics Co. Ltd.
+=======
+ * Copyright (C) 2015-2017 Samsung Electronics Co. Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7,7 +11,11 @@
  * (at your option) any later version.
  */
 
+<<<<<<< HEAD
  /* usb notify layer v2.0 */
+=======
+ /* usb notify layer v3.0 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define pr_fmt(fmt) "usb_notify: " fmt
 
@@ -50,7 +58,11 @@ static struct dev_table essential_device_table[] = {
 	}, /* TI USB Audio DAC 2 */
 	{ .dev = { USB_DEVICE(0x0424, 0xec00), },
 	   .index = MMDOCK_INDEX,
+<<<<<<< HEAD
 	}, /* SMSC LAN Driver */
+=======
+	}, /* Knox Desktop */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{}
 };
 
@@ -90,12 +102,20 @@ static int check_gamepad_device(struct usb_device *dev)
 {
 	int ret = 0;
 
+<<<<<<< HEAD
 	pr_info("%s : product=%s\n", __func__, dev->product);
+=======
+ 	pr_info("%s : product=%s\n", __func__, dev->product);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!dev->product)
 		return ret;
 
+<<<<<<< HEAD
 	if (!strnicmp(dev->product , "Gamepad for SAMSUNG", 19))
+=======
+	if (!strncmp(dev->product , "Gamepad for SAMSUNG", 19))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = 1;
 
 	return ret;
@@ -110,7 +130,11 @@ static int check_lanhub_device(struct usb_device *dev)
 	if (!dev->product)
 		return ret;
 
+<<<<<<< HEAD
 	if (!strnicmp(dev->product , "LAN9512", 8))
+=======
+	if (!strncmp(dev->product , "LAN9512", 8))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = 1;
 
 	return ret;
@@ -220,6 +244,7 @@ skip:
 static int call_device_notify(struct usb_device *dev)
 {
 	struct otg_notify *o_notify = get_otg_notify();
+<<<<<<< HEAD
 	int bInterfaceClass = 0, speed = 0;
 
 	if(o_notify == NULL || dev->config->interface[0] == NULL)
@@ -275,6 +300,14 @@ static int call_device_notify(struct usb_device *dev)
 		} else if (speed == USB_SPEED_LOW) {
 			o_notify->hw_param[USB_HOST_LOW_SPEED_COUNT]++;
 		}
+=======
+
+	if (dev->bus->root_hub != dev) {
+
+		pr_info("%s device\n", __func__);
+
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		send_otg_notify(o_notify, NOTIFY_EVENT_DEVICE_CONNECT, 1);
 
@@ -286,7 +319,13 @@ static int call_device_notify(struct usb_device *dev)
 				NOTIFY_EVENT_LANHUB_CONNECT, 1);
 		else
 			;
+<<<<<<< HEAD
 	}
+=======
+	} else
+		pr_info("%s root hub\n", __func__);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -313,6 +352,10 @@ static int update_hub_autosuspend_timer(struct usb_device *dev)
 skip:
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void check_device_speed(struct usb_device *dev, bool on)
 {
 	struct otg_notify *o_notify = get_otg_notify();
@@ -332,8 +375,12 @@ static void check_device_speed(struct usb_device *dev, bool on)
 
 	o_notify->speed = speed;
 
+<<<<<<< HEAD
 	switch(speed)
 	{
+=======
+	switch (speed) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		case USB_SPEED_SUPER:
 			pr_info("%s : %s superspeed device\n",
 				__func__, (on ? "attached" : "detached"));
@@ -351,8 +398,74 @@ static void check_device_speed(struct usb_device *dev, bool on)
 				__func__, (on ? "attached" : "detached"));
 		break;
 	}
+<<<<<<< HEAD
 }	
 
+=======
+}
+
+#if defined(CONFIG_USB_HW_PARAM)
+static int set_hw_param(struct usb_device *dev)
+{
+	struct otg_notify *o_notify = get_otg_notify();
+	int ret = 0;
+	int bInterfaceClass = 0, speed = 0;
+	if (o_notify == NULL || dev->config->interface[0] == NULL) {
+		ret =  -EFAULT;
+		goto err;
+	}
+	if (dev->bus->root_hub != dev) {
+		bInterfaceClass = dev->config->interface[0]->
+					cur_altsetting->desc.bInterfaceClass;
+		speed = dev->speed;
+		pr_info("%s USB device connected - Class : 0x%x, speed : 0x%x\n",
+			__func__, bInterfaceClass, speed);
+		if (bInterfaceClass == USB_CLASS_AUDIO)
+			inc_hw_param(o_notify, USB_HOST_CLASS_AUDIO_COUNT);
+		else if (bInterfaceClass == USB_CLASS_COMM)
+			inc_hw_param(o_notify, USB_HOST_CLASS_COMM_COUNT);
+		else if (bInterfaceClass == USB_CLASS_HID)
+			inc_hw_param(o_notify, USB_HOST_CLASS_HID_COUNT);
+		else if (bInterfaceClass == USB_CLASS_PHYSICAL)
+			inc_hw_param(o_notify, USB_HOST_CLASS_PHYSICAL_COUNT);
+		else if (bInterfaceClass == USB_CLASS_STILL_IMAGE)
+			inc_hw_param(o_notify, USB_HOST_CLASS_IMAGE_COUNT);
+		else if (bInterfaceClass == USB_CLASS_PRINTER)
+			inc_hw_param(o_notify, USB_HOST_CLASS_PRINTER_COUNT);
+		else if (bInterfaceClass == USB_CLASS_MASS_STORAGE)
+			inc_hw_param(o_notify, USB_HOST_CLASS_STORAGE_COUNT);
+		else if (bInterfaceClass == USB_CLASS_HUB)
+			inc_hw_param(o_notify, USB_HOST_CLASS_HUB_COUNT);
+		else if (bInterfaceClass == USB_CLASS_CDC_DATA)
+			inc_hw_param(o_notify, USB_HOST_CLASS_CDC_COUNT);
+		else if (bInterfaceClass == USB_CLASS_CSCID)
+			inc_hw_param(o_notify, USB_HOST_CLASS_CSCID_COUNT);
+		else if (bInterfaceClass == USB_CLASS_CONTENT_SEC)
+			inc_hw_param(o_notify, USB_HOST_CLASS_CONTENT_COUNT);
+		else if (bInterfaceClass == USB_CLASS_VIDEO)
+			inc_hw_param(o_notify, USB_HOST_CLASS_VIDEO_COUNT);
+		else if (bInterfaceClass == USB_CLASS_WIRELESS_CONTROLLER)
+			inc_hw_param(o_notify, USB_HOST_CLASS_WIRELESS_COUNT);
+		else if (bInterfaceClass == USB_CLASS_MISC)
+			inc_hw_param(o_notify, USB_HOST_CLASS_MISC_COUNT);
+		else if (bInterfaceClass == USB_CLASS_APP_SPEC)
+			inc_hw_param(o_notify, USB_HOST_CLASS_APP_COUNT);
+		else if (bInterfaceClass == USB_CLASS_VENDOR_SPEC)
+			inc_hw_param(o_notify, USB_HOST_CLASS_VENDOR_COUNT);
+		if (speed == USB_SPEED_SUPER)
+			inc_hw_param(o_notify, USB_HOST_SUPER_SPEED_COUNT);
+		else if (speed == USB_SPEED_HIGH)
+			inc_hw_param(o_notify, USB_HOST_HIGH_SPEED_COUNT);
+		else if (speed == USB_SPEED_FULL)
+			inc_hw_param(o_notify, USB_HOST_FULL_SPEED_COUNT);
+		else if (speed == USB_SPEED_LOW)
+			inc_hw_param(o_notify, USB_HOST_LOW_SPEED_COUNT);
+	}
+err:
+	return ret;
+}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int dev_notify(struct notifier_block *self,
 			       unsigned long action, void *dev)
 {
@@ -362,10 +475,20 @@ static int dev_notify(struct notifier_block *self,
 		call_battery_notify(dev, 1);
 		check_device_speed(dev, 1);
 		update_hub_autosuspend_timer(dev);
+<<<<<<< HEAD
 		break;
 	case USB_DEVICE_REMOVE:
 		call_battery_notify(dev, 0);
 		check_device_speed(dev, 0);		
+=======
+#if defined(CONFIG_USB_HW_PARAM)
+		set_hw_param(dev);
+#endif
+		break;
+	case USB_DEVICE_REMOVE:
+		call_battery_notify(dev, 0);
+		check_device_speed(dev, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	}
 	return NOTIFY_OK;
@@ -385,4 +508,9 @@ void unregister_usbdev_notify(void)
 {
 	usb_unregister_notify(&dev_nb);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(unregister_usbdev_notify);
+=======
+EXPORT_SYMBOL(unregister_usbdev_notify);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

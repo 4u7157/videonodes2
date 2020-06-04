@@ -178,10 +178,13 @@ enum is_set_stream {
 #define V4L2_CID_IS_MAP_BUFFER			(V4L2_CID_FIMC_IS_BASE + 59)
 #define V4L2_CID_IS_INTENT			(V4L2_CID_FIMC_IS_BASE + 60)
 #define V4L2_CID_IS_CAMERA_TYPE 		(V4L2_CID_FIMC_IS_BASE + 61)
+<<<<<<< HEAD
 #define V4L2_CID_IS_G_MIPI_ERR			(V4L2_CID_FIMC_IS_BASE + 62)
 #define V4L2_CID_IS_CAPTURE_EXPOSURETIME	(V4L2_CID_FIMC_IS_BASE + 67)
 #define V4L2_CID_IS_FAST_CAPTURE_CONTROL	(V4L2_CID_FIMC_IS_BASE + 68)
 #define V4L2_CID_IS_S_SENSOR_SIZE		(V4L2_CID_FIMC_IS_BASE + 69)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum is_fw_boot_mode {
 	IS_COLD_BOOT = 0,  /* FrontCamera, 3rd-Party Camera */
 	IS_WARM_BOOT,      /* SamsungCamera & RearCamera */
@@ -192,19 +195,25 @@ enum is_fw_boot_mode {
 #define V4L2_CID_IS_DEBUG_DUMP			(V4L2_CID_FIMC_IS_BASE + 900)
 #define V4L2_CID_IS_DEBUG_SYNC_LOG		(V4L2_CID_FIMC_IS_BASE + 901)
 #define V4L2_CID_IS_HAL_VERSION			(V4L2_CID_FIMC_IS_BASE + 902)
+<<<<<<< HEAD
 
 #define V4L2_CID_ISASB0_G_CHKOUT			(V4L2_CID_FIMC_IS_BASE + 0xC00)
 #define V4L2_CID_ISASB1_G_CHKOUT			(V4L2_CID_FIMC_IS_BASE + 0xC01)
 #define V4L2_CID_ISASB2_G_CHKOUT			(V4L2_CID_FIMC_IS_BASE + 0xC02)
 #define V4L2_CID_IS_G_SFRTEST			(V4L2_CID_FIMC_IS_BASE + 0xC03)
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 enum v4l2_is_hal_version {
 	IS_HAL_VER_1_0,
 	IS_HAL_VER_3_2,
 	IS_HAL_VER_MAX,
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define V4L2_CID_SENSOR_SET_AE_TARGET			(V4L2_CID_SENSOR_BASE + 1)
 #define V4L2_CID_SENSOR_SET_AE_WEIGHT_1x1_2		(V4L2_CID_SENSOR_BASE + 2)
 #define V4L2_CID_SENSOR_SET_AE_WEIGHT_1x3_4		(V4L2_CID_SENSOR_BASE + 3)
@@ -256,6 +265,7 @@ enum v4l2_is_hal_version {
 #define V4L2_CID_FLASH_GET_INTENSITY                    (V4L2_CID_SENSOR_BASE + 305)
 #define V4L2_CID_FLASH_GET_FIRING_TIME                  (V4L2_CID_SENSOR_BASE + 306)
 
+<<<<<<< HEAD
 #define V4L2_CID_ISASB0_SET			(V4L2_CID_SENSOR_BASE + 0xC00)
 #define V4L2_CID_ISASB1_SET			(V4L2_CID_SENSOR_BASE + 0xC01)
 #define V4L2_CID_ISASB2_SET			(V4L2_CID_SENSOR_BASE + 0xC02)
@@ -269,6 +279,8 @@ enum v4l2_is_hal_version {
 #define V4L2_CID_SET_CAM_DMA_PATH		(V4L2_CID_SENSOR_BASE + 0xC13)
 
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if 1
 #define V4L2_CID_CAMERA_SCENE_MODE		(V4L2_CID_PRIVATE_BASE+70)
 
@@ -664,6 +676,13 @@ enum v4l2_pix_format_mode {
 	V4L2_PIX_FMT_MODE_VT_MIRROR,
 	V4L2_PIX_FMT_MODE_VT_NONMIRROR,
 };
+<<<<<<< HEAD
+=======
+#define V4L2_CID_IRLED_SET_WIDTH	(V4L2_CID_PRIVATE_BASE+154)
+#define V4L2_CID_IRLED_SET_DELAY	(V4L2_CID_PRIVATE_BASE+155)
+#define V4L2_CID_IRLED_SET_CURRENT	(V4L2_CID_PRIVATE_BASE+156)
+#define V4L2_CID_IRLED_SET_ONTIME	(V4L2_CID_PRIVATE_BASE+157)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* 12  Y/CbCr 4:2:0 64x32 macroblocks */
 #define V4L2_PIX_FMT_NV12T    v4l2_fourcc('T', 'V', '1', '2')

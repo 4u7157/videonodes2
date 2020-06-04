@@ -22,8 +22,24 @@
 #include <linux/mfd/samsung/s2mu005-private.h>
 #include <linux/leds-s2mu005.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 
 struct s2mu005_led_data *g_led_datas[S2MU005_LED_MAX];
+=======
+#include <linux/sec_batt.h>
+
+extern struct class *camera_class;
+struct device *flash_dev;
+bool assistive_light = false;
+#ifdef CONFIG_LEDS_SUPPORT_FRONT_FLASH
+bool front_assistive_light = false;
+int fled_selected_ch = S2MU005_FLED_OFF;
+#endif
+bool flash_config_factory;
+struct s2mu005_led_data * g_led_datas[S2MU005_LED_MAX];
+#define LED_TURN_OFF -1
+#define S2MU005_FLED_DEBUG
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static u8 leds_cur_max[] = {
 	S2MU005_FLASH_OUT_I_1200MA,
@@ -50,6 +66,17 @@ struct s2mu005_led_data {
 	bool enable;
 	int torch_pin;
 	int flash_pin;
+<<<<<<< HEAD
+=======
+	unsigned int flash_brightness;
+	unsigned int preflash_brightness;
+	unsigned int movie_brightness;
+	unsigned int torch_brightness;
+	unsigned int factory_brightness;
+#if defined(CONFIG_LEDS_SUPPORT_FRONT_FLASH)
+	unsigned int front_brightness;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 u8 CH_FLASH_TORCH_EN = S2MU005_REG_FLED_RSVD;
@@ -83,9 +110,14 @@ static int ta_notification(struct notifier_block *nb,
 		unsigned long action, void *data)
 {
 	muic_attached_dev_t attached_dev = *(muic_attached_dev_t *)data;
+<<<<<<< HEAD
 #ifdef CONFIG_S2MU005_LEDS_I2C
 	u8 temp;
 #endif
+=======
+	u8 temp;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret = 0;
 	struct s2mu005_led_data *led_data =
 		container_of(nb, struct s2mu005_led_data, batt_nb);
@@ -120,34 +152,84 @@ static int ta_notification(struct notifier_block *nb,
 #else
 		s2mu005_read_reg(led_data->i2c,
 				CH_FLASH_TORCH_EN, &temp);
+<<<<<<< HEAD
 		if ((temp & S2MU005_TORCH_ON_I2C) == S2MU005_TORCH_ON_I2C) {
 			ret = s2mu005_update_reg(led_data->i2c,
 				CH_FLASH_TORCH_EN,
 				S2MU005_FLASH_TORCH_OFF,
 				S2MU005_TORCH_ENABLE_MASK);
+=======
+		if ((temp & S2MU005_CH1_TORCH_ON_I2C) == S2MU005_CH1_TORCH_ON_I2C) {
+			ret = s2mu005_update_reg(led_data->i2c,
+				CH_FLASH_TORCH_EN,
+				S2MU005_FLASH_TORCH_OFF,
+				S2MU005_CH1_TORCH_ENABLE_MASK);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			pr_info("%s : LED OFF\n", __func__);
 			if (ret < 0)
 				goto err;
+<<<<<<< HEAD
 			ret = s2mu005_update_reg(led_data->i2c,
 				S2MU005_REG_LED_CTRL4,
 				S2MU005_TORCH_ON_I2C,
 				S2MU005_TORCH_ENABLE_MASK);
+=======
+
+			msleep(10);
+
+			ret = s2mu005_update_reg(led_data->i2c,
+				CH_FLASH_TORCH_EN,
+				S2MU005_CH1_TORCH_ON_I2C,
+				S2MU005_CH1_TORCH_ENABLE_MASK);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			pr_info("%s : LED ON\n", __func__);
 			if (ret < 0)
 				goto err;
 		}
 #endif
+<<<<<<< HEAD
+=======
+
+		if (!factory_mode) {
+			/* CHGIN_ENGH = 0 */
+			ret = s2mu005_update_reg(led_data->i2c,
+				S2MU005_REG_FLED_CTRL1, 0x00, 0x80);
+			if (ret < 0)
+				goto err;
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case MUIC_NOTIFY_CMD_ATTACH:
 	case MUIC_NOTIFY_CMD_LOGICALLY_ATTACH:
 		led_data->attach_ta = 0;
 		attach_cable_check(attached_dev, &led_data->attach_ta,
 						&led_data->attach_sdp);
+<<<<<<< HEAD
 		return 0;
 	default:
 		goto err;
+=======
+		if (led_data->attach_ta) {
+			s2mu005_read_reg(led_data->i2c,
+				S2MU005_REG_FLED_STATUS, &temp);
+
+			/* if CH1_TORCH_ON or CH2_TORCH_ON setting CHGIN_ENGH bit 1 */
+			if (temp & 0x50) {
+				 ret = s2mu005_update_reg(led_data->i2c,
+					S2MU005_REG_FLED_CTRL1, 0x80, 0x80);
+				if (ret < 0)
+					goto err;
+			}
+		}
+
+		return 0;
+	default:
+		goto err;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 #ifndef CONFIG_S2MU005_LEDS_I2C
@@ -163,6 +245,38 @@ err:
 }
 #endif
 
+<<<<<<< HEAD
+=======
+static void torch_led_on_off(int value)
+{
+	int ret;
+	u8 temp;
+
+	pr_info("%s : value(%d), attach_ta(%d)\n",
+		__func__, value, g_led_datas[S2MU005_FLASH_LED]->attach_ta);
+
+	if (value && g_led_datas[S2MU005_FLASH_LED]->attach_ta) { //torch on & ta attach
+		ret = s2mu005_update_reg(g_led_datas[S2MU005_FLASH_LED]->i2c,
+			S2MU005_REG_FLED_CTRL1, 0x80, 0x80);
+		if (ret < 0)
+			pr_err("%s : CHGIN_ENGH = 1 fail\n", __func__);
+	}
+
+	if ((value == 0) && !factory_mode) { // torch off
+		s2mu005_read_reg(g_led_datas[S2MU005_FLASH_LED]->i2c,
+			S2MU005_REG_FLED_CTRL1, &temp);
+		pr_info("%s : 0x%2X read value - 0x%2X\n", __func__,
+			S2MU005_REG_FLED_CTRL1, temp);
+		if ((temp & 0x80) == 0x80) {
+			ret = s2mu005_update_reg(g_led_datas[S2MU005_FLASH_LED]->i2c,
+				S2MU005_REG_FLED_CTRL1, 0x00, 0x80);
+			if (ret < 0)
+				pr_err("%s : CHGIN_ENGH = 0 fail\n", __func__);
+		}
+	}
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void led_set(struct s2mu005_led_data *led_data)
 {
 	int ret;
@@ -171,7 +285,11 @@ static void led_set(struct s2mu005_led_data *led_data)
 	u8 mask = 0, reg = 0;
 
 #ifdef CONFIG_S2MU005_LEDS_I2C
+<<<<<<< HEAD
 	u8 enable_mask, value;
+=======
+	u8 enable_mask = 0, value = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 	int gpio_pin;
 #endif
@@ -185,8 +303,21 @@ static void led_set(struct s2mu005_led_data *led_data)
 #endif
 	} else {
 		pr_info("%s led mode is torch\n", __func__);
+<<<<<<< HEAD
 		reg = S2MU005_REG_FLED_CH1_CTRL1;
 		mask = S2MU005_TORCH_IOUT_MASK;
+=======
+#ifdef CONFIG_LEDS_SUPPORT_FRONT_FLASH
+		if (front_assistive_light) {
+			reg = S2MU005_REG_FLED_CH2_CTRL1;
+			mask = S2MU005_TORCH_IOUT_MASK;
+		} else
+#endif
+		{
+			reg = S2MU005_REG_FLED_CH1_CTRL1;
+			mask = S2MU005_TORCH_IOUT_MASK;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifndef CONFIG_S2MU005_LEDS_I2C
 		pr_info("%s gpio_torch mode\n", __func__);
 		gpio_pin = led_data->torch_pin;
@@ -206,6 +337,7 @@ static void led_set(struct s2mu005_led_data *led_data)
 #endif
 	pr_info("%s start led_set\n", __func__);
 
+<<<<<<< HEAD
 	if (led_data->test_brightness == LED_OFF) {
 		ret = s2mu005_update_reg(led_data->i2c, reg,
 				led_data->test_brightness, mask);
@@ -215,14 +347,36 @@ static void led_set(struct s2mu005_led_data *led_data)
 #ifdef CONFIG_S2MU005_LEDS_I2C
 		value = S2MU005_FLASH_TORCH_OFF;
 #else
+=======
+	if (led_data->test_brightness == LED_TURN_OFF) {
+#ifdef CONFIG_S2MU005_LEDS_I2C
+		ret = s2mu005_update_reg(led_data->i2c, reg, 0, mask);
+		if (ret < 0)
+			goto error_set_bits;
+#else
+		ret = s2mu005_update_reg(led_data->i2c, reg,
+				led_data->data->brightness, mask);
+		if (ret < 0)
+			goto error_set_bits;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		gpio_direction_output(gpio_pin, 0);
 #endif
 		/* torch mode off sequence */
 		if (id && led_data->attach_ta) {
+<<<<<<< HEAD
 			ret = s2mu005_update_reg(led_data->i2c,
 				S2MU005_REG_FLED_CTRL1, 0x00, 0x80);
 			if (ret < 0)
 				goto error_set_bits;
+=======
+			if (!factory_mode) {
+				ret = s2mu005_update_reg(led_data->i2c,
+					S2MU005_REG_FLED_CTRL1, 0x00, 0x80);
+				if (ret < 0)
+					goto error_set_bits;
+			}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 #ifndef CONFIG_S2MU005_LEDS_I2C
 		goto gpio_free_data;
@@ -238,18 +392,34 @@ static void led_set(struct s2mu005_led_data *led_data)
 			/* ta attach & sdp mode :  brightness limit 300mA */
 			if (led_data->attach_sdp)
 				led_data->test_brightness =
+<<<<<<< HEAD
 				(led_data->test_brightness > S2MU005_TORCH_OUT_I_300MA) ?
 				S2MU005_TORCH_OUT_I_300MA : led_data->test_brightness;
 		}
 		pr_info("%s led brightness = %d\n", __func__,
 						 led_data->test_brightness);
+=======
+					(led_data->test_brightness > S2MU005_TORCH_OUT_I_300MA) ?
+					S2MU005_TORCH_OUT_I_300MA : led_data->test_brightness;
+		}
+		pr_info("%s led brightness = %d\n", __func__, led_data->test_brightness);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = s2mu005_update_reg(led_data->i2c,
 				reg, led_data->test_brightness, mask);
 		if (ret < 0)
 			goto error_set_bits;
 
 #ifdef CONFIG_S2MU005_LEDS_I2C
+<<<<<<< HEAD
 		value = id ? S2MU005_TORCH_ON_I2C : S2MU005_FLASH_ON_I2C;
+=======
+#ifdef CONFIG_LEDS_SUPPORT_FRONT_FLASH
+		if(front_assistive_light)
+			value = id ? S2MU005_CH2_TORCH_ON_I2C : S2MU005_CH2_FLASH_ON_I2C;
+		else
+#endif
+			value = id ? S2MU005_CH1_TORCH_ON_I2C : S2MU005_CH1_FLASH_ON_I2C;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 		gpio_direction_output(gpio_pin, 1);
 		goto gpio_free_data;
@@ -257,12 +427,23 @@ static void led_set(struct s2mu005_led_data *led_data)
 #endif
 	}
 #ifdef CONFIG_S2MU005_LEDS_I2C
+<<<<<<< HEAD
 	enable_mask = id ? S2MU005_TORCH_ENABLE_MASK :
 		S2MU005_FLASH_ENABLE_MASK;
 
 	ret = s2mu005_update_reg(led_data->i2c,
 		CH_FLASH_TORCH_EN,
 		value, enable_mask);
+=======
+#ifdef CONFIG_LEDS_SUPPORT_FRONT_FLASH
+	if(front_assistive_light)
+		enable_mask = id ? S2MU005_CH2_TORCH_ENABLE_MASK : S2MU005_CH2_FLASH_ENABLE_MASK;
+	else
+#endif
+		enable_mask = id ? S2MU005_CH1_TORCH_ENABLE_MASK : S2MU005_CH1_FLASH_ENABLE_MASK;
+
+	ret = s2mu005_update_reg(led_data->i2c, CH_FLASH_TORCH_EN, value, enable_mask);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (ret < 0)
 		goto error_set_bits;
@@ -277,6 +458,10 @@ gpio_free_data:
 #endif
 error_set_bits:
 	pr_err("%s: can't set led level %d\n", __func__, ret);
+<<<<<<< HEAD
+=======
+	return;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void s2mu005_led_set(struct led_classdev *led_cdev,
@@ -295,7 +480,13 @@ static void s2mu005_led_set(struct led_classdev *led_cdev,
 	led_data->test_brightness = min_t(int, (int)value, (int)max);
 	spin_unlock_irqrestore(&led_data->value_lock, flags);
 
+<<<<<<< HEAD
 	led_set(led_data);
+=======
+//	schedule_work(&led_data->work);
+	led_set(led_data);
+	return;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void s2mu005_led_work(struct work_struct *work)
@@ -316,8 +507,12 @@ static int s2mu005_led_setup(struct s2mu005_led_data *led_data)
 	int mask, value;
 	u8 temp;
 
+<<<<<<< HEAD
 	/* EVT0 0x73[3:0] == 0x0 */
 	ret = s2mu005_read_reg(led_data->i2c, 0x73, &temp);
+=======
+	ret = s2mu005_read_reg(led_data->i2c, 0x73, &temp);	/* EVT0 0x73[3:0] == 0x0 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		goto out;
 
@@ -357,28 +552,43 @@ static int s2mu005_led_setup(struct s2mu005_led_data *led_data)
 
 	if (led_data->data->id == S2MU005_FLASH_LED) {
 		/* flash timer Maximum set */
+<<<<<<< HEAD
 		ret = s2mu005_update_reg(led_data->i2c,
 			S2MU005_REG_FLED_CH1_CTRL3, led_data->data->timeout,
 			S2MU005_TIMEOUT_MAX);
+=======
+		ret = s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH1_CTRL3,
+				led_data->data->timeout, S2MU005_TIMEOUT_MAX);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret < 0)
 			goto out;
 	} else {
 		/* torch timer Maximum set */
+<<<<<<< HEAD
 		ret = s2mu005_update_reg(led_data->i2c,
 			S2MU005_REG_FLED_CH1_CTRL2, led_data->data->timeout,
 			S2MU005_TIMEOUT_MAX);
+=======
+		ret = s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH1_CTRL2,
+				led_data->data->timeout, S2MU005_TIMEOUT_MAX);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret < 0)
 			goto out;
 	}
 
 	/* flash brightness set */
 	ret = s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH1_CTRL0,
+<<<<<<< HEAD
 			S2MU005_FLASH_OUT_I_1000MA, S2MU005_FLASH_IOUT_MASK);
+=======
+			led_data->flash_brightness, S2MU005_FLASH_IOUT_MASK);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		goto out;
 
 	/* torch brightness set */
 	ret = s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH1_CTRL1,
+<<<<<<< HEAD
 			S2MU005_TORCH_OUT_I_75MA, S2MU005_TORCH_IOUT_MASK);
 	if (ret < 0)
 		goto out;
@@ -389,6 +599,31 @@ static int s2mu005_led_setup(struct s2mu005_led_data *led_data)
 	value = S2MU005_FLASH_ON_GPIO | S2MU005_TORCH_ON_GPIO;
 #endif
 	mask = S2MU005_TORCH_ENABLE_MASK | S2MU005_FLASH_ENABLE_MASK;
+=======
+			led_data->preflash_brightness, S2MU005_TORCH_IOUT_MASK);
+	if (ret < 0)
+		goto out;
+
+	/* factory mode additional setting */
+	pr_info("%s : factory_mode %d \n", __func__, factory_mode);
+	if (factory_mode) {
+		ret = s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CTRL1,
+						0x80, 0x80);
+		if (ret < 0)
+			goto out;
+		ret = s2mu005_update_reg(led_data->i2c, 0xAC,0x40, 0x40);
+		if (ret < 0)
+			goto out;
+	}
+
+#ifdef CONFIG_S2MU005_LEDS_I2C
+	value =	S2MU005_FLASH_TORCH_OFF;
+#else
+	value = S2MU005_CH1_FLASH_ON_GPIO | S2MU005_CH1_TORCH_ON_GPIO;
+#endif
+	mask = S2MU005_CH1_TORCH_ENABLE_MASK | S2MU005_CH1_FLASH_ENABLE_MASK
+		| S2MU005_CH2_TORCH_ENABLE_MASK;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ret = s2mu005_update_reg(led_data->i2c, CH_FLASH_TORCH_EN,
 		value, mask);
 	if (ret < 0)
@@ -401,6 +636,302 @@ out:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef S2MU005_FLED_DEBUG
+int s2mu005_led_dump_reg(void)
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_TORCH_LED];
+	int i =0;
+	u8 temp;
+
+	pr_info("[LED] S2MU005 FLED DEBUG : S\n");
+
+	for (i = 0x2D; i <= 0x3C; i++) {
+		s2mu005_read_reg(led_data->i2c, i, &temp);
+		pr_info("[LED] 0x%02X : 0x%02X \n", i, temp);
+	}
+
+	pr_info("[LED] S2MU005 FLED DEBUG : X\n");
+
+	return 0;
+}
+#endif
+
+
+#ifdef CONFIG_CAMERA_USE_SOC_SENSOR
+int s2mu005_led_mode_ctrl(int state)
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_FLASH_LED];
+	int gpio_torch = led_data->torch_pin;
+	int gpio_flash = led_data->flash_pin;
+
+	pr_info("%s : state = %d\n", __func__, state);
+
+	if (assistive_light == true) {
+		pr_info("%s : assistive_light is enabled \n", __func__);
+		return 0;
+	}
+
+	devm_gpio_request(led_data->cdev.dev, gpio_torch,
+				"s2mu005_gpio_torch");
+
+	devm_gpio_request(led_data->cdev.dev, gpio_flash,
+				"s2mu005_gpio_flash");
+
+	switch(state) {
+		case S2MU005_FLED_MODE_OFF:
+			gpio_direction_output(gpio_torch, 0);
+			gpio_direction_output(gpio_flash, 0);
+			torch_led_on_off(0);
+			break;
+		case S2MU005_FLED_MODE_PREFLASH:
+			gpio_direction_output(gpio_torch, 1);
+			break;
+		case S2MU005_FLED_MODE_FLASH:
+			gpio_direction_output(gpio_flash, 1);
+			break;
+		case S2MU005_FLED_MODE_MOVIE:
+			gpio_direction_output(gpio_torch, 1);
+			torch_led_on_off(1);
+			break;
+		default:
+			break;
+	}
+
+	gpio_free(gpio_torch);
+	gpio_free(gpio_flash);
+
+	return 0;
+}
+#elif defined(CONFIG_LEDS_SUPPORT_FRONT_FLASH)
+int s2mu005_led_mode_ctrl(int mode)
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_TORCH_LED];
+#ifdef CONFIG_S2MU005_LEDS_I2C
+	int value = 0;
+	int brightness = 0;
+	int ret = 0;
+#else
+	int gpio_torch = led_data->torch_pin;
+#endif
+
+	if (assistive_light == true) {
+		pr_info("%s : assistive_light is enabled \n", __func__);
+		return 0;
+	}
+
+	pr_info("%s : fled_selected_ch(%d), mode = %d\n", __func__,fled_selected_ch, mode);
+	if (fled_selected_ch == S2MU005_FLED_CH1) {
+		/* Rear Camera use gpio control, because of capture timing */
+		if (mode == S2MU005_FLED_MODE_MOVIE)
+			torch_led_on_off(1);
+		else if (mode == S2MU005_FLED_MODE_OFF)
+			torch_led_on_off(0);
+
+		return 0;
+	}
+
+#ifdef CONFIG_S2MU005_LEDS_I2C
+	switch(mode) {
+		case S2MU005_FLED_MODE_OFF:
+			/* Turn off Torch */
+			brightness = 0;
+			value = S2MU005_FLASH_TORCH_OFF;
+			break;
+		case S2MU005_FLED_MODE_PREFLASH:
+			break;
+		case S2MU005_FLED_MODE_FLASH:
+			brightness = led_data->front_brightness;
+			value = S2MU005_CH2_TORCH_ON_I2C;
+			break;
+		case S2MU005_FLED_MODE_MOVIE:
+			torch_led_on_off(1);
+			brightness = led_data->front_brightness;
+			value = S2MU005_CH2_TORCH_ON_I2C;
+			break;
+		default:
+			break;
+	}
+#if defined (CONFIG_CAMERA_J7VE) || defined (CONFIG_CAMERA_J5Y17)
+	//For control brightness of front flash led
+	ret = s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH2_CTRL1,
+				brightness, S2MU005_TORCH_IOUT_MASK);
+	if (ret < 0)
+		goto error_set_bits;
+#endif
+	ret = s2mu005_write_reg(led_data->i2c, CH_FLASH_TORCH_EN, value);
+	if (ret < 0)
+		goto error_set_bits;
+
+	if (mode == S2MU005_FLED_MODE_OFF)
+		torch_led_on_off(0);
+
+	return 0;
+
+error_set_bits:
+	pr_err("%s: can't set led level %d\n", __func__, ret);
+	return ret;
+#else
+	devm_gpio_request(led_data->cdev.dev, gpio_torch, "s2mu005_gpio_torch");
+
+	if ( mode == S2MU005_FLED_MODE_MOVIE || mode == S2MU005_FLED_MODE_FLASH) {
+		gpio_direction_output(gpio_torch, 1);
+		torch_led_on_off(1);
+	} else if (mode == S2MU005_FLED_MODE_OFF) {
+		gpio_direction_output(gpio_torch, 0);
+		torch_led_on_off(0);
+	}
+
+	gpio_free(gpio_torch);
+
+	return 0;
+#endif
+}
+#else
+int s2mu005_led_mode_ctrl(int state)
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_FLASH_LED];
+
+	pr_info("%s : state = %d\n", __func__, state);
+
+	if (assistive_light == true) {
+		pr_info("%s : assistive_light is enabled \n", __func__);
+		return 0;
+	}
+
+	/* enable safty timer : addr 0x3B, data 0x00 */
+	if (flash_config_factory == true) {
+		s2mu005_write_reg(led_data->i2c, 0x3B, 0x00);
+		flash_config_factory = false;
+	}
+
+	switch(state) {
+		case S2MU005_FLED_MODE_OFF:
+			torch_led_on_off(0);
+			break;
+		case S2MU005_FLED_MODE_PREFLASH:
+			break;
+		case S2MU005_FLED_MODE_FLASH:
+			break;
+		case S2MU005_FLED_MODE_MOVIE:
+			torch_led_on_off(1);
+			break;
+		default:
+			break;
+	}
+
+	return 0;
+}
+#endif
+
+#ifdef CONFIG_LEDS_SUPPORT_FRONT_FLASH
+int s2mu005_led_set_front_flash_brightness(int brightness)	/*For control brightness of front flash led*/
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_TORCH_LED];
+	int ret = 0;
+	pr_emerg("[s]g %s begin\n", __func__);
+
+	//printk("Change Frontflash LED receive br = %d  read data = %d\n", brightness, led_data->front_brightness);
+
+	led_data->front_brightness = brightness;
+
+	if (brightness >= 25) {
+		pr_info("[s]g %s brightness : %d\n", __func__, brightness);
+		ret = s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH2_CTRL1,
+					S2MU005_TORCH_BRIGHTNESS(brightness), S2MU005_TORCH_IOUT_MASK);
+		if (ret < 0)
+			goto error_set_bits;
+	} else {
+		pr_info("[s]g %s brightness not changed %d\n", __func__, brightness);
+	}
+	pr_info("[s]g %s end %d\n", __func__, S2MU005_TORCH_BRIGHTNESS(brightness));
+	return 0;
+
+error_set_bits:
+	pr_err("%s: can't set led level %d\n", __func__, ret);
+
+	return ret;
+}
+
+int s2mu005_led_select_ctrl(int ch)
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_FLASH_LED];
+	int value = 0;
+#ifndef CONFIG_S2MU005_LEDS_I2C
+	int gpio_torch = led_data->torch_pin;
+	int gpio_flash = led_data->flash_pin;
+#endif
+
+	pr_info("%s : selected(%d) %s\n", __func__, ch, ch == S2MU005_FLED_CH1 ? "FLED1" :
+									(ch == S2MU005_FLED_CH2 ?  "FLED2" : "OFF"));
+
+	/* enable safty timer : addr 0x3B, data 0x00 */
+	if (flash_config_factory == true)
+		s2mu005_write_reg(led_data->i2c, 0x3B, 0x00);
+
+	fled_selected_ch = ch;
+	if (assistive_light == true) {
+		pr_info("%s : assistive_light is enabled \n", __func__);
+		/* make default setting of FLED2, when front camera-off with front torch-on */
+		s2mu005_update_reg(led_data->i2c, CH_FLASH_TORCH_EN,
+			S2MU005_FLASH_TORCH_OFF, S2MU005_CH2_TORCH_ENABLE_MASK);
+
+		return 0;
+	}
+
+	mutex_lock(&led_data->lock);
+
+	if (ch == S2MU005_FLED_CH1) {
+		value = S2MU005_CH1_TORCH_ON_GPIO | S2MU005_CH1_FLASH_ON_GPIO;
+		s2mu005_write_reg(led_data->i2c, CH_FLASH_TORCH_EN, value);
+		/* brightness set - Rear pre-flash*/
+		s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH1_CTRL1,
+			led_data->preflash_brightness, S2MU005_TORCH_IOUT_MASK);
+	} else if (ch == S2MU005_FLED_CH2) {
+#ifndef CONFIG_S2MU005_LEDS_I2C
+		s2mu005_write_reg(led_data->i2c, CH_FLASH_TORCH_EN,
+			S2MU005_CH2_TORCH_ON_GPIO);
+#endif
+		/* brightness set - front torch*/
+#if defined (CONFIG_CAMERA_J7VE) || defined (CONFIG_CAMERA_J5Y17)
+		s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH2_CTRL1,
+			led_data->front_brightness, S2MU005_TORCH_IOUT_MASK);
+	/*For control brightness of front flash led*/
+#endif
+	} else {
+#ifndef CONFIG_S2MU005_LEDS_I2C
+		devm_gpio_request(led_data->cdev.dev, gpio_flash, "s2mu005_gpio_flash");
+		devm_gpio_request(led_data->cdev.dev, gpio_torch, "s2mu005_gpio_torch");
+
+		pr_info("%s : gpio_flash = %d\n", __func__, gpio_flash);
+		pr_info("%s : gpio_torch = %d\n", __func__, gpio_torch);
+
+		gpio_direction_output(gpio_flash, 0);
+		gpio_direction_output(gpio_torch, 0);
+		torch_led_on_off(0);
+
+		gpio_free(gpio_flash);
+		gpio_free(gpio_torch);
+
+#endif
+		value = S2MU005_FLASH_TORCH_OFF;
+		s2mu005_write_reg(led_data->i2c, CH_FLASH_TORCH_EN, value);
+		/* brightness set - Rear pre-flash(default)*/
+		s2mu005_update_reg(led_data->i2c, S2MU005_REG_FLED_CH1_CTRL1,
+			led_data->preflash_brightness, S2MU005_TORCH_IOUT_MASK);
+
+#ifdef S2MU005_FLED_DEBUG
+		s2mu005_led_dump_reg();
+#endif
+	}
+
+	mutex_unlock(&led_data->lock);
+	return 0;
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t rear_flash_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
@@ -429,7 +960,158 @@ static ssize_t rear_flash_store(struct device *dev,
 	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_TORCH_LED];
 	struct led_classdev *led_cdev = &led_data->cdev;
 	int value = 0;
+<<<<<<< HEAD
 	int brightness = 0;
+=======
+	int reg_val = 0;
+	int brightness = 0;
+	u32 torch_current;
+
+	if ((buf == NULL) || kstrtouint(buf, 10, &value)) {
+		return -1;
+	}
+
+	pr_info("[LED]%s , value:%d\n", __func__, value);
+	mutex_lock(&led_data->lock);
+
+	if (value == 0) {
+		/* Turn off Torch */
+		brightness = LED_TURN_OFF;
+		assistive_light = false;
+
+		if (flash_config_factory == true) {
+			/* enable safty timer : addr 0x3B, data 0x00 */
+			led_data = g_led_datas[S2MU005_FLASH_LED];
+			led_cdev = &led_data->cdev;
+			s2mu005_write_reg(led_data->i2c, 0x3B, 0x00);
+			flash_config_factory = false;
+		}
+	} else if (value == 1) {
+		/* Turn on Torch */
+		brightness = led_data->torch_brightness;
+		assistive_light = true;
+	} else if (value == 100) {
+		/* Factory mode Turn on Torch */
+		brightness = led_data->factory_brightness;
+		assistive_light = true;
+	} else if (value == 200) {
+		/* Factory mode Turn on Flash */
+		led_data = g_led_datas[S2MU005_FLASH_LED];
+		led_cdev = &led_data->cdev;
+		brightness = led_data->factory_brightness;
+		assistive_light = true;
+		/* disable safty timer : addr 0x3B, data 0xC0 */
+		s2mu005_write_reg(led_data->i2c, 0x3B, 0xC0);
+		flash_config_factory = true;
+	} else if (1001 <= value && value <= 1010) {
+		/* (value) 1001, 1002, 1004, 1006, 1009 */
+#if defined (CONFIG_CAMERA_M10LTE)
+		if (value <= 1001)
+			torch_current = 50;
+		else if (value <= 1002)
+			torch_current = 75;
+		else if (value <= 1004)
+			torch_current = 125;
+		else if (value <= 1006)
+			torch_current = 175;
+		else if (value <= 1009)
+			torch_current = 225;
+		else
+			torch_current = 75;
+#else		
+		if (value <= 1001)
+			torch_current = 25;
+		else if (value <= 1002)
+			torch_current = 50;
+		else if (value <= 1004)
+			torch_current = 75;
+		else if (value <= 1006)
+			torch_current = 100;
+		else if (value <= 1009)
+#if defined (CONFIG_CAMERA_J6) || defined (CONFIG_CAMERA_J7TOP)
+			torch_current = 125;
+#else
+			torch_current = 150;
+#endif
+		else
+			torch_current = 50;
+#endif
+		brightness= S2MU005_TORCH_BRIGHTNESS(torch_current);
+		pr_info("torch current : %d mA\n", torch_current);
+		assistive_light = true;
+	} else if (2001 <= value && value <= 2016) {
+		/* for current check using sysfs (25mA~400mA) */
+		torch_current = 25 * (value - 2000);
+
+		brightness= S2MU005_TORCH_BRIGHTNESS(torch_current);
+		pr_info("torch current : %d mA\n", torch_current);
+		assistive_light = true;
+	} else {
+		pr_info("[LED]%s , Invalid value:%d\n", __func__, value);
+		goto err;
+	}
+
+	if (led_cdev->flags & LED_SUSPENDED) {
+		pr_info("%s : led suspended\n", __func__);
+		goto err;
+	}
+
+#ifdef CONFIG_S2MU005_LEDS_I2C
+	reg_val = S2MU005_FLASH_TORCH_OFF;
+#else
+	reg_val = S2MU005_CH1_TORCH_ON_GPIO | S2MU005_CH1_FLASH_ON_GPIO;
+	s2mu005_write_reg(led_data->i2c, CH_FLASH_TORCH_EN, reg_val);
+#endif
+	s2mu005_led_set(led_cdev, brightness);
+
+	led_data = g_led_datas[S2MU005_TORCH_LED];
+	mutex_unlock(&led_data->lock);
+	return size;
+
+err:
+	pr_err("%s : led abnormal end\n", __func__);
+
+	led_data = g_led_datas[S2MU005_TORCH_LED];
+	mutex_unlock(&led_data->lock);
+	return size;
+}
+
+static DEVICE_ATTR(rear_flash, 0644, rear_flash_show, rear_flash_store);
+static DEVICE_ATTR(rear_torch_flash, 0644, rear_flash_show, rear_flash_store);
+
+#if defined(CONFIG_LEDS_SUPPORT_FRONT_FLASH)
+static ssize_t front_flash_show(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_TORCH_LED];
+	char *str;
+
+	switch (led_data->data->id) {
+	case S2MU005_FLASH_LED:
+		str = "FLASH";
+		break;
+	case S2MU005_TORCH_LED:
+		str = "TORCH";
+		break;
+	default:
+		str = "NONE";
+		break;
+	}
+
+	return snprintf(buf, 20, "%s\n", str);
+}
+
+static ssize_t front_flash_store(struct device *dev,
+				struct device_attribute *attr,
+				const char *buf, size_t size)
+{
+	struct s2mu005_led_data *led_data = g_led_datas[S2MU005_TORCH_LED];
+	struct led_classdev *led_cdev = &led_data->cdev;
+	int value = 0;
+	int reg_val = 0;
+	int brightness = 0;
+	int ret = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if ((buf == NULL) || kstrtouint(buf, 10, &value)) {
 		return -1;
@@ -445,10 +1127,28 @@ static ssize_t rear_flash_store(struct device *dev,
 
 	if (value == 0) {
 		/* Turn off Torch */
+<<<<<<< HEAD
 		brightness = LED_OFF;
 	} else if (value == 1) {
 		/* Turn on Torch */
 		brightness = value;
+=======
+		ret = s2mu005_update_reg(led_data->i2c, CH_FLASH_TORCH_EN,
+			S2MU005_FLASH_TORCH_OFF, S2MU005_CH2_TORCH_ENABLE_MASK);
+		if (ret < 0)
+			goto err;
+		front_assistive_light = false;
+	} else if (value == 1) {
+		/* Turn on Torch */
+		brightness = led_data->front_brightness;
+		front_assistive_light = true;
+		s2mu005_led_set(led_cdev, brightness);
+	} else if (value == 100) {
+		/* Factory mode Turn on Torch */
+		brightness = led_data->factory_brightness;
+		front_assistive_light = true;
+		s2mu005_led_set(led_cdev, brightness);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		pr_info("[LED]%s , Invalid value:%d\n", __func__, value);
 		goto err;
@@ -459,7 +1159,16 @@ static ssize_t rear_flash_store(struct device *dev,
 		goto err;
 	}
 
+<<<<<<< HEAD
 	s2mu005_led_set(led_cdev, brightness);
+=======
+#ifdef CONFIG_S2MU005_LEDS_I2C
+	reg_val = S2MU005_FLASH_TORCH_OFF;
+#else
+	reg_val = S2MU005_CH2_TORCH_ON_GPIO;
+	s2mu005_write_reg(led_data->i2c, CH_FLASH_TORCH_EN, reg_val);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mutex_unlock(&led_data->lock);
 	return size;
@@ -471,19 +1180,34 @@ err:
 	return size;
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(rear_flash, 0644, rear_flash_show, rear_flash_store);
 
 #if defined(CONFIG_OF)
 static int s2mu005_led_dt_parse_pdata(struct s2mu005_dev *iodev,
+=======
+static DEVICE_ATTR(front_flash, 0644, front_flash_show, front_flash_store);
+static DEVICE_ATTR(front_torch_flash, 0644, front_flash_show, front_flash_store);
+#endif
+
+#if defined(CONFIG_OF)
+static int s2mu005_led_dt_parse_pdata(struct device *dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				struct s2mu005_fled_platform_data *pdata)
 {
 	struct device_node *led_np, *np, *c_np;
 	int ret;
 	u32 temp;
 	const char *temp_str;
+<<<<<<< HEAD
 	int index;
 
 	led_np = iodev->dev->of_node;
+=======
+	u32 index;
+
+	led_np = dev->parent->of_node;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!led_np) {
 		pr_err("<%s> could not find led sub-node led_np\n", __func__);
@@ -508,6 +1232,52 @@ static int s2mu005_led_dt_parse_pdata(struct s2mu005_dev *iodev,
 		return ret;
 	}
 
+<<<<<<< HEAD
+=======
+	ret = of_property_read_u32(np, "flash_current", &temp);
+	if (ret < 0)
+		goto dt_err;
+	pdata->flash_brightness = S2MU005_FLASH_BRIGHTNESS(temp);
+	dev_info(dev, "flash_current = <%d>, brightness = %x\n", temp, pdata->flash_brightness);
+
+	ret = of_property_read_u32(np, "preflash_current", &temp);
+	if (ret < 0)
+		goto dt_err;
+	pdata->preflash_brightness = S2MU005_TORCH_BRIGHTNESS(temp);
+	dev_info(dev, "preflash_current = <%d>, brightness = %x\n", temp, pdata->preflash_brightness);
+
+	ret = of_property_read_u32(np, "movie_current", &temp);
+	if (ret < 0)
+		goto dt_err;
+	pdata->movie_brightness = S2MU005_TORCH_BRIGHTNESS(temp);
+	dev_info(dev, "movie_current = <%d>, brightness = %x\n", temp, pdata->movie_brightness);
+
+	ret = of_property_read_u32(np, "torch_current", &temp);
+	if (ret < 0)
+		goto dt_err;
+	pdata->torch_brightness = S2MU005_TORCH_BRIGHTNESS(temp);
+	dev_info(dev, "torch_current = <%d>, brightness = %x\n", temp, pdata->torch_brightness);
+
+	ret = of_property_read_u32(np, "factory_current", &temp);
+	if (ret < 0)
+		goto dt_err;
+	pdata->factory_brightness = S2MU005_TORCH_BRIGHTNESS(temp);
+	dev_info(dev, "factory_current = <%d>, brightness = %x\n", temp, pdata->factory_brightness);
+
+#if defined(CONFIG_LEDS_SUPPORT_FRONT_FLASH)
+#if defined(CONFIG_SEC_FACTORY)
+	if (of_property_read_u32(np, "factory_front_torch_current", &temp) < 0)
+		ret = of_property_read_u32(np, "front_torch_current", &temp);
+#else
+	ret = of_property_read_u32(np, "front_torch_current", &temp);
+#endif
+	if (ret < 0)
+		goto dt_err;
+	pdata->front_brightness = S2MU005_TORCH_BRIGHTNESS(temp);
+	dev_info(dev, "front_torch_current = <%d>, brightness = %x\n", temp, pdata->front_brightness);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pdata->num_leds = of_get_child_count(np);
 
 	for_each_child_of_node(np, c_np) {
@@ -515,6 +1285,7 @@ static int s2mu005_led_dt_parse_pdata(struct s2mu005_dev *iodev,
 		if (ret < 0)
 			goto dt_err;
 		index = temp;
+<<<<<<< HEAD
 		pdata->leds[index].id = temp;
 
 		ret = of_property_read_string(c_np, "ledname", &temp_str);
@@ -535,6 +1306,29 @@ static int s2mu005_led_dt_parse_pdata(struct s2mu005_dev *iodev,
 		if (temp > leds_time_max[index])
 			temp = leds_time_max[index];
 		pdata->leds[index].timeout = temp;
+=======
+
+		if (index < S2MU005_LED_MAX) {
+			pdata->leds[index].id = temp;
+
+			ret = of_property_read_string(c_np, "ledname", &temp_str);
+			if (ret)
+				goto dt_err;
+			pdata->leds[index].name = temp_str;
+
+			temp = index ? pdata->preflash_brightness : pdata->flash_brightness;
+			if (temp > leds_cur_max[index])
+				temp = leds_cur_max[index];
+			pdata->leds[index].brightness = temp;
+
+			ret = of_property_read_u32(c_np, "timeout", &temp);
+			if (ret)
+				goto dt_err;
+			if (temp > leds_time_max[index])
+				temp = leds_time_max[index];
+			pdata->leds[index].timeout = temp;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	return 0;
 dt_err:
@@ -543,6 +1337,52 @@ dt_err:
 }
 #endif /* CONFIG_OF */
 
+<<<<<<< HEAD
+=======
+int create_flash_sysfs(void)
+{
+	int err = -ENODEV;
+
+	if (IS_ERR_OR_NULL(camera_class)) {
+		pr_err("flash_sysfs: error, camera class not exist");
+		return -ENODEV;
+	}
+
+	flash_dev = device_create(camera_class, NULL, 0, NULL, "flash");
+	if (IS_ERR(flash_dev)) {
+		pr_err("flash_sysfs: failed to create device(flash)\n");
+		return -ENODEV;
+	}
+
+	err = device_create_file(flash_dev, &dev_attr_rear_flash);
+	if (unlikely(err < 0)) {
+		pr_err("flash_sysfs: failed to create device file, %s\n",
+				dev_attr_rear_flash.attr.name);
+	}
+
+	err = device_create_file(flash_dev, &dev_attr_rear_torch_flash);
+	if (unlikely(err < 0)) {
+		pr_err("flash_sysfs: failed to create device file, %s\n",
+				dev_attr_rear_torch_flash.attr.name);
+	}
+
+#if defined(CONFIG_LEDS_SUPPORT_FRONT_FLASH)
+	err = device_create_file(flash_dev, &dev_attr_front_flash);
+	if (unlikely(err < 0)) {
+		pr_err("flash_sysfs: failed to create device file, %s\n",
+				dev_attr_front_flash.attr.name);
+	}
+
+	err = device_create_file(flash_dev, &dev_attr_front_torch_flash);
+	if (unlikely(err < 0)) {
+		pr_err("flash_sysfs: failed to create device file, %s\n",
+				dev_attr_front_torch_flash.attr.name);
+	}
+#endif
+	return 0;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int s2mu005_led_probe(struct platform_device *pdev)
 {
 	int ret = 0, i = 0;
@@ -550,7 +1390,11 @@ static int s2mu005_led_probe(struct platform_device *pdev)
 
 	struct s2mu005_dev *s2mu005 = dev_get_drvdata(pdev->dev.parent);
 #ifndef CONFIG_OF
+<<<<<<< HEAD
 	struct s2mu005_mfd_platform_data *s2mu005_pdata = s2mu005->pdata;
+=======
+	struct s2mu005_mfd_platform_data *s2mu005_pdata = NULL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	struct s2mu005_fled_platform_data *pdata;
 	struct s2mu005_led_data *led_data;
@@ -571,7 +1415,11 @@ static int s2mu005_led_probe(struct platform_device *pdev)
 	}
 
 	if (s2mu005->dev->of_node) {
+<<<<<<< HEAD
 		ret = s2mu005_led_dt_parse_pdata(s2mu005, pdata);
+=======
+		ret = s2mu005_led_dt_parse_pdata(&pdev->dev, pdata);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret < 0) {
 			pr_err("[%s] not found leds dt! ret[%d]\n",
 				__func__, ret);
@@ -580,6 +1428,11 @@ static int s2mu005_led_probe(struct platform_device *pdev)
 		}
 	}
 #else
+<<<<<<< HEAD
+=======
+	s2mu005_pdata = s2mu005->pdata;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!s2mu005_pdata) {
 		dev_err(&pdev->dev, "platform data not supplied\n");
 		return -ENODEV;
@@ -657,10 +1510,14 @@ static int s2mu005_led_probe(struct platform_device *pdev)
 			continue;
 		}
 		if (led_data->data->id == S2MU005_TORCH_LED) {
+<<<<<<< HEAD
 			ret = device_create_file(led_data->cdev.dev,
 					&dev_attr_rear_flash);
 			if (ret < 0)
 				pr_err("%s :unable to create file\n", __func__);
+=======
+			create_flash_sysfs();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 #ifndef CONFIG_S2MU005_LEDS_I2C
 		if (gpio_is_valid(pdata->torch_pin) &&
@@ -671,15 +1528,21 @@ static int s2mu005_led_probe(struct platform_device *pdev)
 			} else {
 				led_data->torch_pin = pdata->torch_pin;
 				led_data->flash_pin = pdata->flash_pin;
+<<<<<<< HEAD
 				gpio_request_one(pdata->torch_pin,
 				GPIOF_OUT_INIT_LOW, "LED_GPIO_OUTPUT_LOW");
 				gpio_request_one(pdata->flash_pin,
 				GPIOF_OUT_INIT_LOW, "LED_GPIO_OUTPUT_LOW");
+=======
+				gpio_request_one(pdata->torch_pin, GPIOF_OUT_INIT_LOW, "LED_GPIO_OUTPUT_LOW");
+				gpio_request_one(pdata->flash_pin, GPIOF_OUT_INIT_LOW, "LED_GPIO_OUTPUT_LOW");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				gpio_free(pdata->torch_pin);
 				gpio_free(pdata->flash_pin);
 			}
 		}
 #endif
+<<<<<<< HEAD
 		/* EVT0 0x73[3:0] == 0x0 */
 		ret = s2mu005_read_reg(led_data->i2c, 0x73, &temp);
 		if (ret < 0)
@@ -688,6 +1551,28 @@ static int s2mu005_led_probe(struct platform_device *pdev)
 		if ((temp & 0xf) == 0x00) {
 			/* FLED_CTRL4 = 0x3A */
 			CH_FLASH_TORCH_EN = S2MU005_REG_FLED_CTRL4;
+=======
+
+		led_data->flash_brightness = pdata->flash_brightness;
+		led_data->preflash_brightness = pdata->preflash_brightness;
+		led_data->movie_brightness = pdata->movie_brightness;
+		led_data->torch_brightness = pdata->torch_brightness;
+		led_data->factory_brightness = pdata->factory_brightness;
+#if defined(CONFIG_LEDS_SUPPORT_FRONT_FLASH)
+		led_data->front_brightness = pdata->front_brightness;
+#endif
+
+		ret = s2mu005_read_reg(led_data->i2c, 0x73, &temp);	/* EVT0 0x73[3:0] == 0x0 */
+		if (ret < 0)
+			pr_err("%s : s2mu005 reg fled read fail\n",__func__);
+
+		if ((temp & 0xf) == 0x00) {
+			/* FLED_CTRL4 = 0x3A : EVT0 */
+			CH_FLASH_TORCH_EN = S2MU005_REG_FLED_CTRL4;
+		} else {
+			/* FLED_CTRL4 = 0x3C : EVT1 */
+			CH_FLASH_TORCH_EN = S2MU005_REG_FLED_RSVD;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 
 #ifdef CONFIG_MUIC_NOTIFIER

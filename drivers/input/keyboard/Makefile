@@ -59,8 +59,20 @@ obj-$(CONFIG_KEYBOARD_TEGRA)		+= tegra-kbc.o
 obj-$(CONFIG_KEYBOARD_TWL4030)		+= twl4030_keypad.o
 obj-$(CONFIG_KEYBOARD_XTKBD)		+= xtkbd.o
 obj-$(CONFIG_KEYBOARD_W90P910)		+= w90p910_keypad.o
+<<<<<<< HEAD
 obj-$(CONFIG_KEYBOARD_S2MPU06)		+= s2mpu06_key.o
 obj-$(CONFIG_KEYBOARD_S2MPW01)		+= s2mpw01_key.o
 obj-$(CONFIG_KEYBOARD_TC300K)		+= tc300k.o
 obj-$(CONFIG_KEYBOARD_MELFAS_MHS204) += melfas_mip4/
 obj-$(CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5)	+= cypress/
+=======
+obj-$(CONFIG_KEYBOARD_TC300K)		+= tc300k.o
+obj-$(CONFIG_KEYBOARD_ABOV_TOUCH_FT1804)	+= abov_touchkey_ft1804.o
+obj-$(CONFIG_KEYBOARD_ABOV_TOUCH_T316)	+= abov_touchkey_ft1804.o
+obj-$(CONFIG_KEYBOARD_ABOV_TOUCH_3X6)	+= abov_touchkey_3x6.o
+obj-$(CONFIG_KEYBOARD_ABOV_TOUCH)	+= abov_touchkey.o
+obj-$(CONFIG_KEYBOARD_MELFAS_MHS204) += melfas_mip4/
+obj-$(CONFIG_KEYBOARD_MELFAS_MHS204G) += melfas_mip4/
+obj-$(CONFIG_KEYBOARD_MELFAS_MHS2041) += melfas_mip4/
+obj-$(CONFIG_KEYBOARD_MELFAS_MHS2041B) += melfas_mip4/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

@@ -648,6 +648,10 @@ static struct attribute_group cmd_attr_group = {
  * fast_glove_mode : Set the fast glove mode such as incomming screen.
  * secure_mode : Set the secure mode.
  * boost_level : Control touch booster level.
+<<<<<<< HEAD
+=======
+ * handgrip_enable : Enable reporting the grip infomation based on hover shape.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * set_tsp_test_result : Write the result of tsp test in config area.
  * get_tsp_test_result : Read the result of tsp test in config area.
  */
@@ -729,6 +733,10 @@ static struct ft_cmd ft_cmds[] = {
 	{FT_CMD("run_rawgap_read", run_rawgap_read),},
 	{FT_CMD("dead_zone_enable", dead_zone_enable),},
 	{FT_CMD("set_jitter_level", set_jitter_level),},
+<<<<<<< HEAD
+=======
+	{FT_CMD("handgrip_enable", not_support_cmd),},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef GLOVE_MODE
 	{FT_CMD("glove_mode", glove_mode),},
 	{FT_CMD("clear_cover_mode", clear_cover_mode),},
@@ -1921,14 +1929,22 @@ static ssize_t cmd_store(struct device *dev, struct device_attribute *attr,
 	struct factory_data *data = rmi4_data->f54->factory_data;
 
 	if (strlen(buf) >= CMD_STR_LEN) {
+<<<<<<< HEAD
 		pr_err("%s: cmd length(strlen(buf)) is over (%d,%s)!!\n",
 				__func__, (int)strlen(buf), buf);
+=======
+		input_err(true, &rmi4_data->i2c_client->dev, "%s: cmd length(strlen(buf)) is over (%s,%d)!!\n", __func__, buf, (int)strlen(buf));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EINVAL;
 	}
 
 	if (count >= (unsigned int)CMD_STR_LEN) {
+<<<<<<< HEAD
 		pr_err("%s: cmd length(count) is over (%d,%s)!!\n",
 				__func__, (unsigned int)count, buf);
+=======
+		input_err(true, &rmi4_data->i2c_client->dev, "%s: cmd length(count) is over (%s,%d)!!\n", __func__, buf, (unsigned int)count);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EINVAL;
 	}
 
@@ -3930,12 +3946,17 @@ static int td43xx_ee_short_normalize_data(struct synaptics_rmi4_data *rmi4_data,
 
 	tx_num = f54->tx_assigned;
 	rx_num = f54->rx_assigned;
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
 	left_size = f54->left_mux_size;			//J260 
 	right_size = f54->right_mux_size;
 #else
 	left_size = right_size = tx_num / 2;	//J330
 #endif
+=======
+	left_size = f54->left_mux_size;
+	right_size = f54->right_mux_size;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	input_err(true, &rmi4_data->i2c_client->dev,
 					"%s: size %d %d\n",
@@ -4273,7 +4294,12 @@ static int synaptics_rmi4_amp_open_data_testing(struct synaptics_rmi4_data *rmi4
 
 	tx_num = f54->tx_assigned;
 	rx_num = f54->rx_assigned;
+<<<<<<< HEAD
 	left_size = right_size = tx_num / 2;
+=======
+	left_size = f54->left_mux_size;
+	right_size = f54->right_mux_size;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	p_right_median = (signed short *) kzalloc(rx_num * sizeof(short), GFP_KERNEL);
 	if (!p_right_median) {
@@ -4523,7 +4549,10 @@ static void run_trx_open_test(void *dev_data)
 				"%s: Failed to alloc mem for td43xx_amp_open_data\n",
 				__func__);
 		retval = -ENOMEM;
+<<<<<<< HEAD
 		cmd_state = CMD_STATUS_FAIL;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto out;
 	}
 	/* allocate the buffer */
@@ -4876,7 +4905,11 @@ static void synaptics_print_frame(struct synaptics_rmi4_data *rmi4_data, signed 
 	kfree(pStr);
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int tddi_ratio_calculation(struct synaptics_rmi4_data *rmi4_data, signed short *p_image)
 {
 	struct synaptics_rmi4_f54_handle *f54 = rmi4_data->f54;
@@ -4884,7 +4917,11 @@ static int tddi_ratio_calculation(struct synaptics_rmi4_data *rmi4_data, signed 
 	int i, j;
 	int tx_num = f54->tx_assigned;
 	int rx_num = f54->rx_assigned;
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned char left_size = f54->left_mux_size;		//J260
 	unsigned char right_size = f54->right_mux_size;
 #else
@@ -5043,7 +5080,11 @@ static void  run_elec_open_test(void *dev_data)
 	unsigned int average;
 	signed short min;
 	signed short max;
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	signed short min2;
 	signed short max2;
 #endif
@@ -5421,7 +5462,11 @@ static void  run_elec_open_test(void *dev_data)
 	input_err(true, &rmi4_data->i2c_client->dev,
 		"delta average = %d, min = %d, max = %d\n",
 		average, min, max);
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	// calculate the ratio
 	tddi_ratio_calculation(rmi4_data, p_rt92_delta_image);
 
@@ -5437,7 +5482,11 @@ static void  run_elec_open_test(void *dev_data)
 
 				input_err(true, &rmi4_data->i2c_client->dev,
 						"%s: fail at (tx%-2d, rx%-2d) = %-4d at phase 2 (limit = %d)\n",
+<<<<<<< HEAD
 						i, j, p_rt92_delta_image[i*rx_num + j], ELEC_OPEN_TEST_LIMIT_TWO);
+=======
+						__func__,i, j, p_rt92_delta_image[i*rx_num + j], ELEC_OPEN_TEST_LIMIT_TWO);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 				p_rt92_image_2[i*rx_num + j] = 1; // 1: fail
 			}
@@ -5451,7 +5500,11 @@ static void  run_elec_open_test(void *dev_data)
 	if (data->cmd_all_factory_state == CMD_STATUS_RUNNING)
 		snprintf(data->cmd_buff, CMD_RESULT_STR_LEN, "%d,%d", average, average);
 	else
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		snprintf(data->cmd_buff, CMD_RESULT_STR_LEN, "%d,%d,%d,%d,%d", average, min, max, min2, max2);	//J260
 #else
 		snprintf(data->cmd_buff, CMD_RESULT_STR_LEN, "%d,%d,%d", average, min, max);
@@ -5662,7 +5715,11 @@ static void run_rawgap_read(void *dev_data)
  * tx_half   :  8  / 7
  */
 
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	tx_half = (num_of_tx / 2) + 1;
 #else
 	tx_half = num_of_tx / 2;
@@ -5767,6 +5824,7 @@ static void dead_zone_enable(void *dev_data)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if(strncmp(rmi4_data->board->project_name, "J3y", 3) == 0){
 		input_info(true, &rmi4_data->i2c_client->dev,
 					"%s: skip to do force update\n",__func__);
@@ -5780,6 +5838,16 @@ static void dead_zone_enable(void *dev_data)
 			data->cmd_state = CMD_STATUS_FAIL;
 			goto out;
 		}
+=======
+	retval = do_command(rmi4_data, COMMAND_FORCE_UPDATE);
+	if (retval < 0) {
+		input_err(true, &rmi4_data->i2c_client->dev,
+				"%s: Failed to do force update\n",
+				__func__);
+		snprintf(data->cmd_buff, sizeof(data->cmd_buff), "NG");
+		data->cmd_state = CMD_STATUS_FAIL;
+		goto out;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	snprintf(data->cmd_buff, sizeof(data->cmd_buff), "OK");
@@ -5791,6 +5859,11 @@ out:
 	mutex_lock(&data->cmd_lock);
 	data->cmd_is_running = false;
 	mutex_unlock(&data->cmd_lock);
+<<<<<<< HEAD
+=======
+
+	data->cmd_state = CMD_STATUS_WAITING;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void set_jitter_level(void *dev_data)
@@ -5830,6 +5903,11 @@ out:
 	mutex_lock(&data->cmd_lock);
 	data->cmd_is_running = false;
 	mutex_unlock(&data->cmd_lock);
+<<<<<<< HEAD
+=======
+
+	data->cmd_state = CMD_STATUS_WAITING;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #ifdef GLOVE_MODE
@@ -5882,6 +5960,11 @@ out:
 	mutex_lock(&data->cmd_lock);
 	data->cmd_is_running = false;
 	mutex_unlock(&data->cmd_lock);
+<<<<<<< HEAD
+=======
+
+	data->cmd_state = CMD_STATUS_WAITING;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void fast_glove_mode(void *dev_data)
@@ -5927,6 +6010,11 @@ out:
 	mutex_lock(&data->cmd_lock);
 	data->cmd_is_running = false;
 	mutex_unlock(&data->cmd_lock);
+<<<<<<< HEAD
+=======
+
+	data->cmd_state = CMD_STATUS_WAITING;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void clear_cover_mode(void *dev_data)
@@ -5975,6 +6063,11 @@ out:
 	mutex_lock(&data->cmd_lock);
 	data->cmd_is_running = false;
 	mutex_unlock(&data->cmd_lock);
+<<<<<<< HEAD
+=======
+
+	data->cmd_state = CMD_STATUS_WAITING;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 #endif
 
@@ -6193,6 +6286,11 @@ out:
 	mutex_lock(&data->cmd_lock);
 	data->cmd_is_running = false;
 	mutex_unlock(&data->cmd_lock);
+<<<<<<< HEAD
+=======
+
+	data->cmd_state = CMD_STATUS_WAITING;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 #endif
 
@@ -6341,7 +6439,11 @@ static void check_connection(void *dev_data)
 	if (command == 0){
 		cmd_state = CMD_STATUS_OK;
 	} else if (command == 0xFF) {
+<<<<<<< HEAD
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X00_J2CORELTE
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		cmd_state = CMD_STATUS_OK;
 #else
 		cmd_state = CMD_STATUS_FAIL;
@@ -7737,6 +7839,10 @@ static int synaptics_rmi4_f54_set_query(struct synaptics_rmi4_data *rmi4_data)
 		offset += 1;
 
 	/* query 21 */
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (f54->query_15.has_query21) {
 		retval = rmi4_data->i2c_read(rmi4_data,
 				f54->query_base_addr + offset,
@@ -7746,6 +7852,17 @@ static int synaptics_rmi4_f54_set_query(struct synaptics_rmi4_data *rmi4_data)
 			return retval;
 		offset += 1;
 	}
+<<<<<<< HEAD
+=======
+#else	
+	retval = rmi4_data->i2c_read(rmi4_data,
+			f54->query_base_addr + offset,
+			f54->query_21.data,
+			sizeof(f54->query_21.data));
+	if (retval < 0)
+		return retval;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* query 22 */
 	if (f54->query_15.has_query22) {

@@ -26,6 +26,9 @@
 #include <linux/io.h>
 #include <linux/list.h>
 #include <linux/dma-mapping.h>
+#ifdef CONFIG_USB_NOTIFY_PROC_LOG
+#include <linux/usblog_proc_notify.h>
+#endif
 
 #ifdef CONFIG_USB_NOTIFY_PROC_LOG
 #include <linux/usblog_proc_notify.h>
@@ -63,7 +66,10 @@ static void dwc3_gadget_cable_connect(struct dwc3 *dwc, bool connect)
 	}
 }
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_ARGOS
 extern int argos_irq_affinity_setup_label(unsigned int irq, const char *label,
                  struct cpumask *affinity_cpu_mask,
@@ -83,7 +89,10 @@ static inline struct cpumask *get_default_cpu_mask(void)
 cpumask_var_t affinity_cpu_mask;
 cpumask_var_t default_cpu_mask;
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**
  * ISR for DWC3 gadget was changed because of RNDIS performance.
  * However, previous ISR code was not removed to track the history.
@@ -973,6 +982,7 @@ static void dwc3_prepare_trbs(struct dwc3_ep *dep, bool starting)
 			struct scatterlist *s;
 			int		i;
 
+			printk(KERN_DEBUG"usb: %s using mapped segments \n",__func__);
 			for_each_sg(sg, s, request->num_mapped_sgs, i) {
 				unsigned chain = true;
 
@@ -1253,6 +1263,30 @@ static int __dwc3_gadget_ep_queue(struct dwc3_ep *dep, struct dwc3_request *req)
 
 	return 0;
 }
+static void __dwc3_gadget_ep_zlp_complete(struct usb_ep *ep,struct usb_request *request)
+{
+         dwc3_gadget_ep_free_request(ep, request);
+}
+ 
+static int __dwc3_gadget_ep_queue_zlp(struct dwc3 *dwc, struct dwc3_ep *dep)
+{
+        struct dwc3_request             *req;
+        struct usb_request              *request;
+        struct usb_ep                   *ep = &dep->endpoint;
+ 
+        dev_vdbg(dwc->dev, "queing request ZLP \n");
+         request = dwc3_gadget_ep_alloc_request(ep, GFP_ATOMIC);
+         if (!request)
+                 return -ENOMEM;
+ 
+         request->length = 0;
+         request->buf = dwc->zlp_buf;
+         request->complete = __dwc3_gadget_ep_zlp_complete;
+ 
+         req = to_dwc3_request(request);
+ 
+         return __dwc3_gadget_ep_queue(dep, req);
+}
 
 static void __dwc3_gadget_ep_zlp_complete(struct usb_ep *ep,struct usb_request *request)
 {
@@ -1303,6 +1337,7 @@ static int dwc3_gadget_ep_queue(struct usb_ep *ep, struct usb_request *request,
 	trace_dwc3_ep_queue(req);
 
 	ret = __dwc3_gadget_ep_queue(dep, req);
+<<<<<<< HEAD
 	
 /*
 	 * Okay, here's the thing, if gadget driver has requested for a ZLP by
@@ -1315,6 +1350,18 @@ static int dwc3_gadget_ep_queue(struct usb_ep *ep, struct usb_request *request,
 	   ret = __dwc3_gadget_ep_queue_zlp(dwc, dep);
 	}
 	
+=======
+	/*
+    * Okay, here's the thing, if gadget driver has requested for a ZLP by
+    * setting request->zero, instead of doing magic, we will just queue an
+    * extra usb_request ourselves so that it gets handled the same way as
+    * any other request.
+    */
+   if (ret == 0 && request->zero && request->length &&
+      (request->length % ep->maxpacket == 0))
+      ret = __dwc3_gadget_ep_queue_zlp(dwc, dep);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spin_unlock_irqrestore(&dwc->lock, flags);
 
 	return ret;
@@ -1750,7 +1797,11 @@ static int dwc3_gadget_run_stop(struct dwc3 *dwc, int is_on, int suspend)
 		}
 		timeout--;
 		if (!timeout) {
+<<<<<<< HEAD
 			dev_info(dwc->dev, "gadget run/stop timeout\n");
+=======
+			dev_vdbg(dwc->dev, "gadget run/stop timeout\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -ETIMEDOUT;
 		}
 		udelay(1);
@@ -1820,11 +1871,19 @@ static int dwc3_gadget_pullup(struct usb_gadget *g, int is_on)
 
 	spin_lock_irqsave(&dwc->lock, flags);
 
+<<<<<<< HEAD
 	dev_info(dwc->dev, "%s: pullup = %d, vbus = %d softc = %d\n",
 			   __func__, is_on, dwc->vbus_session, dwc->softconnect);
 
 	if (is_on == dwc->softconnect) {
 		dev_info(dwc->dev, "pullup is already %s\n",
+=======
+	dev_dbg(dwc->dev, "%s: pullup = %d, vbus = %d\n",
+			   __func__, is_on, dwc->vbus_session);
+
+	if (is_on == dwc->softconnect) {
+		dev_dbg(dwc->dev, "pullup is already %s\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				   is_on ? "on" : "off");
 		spin_unlock_irqrestore(&dwc->lock, flags);
 		return 0;
@@ -1839,6 +1898,24 @@ static int dwc3_gadget_pullup(struct usb_gadget *g, int is_on)
 	}
 
 	if (is_on) {
+<<<<<<< HEAD
+=======
+		dwc3_udc_reset(dwc);
+		/* udc reset clears CR port settings */
+		if (dwc->usb3_phy) {
+			/*
+			 * The state of usb phy was set by otg state machine.
+			 * Please, refer to the function "dwc3_otg_statemachine".
+			 */
+			phy_tune(dwc->usb2_generic_phy, dwc->usb3_phy->state);
+			phy_tune(dwc->usb3_generic_phy, dwc->usb3_phy->state);
+		} else {
+			/* There is not any information of the state of usb phy */
+			phy_tune(dwc->usb2_generic_phy, 0);
+			phy_tune(dwc->usb3_generic_phy, 0);
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		/**
 		 * In case there is not a resistance to detect VBUS,
 		 * DP/DM controls by S/W are needed at this point.
@@ -1900,10 +1977,16 @@ static int dwc3_gadget_start(struct usb_gadget *g,
 			return -ENOMEM;
 	
 		cpumask_copy(default_cpu_mask, get_default_cpu_mask());
+<<<<<<< HEAD
 		cpumask_or(affinity_cpu_mask, affinity_cpu_mask, cpumask_of(1));
 		argos_irq_affinity_setup_label(irq, "USB", affinity_cpu_mask, default_cpu_mask);
 #endif
 
+=======
+		cpumask_or(affinity_cpu_mask, affinity_cpu_mask, cpumask_of(dwc->irq_affinity_cpu_mask));
+		argos_irq_affinity_setup_label(irq, "USB", affinity_cpu_mask, default_cpu_mask);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 
 err1:
@@ -1928,12 +2011,20 @@ static int dwc3_gadget_stop(struct usb_gadget *g,
 	if (dwc->usb3_generic_phy->power_count > 0
 			|| dwc->usb2_generic_phy->power_count > 0) {
 		dwc3_gadget_disable_irq(dwc);
+<<<<<<< HEAD
 		__dwc3_gadget_ep_disable(dwc->eps[1]);
+=======
+		__dwc3_gadget_ep_disable(dwc->eps[1]);		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		__dwc3_gadget_ep_disable(dwc->eps[0]);
 	}
 #else
 	dwc3_gadget_disable_irq(dwc);
+<<<<<<< HEAD
 	__dwc3_gadget_ep_disable(dwc->eps[1]);
+=======
+	__dwc3_gadget_ep_disable(dwc->eps[1]);	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	__dwc3_gadget_ep_disable(dwc->eps[0]);
 #endif
 
@@ -3114,6 +3205,11 @@ int dwc3_gadget_init(struct dwc3 *dwc)
 		ret = -ENOMEM;
 		goto err3;
 	}
+	dwc->zlp_buf = kzalloc(DWC3_ZLP_BUF_SIZE, GFP_KERNEL);
+	if (!dwc->zlp_buf) {
+		ret = -ENOMEM;
+		goto err4;
+	}
 
 	dwc->zlp_buf = kzalloc(DWC3_ZLP_BUF_SIZE, GFP_KERNEL);
 	if (!dwc->zlp_buf) {
@@ -3140,12 +3236,20 @@ int dwc3_gadget_init(struct dwc3 *dwc)
 
 	ret = dwc3_gadget_init_endpoints(dwc);
 	if (ret)
-		goto err4;
+		goto err5;
 
 	ret = usb_add_gadget_udc(dwc->dev, &dwc->gadget);
 	if (ret) {
 		dev_err(dwc->dev, "failed to register udc\n");
-		goto err4;
+		goto err5;
+	}
+
+	if (dwc->dotg) {
+		ret = otg_set_peripheral(&dwc->dotg->otg, &dwc->gadget);
+		if (ret) {
+			dev_err(dwc->dev, "failed to set otg peripheral\n");
+			goto err6;
+		}
 	}
 
 	if (dwc->dotg) {
@@ -3158,11 +3262,20 @@ int dwc3_gadget_init(struct dwc3 *dwc)
 
 	return 0;
 
+<<<<<<< HEAD
 err5:
 	usb_del_gadget_udc(&dwc->gadget);
 err4:
 	dwc3_gadget_free_endpoints(dwc);
 	kfree(dwc->zlp_buf);	
+=======
+err6:
+	usb_del_gadget_udc(&dwc->gadget);
+err5:
+	dwc3_gadget_free_endpoints(dwc);
+	kfree(dwc->zlp_buf);	
+err4:	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	dma_free_coherent(dwc->dev, DWC3_EP0_BOUNCE_SIZE,
 			dwc->ep0_bounce, dwc->ep0_bounce_addr);
 
@@ -3196,7 +3309,11 @@ void dwc3_gadget_exit(struct dwc3 *dwc)
 			dwc->ep0_bounce, dwc->ep0_bounce_addr);
 
 	kfree(dwc->setup_buf);
+<<<<<<< HEAD
 	kfree(dwc->zlp_buf);	
+=======
+	kfree(dwc->zlp_buf);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	dma_free_coherent(dwc->dev, sizeof(*dwc->ep0_trb),
 			dwc->ep0_trb, dwc->ep0_trb_addr);
@@ -3225,7 +3342,11 @@ void dwc3_gadget_complete(struct dwc3 *dwc)
 
 int dwc3_gadget_suspend(struct dwc3 *dwc)
 {
+<<<<<<< HEAD
 	__dwc3_gadget_ep_disable(dwc->eps[1]);
+=======
+	__dwc3_gadget_ep_disable(dwc->eps[1]);	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	__dwc3_gadget_ep_disable(dwc->eps[0]);
 
 	dwc->dcfg = dwc3_readl(dwc->regs, DWC3_DCFG);
@@ -3292,3 +3413,7 @@ void dwc3_gadget_disconnect_proc(struct dwc3 *dwc)
 
 	complete(&dwc->disconnect);
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

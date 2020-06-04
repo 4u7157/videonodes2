@@ -28,9 +28,12 @@
 #include <linux/types.h>
 //#include <asm/smc.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 #include <linux/rkp_cfp.h>
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define TZIC_DEV "tzic"
 #define SMC_CMD_STORE_BINFO	 (-201)
 
@@ -55,6 +58,7 @@ uint32_t exynos_smc1(uint32_t cmd, uint32_t arg1, uint32_t arg2, uint32_t arg3)
 	register uint32_t reg3 __asm__("x3") = arg3;
 
 	__asm__ volatile (
+<<<<<<< HEAD
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		PRE_SMC_INLINE
 #endif
@@ -63,6 +67,10 @@ uint32_t exynos_smc1(uint32_t cmd, uint32_t arg1, uint32_t arg2, uint32_t arg3)
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		POST_SMC_INLINE
 #endif
+=======
+		"dsb	sy\n"
+		"smc	0\n"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		: "+r"(reg0), "+r"(reg1), "+r"(reg2), "+r"(reg3)
 	);
 
@@ -77,6 +85,7 @@ uint32_t exynos_smc_new(uint32_t cmd, uint32_t arg1, uint32_t arg2, uint32_t arg
 	register uint32_t reg3 __asm__("x3") = arg3;
 
 	__asm__ volatile (
+<<<<<<< HEAD
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		PRE_SMC_INLINE
 #endif
@@ -85,6 +94,10 @@ uint32_t exynos_smc_new(uint32_t cmd, uint32_t arg1, uint32_t arg2, uint32_t arg
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		POST_SMC_INLINE
 #endif
+=======
+		"dsb	sy\n"
+		"smc	0\n"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		: "+r"(reg0), "+r"(reg1), "+r"(reg2), "+r"(reg3)
 	);
 
@@ -108,6 +121,7 @@ int exynos_smc_read_oemflag(uint32_t ctrl_word, uint32_t *val)
 		reg1 = 1;
 		reg2 = idx;
 		__asm__ volatile (
+<<<<<<< HEAD
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 			PRE_SMC_INLINE
 #endif
@@ -116,6 +130,10 @@ int exynos_smc_read_oemflag(uint32_t ctrl_word, uint32_t *val)
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 			POST_SMC_INLINE
 #endif
+=======
+			"dsb	sy\n"
+			"smc	0\n"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			: "+r"(reg0), "+r"(reg1), "+r"(reg2), "+r"(reg3)
 		);
 		if (reg1)
@@ -127,6 +145,7 @@ int exynos_smc_read_oemflag(uint32_t ctrl_word, uint32_t *val)
 	reg2 = idx;
 
 	__asm__ volatile (
+<<<<<<< HEAD
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		PRE_SMC_INLINE
 #endif
@@ -135,6 +154,10 @@ int exynos_smc_read_oemflag(uint32_t ctrl_word, uint32_t *val)
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		POST_SMC_INLINE
 #endif
+=======
+		"dsb	sy\n"
+		"smc	0\n"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		: "+r"(reg0), "+r"(reg1), "+r"(reg2), "+r"(reg3)
 	);
 	if (reg1)
@@ -163,6 +186,7 @@ int exynos_smc_read_oemflag_new(uint32_t getflag, uint32_t *val)
 	reg3 = idx;
 
 	__asm__ volatile (
+<<<<<<< HEAD
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		PRE_SMC_INLINE
 #endif
@@ -171,6 +195,10 @@ int exynos_smc_read_oemflag_new(uint32_t getflag, uint32_t *val)
 #ifdef CONFIG_RKP_CFP_FIX_SMC_BUG
 		POST_SMC_INLINE
 #endif
+=======
+		"dsb	sy\n"
+		"smc	0\n"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		: "+r"(reg0), "+r"(reg1), "+r"(reg2), "+r"(reg3)
 	);
 
@@ -484,4 +512,8 @@ MODULE_DESCRIPTION("Samsung TZIC Driver");
 MODULE_VERSION("1.00");
 
 module_init(tzic_init);
+<<<<<<< HEAD
 module_exit(tzic_exit);
+=======
+module_exit(tzic_exit);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

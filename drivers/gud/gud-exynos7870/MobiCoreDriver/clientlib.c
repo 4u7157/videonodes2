@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2015 TRUSTONIC LIMITED
+=======
+ * Copyright (c) 2013-2017 TRUSTONIC LIMITED
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -19,7 +23,11 @@
 #include <linux/sched.h>
 #include <linux/list.h>
 
+<<<<<<< HEAD
 #include "public/mc_linux.h"
+=======
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "public/mc_admin.h"
 #include "public/mobicore_driver_api.h"
 
@@ -63,14 +71,22 @@ enum mc_result convert(int err)
 		return MC_DRV_ERR_INVALID_PARAMETER;
 	case EPROTO:
 		return MC_DRV_ERR_KERNEL_MODULE;
+<<<<<<< HEAD
 	case EADDRINUSE:
 		return MC_DRV_ERR_BULK_MAPPING;
 	case EADDRNOTAVAIL:
 		return MC_DRV_ERR_BULK_UNMAPPING;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case ECOMM:
 		return MC_DRV_INFO_NOTIFICATION;
 	case EUNATCH:
 		return MC_DRV_ERR_NQ_FAILED;
+<<<<<<< HEAD
+=======
+	case ERESTARTSYS:
+		return MC_DRV_ERR_INTERRUPTED_BY_SIGNAL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		mc_dev_devel("error is %d\n", err);
 		return MC_DRV_ERR_UNKNOWN;
@@ -79,7 +95,11 @@ enum mc_result convert(int err)
 
 static inline bool is_valid_device(u32 device_id)
 {
+<<<<<<< HEAD
 	return MC_DEVICE_ID_DEFAULT == device_id;
+=======
+	return device_id == MC_DEVICE_ID_DEFAULT;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static struct tee_client *client;
@@ -110,23 +130,48 @@ static void clientlib_client_put(void)
 enum mc_result mc_open_device(u32 device_id)
 {
 	enum mc_result mc_result = MC_DRV_OK;
+<<<<<<< HEAD
+=======
+	int ret;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Check parameters */
 	if (!is_valid_device(device_id))
 		return MC_DRV_ERR_UNKNOWN_DEVICE;
 
 	mutex_lock(&dev_mutex);
+<<<<<<< HEAD
+=======
+	/* Make sure TEE was started */
+	ret = mc_wait_tee_start();
+	if (ret) {
+		mc_dev_err("TEE failed to start, now or in the past");
+		mc_result = MC_DRV_ERR_INVALID_DEVICE_FILE;
+		goto end;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!open_count)
 		client = client_create(true);
 
 	if (client) {
 		open_count++;
+<<<<<<< HEAD
 		mc_dev_devel("Successfully opened the device\n");
 	} else {
 		mc_result = MC_DRV_ERR_INVALID_DEVICE_FILE;
 		mc_dev_devel("Could not open device\n");
 	}
 
+=======
+		mc_dev_devel("successfully opened the device\n");
+	} else {
+		mc_result = MC_DRV_ERR_INVALID_DEVICE_FILE;
+		mc_dev_err("could not open device\n");
+	}
+
+end:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&dev_mutex);
 	return mc_result;
 }
@@ -152,9 +197,16 @@ enum mc_result mc_close_device(u32 device_id)
 	}
 
 	/* Check sessions and freeze client */
+<<<<<<< HEAD
 	mc_result = convert(client_freeze(client));
 	if (MC_DRV_OK != mc_result)
 		goto end;
+=======
+	if (client_has_sessions(client)) {
+		mc_result = MC_DRV_ERR_SESSION_PENDING;
+		goto end;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Close the device */
 	client_close(client);
@@ -171,7 +223,11 @@ enum mc_result mc_open_session(struct mc_session_handle *session,
 			       const struct mc_uuid_t *uuid, u8 *tci, u32 len)
 {
 	struct mc_identity identity = {
+<<<<<<< HEAD
 		.login_type = TEEC_LOGIN_PUBLIC,
+=======
+		.login_type = LOGIN_PUBLIC,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	};
 	enum mc_result ret;
 
@@ -277,8 +333,18 @@ enum mc_result mc_wait_notification(struct mc_session_handle *session,
 		return MC_DRV_ERR_DAEMON_DEVICE_NOT_OPEN;
 
 	/* Call core api */
+<<<<<<< HEAD
 	ret = convert(client_waitnotif_session(client, session->session_id,
 					       timeout));
+=======
+	do {
+		ret = convert(client_waitnotif_session(client,
+						       session->session_id,
+						       timeout, false));
+	} while ((MC_INFINITE_TIMEOUT == timeout) &&
+		 (MC_DRV_ERR_INTERRUPTED_BY_SIGNAL == ret));
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	clientlib_client_put();
 	return ret;
 }

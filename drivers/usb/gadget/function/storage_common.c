@@ -680,4 +680,8 @@ static ssize_t fsg_store_file(struct device *dev, struct device_attribute *attr,
 	}
 	up_write(filesem);
 	return (rc < 0 ? rc : count);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

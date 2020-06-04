@@ -11,7 +11,11 @@
 #include "melfas_mms400.h"
 
 #ifdef USE_TSP_TA_CALLBACKS
+<<<<<<< HEAD
 static bool ta_connected;
+=======
+static bool ta_connected = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 /**
@@ -26,25 +30,39 @@ int mms_power_control(struct mms_ts_info *info, int enable)
 	struct pinctrl_state *pinctrl_state;
 	static bool on;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s [START %s]\n",
 			__func__, enable ? "on":"off");
 
 	if (on == enable) {
 		input_err(true, &client->dev, "%s : TSP power already %s\n",
 			__func__, (on) ? "on":"off");
+=======
+	tsp_debug_info(true, &info->client->dev, "%s [START %s] \n",
+			__func__, enable? "on":"off");
+
+	if (on == enable) {
+		tsp_debug_err(true, &client->dev, "%s : TSP power already %s\n",
+			__func__,(on)?"on":"off");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return ret;
 	}
 
 	if (info->dtdata->gpio_io_en) {
 		regulator_dvdd = regulator_get(NULL, info->dtdata->gpio_io_en);
 		if (IS_ERR_OR_NULL(regulator_dvdd)) {
+<<<<<<< HEAD
 			input_info(true, &client->dev, "%s: Failed to get %s regulator.\n",
+=======
+				tsp_debug_err(true, &client->dev,"%s: Failed to get %s regulator.\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				 __func__, info->dtdata->gpio_io_en);
 			ret = PTR_ERR(regulator_dvdd);
 			goto out;
 		}
 	}
 
+<<<<<<< HEAD
 	if (info->dtdata->gpio_vdd_en) {
 		regulator_avdd = regulator_get(NULL, info->dtdata->gpio_vdd_en);
 		if (IS_ERR_OR_NULL(regulator_avdd)) {
@@ -61,10 +79,26 @@ int mms_power_control(struct mms_ts_info *info, int enable)
 				input_info(true, &client->dev, "%s: Failed to enable avdd: %d\n", __func__, ret);
 				goto out;
 			}
+=======
+	regulator_avdd = regulator_get(NULL, info->dtdata->gpio_vdd_en);
+	if (IS_ERR_OR_NULL(regulator_avdd)) {
+		tsp_debug_err(true, &client->dev,"%s: Failed to get %s regulator.\n",
+			 __func__, info->dtdata->gpio_vdd_en);
+		ret = PTR_ERR(regulator_avdd);
+		goto out;
+	}
+
+	if (enable) {
+		ret = regulator_enable(regulator_avdd);
+		if (ret) {
+			tsp_debug_err(true, &client->dev, "%s: Failed to enable avdd: %d\n", __func__, ret);
+			goto out;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		if (info->dtdata->gpio_io_en) {
 			ret = regulator_enable(regulator_dvdd);
 			if (ret) {
+<<<<<<< HEAD
 				input_info(true, &client->dev, "%s: Failed to enable vdd: %d\n", __func__, ret);
 				goto out;
 			}
@@ -73,12 +107,19 @@ int mms_power_control(struct mms_ts_info *info, int enable)
 		if (info->dtdata->tsp_ldo_en > 0)
 			gpio_direction_output(info->dtdata->tsp_ldo_en, 1);
 
+=======
+					tsp_debug_err(true, &client->dev,"%s: Failed to enable vdd: %d\n", __func__, ret);
+				goto out;
+			}
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pinctrl_state = pinctrl_lookup_state(info->pinctrl, "on_state");
 	} else {
 		if (info->dtdata->gpio_io_en) {
 			if (regulator_is_enabled(regulator_dvdd))
 				regulator_disable(regulator_dvdd);
 		}
+<<<<<<< HEAD
 		if (info->dtdata->gpio_vdd_en) {
 			if (regulator_is_enabled(regulator_avdd))
 				regulator_disable(regulator_avdd);
@@ -105,14 +146,43 @@ out:
 		regulator_put(regulator_dvdd);
 	if (info->dtdata->gpio_vdd_en && !IS_ERR_OR_NULL(regulator_avdd))
 		regulator_put(regulator_avdd);
+=======
+		if (regulator_is_enabled(regulator_avdd))
+			regulator_disable(regulator_avdd);
+
+		pinctrl_state = pinctrl_lookup_state(info->pinctrl, "off_state");
+	}
+
+	if (IS_ERR_OR_NULL(pinctrl_state)) {
+		tsp_debug_err(true, &client->dev,"%s: Failed to lookup pinctrl.\n", __func__);
+	} else {
+		ret = pinctrl_select_state(info->pinctrl, pinctrl_state);
+		if (ret)
+			tsp_debug_err(true, &client->dev, "%s: Failed to configure pinctrl.\n", __func__);
+	}
+
+	on = enable;
+out:
+	if (info->dtdata->gpio_io_en && !IS_ERR_OR_NULL(regulator_dvdd)) {
+		regulator_put(regulator_dvdd);
+	}
+	if (!IS_ERR_OR_NULL(regulator_avdd)) {
+		regulator_put(regulator_avdd);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!enable)
 		usleep_range(10 * 1000, 11 * 1000);
 	else
 		msleep(50);
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s [DONE %s]\n",
 			__func__, enable ? "on":"off");
+=======
+	tsp_debug_info(true, &info->client->dev, "%s [DONE %s] \n",
+			__func__, enable? "on":"off");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -123,12 +193,19 @@ void mms_clear_input(struct mms_ts_info *info)
 {
 	int i;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s\n", __func__);
 
 	input_report_key(info->input_dev, BTN_TOUCH, 0);
 	input_report_key(info->input_dev, BTN_TOOL_FINGER, 0);
 
 	for (i = 0; i < MAX_FINGER_NUM; i++) {
+=======
+	input_report_key(info->input_dev, BTN_TOUCH, 0);
+	input_report_key(info->input_dev, BTN_TOOL_FINGER, 0);
+
+	for (i = 0; i< MAX_FINGER_NUM; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		info->finger_state[i] = 0;
 		input_mt_slot(info->input_dev, i);
 		input_mt_report_slot_state(info->input_dev, MT_TOOL_FINGER, false);
@@ -138,6 +215,10 @@ void mms_clear_input(struct mms_ts_info *info)
 	info->check_multi = 0;
 
 	input_sync(info->input_dev);
+<<<<<<< HEAD
+=======
+	return;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -148,8 +229,13 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 	struct i2c_client *client = info->client;
 	int i;
 
+<<<<<<< HEAD
 	input_dbg(true, &client->dev, "%s [START]\n", __func__);
 	input_dbg(true, &client->dev, "%s - sz[%d] buf[0x%02X]\n", __func__, sz, buf[0]);
+=======
+	tsp_debug_dbg(false, &client->dev, "%s [START]\n", __func__);
+	tsp_debug_dbg(false, &client->dev, "%s - sz[%d] buf[0x%02X]\n", __func__, sz, buf[0]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	for (i = 0; i < sz; i += info->event_size) {
 		u8 *tmp = &buf[i];
@@ -176,6 +262,7 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 			switch (key) {
 			case 1:
 				key_code = KEY_MENU;
+<<<<<<< HEAD
 				//input_dbg(true, &client->dev, "Key : KEY_MENU\n");
 				break;
 			case 2:
@@ -184,6 +271,16 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 				break;
 			default:
 				input_err(true, &client->dev,
+=======
+				//tsp_debug_dbg(true, &client->dev, "Key : KEY_MENU\n");
+				break;
+			case 2:
+				key_code = KEY_BACK;
+				//tsp_debug_dbg(true, &client->dev, "Key : KEY_BACK\n");
+				break;
+			default:
+				tsp_debug_err(true, &client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					"%s [ERROR] Unknown key code [%d]\n",
 					__func__, key);
 				continue;
@@ -192,7 +289,11 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 
 			input_report_key(info->input_dev, key_code, key_state);
 
+<<<<<<< HEAD
 			input_dbg(true, &client->dev, "%s - Key : ID[%d] Code[%d] State[%d]\n",
+=======
+			tsp_debug_dbg(true, &client->dev, "%s - Key : ID[%d] Code[%d] State[%d]\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				__func__, key, key_code, key_state);
 		} else
 #endif
@@ -206,7 +307,11 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 #endif
 				input_mt_report_slot_state(info->input_dev,
 								MT_TOOL_FINGER, false);
+<<<<<<< HEAD
 				if (info->finger_state[id] != 0) {
+=======
+				if (info->finger_state[id] != 0){
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					info->touch_count--;
 					if (!info->touch_count) {
 						input_report_key(info->input_dev, BTN_TOUCH, 0);
@@ -215,7 +320,11 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 						info->check_multi = 0;
 					}
 					info->finger_state[id] = 0;
+<<<<<<< HEAD
 					input_info(true, &client->dev,
+=======
+					tsp_debug_info(true, &client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 						"R[%d] V[%02x%02x%02x] tc:%d\n",
 						id, info->boot_ver_ic, info->core_ver_ic,
 						info->config_ver_ic, info->touch_count);
@@ -246,6 +355,7 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 			info->cur_data[id].z = pressure;
 #endif
 
+<<<<<<< HEAD
 			if (info->finger_state[id] == 0) {
 				info->finger_state[id] = 1;
 				info->touch_count++;
@@ -255,6 +365,17 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 					id, pressure, palm, touch_major, touch_minor, info->touch_count);
 #else
 				input_err(true, &client->dev,
+=======
+			if (info->finger_state[id] == 0){
+				info->finger_state[id] = 1;
+				info->touch_count++;
+#ifdef CONFIG_SAMSUNG_PRODUCT_SHIP
+				tsp_debug_info(true, &client->dev,
+					"P[%d] z:%d p:%d m:%d,%d tc:%d\n",
+					id, pressure, palm, touch_major, touch_minor, info->touch_count);
+#else
+				tsp_debug_info(true, &client->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					"P[%d] (%d, %d) z:%d p:%d m:%d,%d tc:%d\n",
 					id, x, y, pressure, palm, touch_major, touch_minor, info->touch_count);
 #endif
@@ -267,7 +388,12 @@ void mms_input_event_handler(struct mms_ts_info *info, u8 sz, u8 *buf)
 	}
 
 	input_sync(info->input_dev);
+<<<<<<< HEAD
 	input_dbg(true, &client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(false, &client->dev, "%s [DONE]\n", __func__);
+	return;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #if MMS_USE_DEVICETREE
@@ -279,17 +405,29 @@ int mms_parse_devicetree(struct device *dev, struct mms_ts_info *info)
 	struct device_node *np = dev->of_node;
 	int ret;
 
+<<<<<<< HEAD
 	input_info(true, dev, "%s [START]\n", __func__);
 
 	ret = of_property_read_u32(np, "melfas,max_x", &info->dtdata->max_x);
 	if (ret) {
 		input_err(true, dev, "%s [ERROR] max_x\n", __func__);
+=======
+	tsp_debug_info(true, dev, "%s [START]\n", __func__);
+
+	ret = of_property_read_u32(np, "melfas,max_x", &info->dtdata->max_x);
+	if (ret) {
+		tsp_debug_err(true, dev, "%s [ERROR] max_x\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		info->dtdata->max_x = 720;
 	}
 
 	ret = of_property_read_u32(np, "melfas,max_y", &info->dtdata->max_y);
 	if (ret) {
+<<<<<<< HEAD
 		input_err(true, dev, "%s [ERROR] max_y\n", __func__);
+=======
+		tsp_debug_err(true, dev, "%s [ERROR] max_y\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		info->dtdata->max_y = 1280;
 	}
 
@@ -302,6 +440,7 @@ int mms_parse_devicetree(struct device *dev, struct mms_ts_info *info)
 	gpio_request(info->dtdata->gpio_scl, "melfas_scl_gpio");
 	info->dtdata->gpio_sda = of_get_named_gpio(np, "melfas,sda-gpio", 0);
 	gpio_request(info->dtdata->gpio_sda, "melfas_sda_gpio");
+<<<<<<< HEAD
 	info->dtdata->tsp_ldo_en = of_get_named_gpio(np, "melfas,tsp_ldo_en", 0);
 	if (info->dtdata->tsp_ldo_en > 0)
 		gpio_request(info->dtdata->tsp_ldo_en, "melfas_tsp_ldo_en");
@@ -313,10 +452,19 @@ int mms_parse_devicetree(struct device *dev, struct mms_ts_info *info)
 
 	if (of_property_read_string(np, "melfas,io_en", &info->dtdata->gpio_io_en)) {
 		input_err(true, dev, "Failed to get regulator_avdd name property\n");
+=======
+
+	if (of_property_read_string(np, "melfas,vdd_en", &info->dtdata->gpio_vdd_en)) {
+		tsp_debug_err(true, dev,  "Failed to get regulator_dvdd name property\n");
+	}
+	if (of_property_read_string(np, "melfas,io_en", &info->dtdata->gpio_io_en)) {
+		tsp_debug_err(true, dev,  "Failed to get regulator_avdd name property\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		info->dtdata->gpio_io_en = NULL;
 	}
 
 	if (of_property_read_u32(np, "melfas,fw-skip", &info->dtdata->fw_update_skip) >= 0)
+<<<<<<< HEAD
 		input_info(true, dev, "%s() melfas,fw-skip: %d\n", __func__, info->dtdata->fw_update_skip);
 
 	if (of_property_read_string(np, "melfas,fw_name", &info->dtdata->fw_name))
@@ -328,6 +476,23 @@ int mms_parse_devicetree(struct device *dev, struct mms_ts_info *info)
 	info->dtdata->support_lpm = of_property_read_bool(np, "melfas,support_lpm");
 
 	input_info(true, dev, "%s: fw_name %s max_x:%d max_y:%d int:%d irq:%d sda:%d scl:%d support_LPM:%d\n",
+=======
+		tsp_debug_info(true, dev, "%s() melfas,fw-skip: %d\n", __func__, info->dtdata->fw_update_skip);	
+
+	if (of_property_read_string(np, "melfas,fw_name", &info->dtdata->fw_name)) {
+		tsp_debug_err(true, dev, "Failed to get fw_name property\n");
+		info->dtdata->fw_name = INTERNAL_FW_PATH;
+	}
+	
+	if (of_property_read_u32(np, "melfas,factory_item_version", &info->dtdata->item_version) < 0) {
+		tsp_debug_err(true, dev,  "Failed to get factory_item_version property\n");
+		info->dtdata->item_version = 0;
+	}
+	
+	info->dtdata->support_lpm = of_property_read_bool(np, "melfas,support_lpm");
+	
+	tsp_debug_info(true, dev, "%s: fw_name %s max_x:%d max_y:%d int:%d irq:%d sda:%d scl:%d support_LPM:%d\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		__func__, info->dtdata->fw_name, info->dtdata->max_x, info->dtdata->max_y,
 		info->dtdata->gpio_intr, info->client->irq, info->dtdata->gpio_sda,
 		info->dtdata->gpio_scl, info->dtdata->support_lpm);
@@ -344,7 +509,11 @@ void mms_config_input(struct mms_ts_info *info)
 {
 	struct input_dev *input_dev = info->input_dev;
 
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [START]\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	//Screen
 	set_bit(EV_SYN, input_dev->evbit);
@@ -376,7 +545,12 @@ void mms_config_input(struct mms_ts_info *info)
 	set_bit(KEY_POWER, input_dev->keybit);
 #endif
 	set_bit(KEY_BLACK_UI_GESTURE, input_dev->keybit);
+<<<<<<< HEAD
 	input_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+=======
+	tsp_debug_dbg(true, &info->client->dev, "%s [DONE]\n", __func__);
+	return;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #ifdef CONFIG_VBUS_NOTIFIER
@@ -386,6 +560,7 @@ int mms_vbus_notification(struct notifier_block *nb,
 	struct mms_ts_info *info = container_of(nb, struct mms_ts_info, vbus_nb);
 	vbus_status_t vbus_type = *(vbus_status_t *)data;
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s cmd=%lu, vbus_type=%d\n", __func__, cmd, vbus_type);
 
 	switch (vbus_type) {
@@ -395,6 +570,17 @@ int mms_vbus_notification(struct notifier_block *nb,
 		break;
 	case STATUS_VBUS_LOW:
 		input_info(true, &info->client->dev, "%s : detach\n", __func__);
+=======
+	tsp_debug_info(true, &info->client->dev, "%s cmd=%lu, vbus_type=%d\n", __func__, cmd, vbus_type);
+
+	switch (vbus_type) {
+	case STATUS_VBUS_HIGH:
+		tsp_debug_info(true, &info->client->dev, "%s : attach\n",__func__);
+		info->ta_stsatus = true;
+		break;
+	case STATUS_VBUS_LOW:
+		tsp_debug_info(true, &info->client->dev, "%s : detach\n",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		info->ta_stsatus = false;
 		break;
 	default:
@@ -402,7 +588,11 @@ int mms_vbus_notification(struct notifier_block *nb,
 	}
 
 	if (!info->enabled) {
+<<<<<<< HEAD
 		input_err(true, &info->client->dev, "%s tsp disabled", __func__);
+=======
+		tsp_debug_err(true, &info->client->dev, "%s tsp disabled",__func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 0;
 	}
 
@@ -445,10 +635,17 @@ int mms_lowpower_mode(struct mms_ts_info *info, int on)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	/**	bit	Power state
 	 *	0	active
 	 *	1	low power consumption
 	 */
+=======
+	/*	bit	Power state
+	  *	0	active
+	  *	1	low power consumption
+	  */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[0] = MIP_R0_CTRL;
 	wbuf[1] = MIP_R1_CTRL_POWER_STATE;
@@ -483,8 +680,12 @@ int mms_lowpower_mode(struct mms_ts_info *info, int on)
 		return -EIO;
 	}
 
+<<<<<<< HEAD
 	input_info(true, &info->client->dev, "%s: AOT ctrl register=%x, flag=%x\n",
 				__func__, rbuf[0], info->lowpower_flag);
+=======
+	input_info(true, &info->client->dev, "%s: AOT ctrl register=%x, flag=%x\n", __func__, rbuf[0], info->lowpower_flag);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	wbuf[2] = rbuf[0] & (info->lowpower_flag << 1);
 

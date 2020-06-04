@@ -6,16 +6,25 @@
 #include <linux/firmware.h>
 #include <linux/slab.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <linux/hrtimer.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/interrupt.h>
 #include <linux/gpio.h>
 
 #include "fts_ts.h"
 
 #define WRITE_CHUNK_SIZE 64
+<<<<<<< HEAD
 #define FTS_DEFAULT_UMS_FW "/sdcard/stm.fw"
 #define FTS_DEFAULT_FFU_FW "ffu_tsp.bin"
 #define FTS64FILE_SIGNATURE 0xaaaa5555
+=======
+#define FTS_DEFAULT_UMS_FW "/sdcard/Firmware/TSP/stm.fw"
+#define FTS_DEFAULT_FFU_FW "ffu_tsp.bin"
+#define FTSFILE_SIGNATURE 0xAAAA5555
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 enum {
 	BUILT_IN = 0,
@@ -24,7 +33,11 @@ enum {
 	FFU,
 };
 
+<<<<<<< HEAD
 struct fts64_header {
+=======
+struct fts_header {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int signature;
 	unsigned short fw_ver;
 	unsigned char fw_id;
@@ -35,6 +48,7 @@ struct fts64_header {
 	unsigned int checksum;
 };
 
+<<<<<<< HEAD
 static int fts_fw_wait_for_flash_ready(struct fts_ts_info *info)
 {
 	unsigned char regAdd;
@@ -56,10 +70,34 @@ static int fts_fw_wait_for_flash_ready(struct fts_ts_info *info)
 		}
 		msleep(20);
 	}
+=======
+#define	FW_IMAGE_SIZE_D3	(256 * 1024)
+#define	SIGNEDKEY_SIZE		(256)
+
+int FTS_Check_DMA_Done(struct fts_ts_info *info)
+{
+	int timeout = 60;
+	unsigned char regAdd[2] = { 0xF9, 0x05};
+	unsigned char val[1];
+
+	do {
+		info->fts_read_reg(info, &regAdd[0], 2, (unsigned char*)val, 1);
+
+		if ((val[0] & 0x80) != 0x80)
+			break;
+
+		fts_delay(50);
+		timeout--;
+	} while (timeout != 0);
+
+	if (timeout == 0)
+		return -1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
 
+<<<<<<< HEAD
 #define	FW_IMAGE_SIZE_D1	64 * 1024
 #define	FW_IMAGE_SIZE_D2	128 * 1024
 #define	SIGNEDKEY_SIZE	256
@@ -173,6 +211,223 @@ static int fts_get_system_status(struct fts_ts_info *info, unsigned char *val1, 
 }
 
 int fts_fw_wait_for_event(struct fts_ts_info *info, unsigned char eid)
+=======
+static int FTS_Check_Erase_Done(struct fts_ts_info *info)
+{
+	int timeout = 60;  // 3 sec timeout
+	unsigned char regAdd[2] = {0xF9, 0x02};
+	unsigned char val[1];
+
+	do {
+		info->fts_read_reg(info, &regAdd[0], 2, (unsigned char*)val, 1);
+
+		if ((val[0] & 0x80) != 0x80)
+			break;
+
+		fts_delay(50);
+		timeout--;
+	} while (timeout != 0);
+
+	if (timeout == 0)
+		return -1;
+
+	return 0;
+}
+
+static int fts_fw_burn_d3(struct fts_ts_info *info, unsigned char *fw_data)
+{
+	int rc;
+	const unsigned long int FTS_CODE_SIZE = (244 * 1024);	// Total 244kB for Code
+	const unsigned long int FTS_CONFIG_SIZE = (4 * 1024);	// Total 4kB for Config
+	const unsigned long int DRAM_LEN = (64 * 1024);	// 64KB
+	const unsigned int CODE_ADDR_START = (0x0000);
+	const unsigned int CONFIG_ADDR_START = (0xFC00);
+	const unsigned int WRITE_CHUNK_SIZE_D3 = 32;
+
+	unsigned char *config_data = NULL;
+
+	unsigned long int size = 0;
+	unsigned long int i;
+	unsigned long int j;
+	unsigned long int k;
+	unsigned long int dataLen;
+	unsigned long int len = 0;
+	unsigned long int writeAddr = 0;
+	unsigned char buf[WRITE_CHUNK_SIZE_D3 + 3];
+	unsigned char regAdd[8] = {0};
+	int cnt;
+
+	//==================== System reset ====================
+	//System Reset ==> F7 52 34
+	regAdd[0] = 0xF7;
+	regAdd[1] = 0x52;
+	regAdd[2] = 0x34;
+	info->fts_write_reg(info, &regAdd[0], 3);
+	fts_delay(200);
+
+	//==================== Unlock Flash ====================
+	//Unlock Flash Command ==> F7 74 45
+	regAdd[0] = 0xF7;
+	regAdd[1] = 0x74;
+	regAdd[2] = 0x45;
+	info->fts_write_reg(info, &regAdd[0], 3);
+	fts_delay(100);
+
+	//==================== Unlock Erase Operation ====================
+	regAdd[0] = 0xFA;
+	regAdd[1] = 0x72;
+	regAdd[2] = 0x01;
+	info->fts_write_reg(info, &regAdd[0], 3);
+	fts_delay(100);
+
+	//==================== Erase Partial Flash ====================
+	for (i = 0; i < 64; i++) {
+		if ( (i == 61) || (i == 62) )   // skip CX2 area (page 61 and page 62)
+			continue;
+
+		regAdd[0] = 0xFA;
+		regAdd[1] = 0x02;
+		regAdd[2] = (0x80 + i) & 0xFF;
+		info->fts_write_reg(info, &regAdd[0], 3);
+		rc = FTS_Check_Erase_Done(info);
+		if (rc < 0)
+			return rc;
+	}
+
+	//==================== Unlock Programming operation ====================
+	regAdd[0] = 0xFA;
+	regAdd[1] = 0x72;
+	regAdd[2] = 0x02;
+	info->fts_write_reg(info, &regAdd[0], 3);
+
+	//========================== Write to FLASH ==========================
+	// Main Code Programming
+	i = 0;
+	k = 0;
+	size = FTS_CODE_SIZE;
+
+	while(i < size) {
+		j = 0;
+		dataLen = size - i;
+
+		while ((j < DRAM_LEN) && (j < dataLen)) {	//DRAM_LEN = 64*1024
+			writeAddr = j & 0xFFFF;
+
+			cnt = 0;
+			buf[cnt++] = 0xF8;
+			buf[cnt++] = (writeAddr >> 8) & 0xFF;
+			buf[cnt++] = (writeAddr >> 0) & 0xFF;
+
+			memcpy(&buf[cnt], &fw_data[sizeof(struct fts_header) + i], WRITE_CHUNK_SIZE_D3);
+			cnt += WRITE_CHUNK_SIZE_D3;
+
+			info->fts_write_reg(info, &buf[0], cnt);
+
+			i += WRITE_CHUNK_SIZE_D3;
+			j += WRITE_CHUNK_SIZE_D3;
+		}
+		input_info(true, info->dev, "%s: Write to Flash - Total %ld bytes\n", __func__, i);
+
+		 //===================configure flash DMA=====================
+		len = j / 4 - 1; 	// 64*1024 / 4 - 1
+
+		buf[0] = 0xFA;
+		buf[1] = 0x06;
+		buf[2] = 0x00;
+		buf[3] = 0x00;
+		buf[4] = (CODE_ADDR_START +( (k * DRAM_LEN) >> 2)) & 0xFF;			// k * 64 * 1024 / 4
+		buf[5] = (CODE_ADDR_START + ((k * DRAM_LEN) >> (2+8))) & 0xFF;		// k * 64 * 1024 / 4 / 256
+		buf[6] = (len >> 0) & 0xFF;    //DMA length in word
+		buf[7] = (len >> 8) & 0xFF;    //DMA length in word
+		buf[8] = 0x00;
+		info->fts_write_reg(info, &buf[0], 9);
+
+		fts_delay(100);
+
+		//===================START FLASH DMA=====================
+		buf[0] = 0xFA;
+		buf[1] = 0x05;
+		buf[2] = 0xC0;
+		info->fts_write_reg(info, &buf[0], 3);
+
+		rc = FTS_Check_DMA_Done(info);
+		if (rc < 0)
+			return rc;
+		k++;
+	}
+	input_info(true, info->dev, "%s: Total write %ld kbytes for Main Code\n", __func__, i / 1024);
+
+	//=============================================================
+	// Config Programming
+	//=============================================================
+
+	config_data = kzalloc(FTS_CONFIG_SIZE, GFP_KERNEL);
+	if (!config_data) {
+		input_err(true, info->dev, "%s: failed to alloc mem\n",
+				__func__);
+		return -ENOMEM;
+	}
+
+	memcpy(&config_data[0], &fw_data[sizeof(struct fts_header) + (252 * 1024)], FTS_CONFIG_SIZE);
+
+	i = 0;
+	size = FTS_CONFIG_SIZE;
+	j = 0;
+	while ((j < DRAM_LEN) && (j < size)) {		//DRAM_LEN = 64*1024
+		writeAddr = j & 0xFFFF;
+
+		cnt = 0;
+		buf[cnt++] = 0xF8;
+		buf[cnt++] = (writeAddr >> 8) & 0xFF;
+		buf[cnt++] = (writeAddr >> 0) & 0xFF;
+
+		memcpy(&buf[cnt], &config_data[i], WRITE_CHUNK_SIZE_D3);
+		cnt += WRITE_CHUNK_SIZE_D3;
+
+		info->fts_write_reg(info, &buf[0], cnt);
+
+		i += WRITE_CHUNK_SIZE_D3;
+		j += WRITE_CHUNK_SIZE_D3;
+	}
+	kfree(config_data);
+
+	//===================configure flash DMA=====================
+	len = j / 4 - 1;
+
+	buf[0] = 0xFA;
+	buf[1] = 0x06;
+	buf[2] = 0x00;
+	buf[3] = 0x00;
+	buf[4] = (CONFIG_ADDR_START) & 0xFF;
+	buf[5] = (CONFIG_ADDR_START >> 8) & 0xFF;
+	buf[6] = (len >> 0) & 0xFF;    //DMA length in word
+	buf[7] = (len >> 8) & 0xFF;    //DMA length in word
+	buf[8] = 0x00;
+	info->fts_write_reg(info, &buf[0], 9);
+
+	fts_delay(100);
+
+	//===================START FLASH DMA=====================
+	buf[0] = 0xFA;
+	buf[1] = 0x05;
+	buf[2] = 0xC0;
+	info->fts_write_reg(info, &buf[0], 3);
+
+	rc = FTS_Check_DMA_Done(info);
+	if (rc < 0)
+		return rc;
+
+	input_info(true, info->dev, "%s: Total write %ld kbytes for Config\n", __func__, i / 1024);
+
+	//==================== System reset ====================
+	//System Reset ==> F7 52 34
+	regAdd[0] = 0xF7;		regAdd[1] = 0x52;		regAdd[2] = 0x34;
+	info->fts_write_reg(info, &regAdd[0],3);
+
+	return 0;
+}
+
+int fts_fw_wait_for_event(struct fts_ts_info *info, unsigned char eid)
 {
 	int rc;
 	unsigned char regAdd;
@@ -183,6 +438,70 @@ int fts_fw_wait_for_event(struct fts_ts_info *info, unsigned char eid)
 
 	regAdd = READ_ONE_EVENT;
 	rc = -1;
+	while (info->fts_read_reg(info, &regAdd, 1, (unsigned char *)data, FTS_EVENT_SIZE)) {
+		if (data[0] == EVENTID_STATUS_EVENT || data[0] == EVENTID_ERROR) {
+			if ((data[0] == EVENTID_STATUS_EVENT) && (data[1] == eid)) {
+				rc = 0;
+				break;
+			} else {
+				input_info(true, info->dev, "%s: %2X,%2X,%2X,%2X\n", __func__, data[0],data[1],data[2],data[3]);
+			}
+		}
+		if (retry++ > FTS_RETRY_COUNT * 15) {
+			rc = -1;
+			input_err(true, info->dev, "%s: Time Over (%2X,%2X,%2X,%2X)\n", __func__, data[0],data[1],data[2],data[3]);
+			break;
+		}
+		fts_delay(20);
+	}
+
+	return rc;
+}
+
+int fts_fw_wait_for_event_D3(struct fts_ts_info *info, unsigned char eid0, unsigned char eid1)
+{
+	int rc;
+	unsigned char regAdd;
+	unsigned char data[FTS_EVENT_SIZE];
+	int retry = 0;
+
+	memset(data, 0x0, FTS_EVENT_SIZE);
+
+	regAdd = READ_ONE_EVENT;
+	rc = -1;
+	while (info->fts_read_reg(info, &regAdd, 1, (unsigned char *)data, FTS_EVENT_SIZE)) {
+		if (data[0] == EVENTID_STATUS_EVENT || data[0] == EVENTID_ERROR) {
+			if ((data[0] == EVENTID_STATUS_EVENT) && (data[1] == eid0) && (data[2] == eid1)) {
+				rc = 0;
+				break;
+			} else {
+				input_info(true, info->dev, "%s: %2X,%2X,%2X,%2X\n", __func__, data[0],data[1],data[2],data[3]);
+			}
+		}
+		if (retry++ > FTS_RETRY_COUNT * 15) {
+			rc = -1;
+			input_err(true, info->dev, "%s: Time Over (%2X,%2X,%2X,%2X)\n", __func__, data[0],data[1],data[2],data[3]);
+			break;
+		}
+		fts_delay(20);
+	}
+
+	return rc;
+}
+
+int fts_fw_wait_for_specific_event(struct fts_ts_info *info, unsigned char eid0, unsigned char eid1, unsigned char eid2)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+{
+	int rc;
+	unsigned char regAdd;
+	unsigned char data[FTS_EVENT_SIZE];
+	int retry = 0;
+
+	memset(data, 0x0, FTS_EVENT_SIZE);
+
+	regAdd = READ_ONE_EVENT;
+	rc = -1;
+<<<<<<< HEAD
 	while (info->fts_read_reg
 	       (info, &regAdd, 1, (unsigned char *)data, FTS_EVENT_SIZE)) {
 		if ((data[0] == EVENTID_STATUS_EVENT) &&
@@ -197,6 +516,23 @@ int fts_fw_wait_for_event(struct fts_ts_info *info, unsigned char eid)
 			break;
 		}
 		msleep(20);
+=======
+	while (info->fts_read_reg(info, &regAdd, 1, (unsigned char *)data, FTS_EVENT_SIZE)) {
+		if (data[0]) {
+			if ((data[0] == eid0) && (data[1] == eid1) && (data[2] == eid2)) {
+				rc = 0;
+				break;
+			} else {
+				input_info(true, info->dev, "%s: %2X,%2X,%2X,%2X\n", __func__, data[0],data[1],data[2],data[3]);
+			}
+		}
+		if (retry++ > FTS_RETRY_COUNT * 15) {
+			rc = -1;
+			input_err(true, info->dev, "%s: Time Over ( %2X,%2X,%2X,%2X )\n", __func__, data[0],data[1],data[2],data[3]);
+			break;
+		}
+		fts_delay(20);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return rc;
@@ -204,6 +540,7 @@ int fts_fw_wait_for_event(struct fts_ts_info *info, unsigned char eid)
 
 void fts_execute_autotune(struct fts_ts_info *info)
 {
+<<<<<<< HEAD
 	info->fts_command(info, CX_TUNNING);
 	msleep(300);
 	fts_fw_wait_for_event(info, STATUS_EVENT_MUTUAL_AUTOTUNE_DONE);
@@ -245,37 +582,104 @@ void fts_fw_init(struct fts_ts_info *info)
 #else
 	fts_fw_wait_for_event (info, STATUS_EVENT_FORCE_CAL_DONE);
 #endif
+=======
+	input_info(true, info->dev, "%s: start\n", __func__);
+
+	info->fts_command(info, CX_TUNNING);
+	fts_delay(300);
+	fts_fw_wait_for_event_D3(info, STATUS_EVENT_MUTUAL_AUTOTUNE_DONE, 0x00);
+	info->fts_command(info, SELF_AUTO_TUNE);
+	fts_delay(300);
+	fts_fw_wait_for_event_D3(info, STATUS_EVENT_SELF_AUTOTUNE_DONE_D3, 0x00);
+
+	info->fts_command(info, FTS_CMD_SAVE_CX_TUNING);
+	fts_delay(230);
+	fts_fw_wait_for_event(info, STATUS_EVENT_FLASH_WRITE_CXTUNE_VALUE);
+
+	info->fts_command(info, FTS_CMD_SAVE_FWCONFIG);
+	fts_delay(230);
+	fts_fw_wait_for_event(info, STATUS_EVENT_FLASH_WRITE_CONFIG);
+
+	/* Reset FTS */
+	info->fts_systemreset(info, 30);
+}
+
+void fts_fw_init(struct fts_ts_info *info, bool boot)
+{
+	input_info(true, info->dev, "%s: boot(%d)\n", __func__,boot);
+
+	info->fts_command(info, FTS_CMD_TRIM_LOW_POWER_OSCILLATOR);
+	fts_delay(200);
+
+#ifdef PAT_CONTROL
+	fts_ts_tclm(info, boot, false);
+#endif
+
+	info->fts_command(info, SENSEON);
+#ifdef FTS_SUPPORT_PRESSURE_SENSOR
+	info->fts_command(info, FTS_CMD_PRESSURE_SENSE_ON);
+#endif
+	fts_fw_wait_for_event (info, STATUS_EVENT_FORCE_CAL_DONE_D3);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef FTS_SUPPORT_TOUCH_KEY
 	if (info->board->support_mskey)
 		info->fts_command(info, FTS_CMD_KEY_SENSE_ON);
 #endif
+<<<<<<< HEAD
 }
 
 const int fts_fw_updater(struct fts_ts_info *info, unsigned char *fw_data)
 {
 	const struct fts64_header *header;
+=======
+
+	fts_interrupt_set(info, INT_ENABLE);
+	fts_delay(20);
+}
+
+const int fts_fw_updater(struct fts_ts_info *info, unsigned char *fw_data, bool boot)
+{
+	const struct fts_header *header;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int retval;
 	int retry;
 	unsigned short fw_main_version;
 
 	if (!fw_data) {
+<<<<<<< HEAD
 		tsp_debug_err(true, info->dev, "%s: Firmware data is NULL\n",
+=======
+		input_err(true, info->dev, "%s: Firmware data is NULL\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__);
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	header = (struct fts64_header *)fw_data;
 	fw_main_version = (header->released_ver[0] << 8) +
 							(header->released_ver[1]);
 
 	tsp_debug_info(true, info->dev,
 		  "Starting firmware update : 0x%04X\n",
+=======
+	header = (struct fts_header *)fw_data;
+	fw_main_version = (header->released_ver[0] << 8) + (header->released_ver[1]);
+
+	input_info(true, info->dev,
+		  "%s: Starting firmware update : 0x%04X\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		  fw_main_version);
 
 	retry = 0;
 	while (1) {
+<<<<<<< HEAD
 		retval = fts_fw_burn(info, fw_data);
+=======
+
+		retval = fts_fw_burn_d3(info, fw_data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (retval >= 0) {
 			info->fts_wait_for_ready(info);
 			info->fts_get_version_info(info);
@@ -285,17 +689,29 @@ const int fts_fw_updater(struct fts_ts_info *info, unsigned char *fw_data)
 #endif
 
 			if (fw_main_version == info->fw_main_version_of_ic) {
+<<<<<<< HEAD
 				tsp_debug_info(true, info->dev,
 					  "%s: Success Firmware update\n",
 					  __func__);
 				fts_fw_init(info);
+=======
+				input_info(true, info->dev,
+					  "%s: Success Firmware update\n",
+					  __func__);
+
+				fts_fw_init(info, boot);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				retval = 0;
 				break;
 			}
 		}
 
 		if (retry++ > 3) {
+<<<<<<< HEAD
 			tsp_debug_err(true, info->dev, "%s: Fail Firmware update\n",
+=======
+			input_err(true, info->dev, "%s: Fail Firmware update\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				 __func__);
 			retval = -1;
 			break;
@@ -306,6 +722,7 @@ const int fts_fw_updater(struct fts_ts_info *info, unsigned char *fw_data)
 }
 EXPORT_SYMBOL(fts_fw_updater);
 
+<<<<<<< HEAD
 #define FW_IMAGE_NAME_D2_TB_INTEG			"tsp_stm/stm_tb_integ.fw"
 #define FW_IMAGE_NAME_D2_Z2A			"tsp_stm/stm_z2a.fw"
 #define FW_IMAGE_NAME_D2_Z2I			"tsp_stm/stm_z2i.fw"
@@ -354,12 +771,15 @@ out:
 	return false;
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int fts_fw_update_on_probe(struct fts_ts_info *info)
 {
 	int retval = 0;
 	const struct firmware *fw_entry = NULL;
 	unsigned char *fw_data = NULL;
 	char fw_path[FTS_MAX_FW_PATH];
+<<<<<<< HEAD
 	const struct fts64_header *header;
 	unsigned char SYS_STAT[2] = {0, };
 	int tspid = 0;
@@ -387,11 +807,32 @@ int fts_fw_update_on_probe(struct fts_ts_info *info)
 	retval = request_firmware(&fw_entry, fw_path, info->dev);
 	if (retval) {
 		tsp_debug_err(true, info->dev,
+=======
+	const struct fts_header *header;
+
+	if (info->board->bringup == 1)
+		return 0;
+
+	if (info->board->firmware_name) {
+		info->firmware_name = info->board->firmware_name;
+	} else {
+		input_err(true, info->dev,"%s: firmware name does not declair in dts\n", __func__);
+		goto exit_fwload;
+	}
+
+	snprintf(fw_path, FTS_MAX_FW_PATH, "%s", info->firmware_name);
+	input_info(true, info->dev, "%s: Load firmware : %s, TSP_ID : %d\n", __func__, fw_path, info->board->tsp_id);
+
+	retval = request_firmware(&fw_entry, fw_path, info->dev);
+	if (retval) {
+		input_err(true, info->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: Firmware image %s not available\n", __func__,
 			fw_path);
 		goto done;
 	}
 
+<<<<<<< HEAD
 	if (info->digital_rev == FTS_DIGITAL_REV_1 && fw_entry->size!=(FW_IMAGE_SIZE_D1 + sizeof(struct fts64_header))) {
 		tsp_debug_err(true, info->dev,
 			"%s: Firmware image %s not available for FTS D1\n", __func__,
@@ -402,11 +843,17 @@ int fts_fw_update_on_probe(struct fts_ts_info *info)
 	if (info->digital_rev == FTS_DIGITAL_REV_2 && fw_entry->size!=(FW_IMAGE_SIZE_D2 + sizeof(struct fts64_header))) {
 		tsp_debug_err(true, info->dev,
 			"%s: Firmware image %s not available for FTS D2\n", __func__,
+=======
+	if (fw_entry->size != (FW_IMAGE_SIZE_D3 + sizeof(struct fts_header))) {
+		input_err(true, info->dev,
+			"%s: Firmware image %s not available for FTS D3\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			fw_path);
 		goto done;
 	}
 
 	fw_data = (unsigned char *)fw_entry->data;
+<<<<<<< HEAD
 	header = (struct fts64_header *)fw_data;
 
 	info->fw_version_of_bin = (fw_data[5] << 8)+fw_data[4];
@@ -448,6 +895,54 @@ done:
 	if (fw_entry)
 		release_firmware(fw_entry);
 
+=======
+	header = (struct fts_header *)fw_data;
+
+	info->fw_version_of_bin = (fw_data[5] << 8)+fw_data[4];
+	info->fw_main_version_of_bin = (header->released_ver[0] << 8) + (header->released_ver[1]);
+	info->config_version_of_bin = (fw_data[CONFIG_OFFSET_BIN_D3] << 8) + fw_data[CONFIG_OFFSET_BIN_D3 - 1];
+
+	input_info(true, info->dev,
+		"%s: [BIN] Firmware Ver: 0x%04X, Config Ver: 0x%04X, Main Ver: 0x%04X\n", __func__,
+		info->fw_version_of_bin,
+		info->config_version_of_bin,
+		info->fw_main_version_of_bin);
+
+	if (info->board->bringup == 2) {
+		input_err(true, info->dev, "%s: skip fw_update for bringup\n", __func__);
+		retval = FTS_NOT_ERROR;
+		goto done;
+	}
+
+#ifdef PAT_CONTROL
+	if ((info->fw_main_version_of_ic < info->fw_main_version_of_bin)
+		|| ((info->config_version_of_ic < info->config_version_of_bin))
+		|| ((info->fw_version_of_ic < info->fw_version_of_bin))
+		|| (info->boot_crc_check_fail == FTS_BOOT_CRC_FAIL))
+		retval = FTS_NEED_FW_UPDATE;
+	else
+		retval = FTS_NOT_ERROR;
+
+	/* ic fw ver > bin fw ver && force is false*/
+	if (retval != FTS_NEED_FW_UPDATE) {
+		/* clear nv,  forced f/w update eventhough same f/w,  then apply pat magic */
+		if (info->board->pat_function == PAT_CONTROL_FORCE_UPDATE) {
+			input_info(true, info->dev, "%s: run forced f/w update and excute autotune\n", __func__);
+		} else {
+			input_info(true, info->dev, "%s: skip fw update & nv read\n", __func__);
+			goto done;
+		}
+	}
+
+	/* pat_control - boot(true) */
+	retval = fts_fw_updater(info, fw_data, true);
+#endif
+
+done:
+	if (fw_entry)
+		release_firmware(fw_entry);
+exit_fwload:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return retval;
 }
 EXPORT_SYMBOL(fts_fw_update_on_probe);
@@ -460,18 +955,30 @@ static int fts_load_fw_from_kernel(struct fts_ts_info *info,
 	unsigned char *fw_data = NULL;
 
 	if (!fw_path) {
+<<<<<<< HEAD
 		tsp_debug_err(true, info->dev, "%s: Firmware name is not defined\n",
+=======
+		input_err(true, info->dev, "%s: Firmware name is not defined\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__);
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	tsp_debug_info(true, info->dev, "%s: Load firmware : %s\n", __func__,
+=======
+	input_info(true, info->dev, "%s: Load firmware : %s\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		 fw_path);
 
 	retval = request_firmware(&fw_entry, fw_path, info->dev);
 
 	if (retval) {
+<<<<<<< HEAD
 		tsp_debug_err(true, info->dev,
+=======
+		input_err(true, info->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: Firmware image %s not available\n", __func__,
 			fw_path);
 		goto done;
@@ -479,6 +986,7 @@ static int fts_load_fw_from_kernel(struct fts_ts_info *info,
 
 	fw_data = (unsigned char *)fw_entry->data;
 
+<<<<<<< HEAD
 	if (fts_skip_firmware_update(info, fw_data))
 		goto done;
 
@@ -499,6 +1007,19 @@ static int fts_load_fw_from_kernel(struct fts_ts_info *info,
 		enable_irq(info->irq);
 	else
 		hrtimer_start(&info->timer, ktime_set(1, 0), HRTIMER_MODE_REL);
+=======
+	disable_irq(info->irq);
+
+	info->fts_systemreset(info, 10);
+
+	/* pat_control - boot(false) */
+	retval = fts_fw_updater(info, fw_data, false);
+	if (retval)
+		input_err(true, info->dev, "%s: failed update firmware\n",
+			__func__);
+
+	enable_irq(info->irq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  done:
 	if (fw_entry)
 		release_firmware(fw_entry);
@@ -518,7 +1039,11 @@ static int fts_load_fw_from_ums(struct fts_ts_info *info)
 
 	fp = filp_open(FTS_DEFAULT_UMS_FW, O_RDONLY, S_IRUSR);
 	if (IS_ERR(fp)) {
+<<<<<<< HEAD
 		tsp_debug_err(true, info->dev, "%s: failed to open %s.\n", __func__,
+=======
+		input_err(true, info->dev, "%s: failed to open %s.\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			FTS_DEFAULT_UMS_FW);
 		error = -ENOENT;
 		goto open_err;
@@ -528,21 +1053,43 @@ static int fts_load_fw_from_ums(struct fts_ts_info *info)
 
 	if (0 < fw_size) {
 		unsigned char *fw_data;
+<<<<<<< HEAD
 		const struct fts64_header *header;
 		fw_data = kzalloc(fw_size, GFP_KERNEL);
 		nread = vfs_read(fp, (char __user *)fw_data,
 				 fw_size, &fp->f_pos);
 
 		tsp_debug_info(true, info->dev,
+=======
+		const struct fts_header *header;
+
+		fw_data = kzalloc(fw_size, GFP_KERNEL);
+		if (!fw_data) {
+			input_err(true, info->dev, "%s: failed to alloc mem\n",
+					__func__);
+			error = -ENOMEM;
+			goto alloc_err;
+		}
+
+		nread = vfs_read(fp, (char __user *)fw_data,
+				 fw_size, &fp->f_pos);
+
+		input_info(true, info->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			 "%s: start, file path %s, size %ld Bytes\n",
 			 __func__, FTS_DEFAULT_UMS_FW, fw_size);
 
 		if (nread != fw_size) {
+<<<<<<< HEAD
 			tsp_debug_err(true, info->dev,
+=======
+			input_err(true, info->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				"%s: failed to read firmware file, nread %ld Bytes\n",
 				__func__, nread);
 			error = -EIO;
 		} else {
+<<<<<<< HEAD
 			if (fts_skip_firmware_update(info, fw_data))
 				goto done;
 
@@ -574,12 +1121,36 @@ static int fts_load_fw_from_ums(struct fts_ts_info *info)
 			} else {
 				error = -1;
 				tsp_debug_err(true, info->dev,
+=======
+			header = (struct fts_header *)fw_data;
+			if (header->signature == FTSFILE_SIGNATURE) {
+
+				disable_irq(info->irq);
+
+				info->fts_systemreset(info, 10);
+
+				input_info(true, info->dev,
+					"%s: [UMS] Firmware Ver: 0x%04X, Main Version : 0x%04X\n",
+					__func__, (fw_data[5] << 8)+fw_data[4],
+					(header->released_ver[0] << 8) +
+					(header->released_ver[1]));
+
+				/* pat_control - boot(false) */
+				error = fts_fw_updater(info, fw_data, false);
+
+				enable_irq(info->irq);
+
+			} else {
+				error = -1;
+				input_err(true, info->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					 "%s: File type is not match with FTS64 file. [%8x]\n",
 					 __func__, header->signature);
 			}
 		}
 
 		if (error < 0)
+<<<<<<< HEAD
 			tsp_debug_err(true, info->dev, "%s: failed update firmware\n",
 				__func__);
 
@@ -587,6 +1158,15 @@ done:
 		kfree(fw_data);
 	}
 
+=======
+			input_err(true, info->dev, "%s: failed update firmware\n",
+				__func__);
+
+		kfree(fw_data);
+	}
+
+alloc_err:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	filp_close(fp, NULL);
 
  open_err:
@@ -600,29 +1180,49 @@ static int fts_load_fw_from_ffu(struct fts_ts_info *info)
 	const struct firmware *fw_entry = NULL;
 	unsigned char *fw_data = NULL;
 	const char *fw_path = FTS_DEFAULT_FFU_FW;
+<<<<<<< HEAD
 	const struct fts64_header *header;
 
 	if (!fw_path) {
 		tsp_debug_err(true, info->dev, "%s: Firmware name is not defined\n",
+=======
+	const struct fts_header *header;
+
+	if (!fw_path) {
+		input_err(true, info->dev, "%s: Firmware name is not defined\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__);
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	tsp_debug_info(true, info->dev, "%s: Load firmware : %s\n", __func__,
+=======
+	input_info(true, info->dev, "%s: Load firmware : %s\n", __func__,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		 fw_path);
 
 	retval = request_firmware(&fw_entry, fw_path, info->dev);
 
 	if (retval) {
+<<<<<<< HEAD
 		tsp_debug_err(true, info->dev,
+=======
+		input_err(true, info->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: Firmware image %s not available\n", __func__,
 			fw_path);
 		goto done;
 	}
 
+<<<<<<< HEAD
 	if ((info->digital_rev == FTS_DIGITAL_REV_2) &&
 		(fw_entry->size != (FW_IMAGE_SIZE_D2 + sizeof(struct fts64_header) + SIGNEDKEY_SIZE))) {
 		tsp_debug_err(true, info->dev,
+=======
+	if (fw_entry->size != (FW_IMAGE_SIZE_D3 + sizeof(struct fts_header) + SIGNEDKEY_SIZE)) {
+		input_err(true, info->dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			"%s: Unsigned firmware %s is not available, %ld\n", __func__,
 			fw_path, fw_entry->size);
 		retval = -EPERM;
@@ -630,6 +1230,7 @@ static int fts_load_fw_from_ffu(struct fts_ts_info *info)
 	}
 
 	fw_data = (unsigned char *)fw_entry->data;
+<<<<<<< HEAD
 	header = (struct fts64_header *)fw_data;
 
 	info->fw_version_of_bin = (fw_data[5] << 8)+fw_data[4];
@@ -670,6 +1271,31 @@ static int fts_load_fw_from_ffu(struct fts_ts_info *info)
 	else
 		hrtimer_start(&info->timer, ktime_set(1, 0), HRTIMER_MODE_REL);
  done:
+=======
+	header = (struct fts_header *)fw_data;
+
+	info->fw_version_of_bin = (fw_data[5] << 8)+fw_data[4];
+	info->fw_main_version_of_bin = (header->released_ver[0] << 8) + (header->released_ver[1]);
+	info->config_version_of_bin = (fw_data[CONFIG_OFFSET_BIN_D3] << 8) + fw_data[CONFIG_OFFSET_BIN_D3 - 1];
+
+	input_info(true, info->dev,
+		"%s: [FFU] Firmware Ver: 0x%04X, Config Ver: 0x%04X, Main Ver: 0x%04X\n",
+		__func__, info->fw_version_of_bin, info->config_version_of_bin,
+		info->fw_main_version_of_bin);
+
+	disable_irq(info->irq);
+
+	info->fts_systemreset(info, 10);
+
+	/* pat_control - boot(false) */
+	retval = fts_fw_updater(info, fw_data, false);
+	if (retval)
+		input_err(true, info->dev, "%s: failed update firmware\n", __func__);
+
+	enable_irq(info->irq);
+
+done:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (fw_entry)
 		release_firmware(fw_entry);
 
@@ -702,7 +1328,11 @@ int fts_fw_update_on_hidden_menu(struct fts_ts_info *info, int update_type)
 		break;
 
 	default:
+<<<<<<< HEAD
 		tsp_debug_err(true, info->dev, "%s: Not support command[%d]\n",
+=======
+		input_err(true, info->dev, "%s: Not support command[%d]\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__func__, update_type);
 		break;
 	}
@@ -710,3 +1340,7 @@ int fts_fw_update_on_hidden_menu(struct fts_ts_info *info, int update_type)
 	return retval;
 }
 EXPORT_SYMBOL(fts_fw_update_on_hidden_menu);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

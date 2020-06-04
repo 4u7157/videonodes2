@@ -209,8 +209,12 @@ extern int devm_devfreq_register_opp_notifier(struct device *dev,
 extern void devm_devfreq_unregister_opp_notifier(struct device *dev,
 						struct devfreq *devfreq);
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND) || IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_USAGE)\
 	|| IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_INTERACTIVE)
+=======
+#if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND) || IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_USAGE)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct devfreq_notifier_block {
 	struct notifier_block nb;
 	struct devfreq *df;
@@ -268,6 +272,7 @@ struct devfreq_simple_exynos_data {
 	bool en_monitoring;
 	struct devfreq_notifier_block nb;
 	struct devfreq_notifier_block nb_max;
+<<<<<<< HEAD
 };
 #endif
 
@@ -289,6 +294,8 @@ struct devfreq_simple_interactive_data {
 	int pm_qos_class_max;
 	struct devfreq_notifier_block nb;
 	struct devfreq_notifier_block nb_max;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 #endif
 

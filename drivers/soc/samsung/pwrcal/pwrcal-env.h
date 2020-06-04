@@ -9,7 +9,10 @@
 #include <linux/math64.h>
 #include <linux/smc.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <soc/samsung/ect_parser.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #else
 
@@ -23,7 +26,10 @@
 #include <kernel/timer.h>
 #include <kernel/panic.h>
 #include <compat.h>
+<<<<<<< HEAD
 #include <mach/ect_parser.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define pr_err(_msg, args...)	\
 	console_printf(0, "\033[1;31;5merror::func=%s, "_msg"\033[0m\n", \

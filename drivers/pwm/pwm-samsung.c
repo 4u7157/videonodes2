@@ -401,7 +401,11 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
 			clk_get_rate(our_chip->base_clk));
 	if (our_chip->sclk_ctrl)
 		dev_dbg(our_chip->chip.dev, "sclk at %lu\n",
+<<<<<<< HEAD
 				clk_get_rate(our_chip->sclk));
+=======
+				clk_get_rate(our_chip->base_clk));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Check to see if we are changing the clock rate of the PWM. */
 	if (chan->period_ns != period_ns) {
@@ -715,7 +719,13 @@ static int pwm_samsung_probe(struct platform_device *pdev)
 		goto chip_add_err;
 	}
 
+<<<<<<< HEAD
 	pwm_samsung_clk_disable(chip);
+=======
+#ifndef CONFIG_EXYNOS_LCD_PWM_BACKLIGHT
+	pwm_samsung_clk_disable(chip);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_CPU_IDLE
 	exynos_pm_register_notifier(&pwm_samsung_notifier_block);
 #endif

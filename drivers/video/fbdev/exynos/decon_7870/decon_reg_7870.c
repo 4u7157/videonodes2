@@ -257,6 +257,10 @@ int decon_reg_wait_linecnt_is_zero_timeout(u32 id, int dsi_idx,
 
 	if (!cnt) {
 		decon_err("wait timeout linecount is zero(%u)\n", linecnt);
+<<<<<<< HEAD
+=======
+		DISP_SS_DUMP(DISP_DUMP_LINECNT_ZERO);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EBUSY;
 	}
 
@@ -435,6 +439,7 @@ int decon_reg_stop(u32 id, enum decon_dsi_mode dsi_mode,
 			(psr->trig_mode == DECON_HW_TRIG)) {
 		decon_reg_set_trigger(id, dsi_mode, psr->trig_mode,
 				DECON_TRIG_DISABLE);
+<<<<<<< HEAD
 	}
 
 	if (decon_reg_get_stop_status(id) == 1) {
@@ -448,6 +453,23 @@ int decon_reg_stop(u32 id, enum decon_dsi_mode dsi_mode,
 			decon_reg_direct_on_off(id, 0);
 		else
 			decon_reg_per_frame_off(id);
+=======
+
+		ret = decon_reg_wait_linecnt_is_zero_timeout(id, 0, 50 * 1000);
+		if (ret)
+			goto err;
+	}
+
+	if (decon_reg_get_stop_status(id) == 1) {
+		/* timeout : 50ms */
+		/* TODO: dual DSI scenario */
+		if (psr->psr_mode == DECON_MIPI_COMMAND_MODE)
+			decon_reg_direct_on_off(id, 0);
+		else {
+			decon_reg_per_frame_off(id);
+			decon_reg_update_standalone(id);
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		/* timeout : 20ms */
 		ret = decon_reg_wait_stop_status_timeout(id, 20 * 1000);
@@ -474,6 +496,20 @@ void decon_reg_set_regs_data(u32 id, int win_idx,
 		regs->wincon = val | (WINCON_OUTSTAND_MAX_DEFAULT <<
 					WINCON_OUTSTAND_MAX_POS);
 	}
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_EXYNOS_DECON_LCD_S6E8AA5X01)
+#if defined(CONFIG_CAMERA_CIS_2P6_OBJ)
+	/* [Camera overflow w/a]
+	 * For HD or HD+ resolution and certain camera sensor,
+	 * MO setting should be done as below
+	 */
+	val = regs->wincon & (~WINCON_OUTSTAND_MAX_MASK);
+	regs->wincon = val | (WINCON_OUTSTAND_MAX_DEFAULT_HD <<
+				WINCON_OUTSTAND_MAX_POS);
+#endif
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	decon_write(id, WINCON(win_idx), regs->wincon);
 	decon_write(id, WIN_MAP(win_idx), regs->winmap);
 	if (regs->winmap & WIN_MAP_MAP) {
@@ -549,16 +585,31 @@ int decon_reg_wait_for_update_timeout(u32 id, unsigned long timeout)
 {
 	unsigned long delay_time = 100;
 	unsigned long cnt = timeout / delay_time;
+<<<<<<< HEAD
 
 	while ((decon_read(id, DECON_UPDATE) & DECON_UPDATE_STANDALONE_F) &&
 				--cnt)
 		udelay(delay_time);
+=======
+	struct decon_device *decon = get_decon_drvdata(id);
+
+	while ((decon_read(id, DECON_UPDATE) & DECON_UPDATE_STANDALONE_F) && --cnt) {
+		if (decon->pdata->psr_mode == DECON_MIPI_COMMAND_MODE && decon->ignore_vsync)
+			goto wait_exit;
+
+		udelay(delay_time);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!cnt) {
 		decon_err("timeout of updating decon registers\n");
 		return -EBUSY;
 	}
 
+<<<<<<< HEAD
+=======
+wait_exit:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 

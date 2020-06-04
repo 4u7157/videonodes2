@@ -40,6 +40,10 @@
 #include <linux/swap.h>
 #include <linux/rcupdate.h>
 #include <linux/notifier.h>
+#include <linux/delay.h>
+
+#define CREATE_TRACE_POINTS
+#include "trace/lowmemorykiller.h"
 
 #define CREATE_TRACE_POINTS
 #include "trace/lowmemorykiller.h"
@@ -60,8 +64,11 @@ static int lowmem_minfree[6] = {
 };
 static int lowmem_minfree_size = 4;
 static uint32_t lowmem_lmkcount = 0;
+<<<<<<< HEAD
 static int lmkd_count;
 static int lmkd_cricount;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static unsigned long lowmem_deathpending_timeout;
 
@@ -165,6 +172,7 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 
 		if (p->state & TASK_UNINTERRUPTIBLE) {
 			task_unlock(p);
+<<<<<<< HEAD
 			continue;
 		}
 
@@ -175,6 +183,12 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 				return SHRINK_STOP;
 			}
 			continue;
+=======
+			rcu_read_unlock();
+			/* give the system time to free up the memory */
+			msleep_interruptible(20);
+			return 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		oom_score_adj = p->signal->oom_score_adj;
 		if (oom_score_adj < min_score_adj) {
@@ -225,12 +239,21 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 			     cache_size, cache_limit,
 			     min_score_adj,
 			     free);
+<<<<<<< HEAD
+=======
+		show_mem_extra_call_notifiers();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		lowmem_deathpending_timeout = jiffies + HZ;
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		send_sig(SIGKILL, selected, 0);
 		rem += selected_tasksize;
 		lowmem_lmkcount++;
 		rcu_read_unlock();
+<<<<<<< HEAD
+=======
+		/* give the system time to free up the memory */
+		msleep_interruptible(20);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (reclaim_state)
 			reclaim_state->reclaimed_slab += selected_tasksize;
@@ -240,10 +263,13 @@ static unsigned long lowmem_scan(struct shrinker *s, struct shrink_control *sc)
 
 	lowmem_print(4, "lowmem_scan %lu, %x, return %lu\n",
 		     sc->nr_to_scan, sc->gfp_mask, rem);
+<<<<<<< HEAD
 
 	if (!rem)
 		rem = SHRINK_STOP;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return rem;
 }
 
@@ -354,8 +380,11 @@ module_param_array_named(minfree, lowmem_minfree, uint, &lowmem_minfree_size,
 			 S_IRUGO | S_IWUSR);
 module_param_named(debug_level, lowmem_debug_level, uint, S_IRUGO | S_IWUSR);
 module_param_named(lmkcount, lowmem_lmkcount, uint, S_IRUGO);
+<<<<<<< HEAD
 module_param_named(lmkd_count, lmkd_count, int, 0644);
 module_param_named(lmkd_cricount, lmkd_cricount, int, 0644);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 module_init(lowmem_init);
 module_exit(lowmem_exit);

@@ -114,7 +114,10 @@ static struct modem_ctl *create_modemctl_device(struct platform_device *pdev,
 	modemctl->msd = msd;
 
 	modemctl->phone_state = STATE_OFFLINE;
+<<<<<<< HEAD
 	modemctl->airplane_mode = 0;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	INIT_LIST_HEAD(&modemctl->modem_state_notify_list);
 	spin_lock_init(&modemctl->lock);
@@ -461,7 +464,11 @@ static int parse_dt_mbox_pdata(struct device *dev, struct device_node *np,
 	const struct property *prop;
 	const __be32 *val;
 	int nr;
+<<<<<<< HEAD
 #endif
+=======
+#endif	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (pdata->link_types != LINKTYPE(LINKDEV_SHMEM))
 		return ret;
@@ -473,6 +480,7 @@ static int parse_dt_mbox_pdata(struct device *dev, struct device_node *np,
 	}
 	pdata->mbx = mbox;
 
+<<<<<<< HEAD
 	mif_dt_read_u32 (np, "mbx_ap2cp_msg", mbox->mbx_ap2cp_msg);
 	mif_dt_read_u32 (np, "mbx_cp2ap_msg", mbox->mbx_cp2ap_msg);
 	mif_dt_read_u32 (np, "mbx_ap2cp_united_status",
@@ -481,10 +489,15 @@ static int parse_dt_mbox_pdata(struct device *dev, struct device_node *np,
 				mbox->mbx_cp2ap_status);
 
 	mif_dt_read_u32 (np, "mif,int_ap2cp_msg", mbox->int_ap2cp_msg);
+=======
+	mif_dt_read_u32 (np, "mif,int_ap2cp_msg", mbox->int_ap2cp_msg);
+	mif_dt_read_u32 (np, "mif,int_ap2cp_wakeup", mbox->int_ap2cp_wakeup);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mif_dt_read_u32 (np, "mif,int_ap2cp_status", mbox->int_ap2cp_status);
 	mif_dt_read_u32 (np, "mif,int_ap2cp_active", mbox->int_ap2cp_active);
 
 	mif_dt_read_u32 (np, "mif,irq_cp2ap_msg", mbox->irq_cp2ap_msg);
+<<<<<<< HEAD
 	mif_dt_read_u32 (np, "mif,irq_cp2ap_status", mbox->irq_cp2ap_status);
 	mif_dt_read_u32 (np, "mif,irq_cp2ap_active", mbox->irq_cp2ap_active);
 	mif_dt_read_u32 (np, "mif,irq_cp2ap_wake_lock",
@@ -509,6 +522,34 @@ static int parse_dt_mbox_pdata(struct device *dev, struct device_node *np,
 	mif_dt_read_u32 (np, "sbi_pda_active_pos", mbox->sbi_pda_active_pos);
 	mif_dt_read_u32 (np, "sbi_ap_status_mask", mbox->sbi_ap_status_mask);
 	mif_dt_read_u32 (np, "sbi_ap_status_pos", mbox->sbi_ap_status_pos);
+=======
+	mif_dt_read_u32 (np, "mif,irq_cp2ap_wakeup", mbox->irq_cp2ap_wakeup);
+	mif_dt_read_u32 (np, "mif,irq_cp2ap_status", mbox->irq_cp2ap_status);
+	mif_dt_read_u32 (np, "mif,irq_cp2ap_perf_req",
+		mbox->irq_cp2ap_perf_req);
+	mif_dt_read_u32 (np, "mif,irq_cp2ap_perf_req_cpu",
+		mbox->irq_cp2ap_perf_req_cpu);
+	mif_dt_read_u32 (np, "mif,irq_cp2ap_perf_req_mif",
+		mbox->irq_cp2ap_perf_req_mif);
+	mif_dt_read_u32 (np, "mif,irq_cp2ap_perf_req_int",
+		mbox->irq_cp2ap_perf_req_int);
+	mif_dt_read_u32 (np, "mif,irq_cp2ap_active", mbox->irq_cp2ap_active);
+
+	mif_dt_read_u32 (np, "mbx_ap2cp_msg", mbox->mbx_ap2cp_msg);
+	mif_dt_read_u32 (np, "mbx_cp2ap_msg", mbox->mbx_cp2ap_msg);
+	mif_dt_read_u32 (np, "mbx_ap2cp_wakeup", mbox->mbx_ap2cp_wakeup);
+	mif_dt_read_u32 (np, "mbx_cp2ap_wakeup", mbox->mbx_cp2ap_wakeup);
+	mif_dt_read_u32 (np, "mbx_ap2cp_status", mbox->mbx_ap2cp_status);
+	mif_dt_read_u32 (np, "mbx_cp2ap_status", mbox->mbx_cp2ap_status);
+	mif_dt_read_u32 (np, "mbx_ap2cp_active", mbox->mbx_ap2cp_active);
+	mif_dt_read_u32 (np, "mbx_cp2ap_dvfsreq", mbox->mbx_cp2ap_perf_req);
+	mif_dt_read_u32 (np, "mbx_cp2ap_dvfsreq_cpu", mbox->mbx_cp2ap_perf_req_cpu);
+	mif_dt_read_u32 (np, "mbx_cp2ap_dvfsreq_mif", mbox->mbx_cp2ap_perf_req_mif);
+	mif_dt_read_u32 (np, "mbx_cp2ap_dvfsreq_int", mbox->mbx_cp2ap_perf_req_int);
+	mif_dt_read_u32 (np, "mbx_cp2ap_active", mbox->mbx_cp2ap_active);
+	mif_dt_read_u32 (np, "mbx_ap2cp_lock_value",
+		mbox->mbx_ap2cp_lock_value);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifndef CONFIG_ECT
 	/* get AP core clock table from DT */
@@ -901,12 +942,18 @@ static int modem_suspend(struct device *pdev)
 #endif
 
 #ifdef CONFIG_LINK_DEVICE_SHMEM
+<<<<<<< HEAD
 	if (mc->airplane_mode == 0) {
 		mif_err("%s: pda_active:0\n", mc->name);
 		mbox_update_value(MCU_CP, mc->mbx_ap_status, 0,
 				mc->sbi_pda_active_mask, mc->sbi_pda_active_pos);
 		mbox_set_interrupt(MCU_CP, mc->int_pda_active);
 	}
+=======
+	mif_info("%s: pda_active:0\n", mc->name);
+	mbox_set_value(MCU_CP, mc->mbx_pda_active, 0);
+	mbox_set_interrupt(MCU_CP, mc->int_pda_active);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	evt_log(0, "%s: %s\n", FUNC, mc->name);
@@ -936,12 +983,18 @@ static int modem_resume(struct device *pdev)
 #endif
 
 #ifdef CONFIG_LINK_DEVICE_SHMEM
+<<<<<<< HEAD
 	if (mc->airplane_mode == 0) {
 		mif_err("%s: pda_active:1\n", mc->name);
 		mbox_update_value(MCU_CP, mc->mbx_ap_status, 1,
 				mc->sbi_pda_active_mask, mc->sbi_pda_active_pos);
 		mbox_set_interrupt(MCU_CP, mc->int_pda_active);
 	}
+=======
+	mif_info("%s: pda_active:1\n", mc->name);
+	mbox_set_value(MCU_CP, mc->mbx_pda_active, 1);
+	mbox_set_interrupt(MCU_CP, mc->int_pda_active);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	evt_log(0, "%s: %s\n", FUNC, mc->name);

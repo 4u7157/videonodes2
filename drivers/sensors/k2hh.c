@@ -27,7 +27,11 @@
 #include <linux/of_gpio.h>
 #include <linux/wakelock.h>
 #include <linux/regulator/consumer.h>
+<<<<<<< HEAD
 
+=======
+#include <linux/interrupt.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/sensor/sensors_core.h>
 
 #define I2C_M_WR                      0 /* for i2c Write */
@@ -43,10 +47,27 @@
 #define MAX_ACCEL_1G                  8192
 
 #define K2HH_DEFAULT_DELAY            200000000LL
+<<<<<<< HEAD
 
 #define CHIP_ID_RETRIES               3
 #define ACCEL_LOG_TIME                15 /* 15 sec */
 
+=======
+#define K2HH_MIN_DELAY                5000000LL
+
+#define CHIP_ID_RETRIES               5
+#define ACCEL_LOG_TIME                15 /* 15 sec */
+
+#define K2HH_TOP_UPPER_RIGHT          0
+#define K2HH_TOP_LOWER_RIGHT          1
+#define K2HH_TOP_LOWER_LEFT           2
+#define K2HH_TOP_UPPER_LEFT           3
+#define K2HH_BOTTOM_UPPER_RIGHT       4
+#define K2HH_BOTTOM_LOWER_RIGHT       5
+#define K2HH_BOTTOM_LOWER_LEFT        6
+#define K2HH_BOTTOM_UPPER_LEFT        7
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define K2HH_MODE_SUSPEND             0
 #define K2HH_MODE_NORMAL              1
 
@@ -79,10 +100,17 @@
 
 /* CTRL2 */
 #define CTRL2_DFC_MASK                0x60
+<<<<<<< HEAD
 #define CTRL2_DFC_50                  0x00
 #define CTRL2_DFC_100                 0x20
 #define CTRL2_DFC_9                   0x40
 #define CTRL2_DFC_400                 0x60
+=======
+#define CTRL2_DFC_50				  0x00
+#define CTRL2_DFC_100				  0x20
+#define CTRL2_DFC_9					  0x40
+#define CTRL2_DFC_400				  0x60
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* CTRL3 */
 #define CTRL3_IG1_INT1                0x08
@@ -115,20 +143,33 @@
 #define K2HH_ACC_BW_100               0x80
 #define K2HH_ACC_BW_200               0x40
 #define K2HH_ACC_BW_400               0x00
+<<<<<<< HEAD
 
 #define INT_THSX1_REG                 0x32
 #define INT_THSY1_REG                 0x33
 #define INT_THSZ1_REG                 0x34
 
+=======
+#define INT_THSX1_REG                 0x32
+#define INT_THSY1_REG                 0x33
+#define INT_THSZ1_REG                 0x34
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define K2HH_ACC_BW_SCALE_ODR_ENABLE  0x08
 #define K2HH_ACC_BW_SCALE_ODR_DISABLE 0x00
 
 #define DYNAMIC_THRESHOLD             5000
 
+<<<<<<< HEAD
 #define ENABLE_LPF_CUT_OFF_FREQ	      1
 #define ENABLE_LOG_ACCEL_MAX_OUT      1
 #if defined(ENABLE_LOG_ACCEL_MAX_OUT)
 #define ACCEL_MAX_OUTPUT              32760
+=======
+#define ENABLE_LPF_CUT_OFF_FREQ		  1
+#define ENABLE_LOG_ACCEL_MAX_OUT	  1
+#if defined(ENABLE_LOG_ACCEL_MAX_OUT)
+#define ACCEL_MAX_OUTPUT			  32760
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 enum {
@@ -158,7 +199,11 @@ struct k2hh_p {
 	struct mutex mode_mutex;
 	struct hrtimer accel_timer;
 	struct workqueue_struct *accel_wq;
+<<<<<<< HEAD
 	struct work_struct work_accel;
+=======
+	struct work_struct work;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct regulator *reg_vio;
 #ifdef CONFIG_SENSORS_K2HH_VDD
 	struct regulator *reg_vdd;
@@ -170,6 +215,11 @@ struct k2hh_p {
 	int irq1;
 	int irq_state;
 	int acc_int1;
+<<<<<<< HEAD
+=======
+	int sda_gpio;
+	int scl_gpio;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int time_count;
 
 	u8 odr;
@@ -182,6 +232,7 @@ struct k2hh_p {
 	u8 negate_x;
 	u8 negate_y;
 	u8 negate_z;
+<<<<<<< HEAD
 };
 
 #define ACC_ODR10     0x10	/*   10Hz output data rate */
@@ -191,6 +242,20 @@ struct k2hh_p {
 #define ACC_ODR400    0x50	/*  400Hz output data rate */
 #define ACC_ODR800    0x60	/*  800Hz output data rate */
 #define ACC_ODR_MASK  0X70
+=======
+	u64 old_timestamp;
+	const char *str_vdd;
+	const char *str_vio;
+};
+
+#define ACC_ODR10		0x10	/*   10Hz output data rate */
+#define ACC_ODR50		0x20	/*   50Hz output data rate */
+#define ACC_ODR100		0x30	/*  100Hz output data rate */
+#define ACC_ODR200		0x40	/*  200Hz output data rate */
+#define ACC_ODR400		0x50	/*  400Hz output data rate */
+#define ACC_ODR800		0x60	/*  800Hz output data rate */
+#define ACC_ODR_MASK		0X70
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct k2hh_acc_odr {
 	unsigned int cutoff_ms;
@@ -210,6 +275,14 @@ const struct k2hh_acc_odr k2hh_acc_odr_table[] = {
 #endif
 };
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SENSORS_LDO_CONTROL
+extern unsigned int lpcharge;
+#endif
+
+static int k2hh_regulator_onoff(struct k2hh_p *data, bool onoff);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int k2hh_i2c_read(struct k2hh_p *data,
 		unsigned char reg_addr, unsigned char *buf, unsigned int len)
 {
@@ -233,7 +306,11 @@ static int k2hh_i2c_read(struct k2hh_p *data,
 	} while (retries++ < 2);
 
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("i2c read error %d\n", ret);
+=======
+		SENSOR_ERR(" i2c read error %d\n", ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return ret;
 	}
 
@@ -262,7 +339,11 @@ static int k2hh_i2c_write(struct k2hh_p *data,
 	} while (retries++ < 2);
 
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("i2c write error %d\n", ret);
+=======
+		SENSOR_ERR(" i2c write error %d\n", ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return ret;
 	}
 
@@ -275,7 +356,12 @@ static int k2hh_read_accel_xyz(struct k2hh_p *data, struct k2hh_v *acc)
 	struct k2hh_v rawdata;
 	unsigned char buf[READ_DATA_LENTH];
 
+<<<<<<< HEAD
 	ret = k2hh_i2c_read(data, AXISDATA_REG, buf, READ_DATA_LENTH);
+=======
+	ret += k2hh_i2c_read(data, AXISDATA_REG, buf, READ_DATA_LENTH);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		goto exit;
 
@@ -283,12 +369,21 @@ static int k2hh_read_accel_xyz(struct k2hh_p *data, struct k2hh_v *acc)
 	rawdata.v[1] = ((s16) ((buf[3] << 8) | buf[2]));
 	rawdata.v[2] = ((s16) ((buf[5] << 8) | buf[4]));
 
+<<<<<<< HEAD
 	acc->v[0] = ((data->negate_x) ? (-rawdata.v[data->axis_map_x]) :
 		(rawdata.v[data->axis_map_x]));
 	acc->v[1] = ((data->negate_y) ? (-rawdata.v[data->axis_map_y]) :
 		(rawdata.v[data->axis_map_y]));
 	acc->v[2] = ((data->negate_z) ? (-rawdata.v[data->axis_map_z]) :
 		(rawdata.v[data->axis_map_z]));
+=======
+	acc->v[0] = ((data->negate_x) ? (-rawdata.v[data->axis_map_x])
+		   : (rawdata.v[data->axis_map_x]));
+	acc->v[1] = ((data->negate_y) ? (-rawdata.v[data->axis_map_y])
+		   : (rawdata.v[data->axis_map_y]));
+	acc->v[2] = ((data->negate_z) ? (-rawdata.v[data->axis_map_z])
+		   : (rawdata.v[data->axis_map_z]));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 exit:
 	return ret;
@@ -354,14 +449,21 @@ static int k2hh_set_odr(struct k2hh_p *data)
 	SENSOR_INFO("change odr %d\n", i);
 
 #if defined(ENABLE_LPF_CUT_OFF_FREQ)
+<<<<<<< HEAD
 	/* To increase LPF cut-off frequency, ODR/DFC */
+=======
+	// To increase LPF cut-off frequency, ODR/DFC
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	k2hh_i2c_read(data, CTRL2_REG, &buf, 1);
 
 	buf = (CTRL2_DFC_MASK & CTRL2_DFC_9) | ((~CTRL2_DFC_MASK) & buf);
 	k2hh_i2c_write(data, CTRL2_REG, buf);
 	SENSOR_INFO("ctrl2:%x\n", buf);
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -389,7 +491,10 @@ static int k2hh_set_bw(struct k2hh_p *data)
 
 	return ret;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int k2hh_set_hr(struct k2hh_p *data, int set)
 {
 	int ret;
@@ -412,8 +517,13 @@ static int k2hh_set_hr(struct k2hh_p *data, int set)
 #if defined(OUTPUT_ALWAYS_ANTI_ALIASED)
 		bw = K2HH_ACC_BW_SCALE_ODR_DISABLE;
 		k2hh_i2c_read(data, CTRL4_REG, &buf, 1);
+<<<<<<< HEAD
 		buf = (K2HH_ACC_BW_SCALE_ODR_MASK & bw) |
 			((~K2HH_ACC_BW_SCALE_ODR_MASK) & buf);
+=======
+		buf = (K2HH_ACC_BW_SCALE_ODR_MASK & bw)
+				| ((~K2HH_ACC_BW_SCALE_ODR_MASK) & buf);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		k2hh_i2c_write(data, CTRL4_REG, buf);
 #endif
 	}
@@ -425,6 +535,10 @@ static int k2hh_set_hr(struct k2hh_p *data, int set)
 	buf = ((K2HH_ACC_ODR_MASK & odr) | ((~K2HH_ACC_ODR_MASK) & buf));
 	ret += k2hh_i2c_write(data, CTRL1_REG, buf);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -435,7 +549,11 @@ static void k2hh_set_enable(struct k2hh_p *data, int enable)
 		      HRTIMER_MODE_REL);
 	} else {
 		hrtimer_cancel(&data->accel_timer);
+<<<<<<< HEAD
 		cancel_work_sync(&data->work_accel);
+=======
+		cancel_work_sync(&data->work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 
@@ -492,7 +610,11 @@ static int k2hh_open_calibration(struct k2hh_p *data)
 		data->caldata.y = 0;
 		data->caldata.z = 0;
 
+<<<<<<< HEAD
 		SENSOR_INFO("No Calibration\n");
+=======
+		SENSOR_ERR(" No Calibration\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		return ret;
 	}
@@ -500,7 +622,11 @@ static int k2hh_open_calibration(struct k2hh_p *data)
 	ret = cal_filp->f_op->read(cal_filp, (char *)&data->caldata.v,
 		3 * sizeof(s16), &cal_filp->f_pos);
 	if (ret != 3 * sizeof(s16)) {
+<<<<<<< HEAD
 		SENSOR_ERR("can't read the cal data\n");
+=======
+		SENSOR_ERR("Can't read the cal data\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EIO;
 	}
 
@@ -525,11 +651,19 @@ static int k2hh_do_calibrate(struct k2hh_p *data, int enable)
 	struct k2hh_v acc;
 	mm_segment_t old_fs;
 
+<<<<<<< HEAD
 	data->caldata.x = 0;
 	data->caldata.y = 0;
 	data->caldata.z = 0;
 
 	if (enable) {
+=======
+	if (enable) {
+		data->caldata.x = 0;
+		data->caldata.y = 0;
+		data->caldata.z = 0;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (atomic_read(&data->enable) == ON)
 			k2hh_set_enable(data, OFF);
 		else
@@ -558,6 +692,13 @@ static int k2hh_do_calibrate(struct k2hh_p *data, int enable)
 			data->caldata.z -= MAX_ACCEL_1G;
 		else if (data->caldata.z < 0)
 			data->caldata.z += MAX_ACCEL_1G;
+<<<<<<< HEAD
+=======
+	} else {
+		data->caldata.x = 0;
+		data->caldata.y = 0;
+		data->caldata.z = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	SENSOR_INFO("do accel calibrate %d, %d, %d\n",
@@ -569,7 +710,11 @@ static int k2hh_do_calibrate(struct k2hh_p *data, int enable)
 	cal_filp = filp_open(CALIBRATION_FILE_PATH,
 			O_CREAT | O_TRUNC | O_WRONLY, 0660);
 	if (IS_ERR(cal_filp)) {
+<<<<<<< HEAD
 		SENSOR_ERR("can't open calibration file\n");
+=======
+		SENSOR_ERR(" Can't open calibration file\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		set_fs(old_fs);
 		ret = PTR_ERR(cal_filp);
 		return ret;
@@ -578,7 +723,11 @@ static int k2hh_do_calibrate(struct k2hh_p *data, int enable)
 	ret = cal_filp->f_op->write(cal_filp, (char *)&data->caldata.v,
 		3 * sizeof(s16), &cal_filp->f_pos);
 	if (ret != 3 * sizeof(s16)) {
+<<<<<<< HEAD
 		SENSOR_ERR("can't write the caldata to file\n");
+=======
+		SENSOR_ERR(" Can't write the caldata to file\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -EIO;
 	}
 
@@ -593,8 +742,13 @@ static enum hrtimer_restart k2hh_timer_func(struct hrtimer *timer)
 	struct k2hh_p *data = container_of(timer,
 					struct k2hh_p, accel_timer);
 
+<<<<<<< HEAD
 	if (!work_pending(&data->work_accel))
 		queue_work(data->accel_wq, &data->work_accel);
+=======
+	if (!work_pending(&data->work))
+		queue_work(data->accel_wq, &data->work);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	hrtimer_forward_now(&data->accel_timer, data->poll_delay);
 
@@ -603,40 +757,103 @@ static enum hrtimer_restart k2hh_timer_func(struct hrtimer *timer)
 
 static void k2hh_work_func(struct work_struct *work)
 {
+<<<<<<< HEAD
 	struct k2hh_v acc;
 	struct k2hh_p *data = container_of(work, struct k2hh_p, work_accel);
 	int ret;
+=======
+	int ret;
+	struct k2hh_v acc;
+	struct k2hh_p *data = container_of(work, struct k2hh_p, work);
+	struct timespec ts;
+	u64 timestamp_new;
+	u64 delay = ktime_to_ns(data->poll_delay);
+	int time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = k2hh_read_accel_xyz(data, &acc);
 	if (ret < 0)
 		goto exit;
 
 #if defined(ENABLE_LOG_ACCEL_MAX_OUT)
+<<<<<<< HEAD
 	/* For debugging if happened exceptional situation */
 	if (acc.x > ACCEL_MAX_OUTPUT ||
 			acc.y > ACCEL_MAX_OUTPUT ||
 			acc.z > ACCEL_MAX_OUTPUT) {
 		unsigned char buf[4], status;
 
+=======
+	// For debugging if happened exceptional situation
+	if (acc.x > ACCEL_MAX_OUTPUT ||
+		acc.y > ACCEL_MAX_OUTPUT ||
+		acc.z > ACCEL_MAX_OUTPUT)
+	{
+		unsigned char buf[4], status;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		k2hh_i2c_read(data, CTRL1_REG, buf, 4);
 		k2hh_i2c_read(data, STATUS_REG, &status, 1);
 
 		SENSOR_INFO("MAX_OUTPUT x = %d, y = %d, z = %d\n",
+<<<<<<< HEAD
 				acc.x, acc.y, acc.z);
 		SENSOR_INFO("CTRL(20h~23h) : %X, %X, %X, %X - STATUS(27h) : %X\n",
 				buf[0], buf[1], buf[2], buf[3], status);
 	}
 #endif
 
+=======
+				acc.x, acc.y,acc.z);
+		SENSOR_INFO("CTRL(20~23) : %X, %X, %X, %X - STATUS(27h) : %X\n",
+			buf[0],buf[1],buf[2],buf[3],status);
+	}
+#endif
+
+
+	ts = ktime_to_timespec(ktime_get_boottime());
+	timestamp_new = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	data->accdata.x = acc.x - data->caldata.x;
 	data->accdata.y = acc.y - data->caldata.y;
 	data->accdata.z = acc.z - data->caldata.z;
 
+<<<<<<< HEAD
 	input_report_rel(data->input, REL_X, data->accdata.x);
 	input_report_rel(data->input, REL_Y, data->accdata.y);
 	input_report_rel(data->input, REL_Z, data->accdata.z);
 	input_sync(data->input);
 
+=======
+	if (((timestamp_new - data->old_timestamp)*10 > delay *18)\
+		&& (data->old_timestamp != 0))
+	{
+		u64 shift_timestamp = delay >> 1;
+		u64 timestamp = 0ULL;
+
+		for (timestamp = data->old_timestamp + delay; timestamp < timestamp_new - shift_timestamp; timestamp+=delay){
+			time_hi = (int)((timestamp & TIME_HI_MASK) >> TIME_HI_SHIFT);
+			time_lo = (int)(timestamp & TIME_LO_MASK);
+			input_report_rel(data->input, REL_X, data->accdata.x);
+			input_report_rel(data->input, REL_Y, data->accdata.y);
+			input_report_rel(data->input, REL_Z, data->accdata.z);
+			input_report_rel(data->input, REL_DIAL, time_hi);
+			input_report_rel(data->input, REL_MISC, time_lo);
+			input_sync(data->input);
+		}
+	}
+	time_hi = (int)((timestamp_new & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp_new & TIME_LO_MASK);
+	input_report_rel(data->input, REL_X, data->accdata.x);
+	input_report_rel(data->input, REL_Y, data->accdata.y);
+	input_report_rel(data->input, REL_Z, data->accdata.z);
+	input_report_rel(data->input, REL_DIAL, time_hi);
+	input_report_rel(data->input, REL_MISC, time_lo);
+	input_sync(data->input);
+
+	data->old_timestamp = timestamp_new;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 exit:
 	if ((ktime_to_ns(data->poll_delay) * (int64_t)data->time_count)
 		>= ((int64_t)ACCEL_LOG_TIME * NSEC_PER_SEC)) {
@@ -662,6 +879,7 @@ static ssize_t k2hh_enable_store(struct device *dev,
 	u8 enable;
 	int ret, pre_enable;
 	struct k2hh_p *data = dev_get_drvdata(dev);
+<<<<<<< HEAD
 
 	ret = kstrtou8(buf, 2, &enable);
 	if (ret) {
@@ -679,6 +897,21 @@ static ssize_t k2hh_enable_store(struct device *dev,
 			if (data->caldata.x == 0 && data->caldata.y == 0
 					&& data->caldata.z == 0)
 				k2hh_open_calibration(data);
+=======
+	data->old_timestamp = 0LL;
+	ret = kstrtou8(buf, 2, &enable);
+	if (ret) {
+		SENSOR_ERR(" Invalid Argument\n");
+		return ret;
+	}
+
+	SENSOR_INFO("new_value = %u\n",enable);
+	pre_enable = atomic_read(&data->enable);
+
+	if (enable) {
+		if (pre_enable == OFF) {
+			k2hh_open_calibration(data);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			k2hh_set_range(data, K2HH_RANGE_4G);
 			k2hh_set_bw(data);
 			k2hh_set_mode(data, K2HH_MODE_NORMAL);
@@ -687,9 +920,15 @@ static ssize_t k2hh_enable_store(struct device *dev,
 		}
 	} else {
 		if (pre_enable == ON) {
+<<<<<<< HEAD
 			atomic_set(&data->enable, OFF);
 			k2hh_set_mode(data, K2HH_MODE_SUSPEND);
 			k2hh_set_enable(data, OFF);
+=======
+			k2hh_set_enable(data, OFF);
+			atomic_set(&data->enable, OFF);
+			k2hh_set_mode(data, K2HH_MODE_SUSPEND);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -711,12 +950,25 @@ static ssize_t k2hh_delay_store(struct device *dev,
 	int ret;
 	int64_t delay;
 	struct k2hh_p *data = dev_get_drvdata(dev);
+<<<<<<< HEAD
 
 	ret = kstrtoll(buf, 10, &delay);
 	if (ret) {
 		SENSOR_ERR("Invalid Argument\n");
 		return ret;
 	}
+=======
+	data->old_timestamp = 0LL;
+	ret = kstrtoll(buf, 10, &delay);
+	if (ret) {
+		SENSOR_ERR(" Invalid Argument\n");
+		return ret;
+	}
+	if (delay > K2HH_DEFAULT_DELAY)
+		delay = K2HH_DEFAULT_DELAY;
+	else if(delay < K2HH_MIN_DELAY)
+		delay = K2HH_MIN_DELAY ;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	data->poll_delay = ns_to_ktime(delay);
 	k2hh_set_odr(data);
@@ -745,6 +997,10 @@ static struct attribute_group k2hh_attribute_group = {
 	.attrs = k2hh_attributes
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t k2hh_vendor_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -757,6 +1013,7 @@ static ssize_t k2hh_name_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%s\n", MODEL_NAME);
 }
 
+<<<<<<< HEAD
 static ssize_t k2hh_dhr_sensor_info_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -790,6 +1047,8 @@ static ssize_t k2hh_dhr_sensor_info_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "\"FULL_SCALE\":\"%uG\"\n", fs);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t k2hh_calibration_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -798,19 +1057,29 @@ static ssize_t k2hh_calibration_show(struct device *dev,
 
 	ret = k2hh_open_calibration(data);
 	if (ret < 0)
+<<<<<<< HEAD
 		SENSOR_ERR("calibration open failed(%d)\n", ret);
+=======
+		SENSOR_ERR(" calibration open failed(%d)\n", ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	SENSOR_INFO("cal data %d %d %d - ret : %d\n",
 		data->caldata.x, data->caldata.y, data->caldata.z, ret);
 
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%d %d %d %d\n", ret,
 		data->caldata.x, data->caldata.y, data->caldata.z);
+=======
+	return snprintf(buf, PAGE_SIZE, "%d %d %d %d\n", ret, data->caldata.x,
+			data->caldata.y, data->caldata.z);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static ssize_t k2hh_calibration_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t size)
 {
 	int ret;
+<<<<<<< HEAD
 	int64_t d_enable;
 	struct k2hh_p *data = dev_get_drvdata(dev);
 
@@ -821,6 +1090,18 @@ static ssize_t k2hh_calibration_store(struct device *dev,
 	ret = k2hh_do_calibrate(data, (int)d_enable);
 	if (ret < 0)
 		SENSOR_ERR("accel calibrate failed\n");
+=======
+	int64_t dEnable;
+	struct k2hh_p *data = dev_get_drvdata(dev);
+
+	ret = kstrtoll(buf, 10, &dEnable);
+	if (ret < 0)
+		return ret;
+
+	ret = k2hh_do_calibrate(data, (int)dEnable);
+	if (ret < 0)
+		SENSOR_ERR(" accel calibrate failed\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return size;
 }
@@ -843,11 +1124,16 @@ static ssize_t k2hh_lowpassfilter_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t size)
 {
 	int ret;
+<<<<<<< HEAD
 	int64_t d_enable;
+=======
+	int64_t dEnable;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct k2hh_p *data = dev_get_drvdata(dev);
 
 	SENSOR_INFO("\n");
 
+<<<<<<< HEAD
 	ret = kstrtoll(buf, 10, &d_enable);
 	if (ret < 0)
 		SENSOR_ERR("kstrtoll failed\n");
@@ -855,6 +1141,15 @@ static ssize_t k2hh_lowpassfilter_store(struct device *dev,
 	ret = k2hh_set_hr(data, d_enable);
 	if (ret < 0)
 		SENSOR_ERR("set_hr failed\n");
+=======
+	ret = kstrtoll(buf, 10, &dEnable);
+	if (ret < 0)
+		SENSOR_ERR("kstrtoll failed\n");
+
+	ret = k2hh_set_hr(data, dEnable);
+	if (ret < 0)
+		SENSOR_ERR("k303c_acc_set_hr failed\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return size;
 }
@@ -866,6 +1161,10 @@ static ssize_t k2hh_raw_data_read(struct device *dev,
 	struct k2hh_p *data = dev_get_drvdata(dev);
 
 	if (atomic_read(&data->enable) == OFF) {
+<<<<<<< HEAD
+=======
+		SENSOR_INFO(", atomic_read\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		k2hh_set_mode(data, K2HH_MODE_NORMAL);
 		msleep(20);
 		k2hh_read_accel_xyz(data, &acc);
@@ -874,8 +1173,14 @@ static ssize_t k2hh_raw_data_read(struct device *dev,
 		acc.x = acc.x - data->caldata.x;
 		acc.y = acc.y - data->caldata.y;
 		acc.z = acc.z - data->caldata.z;
+<<<<<<< HEAD
 	} else
 		acc = data->accdata;
+=======
+	} else {
+		acc = data->accdata;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return snprintf(buf, PAGE_SIZE, "%d,%d,%d\n",
 			acc.x, acc.y, acc.z);
@@ -910,7 +1215,11 @@ static ssize_t k2hh_reactive_alert_store(struct device *dev,
 		factory_mode = ON;
 		SENSOR_INFO("factory mode\n");
 	} else {
+<<<<<<< HEAD
 		SENSOR_ERR("invalid value %d\n", *buf);
+=======
+		SENSOR_ERR(" invalid value %d\n", *buf);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return -EINVAL;
 	}
 
@@ -975,7 +1284,11 @@ static ssize_t k2hh_selftest_show(struct device *dev,
 	struct k2hh_p *data = dev_get_drvdata(dev);
 	struct k2hh_v acc;
 	unsigned char temp, backup[4];
+<<<<<<< HEAD
 	int result = 1, i, retry;
+=======
+	int result = 1, i;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ssize_t ret;
 	s32 NO_ST[3] = {0, 0, 0};
 	s32 ST[3] = {0, 0, 0};
@@ -1000,16 +1313,22 @@ static ssize_t k2hh_selftest_show(struct device *dev,
 	k2hh_read_accel_xyz(data, &acc);
 
 	for (i = 0; i < 5; i++) {
+<<<<<<< HEAD
 		retry = 5;
 		do {
 			ret = k2hh_i2c_read(data, STATUS_REG, &temp, 1);
 			if (ret < 0) {
+=======
+		while (1) {
+			if (k2hh_i2c_read(data, STATUS_REG, &temp, 1) < 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				SENSOR_ERR("i2c error");
 				goto exit_status_err;
 			}
 
 			if (temp & 0x08)
 				break;
+<<<<<<< HEAD
 
 			msleep(20);
 		} while (retry-- >= 0);
@@ -1021,11 +1340,19 @@ static ssize_t k2hh_selftest_show(struct device *dev,
 
 		k2hh_read_accel_xyz(data, &acc);
 
+=======
+		}
+
+		k2hh_read_accel_xyz(data, &acc);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		NO_ST[0] += acc.x;
 		NO_ST[1] += acc.y;
 		NO_ST[2] += acc.z;
 	}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NO_ST[0] /= 5;
 	NO_ST[1] /= 5;
 	NO_ST[2] /= 5;
@@ -1037,16 +1364,22 @@ static ssize_t k2hh_selftest_show(struct device *dev,
 	k2hh_read_accel_xyz(data, &acc);
 
 	for (i = 0; i < 5; i++) {
+<<<<<<< HEAD
 		retry = 5;
 		do {
 			ret = k2hh_i2c_read(data, STATUS_REG, &temp, 1);
 			if (ret < 0) {
+=======
+		while (1) {
+			if (k2hh_i2c_read(data, STATUS_REG, &temp, 1) < 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				SENSOR_ERR("i2c error");
 				goto exit_status_err;
 			}
 
 			if (temp & 0x08)
 				break;
+<<<<<<< HEAD
 
 			msleep(20);
 		} while (retry-- >= 0);
@@ -1054,6 +1387,8 @@ static ssize_t k2hh_selftest_show(struct device *dev,
 		if (retry < 0) {
 			SENSOR_ERR("failed to update data\n");
 			goto exit_status_err;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 
 		k2hh_read_accel_xyz(data, &acc);
@@ -1072,7 +1407,11 @@ static ssize_t k2hh_selftest_show(struct device *dev,
 
 		if ((SELF_TEST_2G_MIN_LSB > ST[i])
 			|| (ST[i] > SELF_TEST_2G_MAX_LSB)) {
+<<<<<<< HEAD
 			SENSOR_ERR("%d Out of range!! (%d)\n", i, ST[i]);
+=======
+			SENSOR_ERR("%d Out of range!! (%d)\n",i, ST[i]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			result = 0;
 		}
 	}
@@ -1108,7 +1447,10 @@ exit:
 static DEVICE_ATTR(selftest, S_IRUGO, k2hh_selftest_show, NULL);
 static DEVICE_ATTR(name, S_IRUGO, k2hh_name_show, NULL);
 static DEVICE_ATTR(vendor, S_IRUGO, k2hh_vendor_show, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(dhr_sensor_info, S_IRUGO, k2hh_dhr_sensor_info_show, NULL);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(calibration, S_IRUGO | S_IWUSR | S_IWGRP,
 	k2hh_calibration_show, k2hh_calibration_store);
 static DEVICE_ATTR(lowpassfilter, S_IRUGO | S_IWUSR | S_IWGRP,
@@ -1125,7 +1467,10 @@ static struct device_attribute *sensor_attrs[] = {
 	&dev_attr_raw_data,
 	&dev_attr_reactive_alert,
 	&dev_attr_selftest,
+<<<<<<< HEAD
 	&dev_attr_dhr_sensor_info,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NULL,
 };
 
@@ -1165,7 +1510,11 @@ static int k2hh_setup_pin(struct k2hh_p *data)
 
 	ret = gpio_direction_input(data->acc_int1);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("failed to set gpio %d as input (%d)\n",
+=======
+		SENSOR_ERR(" failed to set gpio %d as input (%d)\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			data->acc_int1, ret);
 		goto exit_acc_int1;
 	}
@@ -1174,11 +1523,18 @@ static int k2hh_setup_pin(struct k2hh_p *data)
 		"reactive_wake_lock");
 
 	data->irq1 = gpio_to_irq(data->acc_int1);
+<<<<<<< HEAD
 	/* add IRQF_NO_SUSPEND option in case of Spreadtrum AP */
 	ret = request_threaded_irq(data->irq1, NULL, k2hh_irq_thread,
 		IRQF_TRIGGER_RISING | IRQF_ONESHOT, "k2hh_accel", data);
 	if (ret < 0) {
 		SENSOR_ERR("can't allocate irq.\n");
+=======
+	ret = request_threaded_irq(data->irq1, NULL, k2hh_irq_thread,
+		IRQF_TRIGGER_RISING | IRQF_ONESHOT, "k2hh_accel", data);
+	if (ret < 0) {
+		SENSOR_ERR(" can't allocate irq.\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto exit_reactive_irq;
 	}
 
@@ -1208,6 +1564,11 @@ static int k2hh_input_init(struct k2hh_p *data)
 	input_set_capability(dev, EV_REL, REL_X);
 	input_set_capability(dev, EV_REL, REL_Y);
 	input_set_capability(dev, EV_REL, REL_Z);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_DIAL);
+	input_set_capability(dev, EV_REL, REL_MISC);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_drvdata(dev, data);
 
 	ret = input_register_device(dev);
@@ -1238,21 +1599,37 @@ err_register_input_dev:
 
 static int k2hh_parse_dt(struct k2hh_p *data, struct device *dev)
 {
+<<<<<<< HEAD
 	struct device_node *d_node = dev->of_node;
+=======
+	struct device_node *dNode = dev->of_node;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enum of_gpio_flags flags;
 	int ret;
 	u32 temp;
 
+<<<<<<< HEAD
 	if (d_node == NULL)
 		return -ENODEV;
 
 	data->acc_int1 = of_get_named_gpio_flags(d_node, "k2hh,irq_gpio", 0, &flags);
+=======
+	if (dNode == NULL)
+		return -ENODEV;
+
+	data->acc_int1 = of_get_named_gpio_flags(dNode, "k2hh,irq_gpio", 0,
+		&flags);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->acc_int1 < 0) {
 		SENSOR_ERR("get acc_int1 error\n");
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(d_node, "k2hh,axis_map_x", &temp);
+=======
+	ret = of_property_read_u32(dNode, "k2hh,axis_map_x", &temp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((data->axis_map_x > 2) || (ret < 0)) {
 		SENSOR_ERR("invalid x axis_map value %u\n",
 			data->axis_map_x);
@@ -1260,7 +1637,11 @@ static int k2hh_parse_dt(struct k2hh_p *data, struct device *dev)
 	} else
 		data->axis_map_x = (u8)temp;
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(d_node, "k2hh,axis_map_y", &temp);
+=======
+	ret = of_property_read_u32(dNode, "k2hh,axis_map_y", &temp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((data->axis_map_y > 2) || (ret < 0)) {
 		SENSOR_ERR("invalid y axis_map value %u\n",
 			data->axis_map_y);
@@ -1268,7 +1649,11 @@ static int k2hh_parse_dt(struct k2hh_p *data, struct device *dev)
 	} else
 		data->axis_map_y = (u8)temp;
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(d_node, "k2hh,axis_map_z", &temp);
+=======
+	ret = of_property_read_u32(dNode, "k2hh,axis_map_z", &temp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((data->axis_map_z > 2) || (ret < 0)) {
 		SENSOR_ERR("invalid z axis_map value %u\n",
 			data->axis_map_z);
@@ -1276,7 +1661,11 @@ static int k2hh_parse_dt(struct k2hh_p *data, struct device *dev)
 	} else
 		data->axis_map_z = (u8)temp;
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(d_node, "k2hh,negate_x", &temp);
+=======
+	ret = of_property_read_u32(dNode, "k2hh,negate_x", &temp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((data->negate_x > 1) || (ret < 0)) {
 		SENSOR_ERR("invalid x axis_map value %u\n",
 			data->negate_x);
@@ -1284,7 +1673,11 @@ static int k2hh_parse_dt(struct k2hh_p *data, struct device *dev)
 	} else
 		data->negate_x = (u8)temp;
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(d_node, "k2hh,negate_y", &temp);
+=======
+	ret = of_property_read_u32(dNode, "k2hh,negate_y", &temp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((data->negate_y > 1) || (ret < 0)) {
 		SENSOR_ERR("invalid y axis_map value %u\n",
 			data->negate_y);
@@ -1292,7 +1685,11 @@ static int k2hh_parse_dt(struct k2hh_p *data, struct device *dev)
 	} else
 		data->negate_y = (u8)temp;
 
+<<<<<<< HEAD
 	ret = of_property_read_u32(d_node, "k2hh,negate_z", &temp);
+=======
+	ret = of_property_read_u32(dNode, "k2hh,negate_z", &temp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((data->negate_z > 1) || (ret < 0)) {
 		SENSOR_ERR("invalid z axis_map value %u\n",
 			data->negate_z);
@@ -1307,11 +1704,19 @@ static int k2hh_regulator_onoff(struct k2hh_p *data, bool onoff)
 {
 	int ret = 0;
 
+<<<<<<< HEAD
 	SENSOR_INFO("%s\n", (onoff) ? "on" : "off");
 
 #ifdef CONFIG_SENSORS_K2HH_VDD
 	if (!data->reg_vdd) {
 		SENSOR_INFO("VDD get regulator\n");
+=======
+	SENSOR_INFO(" %s\n", (onoff) ? "on" : "off");
+
+#ifdef CONFIG_SENSORS_K2HH_VDD
+	if (!data->reg_vdd) {
+		SENSOR_INFO(" VDD get regulator\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		data->reg_vdd = devm_regulator_get(&data->client->dev,
 			"k2hh,vdd");
 		if (IS_ERR(data->reg_vdd)) {
@@ -1333,14 +1738,19 @@ static int k2hh_regulator_onoff(struct k2hh_p *data, bool onoff)
 			ret = -ENODEV;
 			goto err_vio;
 		}
+<<<<<<< HEAD
 		if (!regulator_get_voltage(data->reg_vio))
 			regulator_set_voltage(data->reg_vio, 1800000, 1800000);
+=======
+		regulator_set_voltage(data->reg_vio, 1800000, 1800000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	if (onoff) {
 #ifdef CONFIG_SENSORS_K2HH_VDD
 		ret = regulator_enable(data->reg_vdd);
 		if (ret)
+<<<<<<< HEAD
 			SENSOR_ERR("failed to enable vdd.\n");
 #endif
 		if (!regulator_is_enabled(data->reg_vio)) {
@@ -1350,15 +1760,31 @@ static int k2hh_regulator_onoff(struct k2hh_p *data, bool onoff)
 			msleep(30);
 		} else
 			SENSOR_INFO(" VDD already enabled\n");
+=======
+			SENSOR_ERR("Failed to enable vdd.\n");
+#endif
+		ret = regulator_enable(data->reg_vio);
+		if (ret)
+			SENSOR_ERR("Failed to enable vio.\n");
+		msleep(30);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 #ifdef CONFIG_SENSORS_K2HH_VDD
 		ret = regulator_disable(data->reg_vdd);
 		if (ret)
+<<<<<<< HEAD
 			SENSOR_ERR("failed to disable vdd.\n");
 #endif
 		ret = regulator_disable(data->reg_vio);
 		if (ret)
 			SENSOR_ERR("failed to disable vio.\n");
+=======
+			SENSOR_ERR("Failed to disable vdd.\n");
+#endif
+		ret = regulator_disable(data->reg_vio);
+		if (ret)
+			SENSOR_ERR("Failed to disable vio.\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		msleep(30);
 	}
 
@@ -1366,7 +1792,11 @@ static int k2hh_regulator_onoff(struct k2hh_p *data, bool onoff)
 
 err_vio:
 #ifdef CONFIG_SENSORS_K2HH_VDD
+<<<<<<< HEAD
 	SENSOR_INFO("VDD put\n");
+=======
+	SENSOR_INFO(" VDD put\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	devm_regulator_put(data->reg_vdd);
 err_vdd:
 #endif
@@ -1379,20 +1809,35 @@ static int k2hh_probe(struct i2c_client *client,
 {
 	u8 temp;
 	int ret = -ENODEV, i;
+<<<<<<< HEAD
 	struct k2hh_p *data;
 
 	SENSOR_INFO("start!\n");
 
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
 		SENSOR_ERR("i2c_check_functionality error\n");
+=======
+	struct k2hh_p *data = NULL;
+
+	SENSOR_INFO("Probe Start!\n");
+
+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+		SENSOR_ERR(" i2c_check_functionality error\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto exit;
 	}
 
 	data = kzalloc(sizeof(struct k2hh_p), GFP_KERNEL);
 	if (data == NULL) {
+<<<<<<< HEAD
 		SENSOR_ERR("kzalloc error\n");
 		ret = -ENOMEM;
 		goto exit;
+=======
+		SENSOR_ERR(" kzalloc error\n");
+		ret = -ENOMEM;
+		goto exit_kzalloc;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	i2c_set_clientdata(client, data);
@@ -1400,15 +1845,24 @@ static int k2hh_probe(struct i2c_client *client,
 
 	ret = k2hh_parse_dt(data, &client->dev);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("of_node error\n");
+=======
+		SENSOR_ERR(" of_node error\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret = -ENODEV;
 		goto exit_of_node;
 	}
 
 	ret = k2hh_regulator_onoff(data, true);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("No regulator\n");
 		goto exit_no_regulator;
+=======
+		SENSOR_ERR(" No regulator\n");
+		goto exit_regulator_onoff;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	mutex_init(&data->mode_mutex);
@@ -1438,12 +1892,17 @@ static int k2hh_probe(struct i2c_client *client,
 	if (ret < 0)
 		goto exit_input_init;
 
+<<<<<<< HEAD
 	ret = sensors_register(&data->factory_device, data, sensor_attrs,
 		MODULE_NAME);
 	if (ret) {
 		SENSOR_ERR("failed to sensors_register (%d)\n", ret);
 		goto exit_sensor_register_failed;
 	}
+=======
+	sensors_register(&data->factory_device, data, sensor_attrs,
+		MODULE_NAME);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* accel_timer settings. we poll for light values using a timer. */
 	hrtimer_init(&data->accel_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
@@ -1455,17 +1914,29 @@ static int k2hh_probe(struct i2c_client *client,
 	data->accel_wq = create_singlethread_workqueue("accel_wq");
 	if (!data->accel_wq) {
 		ret = -ENOMEM;
+<<<<<<< HEAD
 		SENSOR_ERR("could not create workqueue\n");
+=======
+		SENSOR_ERR(" could not create workqueue\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto exit_create_workqueue;
 	}
 
 	/* this is the thread function we run on the work queue */
+<<<<<<< HEAD
 	INIT_WORK(&data->work_accel, k2hh_work_func);
+=======
+	INIT_WORK(&data->work, k2hh_work_func);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	INIT_DELAYED_WORK(&data->irq_work, k2hh_irq_work_func);
 
 	ret = k2hh_setup_pin(data);
 	if (ret < 0) {
+<<<<<<< HEAD
 		SENSOR_ERR("could not setup pin\n");
+=======
+		SENSOR_ERR(" could not setup pin\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto exit_setup_pin;
 	}
 
@@ -1475,11 +1946,18 @@ static int k2hh_probe(struct i2c_client *client,
 	data->recog_flag = OFF;
 	data->hr = CTRL1_HR_ENABLE;
 
+<<<<<<< HEAD
 	k2hh_set_odr(data);
 	k2hh_set_range(data, K2HH_RANGE_4G);
 	k2hh_set_mode(data, K2HH_MODE_SUSPEND);
 
 	SENSOR_INFO("done!\n");
+=======
+	k2hh_set_range(data, K2HH_RANGE_4G);
+	k2hh_set_mode(data, K2HH_MODE_SUSPEND);
+
+	SENSOR_INFO("Probe done!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 
@@ -1488,19 +1966,33 @@ exit_setup_pin:
 	destroy_workqueue(data->accel_wq);
 exit_create_workqueue:
 	sensors_unregister(data->factory_device, sensor_attrs);
+<<<<<<< HEAD
 exit_sensor_register_failed:
 	sysfs_remove_group(&data->input->dev.kobj, &k2hh_attribute_group);
 	sensors_remove_symlink(&data->input->dev.kobj, data->input->name);
+=======
+	sensors_remove_symlink(&data->input->dev.kobj, data->input->name);
+	sysfs_remove_group(&data->input->dev.kobj, &k2hh_attribute_group);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_unregister_device(data->input);
 exit_input_init:
 exit_read_chipid:
 	mutex_destroy(&data->mode_mutex);
 	k2hh_regulator_onoff(data, false);
+<<<<<<< HEAD
 exit_no_regulator:
 exit_of_node:
 	kfree(data);
 exit:
 	SENSOR_ERR("fail!\n");
+=======
+exit_regulator_onoff:
+exit_of_node:
+	kfree(data);
+exit_kzalloc:
+exit:
+	SENSOR_ERR(" Probe fail!\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -1548,8 +2040,13 @@ static int k2hh_suspend(struct device *dev)
 	SENSOR_INFO("\n");
 
 	if (atomic_read(&data->enable) == ON) {
+<<<<<<< HEAD
 		k2hh_set_mode(data, K2HH_MODE_SUSPEND);
 		k2hh_set_enable(data, OFF);
+=======
+		k2hh_set_enable(data, OFF);
+		k2hh_set_mode(data, K2HH_MODE_SUSPEND);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return 0;
@@ -1580,13 +2077,21 @@ static void k2hh_shutdown(struct i2c_client *client)
 	k2hh_set_mode(data, K2HH_MODE_SUSPEND);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct of_device_id k2hh_match_table[] = {
 	{ .compatible = "k2hh-i2c",},
 	{},
 };
 
 static const struct i2c_device_id k2hh_id[] = {
+<<<<<<< HEAD
 	{ "k2hh_match_table", 0 },
+=======
+	{ "k2hh-i2c", 0 },
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{ }
 };
 
@@ -1610,7 +2115,16 @@ static struct i2c_driver k2hh_driver = {
 
 static int __init k2hh_init(void)
 {
+<<<<<<< HEAD
 	return i2c_add_driver(&k2hh_driver);
+=======
+#ifdef CONFIG_SENSORS_LDO_CONTROL
+	if(lpcharge)
+		return 0;
+	else
+#endif
+		return i2c_add_driver(&k2hh_driver);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void __exit k2hh_exit(void)
@@ -1624,3 +2138,7 @@ module_exit(k2hh_exit);
 MODULE_DESCRIPTION("k2hh accelerometer sensor driver");
 MODULE_AUTHOR("Samsung Electronics");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

@@ -455,6 +455,17 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
 	if (!strncmp(bank->name, CONFIG_SENSORS_FP_SPI_GPIO, 4))
 		return;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+	if (!strncmp(bank->name, CONFIG_ESE_SECURE_GPIO, 4))
+		return;
+#endif
+#ifdef CONFIG_MST_SECURE_GPIO
+	if (!strncmp(bank->name, "gpc3", 4))
+		return;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	type = bank->type;
 	mask = (1 << type->fld_width[PINCFG_TYPE_FUNC]) - 1;
@@ -514,6 +525,17 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
 	if (!strncmp(bank->name, CONFIG_SENSORS_FP_SPI_GPIO, 4))
 		return 0;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+	if (!strncmp(bank->name, CONFIG_ESE_SECURE_GPIO, 4))
+		return 0;
+#endif
+#ifdef CONFIG_MST_SECURE_GPIO
+	if (!strncmp(bank->name, "gpc3", 4))
+		return 0;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	type = bank->type;
 
@@ -663,6 +685,17 @@ static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
 	if (!strncmp(bank->name, CONFIG_SENSORS_FP_SPI_GPIO, 4))
 		return;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+	if (!strncmp(bank->name, CONFIG_ESE_SECURE_GPIO, 4))
+		return;
+#endif
+#ifdef CONFIG_MST_SECURE_GPIO
+	if (!strncmp(bank->name, "gpc3", 4))
+		return;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	reg = bank->drvdata->virt_base + bank->pctl_offset;
 
@@ -672,12 +705,21 @@ static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
 		data |= 1 << offset;
 	writel(data, reg + type->reg_offset[PINCFG_TYPE_DAT]);
 }
+<<<<<<< HEAD
 
 static void samsung_gpio_set_value(struct gpio_chip *gc, unsigned offset, int value)
 {
 	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
 	unsigned long flags;
 
+=======
+
+static void samsung_gpio_set_value(struct gpio_chip *gc, unsigned offset, int value)
+{
+	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
+	unsigned long flags;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spin_lock_irqsave(&bank->slock, flags);
 	samsung_gpio_set(gc, offset, value);
 	spin_unlock_irqrestore(&bank->slock, flags);
@@ -1261,6 +1303,17 @@ static void samsung_pinctrl_save_regs(
 		if (!strncmp(bank->name, CONFIG_SENSORS_FP_SPI_GPIO, 4))
 			continue;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+		if (!strncmp(bank->name, CONFIG_ESE_SECURE_GPIO, 4))
+			continue;
+#endif
+#ifdef CONFIG_MST_SECURE_GPIO
+		if (!strncmp(bank->name, "gpc3", 4))
+			continue;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		for (type = 0; type < PINCFG_TYPE_NUM; type++)
 			if (widths[type])
@@ -1310,6 +1363,17 @@ static void samsung_pinctrl_restore_regs(
 		if (!strncmp(bank->name, CONFIG_SENSORS_FP_SPI_GPIO, 4))
 			continue;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+		if (!strncmp(bank->name, CONFIG_ESE_SECURE_GPIO, 4))
+			continue;
+#endif
+#ifdef CONFIG_MST_SECURE_GPIO
+		if (!strncmp(bank->name, "gpc3", 4))
+			continue;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if (widths[PINCFG_TYPE_FUNC] * bank->nr_pins > 32) {
 			/* Some banks have two config registers */
@@ -1358,6 +1422,17 @@ static void samsung_pinctrl_set_pdn_previos_state(
 		if (!strncmp(bank->name, CONFIG_SENSORS_FP_SPI_GPIO, 4))
 			continue;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+		if (!strncmp(bank->name, CONFIG_ESE_SECURE_GPIO, 4))
+			continue;
+#endif
+#ifdef CONFIG_MST_SECURE_GPIO
+		if (!strncmp(bank->name, "gpc3", 4))
+			continue;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		/* set previous state */
 		writel(0xffffffff, reg + offs[PINCFG_TYPE_CON_PDN]);
@@ -1728,6 +1803,41 @@ static void gpiodvs_check_init_gpio(struct samsung_pinctrl_drv_data *drvdata,
 		goto out;
 	}
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MST_SECURE_GPIO
+	if (!strncmp(bank->name, "gpc3", 4)){
+		init_gpio_idx++;
+		goto out;
+	}
+#endif
+
+	/* GPH ports are AUD interface (I2S, UART, PCM, SB) that should not
+	 * access when AUD power is disabled
+	 */
+	if (!strncmp(bank->name, "gph", 3)) {
+		init_gpio_idx++;
+		goto out;
+	}
+	/* both gpj0/1 are skiped for dvs test in zero project */
+#if defined(CONFIG_MST_SECURE_GPIO) && !defined(CONFIG_MST_NOBLE_TARGET) && !defined(CONFIG_MST_ZEN_TARGET)
+	if (!strncmp(bank->name, "gpj", 3)) {
+		init_gpio_idx++;
+		goto out;
+	}
+#else /* only gpj0 is skiped for dvs test in noble/zen project */
+	if (!strncmp(bank->name, "gpj0", 4)) {
+		init_gpio_idx++;
+		goto out;
+	}
+#endif
+
+#ifdef CONFIG_SOC_EXYNOS5433
+	/* xxxx group is dummy for align insted of GPF0 */
+	if (!strcmp(bank->name, "xxxx"))
+		return;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	spin_lock_irqsave(&bank->slock, flags);
 	for (type = PINCFG_TYPE_FUNC; type <= PINCFG_TYPE_PUD; type++)
@@ -1739,9 +1849,13 @@ static void gpiodvs_check_init_gpio(struct samsung_pinctrl_drv_data *drvdata,
 		gpiodvs_combine_data(data, PHONE_INIT);
 
 	gpiodvs_print_pin_state(PHONE_INIT, 0, bank->name, pin_num, data);
+<<<<<<< HEAD
 #if defined(ENABLE_SENSORS_FPRINT_SECURE) || defined(CONFIG_ESE_SECURE)
 out:
 #endif
+=======
+out:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pin_num++;
 	if (pin_num == bank->nr_pins) {
 		pin_num = 0;
@@ -1775,6 +1889,21 @@ static void gpiodvs_check_sleep_gpio(struct samsung_pinctrl_drv_data *drvdata,
 		goto out;
 	}
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+	if (!strncmp(bank->name, CONFIG_ESE_SECURE_GPIO, 4)) {
+		sleep_gpio_idx++;
+		goto out;
+	}
+#endif
+#ifdef CONFIG_MST_SECURE_GPIO
+	if (!strncmp(bank->name, "gpc3", 4)) {
+		sleep_gpio_idx++;
+		goto out;
+	}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* GPZ ports are AUD interface that should not access
 	 * when AUD power is disabled
@@ -1847,10 +1976,17 @@ static void check_gpio_status(unsigned char phonestate)
 }
 
 
+<<<<<<< HEAD
 struct gpio_dvs_t exynos7570_secgpio_dvs = {
 	.result = &gpiomap_result,
 	.check_gpio_status = check_gpio_status,
 	.get_nr_gpio = exynos7570_secgpio_get_nr_gpio,
+=======
+struct gpio_dvs_t exynos7870_secgpio_dvs = {
+	.result = &gpiomap_result,
+	.check_gpio_status = check_gpio_status,
+	.get_nr_gpio = exynos7870_secgpio_get_nr_gpio,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 #endif
 
@@ -1870,8 +2006,11 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
 		.data = (void *)exynos5420_pin_ctrl },
 	{ .compatible = "samsung,s5pv210-pinctrl",
 		.data = (void *)s5pv210_pin_ctrl },
+<<<<<<< HEAD
 	{ .compatible = "samsung,exynos7570-pinctrl",
 		.data = (void *)exynos7570_pin_ctrl },
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{ .compatible = "samsung,exynos7870-pinctrl",
 		.data = (void *)exynos7870_pin_ctrl },
 	{ .compatible = "samsung,exynos8890-pinctrl",

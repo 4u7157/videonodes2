@@ -1,11 +1,20 @@
 /*
  *  Host notify class driver
  *
+<<<<<<< HEAD
  * Copyright (C) 2011-2013 Samsung, Inc.
+=======
+ * Copyright (C) 2011-2017 Samsung, Inc.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * Author: Dongrak Shin <dongrak.shin@samsung.com>
  *
 */
 
+<<<<<<< HEAD
+=======
+ /* usb notify layer v3.0 */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifndef __LINUX_HOST_NOTIFY_H__
 #define __LINUX_HOST_NOTIFY_H__
 

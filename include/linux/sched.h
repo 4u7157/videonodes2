@@ -187,6 +187,12 @@ extern int register_hmp_task_migration_notifier(struct notifier_block *nb);
 #define HMP_UP_MIGRATION       0
 #define HMP_DOWN_MIGRATION     1
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SEC_PHCOMP
+extern unsigned long nr_running_cpu(unsigned int cpu);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 extern void calc_global_load(unsigned long ticks);
 extern void update_cpu_load_nohz(void);
@@ -789,7 +795,7 @@ struct user_struct {
 	unsigned long mq_bytes;	/* How many bytes can be allocated to mqueue? */
 #endif
 	unsigned long locked_shm; /* How many pages of mlocked shm ? */
-	unsigned long unix_inflight;	/* How many files in flight in unix sockets */
+	unsigned long unix_inflight;    /* How many files in flight in unix sockets */
 	atomic_long_t pipe_bufs;  /* how many pages are allocated in pipe buffers */
 
 #ifdef CONFIG_KEYS

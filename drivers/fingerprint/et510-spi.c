@@ -41,6 +41,14 @@
 #endif
 #include <linux/sysfs.h>
 
+<<<<<<< HEAD
+=======
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+#include <linux/pinctrl/consumer.h>
+#include "../pinctrl/core.h"
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DECLARE_BITMAP(minors, N_SPI_MINORS);
 
 static LIST_HEAD(device_list);
@@ -109,7 +117,11 @@ int etspi_Interrupt_Init(
 		}
 	}
 done:
+<<<<<<< HEAD
 	return 0;
+=======
+	return status;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int etspi_Interrupt_Free(struct etspi_data *etspi)
@@ -165,11 +177,49 @@ static void etspi_reset(struct etspi_data *etspi)
 	usleep_range(1050, 1100);
 	gpio_set_value(etspi->sleepPin, 1);
 }
+<<<<<<< HEAD
 
+=======
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+static void etspi_pin_control(struct etspi_data *etspi,
+	bool pin_set)
+{
+	int status = 0;
+	if(etspi->ldocontrol){
+		etspi->p->state = NULL;
+		if (pin_set) {
+			if (!IS_ERR(etspi->pins_poweron)) {
+				status = pinctrl_select_state(etspi->p,
+					etspi->pins_poweron);
+				if (status)
+					pr_err("%s: can't set pin default state\n",
+						__func__);
+				pr_info("%s idle\n", __func__);
+			}
+		} else {
+			if (!IS_ERR(etspi->pins_poweroff)) {
+				status = pinctrl_select_state(etspi->p,
+					etspi->pins_poweroff);
+				if (status)
+					pr_err("%s: can't set pin sleep state\n",
+						__func__);
+				pr_info("%s sleep\n", __func__);
+			}
+		}
+	}
+}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void etspi_power_control(struct etspi_data *etspi, int status)
 {
 	pr_info("%s status = %d\n", __func__, status);
 	if (status == 1) {
+<<<<<<< HEAD
+=======
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+		etspi_pin_control(etspi,1);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (etspi->ldo_pin)
 			gpio_set_value(etspi->ldo_pin, 1);
 		usleep_range(50, 100);
@@ -185,6 +235,12 @@ static void etspi_power_control(struct etspi_data *etspi, int status)
 			gpio_set_value(etspi->sleepPin, 0);
 		if (etspi->ldo_pin)
 			gpio_set_value(etspi->ldo_pin, 0);
+<<<<<<< HEAD
+=======
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+		etspi_pin_control(etspi,0);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		pr_err("%s can't support this value. %d\n", __func__, status);
 	}
@@ -230,9 +286,15 @@ static int etspi_sec_spi_prepare(struct sec_spi_info *spi_info,
 		return PTR_ERR(fp_spi_sclk);
 	}
 #if defined(CONFIG_SOC_EXYNOS7870) || defined(CONFIG_SOC_EXYNOS7880)
+<<<<<<< HEAD
 	fp_spi_dma = clk_get(NULL, "fp-spi-dma");
 	if (IS_ERR(fp_spi_dma)) {
 		pr_err("%s Can't get fp-spi-dma\n", __func__);
+=======
+	fp_spi_dma = clk_get(NULL, "apb_pclk");
+	if (IS_ERR(fp_spi_dma)) {
+		pr_err("%s Can't get apb_pclk\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return PTR_ERR(fp_spi_dma);
 	}
 #endif
@@ -275,9 +337,15 @@ static int etspi_sec_spi_unprepare(struct sec_spi_info *spi_info,
 		return PTR_ERR(fp_spi_sclk);
 	}
 #if defined(CONFIG_SOC_EXYNOS7870) || defined(CONFIG_SOC_EXYNOS7880)
+<<<<<<< HEAD
 	fp_spi_dma = clk_get(NULL, "fp-spi-dma");
 	if (IS_ERR(fp_spi_dma)) {
 		pr_err("%s Can't get fp-spi-dma\n", __func__);
+=======
+	fp_spi_dma = clk_get(NULL, "apb_pclk");
+	if (IS_ERR(fp_spi_dma)) {
+		pr_err("%s Can't get apb_pclk\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return PTR_ERR(fp_spi_dma);
 	}
 #endif
@@ -651,9 +719,13 @@ static long etspi_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 				if (retval < 0)
 					pr_err("%s: couldn't disable spi dma\n", __func__);
 #endif
+<<<<<<< HEAD
 #ifdef FEATURE_SPI_WAKELOCK
 				wake_unlock(&etspi->fp_spi_lock);
 #endif
+=======
+				wake_unlock(&etspi->fp_spi_lock);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				etspi->enabled_clk = false;
 			}
 		}
@@ -674,9 +746,13 @@ static long etspi_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 				pr_err("%s: Unable to enable spi dma\n", __func__);
 #endif
 			kfree(spi_info);
+<<<<<<< HEAD
 #ifdef FEATURE_SPI_WAKELOCK
 			wake_lock(&etspi->fp_spi_lock);
 #endif
+=======
+			wake_lock(&etspi->fp_spi_lock);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			etspi->enabled_clk = true;
 		} else
 			retval = -ENOMEM;
@@ -722,9 +798,13 @@ static long etspi_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			if (retval < 0)
 				pr_err("%s: couldn't disable spi dma\n", __func__);
 #endif
+<<<<<<< HEAD
 #ifdef FEATURE_SPI_WAKELOCK
 			wake_unlock(&etspi->fp_spi_lock);
 #endif
+=======
+			wake_unlock(&etspi->fp_spi_lock);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			etspi->enabled_clk = false;
 		}
 		break;
@@ -927,11 +1007,17 @@ int etspi_platformInit(struct etspi_data *etspi)
 	}
 
 #ifdef ENABLE_SENSORS_FPRINT_SECURE
+<<<<<<< HEAD
 #ifdef FEATURE_SPI_WAKELOCK
 	wake_lock_init(&etspi->fp_spi_lock,
 		WAKE_LOCK_SUSPEND, "etspi_wake_lock");
 #endif
 #endif
+=======
+	wake_lock_init(&etspi->fp_spi_lock,
+		WAKE_LOCK_SUSPEND, "etspi_wake_lock");
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	wake_lock_init(&etspi->fp_signal_lock,
 				WAKE_LOCK_SUSPEND, "etspi_sigwake_lock");
 
@@ -968,10 +1054,15 @@ void etspi_platformUninit(struct etspi_data *etspi)
 #endif
 #endif
 #ifdef ENABLE_SENSORS_FPRINT_SECURE
+<<<<<<< HEAD
 #ifdef FEATURE_SPI_WAKELOCK
 		wake_lock_destroy(&etspi->fp_spi_lock);
 #endif
 #endif
+=======
+		wake_lock_destroy(&etspi->fp_spi_lock);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		wake_lock_destroy(&etspi->fp_signal_lock);
 	}
 }
@@ -1028,9 +1119,49 @@ static int etspi_parse_dt(struct device *dev,
 		pr_info("%s: ldo_pin=%d\n",
 			__func__, data->ldo_pin);
 	}
+<<<<<<< HEAD
 
 	pr_info("%s is successful\n", __func__);
 	return errorno;
+=======
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+
+	if (of_property_read_u32(np, "etspi-ldocontrol",
+			&data->ldocontrol))
+			data->ldocontrol = 0;
+	
+	pr_info("%s: ldocontrol=%d\n",
+		__func__, data->ldocontrol);
+	if(data->ldocontrol){
+		data->p = pinctrl_get_select_default(dev);
+		if (IS_ERR(data->p)) {
+			errorno = -EINVAL;
+			pr_err("%s: failed pinctrl_get\n", __func__);
+			goto dt_exit;
+		}
+	
+		data->pins_poweroff = pinctrl_lookup_state(data->p, "pins_poweroff");
+		if(IS_ERR(data->pins_poweroff)) {
+			pr_err("%s : could not get pins sleep_state (%li)\n",
+				__func__, PTR_ERR(data->pins_poweroff));
+			goto fail_pinctrl_get;
+		}
+	
+		data->pins_poweron = pinctrl_lookup_state(data->p, "pins_poweron");
+		if(IS_ERR(data->pins_poweron)) {
+			pr_err("%s : could not get pins idle_state (%li)\n",
+				__func__, PTR_ERR(data->pins_poweron));
+			goto fail_pinctrl_get;
+		}
+	}
+#endif
+	pr_info("%s is successful\n", __func__);
+	return errorno;
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+fail_pinctrl_get:
+		pinctrl_put(data->p);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 dt_exit:
 	pr_err("%s is failed\n", __func__);
 	return errorno;
@@ -1083,7 +1214,19 @@ static int etspi_type_check(struct etspi_data *etspi)
 	}
 }
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_FINGERPRINT_SYSFS
+=======
+
+static ssize_t etspi_bfs_values_show(struct device *dev,
+				      struct device_attribute *attr, char *buf)
+{
+	struct etspi_data *data = dev_get_drvdata(dev);
+
+	return snprintf(buf, PAGE_SIZE, "\"FP_SPICLK\":\"%d\"\n", data->spi->max_speed_hz);
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t etspi_type_check_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
 {
@@ -1109,7 +1252,34 @@ static ssize_t etspi_adm_show(struct device *dev,
 {
 	return snprintf(buf, PAGE_SIZE, "%d\n", DETECT_ADM);
 }
+<<<<<<< HEAD
 
+=======
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+static ssize_t etspi_sysfs_power_on_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	if(g_data->ldocontrol){
+		etspi_power_control(g_data, 1);
+	}
+	return snprintf(buf, PAGE_SIZE, "0\n");
+}
+static ssize_t etspi_sysfs_power_off_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	if(g_data->ldocontrol){
+		etspi_power_control(g_data, 0);
+	}
+	return snprintf(buf, PAGE_SIZE, "0\n");
+}
+static DEVICE_ATTR(sysfs_power_on, S_IRUGO,
+	etspi_sysfs_power_on_show, NULL);
+static DEVICE_ATTR(sysfs_power_off, S_IRUGO,
+	etspi_sysfs_power_off_show, NULL);
+#endif
+static DEVICE_ATTR(bfs_values, S_IRUGO,
+	etspi_bfs_values_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(type_check, S_IRUGO,
 	etspi_type_check_show, NULL);
 static DEVICE_ATTR(vendor, S_IRUGO,
@@ -1120,13 +1290,26 @@ static DEVICE_ATTR(adm, S_IRUGO,
 	etspi_adm_show, NULL);
 
 static struct device_attribute *fp_attrs[] = {
+<<<<<<< HEAD
+=======
+	&dev_attr_bfs_values,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_type_check,
 	&dev_attr_vendor,
 	&dev_attr_name,
 	&dev_attr_adm,
+<<<<<<< HEAD
 	NULL,
 };
 #endif
+=======
+#ifndef ENABLE_SENSORS_FPRINT_SECURE
+	&dev_attr_sysfs_power_on,
+	&dev_attr_sysfs_power_off,
+#endif
+	NULL,
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void etspi_work_func_debug(struct work_struct *work)
 {
@@ -1331,14 +1514,21 @@ static int etspi_probe(struct spi_device *spi)
 		spi_set_drvdata(spi, etspi);
 	else
 		goto etspi_probe_failed;
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_FINGERPRINT_SYSFS
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	status = fingerprint_register(etspi->fp_device,
 		etspi, fp_attrs, "fingerprint");
 	if (status) {
 		pr_err("%s sysfs register failed\n", __func__);
 		goto etspi_probe_failed;
 	}
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	status = etspi_set_timer(etspi);
 	if (status)
@@ -1349,9 +1539,13 @@ static int etspi_probe(struct spi_device *spi)
 	return status;
 
 etspi_sysfs_failed:
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_FINGERPRINT_SYSFS
 		fingerprint_unregister(etspi->fp_device, fp_attrs);
 #endif
+=======
+		fingerprint_unregister(etspi->fp_device, fp_attrs);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 etspi_probe_failed:
 	device_destroy(etspi_class, etspi->devt);
 	class_destroy(etspi_class);
@@ -1385,9 +1579,13 @@ static int etspi_remove(struct spi_device *spi)
 
 		/* prevent new opens */
 		mutex_lock(&device_list_lock);
+<<<<<<< HEAD
 #ifdef CONFIG_SENSORS_FINGERPRINT_SYSFS
 		fingerprint_unregister(etspi->fp_device, fp_attrs);
 #endif
+=======
+		fingerprint_unregister(etspi->fp_device, fp_attrs);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		list_del(&etspi->device_entry);
 		device_destroy(etspi_class, etspi->devt);
 		clear_bit(MINOR(etspi->devt), minors);
@@ -1434,7 +1632,12 @@ static int etspi_pm_resume(struct device *dev)
 	if (g_data != NULL) {
 		etspi_enable_debug_timer();
 #ifndef ENABLE_SENSORS_FPRINT_SECURE
+<<<<<<< HEAD
 		etspi_power_control(g_data, 1);
+=======
+		if(!g_data->ldocontrol)
+			etspi_power_control(g_data, 1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	}
 	return 0;

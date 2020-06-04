@@ -224,12 +224,21 @@ static void da9155_set_charge_current(struct da9155_charger_data *charger,
 /* return : 0 (AFC type or High Voltage( > 6V), 1 : 5V ) */
 static int da9155_check_cable_type(unsigned int type)
 {
+<<<<<<< HEAD
 	if (type == SEC_BATTERY_CABLE_NONE)
 		return -1;
 
 	// AFC or High Voltage charger (6V > )
 	if (type == SEC_BATTERY_CABLE_9V_TA ||	\
 	    type == SEC_BATTERY_CABLE_12V_TA) {
+=======
+	if (type == POWER_SUPPLY_TYPE_BATTERY)
+		return -1;
+
+	// AFC or High Voltage charger (6V > )
+	if (type == POWER_SUPPLY_TYPE_HV_MAINS
+			|| type == POWER_SUPPLY_TYPE_HV_MAINS_12V) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 0;
 	}
 	else {
@@ -264,18 +273,31 @@ static void da9155_mode_change(struct da9155_charger_data *charger, u8 enable)
 			da9155_write_reg(charger->i2c, 0x39, 0x0);
 			da9155_write_reg(charger->i2c, DA9155_PAGE_CTRL_0, 0x0);
 		} else if (enable == DISABLE) {
+<<<<<<< HEAD
 			if((charger->prev_cable_type == SEC_BATTERY_CABLE_9V_TA ||
 				charger->prev_cable_type == SEC_BATTERY_CABLE_12V_TA) &&
 				charger->cable_type == SEC_BATTERY_CABLE_NONE)
+=======
+			if((charger->prev_cable_type == POWER_SUPPLY_TYPE_HV_MAINS ||
+				charger->prev_cable_type == POWER_SUPPLY_TYPE_HV_MAINS_12V) &&
+				charger->cable_type == POWER_SUPPLY_TYPE_BATTERY)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					return;
 
 			da9155_write_reg(charger->i2c, DA9155_PAGE_CTRL_0, 0x06);
 			da9155_write_reg(charger->i2c, 0x39, 0x05);
 			da9155_write_reg(charger->i2c, 0x11, 0x0);
+<<<<<<< HEAD
 			if(charger->prev_cable_type != SEC_BATTERY_CABLE_9V_TA &&
 				charger->prev_cable_type != SEC_BATTERY_CABLE_12V_TA &&
 				charger->prev_cable_type != SEC_BATTERY_CABLE_NONE &&
 				charger->cable_type == SEC_BATTERY_CABLE_NONE)
+=======
+			if(charger->prev_cable_type != POWER_SUPPLY_TYPE_HV_MAINS &&
+				charger->prev_cable_type != POWER_SUPPLY_TYPE_HV_MAINS_12V &&
+				charger->prev_cable_type != POWER_SUPPLY_TYPE_BATTERY &&
+				charger->cable_type == POWER_SUPPLY_TYPE_BATTERY)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					return;
 
 			da9155_write_reg(charger->i2c, 0x39, 0x0);
@@ -295,7 +317,11 @@ static irqreturn_t da9155_irq_handler(int irq, void *data)
 	if (!da9155_read_reg(charger->i2c, DA9155_EVENT_A, &event_a) &&
 			!da9155_read_reg(charger->i2c, DA9155_EVENT_B, &event_b)) {
 
+<<<<<<< HEAD
 		if ((event_b & 0x1) && (charger->cable_type != SEC_BATTERY_CABLE_NONE)) {
+=======
+		if ((event_b & 0x1) && (charger->cable_type != POWER_SUPPLY_TYPE_BATTERY)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			dev_info(charger->dev, "%s: E_RDY Event occured", __func__);
 			da9155_mode_change(charger, da9155_check_cable_type(charger->cable_type));
 			da9155_charger_initialize(charger);
@@ -318,13 +344,22 @@ static int da9155_chg_get_property(struct power_supply *psy,
 	enum power_supply_property psp, union power_supply_propval *val)
 {
 	struct da9155_charger_data *charger =
+<<<<<<< HEAD
 		power_supply_get_drvdata(psy);
+=======
+		container_of(psy, struct da9155_charger_data, psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	enum power_supply_ext_property ext_psp = psp;
 
 	switch (psp) {
 	case POWER_SUPPLY_PROP_HEALTH:
+<<<<<<< HEAD
 		if (charger->cable_type == SEC_BATTERY_CABLE_9V_TA ||
 			charger->cable_type == SEC_BATTERY_CABLE_12V_TA) {
+=======
+		if (charger->cable_type == POWER_SUPPLY_TYPE_HV_MAINS ||
+			charger->cable_type == POWER_SUPPLY_TYPE_HV_MAINS_12V) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			da9155_charger_test_read(charger);
 			val->intval = da9155_get_charger_health(charger);
 		} else
@@ -365,7 +400,11 @@ static int da9155_chg_set_property(struct power_supply *psy,
 	enum power_supply_property psp, const union power_supply_propval *val)
 {
 	struct da9155_charger_data *charger =
+<<<<<<< HEAD
 		power_supply_get_drvdata(psy);
+=======
+		container_of(psy, struct da9155_charger_data, psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	switch (psp) {
 	case POWER_SUPPLY_PROP_CHARGING_ENABLED:
@@ -382,14 +421,22 @@ static int da9155_chg_set_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_ONLINE:
 		charger->cable_type = val->intval;
+<<<<<<< HEAD
 		if (val->intval != SEC_BATTERY_CABLE_NONE) {
+=======
+		if (val->intval != POWER_SUPPLY_TYPE_BATTERY) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			da9155_mode_change(charger, da9155_check_cable_type(charger->cable_type));
 			charger->prev_cable_type = charger->cable_type;
 			da9155_charger_initialize(charger);
 			da9155_set_vindrop_vbatov(charger);
 		} else {
 			da9155_mode_change(charger, DISABLE);
+<<<<<<< HEAD
 			charger->prev_cable_type = SEC_BATTERY_CABLE_NONE;
+=======
+			charger->prev_cable_type = POWER_SUPPLY_TYPE_BATTERY;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		break;
 	case POWER_SUPPLY_PROP_VOLTAGE_MAX:
@@ -441,6 +488,7 @@ static int da9155_charger_parse_dt(struct da9155_charger_data *charger,
 	return ret;
 }
 
+<<<<<<< HEAD
 static const struct power_supply_desc da9155_charger_power_supply_desc = {
 	.name = "da9155-charger",
 	.type = POWER_SUPPLY_TYPE_UNKNOWN,
@@ -450,13 +498,18 @@ static const struct power_supply_desc da9155_charger_power_supply_desc = {
 	.set_property = da9155_chg_set_property,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int da9155_charger_probe(struct i2c_client *client,
 	const struct i2c_device_id *id)
 {
 	struct device_node *of_node = client->dev.of_node;
 	struct da9155_charger_data *charger;
 	struct da9155_charger_platform_data *pdata = client->dev.platform_data;
+<<<<<<< HEAD
 	struct power_supply_config sub_charger_cfg = {};
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret = 0;
 
 	pr_info("%s: DA9155 Charger Driver Loading\n", __func__);
@@ -484,11 +537,26 @@ static int da9155_charger_probe(struct i2c_client *client,
 	charger->pdata = pdata;
 	i2c_set_clientdata(client, charger);
 
+<<<<<<< HEAD
 	/* da9155_charger_initialize(charger); */
 	charger->cable_type = SEC_BATTERY_CABLE_NONE;
 	charger->prev_cable_type = SEC_BATTERY_CABLE_NONE;
 	sub_charger_cfg.drv_data = charger;
 	charger->psy_chg = power_supply_register(charger->dev, &da9155_charger_power_supply_desc, &sub_charger_cfg);
+=======
+	charger->psy_chg.name			= "da9155-charger";
+	charger->psy_chg.type			= POWER_SUPPLY_TYPE_UNKNOWN;
+	charger->psy_chg.get_property	= da9155_chg_get_property;
+	charger->psy_chg.set_property	= da9155_chg_set_property;
+	charger->psy_chg.properties		= da9155_charger_props;
+	charger->psy_chg.num_properties	= ARRAY_SIZE(da9155_charger_props);
+
+	/* da9155_charger_initialize(charger); */
+	charger->cable_type = POWER_SUPPLY_TYPE_BATTERY;
+	charger->prev_cable_type = POWER_SUPPLY_TYPE_BATTERY;
+
+	ret = power_supply_register(charger->dev, &charger->psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret) {
 		pr_err("%s: Failed to Register psy_chg\n", __func__);
 		ret = -1;
@@ -514,7 +582,11 @@ static int da9155_charger_probe(struct i2c_client *client,
 	return 0;
 
 err_req_irq:
+<<<<<<< HEAD
 	power_supply_unregister(charger->psy_chg);
+=======
+	power_supply_unregister(&charger->psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_power_supply_register:
 err_parse_dt:
 	kfree(pdata);
@@ -531,7 +603,11 @@ static int da9155_charger_remove(struct i2c_client *client)
 
 	if (charger->chg_irq)
 		free_irq(charger->chg_irq, charger);
+<<<<<<< HEAD
 	power_supply_unregister(charger->psy_chg);
+=======
+	power_supply_unregister(&charger->psy_chg);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_destroy(&charger->io_lock);
 	kfree(charger->pdata);
 	kfree(charger);
@@ -547,7 +623,11 @@ static void da9155_charger_shutdown(struct i2c_client *client)
 		free_irq(charger->chg_irq, charger);
 	da9155_update_reg(client, DA9155_BUCK_CONT, 0, DA9155_BUCK_EN_MASK);
 	da9155_update_reg(client, DA9155_BUCK_IOUT, 0x7D, DA9155_BUCK_ILIM_MASK);
+<<<<<<< HEAD
 	if (charger->cable_type != SEC_BATTERY_CABLE_NONE)
+=======
+	if (charger->cable_type != POWER_SUPPLY_TYPE_BATTERY)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		da9155_mode_change(charger, DISABLE);
 }
 

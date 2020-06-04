@@ -1,12 +1,22 @@
 /*
  *  drivers/usb/notify/usb_notify_sysfs.c
  *
+<<<<<<< HEAD
  * Copyright (C) 2015 Samsung, Inc.
  * Author: Dongrak Shin <dongrak.shin@samsung.com>
  *
 */
 
  /* usb notify layer v2.0 */
+=======
+ * Copyright (C) 2015-2017 Samsung, Inc.
+ * Author: Dongrak Shin <dongrak.shin@samsung.com>
+ *
+ */
+
+ /* usb notify layer v3.0 */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define pr_fmt(fmt) "usb_notify: " fmt
 
@@ -22,7 +32,13 @@
 #include <linux/string.h>
 #include "usb_notify_sysfs.h"
 
+<<<<<<< HEAD
 const char USB_HW_Param_Print[USB_CCIC_HW_PARAM_MAX][MAX_HWPARAM_STRING] = {
+=======
+#if defined(CONFIG_USB_HW_PARAM)
+const char
+usb_hw_param_print[USB_CCIC_HW_PARAM_MAX][MAX_HWPARAM_STRING] = {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{"CC_WATER"},
 	{"CC_DRY"},
 	{"CC_I2C"},
@@ -55,8 +71,15 @@ const char USB_HW_Param_Print[USB_CCIC_HW_PARAM_MAX][MAX_HWPARAM_STRING] = {
 	{"CC_DEX"},
 	{"CC_WTIME"},
 	{"CC_WVBUS"},
+<<<<<<< HEAD
 	{"CC_VER"},
 };
+=======
+	{"CC_CSHORT"},
+	{"CC_VER"},
+};
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct notify_data {
 	struct class *usb_notify_class;
@@ -65,6 +88,7 @@ struct notify_data {
 
 static struct notify_data usb_notify_data;
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
 int get_ccic_water_count(void);
 int get_ccic_dry_count(void);
@@ -77,6 +101,8 @@ unsigned long long show_ccic_version(void);
 int microusb_get_usb310_count(void);
 int microusb_get_usb210_count(void);
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int is_valid_cmd(char *cur_cmd, char *prev_cmd)
 {
@@ -159,6 +185,7 @@ invalid:
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 static unsigned long long int strtoull(char *ptr, char **end, int base)
 {
 	unsigned long long ret = 0;
@@ -191,6 +218,10 @@ out:
 }
 
 static ssize_t disable_show(struct device *dev, struct device_attribute *attr,
+=======
+static ssize_t disable_show(
+	struct device *dev, struct device_attribute *attr,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		char *buf)
 {
 	struct usb_notify_dev *udev = (struct usb_notify_dev *)
@@ -291,6 +322,36 @@ static ssize_t otg_speed_show(struct device *dev,
 	return snprintf(buf,  sizeof(speed)+1, "%s\n", speed);
 }
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_USB_HW_PARAM)
+static unsigned long long strtoull(char *ptr, char **end, int base)
+{
+	unsigned long long ret = 0;
+
+	if (base > 36)
+		goto out;
+	while (*ptr) {
+		int digit;
+
+		if (*ptr >= '0' && *ptr <= '9' && *ptr < '0' + base)
+			digit = *ptr - '0';
+		else if (*ptr >= 'A' && *ptr < 'A' + base - 10)
+			digit = *ptr - 'A' + 10;
+		else if (*ptr >= 'a' && *ptr < 'a' + base - 10)
+			digit = *ptr - 'a' + 10;
+		else
+			break;
+		ret *= base;
+		ret += digit;
+		ptr++;
+	}
+out:
+	if (end)
+		*end = (char *)ptr;
+	return ret;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t usb_hw_param_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -299,6 +360,7 @@ static ssize_t usb_hw_param_show(struct device *dev,
 	struct otg_notify *n = udev->o_notify;
 	int index, ret = 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
 	n->hw_param[USB_CCIC_WATER_INT_COUNT] += get_ccic_water_count();
 	n->hw_param[USB_CCIC_DRY_INT_COUNT] += get_ccic_dry_count();
@@ -316,6 +378,53 @@ static ssize_t usb_hw_param_show(struct device *dev,
 		ret += sprintf(buf + ret, "%llu ", n->hw_param[index]);
 	}
 	ret += sprintf(buf + ret, "%llu\n", n->hw_param[index]);
+=======
+	unsigned long long *p_param = NULL;
+#if defined(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
+	p_param = get_hw_param(n, USB_CCIC_WATER_INT_COUNT);
+	if (p_param)
+		*p_param += get_ccic_water_count();
+	p_param = get_hw_param(n, USB_CCIC_DRY_INT_COUNT);
+	if (p_param)
+		*p_param += get_ccic_dry_count();
+	p_param = get_hw_param(n, USB_CLIENT_SUPER_SPEED_COUNT);
+	if (p_param)
+		*p_param += get_usb310_count();
+	p_param = get_hw_param(n, USB_CLIENT_HIGH_SPEED_COUNT);
+	if (p_param)
+		*p_param += get_usb210_count();
+	p_param = get_hw_param(n, USB_CCIC_WATER_TIME_DURATION);
+	if (p_param)
+		*p_param += get_waterDet_duration();
+	p_param = get_hw_param(n, USB_CCIC_WATER_VBUS_COUNT);
+	if (p_param)
+		*p_param += get_waterChg_count();
+	p_param = get_hw_param(n, USB_CCIC_VERSION);
+#if defined(CONFIG_USB_NOTIFY_PROC_LOG)
+	if (p_param)
+		*p_param = show_ccic_version();
+#endif
+#else
+	p_param = get_hw_param(n, USB_CLIENT_SUPER_SPEED_COUNT);
+	if (p_param)
+		*p_param += microusb_get_usb310_count();
+	p_param = get_hw_param(n, USB_CLIENT_HIGH_SPEED_COUNT);
+	if (p_param)
+		*p_param += microusb_get_usb210_count();
+#endif
+	for (index = 0; index < USB_CCIC_HW_PARAM_MAX - 1; index++) {
+		p_param = get_hw_param(n, index);
+		if (p_param)
+			ret += sprintf(buf + ret, "%llu ", *p_param);
+		else
+			ret += sprintf(buf + ret, "0 ");
+	}
+	p_param = get_hw_param(n, index);
+	if (p_param)
+		ret += sprintf(buf + ret, "%llu\n", *p_param);
+	else
+		ret += sprintf(buf + ret, "0\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_info("%s - ret : %d\n", __func__, ret);
 
 	return ret;
@@ -328,6 +437,10 @@ static ssize_t usb_hw_param_store(
 	struct usb_notify_dev *udev = (struct usb_notify_dev *)
 		dev_get_drvdata(dev);
 	struct otg_notify *n = udev->o_notify;
+<<<<<<< HEAD
+=======
+	unsigned long long prev_hw_param[USB_CCIC_HW_PARAM_MAX] = {0, };
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	int index = 0;
 	size_t ret = -ENOMEM;
@@ -343,6 +456,7 @@ static ssize_t usb_hw_param_store(
 		goto error;
 	}
 
+<<<<<<< HEAD
 	for (index = 0; index < USB_CCIC_HW_PARAM_MAX; index++) {
 		token = strsep(&str, " ");
 		if (token)
@@ -350,6 +464,20 @@ static ssize_t usb_hw_param_store(
 		pr_info("%s - hw_param[%d] : %llu\n",
 			__func__, index, n->hw_param[index]);
 	}
+=======
+	for (index = 0; index < (USB_CCIC_HW_PARAM_MAX - 1); index++) {
+		token = strsep(&str, " ");
+		if (token)
+			prev_hw_param[index] = strtoull(token, NULL, 10);
+
+		if (!token || (prev_hw_param[index] > HWPARAM_DATA_LIMIT))
+			goto error;
+	}
+
+	for (index = 0; index < (USB_CCIC_HW_PARAM_MAX - 1); index++)
+		*(get_hw_param(n, index)) += prev_hw_param[index];
+	pr_info("%s - ret : %zu\n", __func__, ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 error:
 	return ret;
 }
@@ -361,6 +489,7 @@ static ssize_t hw_param_show(struct device *dev,
 		dev_get_drvdata(dev);
 	struct otg_notify *n = udev->o_notify;
 	int index, ret = 0;
+<<<<<<< HEAD
 	
 #ifdef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
 	n->hw_param[USB_CCIC_WATER_INT_COUNT] += get_ccic_water_count();
@@ -401,6 +530,72 @@ static ssize_t hw_param_show(struct device *dev,
 	ret += sprintf(buf + ret, "\"\n");
 	pr_info("%s - ret : %d\n", __func__, ret);
 
+=======
+
+	unsigned long long *p_param = NULL;
+#if defined(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)
+	p_param = get_hw_param(n, USB_CCIC_WATER_INT_COUNT);
+	if (p_param)
+		*p_param += get_ccic_water_count();
+	p_param = get_hw_param(n, USB_CCIC_DRY_INT_COUNT);
+	if (p_param)
+		*p_param += get_ccic_dry_count();
+	p_param = get_hw_param(n, USB_CLIENT_SUPER_SPEED_COUNT);
+	if (p_param)
+		*p_param += get_usb310_count();
+	p_param = get_hw_param(n, USB_CLIENT_HIGH_SPEED_COUNT);
+	if (p_param)
+		*p_param += get_usb210_count();
+	p_param = get_hw_param(n, USB_CCIC_WATER_TIME_DURATION);
+	if (p_param)
+		*p_param += get_waterDet_duration();
+	p_param = get_hw_param(n, USB_CCIC_WATER_VBUS_COUNT);
+	if (p_param)
+		*p_param += get_waterChg_count();
+	p_param = get_hw_param(n, USB_CCIC_VERSION);
+#if defined(CONFIG_USB_NOTIFY_PROC_LOG)
+	if (p_param)
+		*p_param = show_ccic_version();
+#endif
+#else
+	p_param = get_hw_param(n, USB_CLIENT_SUPER_SPEED_COUNT);
+	if (p_param)
+		*p_param += microusb_get_usb310_count();
+	p_param = get_hw_param(n, USB_CLIENT_HIGH_SPEED_COUNT);
+	if (p_param)
+		*p_param += microusb_get_usb210_count();
+#endif
+	for (index = 0; index < USB_CCIC_HW_PARAM_MAX-1; index++) {
+		p_param = get_hw_param(n, index);
+		if (p_param)
+			ret += sprintf(buf + ret, "\"%s\":\"%llu\",",
+				usb_hw_param_print[index], *p_param);
+		else
+			ret += sprintf(buf + ret, "\"%s\":\"0\",",
+				usb_hw_param_print[index]);
+	}
+	/* CCIC FW version */
+	ret += sprintf(buf + ret, "\"%s\":\"",
+		usb_hw_param_print[index]);
+	p_param = get_hw_param(n, index);
+	if (p_param) {
+		ret += sprintf(buf + ret, "%02X%02X%02X%02X",
+			*((unsigned char *)p_param + 3),
+			*((unsigned char *)p_param + 2),
+			*((unsigned char *)p_param + 1),
+			*((unsigned char *)p_param));
+		ret += sprintf(buf + ret, "%02X%02X%02X",
+			*((unsigned char *)p_param + 6),
+			*((unsigned char *)p_param + 5),
+			*((unsigned char *)p_param + 4));
+		ret += sprintf(buf + ret, "%02X",
+			*((unsigned char *)p_param + 7));
+		ret += sprintf(buf + ret, "\"\n");
+	} else
+		ret += sprintf(buf + ret, "0000000000000000\"\n");
+
+	pr_info("%s - ret : %d\n", __func__, ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -422,6 +617,7 @@ static ssize_t hw_param_store(
 	}
 	ret = size;
 	pr_info("%s : %s\n", __func__, str);
+<<<<<<< HEAD
 	if(!strncmp(str, "c", 1))
 		for (index = 0; index < USB_CCIC_HW_PARAM_MAX; index++) {
 			n->hw_param[index] = 0;
@@ -430,6 +626,15 @@ error:
 	return ret;
 }
 
+=======
+	if (!strncmp(str, "c", 1))
+		for (index = 0; index < USB_CCIC_HW_PARAM_MAX; index++)
+			*(get_hw_param(n, index)) = 0;
+error:
+	return ret;
+}
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_USB_OTG_WHITELIST_FOR_MDM)
 char interface_class_name[USB_CLASS_VENDOR_SPEC][4] = {
 	{"PER"},
@@ -491,9 +696,16 @@ int set_usb_whitelist_array(const char *buf, int *whitelist_array)
 
 	source = (char *)buf;
 	while ((ptr = strsep(&source, ":")) != NULL) {
+<<<<<<< HEAD
 		pr_info("%s : token = %s!\n", __func__, ptr);
 		for (i = 1; i <= USB_CLASS_VENDOR_SPEC; i++) {
 			if (!strcmp(ptr, interface_class_name[i-1]))
+=======
+		pr_info("%s token = %c%c%c!\n", __func__,
+				ptr[0], ptr[1], ptr[2]);
+		for (i = 1; i <= USB_CLASS_VENDOR_SPEC; i++) {
+			if (!strncmp(ptr, interface_class_name[i-1], 3))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				whitelist_array[i] = 1;
 		}
 	}
@@ -502,7 +714,11 @@ int set_usb_whitelist_array(const char *buf, int *whitelist_array)
 		if (whitelist_array[i])
 			valid_class_count++;
 	}
+<<<<<<< HEAD
 	pr_info("%s : valid_class_count = %d!\n", __func__, valid_class_count);
+=======
+	pr_info("%s valid_class_count = %d!\n", __func__, valid_class_count);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return valid_class_count;
 }
 
@@ -517,9 +733,13 @@ static ssize_t whitelist_for_mdm_show(struct device *dev,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	get_usb_whitelist_array(udev->whitelist_str,
 		udev->whitelist_array_for_mdm);
 	pr_info("%s : read whitelist_classes %s\n",
+=======
+	pr_info("%s read whitelist_classes %s\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		__func__, udev->whitelist_str);
 	return sprintf(buf, "%s\n", udev->whitelist_str);
 }
@@ -556,6 +776,7 @@ static ssize_t whitelist_for_mdm_store(
 	sret = sscanf(buf, "%s", disable);
 	if (sret != 1)
 		goto error1;
+<<<<<<< HEAD
 	pr_info("usb: %s buf=%s\n", __func__, disable);
 
 	init_usb_whitelist_array(udev->whitelist_array_for_mdm);
@@ -565,13 +786,35 @@ static ssize_t whitelist_for_mdm_store(
 		mdm_disable = NOTIFY_MDM_TYPE_OFF;
 	} else {
 		valid_whilelist_count = set_usb_whitelist_array(buf, udev->whitelist_array_for_mdm);
+=======
+	pr_info("%s buf=%s\n", __func__, disable);
+
+	init_usb_whitelist_array(udev->whitelist_array_for_mdm);
+	/* To active displayport, hub class must be enabled */
+	if (!strncmp(buf, "ABL", 3)) {
+		udev->whitelist_array_for_mdm[USB_CLASS_HUB] = 1;
+		mdm_disable = NOTIFY_MDM_TYPE_ON;
+	} else if (!strncmp(buf, "OFF", 3)) {
+		mdm_disable = NOTIFY_MDM_TYPE_OFF;
+	} else {
+		valid_whilelist_count =	set_usb_whitelist_array
+			(buf, udev->whitelist_array_for_mdm);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (valid_whilelist_count > 0) {
 			udev->whitelist_array_for_mdm[USB_CLASS_HUB] = 1;
 			mdm_disable = NOTIFY_MDM_TYPE_ON;
 		} else
+<<<<<<< HEAD
    mdm_disable = NOTIFY_MDM_TYPE_OFF;
 	}
 
+=======
+			mdm_disable = NOTIFY_MDM_TYPE_OFF;
+	}
+
+	strncpy(udev->whitelist_str,
+		disable, sizeof(udev->whitelist_str)-1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (udev->set_mdm) {
 		udev->set_mdm(udev, mdm_disable);
 		ret = size;
@@ -591,15 +834,29 @@ static DEVICE_ATTR(whitelist_for_mdm, 0664,
 static DEVICE_ATTR(disable, 0664, disable_show, disable_store);
 static DEVICE_ATTR(support, 0444, support_show, NULL);
 static DEVICE_ATTR(otg_speed, 0444, otg_speed_show, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(usb_hw_param, 0664, usb_hw_param_show, usb_hw_param_store);
 static DEVICE_ATTR(hw_param, 0664, hw_param_show, hw_param_store);
+=======
+#if defined(CONFIG_USB_HW_PARAM)
+static DEVICE_ATTR(usb_hw_param, 0664, usb_hw_param_show, usb_hw_param_store);
+static DEVICE_ATTR(hw_param, 0664, hw_param_show, hw_param_store);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct attribute *usb_notify_attrs[] = {
 	&dev_attr_disable.attr,
 	&dev_attr_support.attr,
 	&dev_attr_otg_speed.attr,
+<<<<<<< HEAD
 	&dev_attr_usb_hw_param.attr,
 	&dev_attr_hw_param.attr,
+=======
+#if defined(CONFIG_USB_HW_PARAM)
+	&dev_attr_usb_hw_param.attr,
+	&dev_attr_hw_param.attr,
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(CONFIG_USB_OTG_WHITELIST_FOR_MDM)
 	&dev_attr_whitelist_for_mdm.attr,
 #endif

@@ -14,9 +14,15 @@
 #include <linux/mmc/core.h>
 #include <linux/mod_devicetable.h>
 
+<<<<<<< HEAD
 #define MAX_CNT_U64     0xFFFFFFFFFF
 #define MAX_CNT_U32     0x7FFFFFFF
 #define STATUS_MASK     (R1_ERROR | R1_CC_ERROR | R1_CARD_ECC_FAILED | R1_WP_VIOLATION | R1_OUT_OF_RANGE)
+=======
+#define MAX_CNT_U64	0xFFFFFFFFFF
+#define MAX_CNT_U32	0x7FFFFFFF
+#define STATUS_MASK	(R1_ERROR | R1_CC_ERROR | R1_CARD_ECC_FAILED | R1_WP_VIOLATION | R1_OUT_OF_RANGE)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define RPMB_SWITCH_ERR		0x00000100
 
 struct mmc_cid {
@@ -126,7 +132,12 @@ struct mmc_ext_csd {
 	u8			raw_bkops_status;	/* 246 */
 	u8			raw_sectors[4];		/* 212 - 4 bytes */
 	u8			pre_eol_info;		/* 267 */
+<<<<<<< HEAD
 
+=======
+	u8			device_life_time_est_typ_a;	/* 268 */
+	u8			device_life_time_est_typ_b;	/* 269 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	unsigned int            feature_support;
 #define MMC_DISCARD_FEATURE	BIT(0)                  /* CMD38 feature */
@@ -268,6 +279,7 @@ struct mmc_part {
 };
 
 struct mmc_card_error_log {
+<<<<<<< HEAD
 	char	type[4];	// sbc, cmd, data, stop, busy
 	int	err_type;
 	u32	status;
@@ -280,6 +292,21 @@ struct mmc_card_error_log {
 	u32     wp_cnt;         // status[26] : write protection error
 	u32     oor_cnt;        // status[31] : out of range error
 	u32     rpmb_cnt;		// RPMB switch fail
+=======
+	char    type[4];        // sbc, cmd, data, stop
+	int     err_type;
+	u32     status;
+	u64     first_issue_time;
+	u64     last_issue_time;
+	u32     count;
+	u32	ge_cnt;			// status[19] : general error or unknown error_count
+	u32	cc_cnt;			// status[20] : internal card controller error_count
+	u32	ecc_cnt;		// status[21] : ecc error_count
+	u32	wp_cnt;			// status[26] : write protection error_count
+	u32	oor_cnt;		// status[31] : out of range error
+	u32	noti_cnt;		// uevent notification count
+	u32	rpmb_cnt;		// RPMB switch fail
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 /*
@@ -351,7 +378,11 @@ struct mmc_card {
 	struct mmc_part	part[MMC_NUM_PHY_PARTITION]; /* physical partitions */
 	unsigned int    nr_parts;
 	u8 en_strobe_enhanced;	/*enhanced strobe ctrl */
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct device_attribute error_count;
 	struct mmc_card_error_log err_log[10];
 };

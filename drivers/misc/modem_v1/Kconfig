@@ -84,6 +84,7 @@ config CP_SECURE_BOOT
 	bool "Support CP Secure Boot"
 	default n
 
+<<<<<<< HEAD
 config SHARE_MIF_FREQ_INFO
 	bool "Share MIF frequency information with CP"
 	default y
@@ -92,6 +93,8 @@ config MODEMIF_SHM_IPC_1MB
 	bool "Set shared memory to 1MB"
 	default n
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config GPIO_DS_DETECT
 	bool "Support GPIO DS Detect"
 	default n
@@ -100,9 +103,18 @@ config FREE_CP_RSVD_MEMORY
 	bool "Free CP reserved memory after CP goes to sleep for Wifi model"
 	depends on LINK_DEVICE_SHMEM
 	default n
+<<<<<<< HEAD
 	
 config HW_REV_DETECT
 	bool "Support HW REV Detect"
 	default n
+=======
+
+config MODEM_IF_QOS
+	bool "Implement QoS"
+	depends on LINK_DEVICE_SHMEM
+	default n
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 endmenu
 endif

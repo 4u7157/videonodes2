@@ -123,6 +123,7 @@ void s2mm001_print_reg_dump(struct s2mm001_muic_data *muic_data)
 }
 #endif
 
+<<<<<<< HEAD
 /* don't access this variable directly!! except get_switch_sel_value function.
  * you must get switch_sel value by using get_switch_sel function. */
 static int switch_sel;
@@ -143,6 +144,8 @@ static int set_switch_sel(char *str)
 }
 __setup("pmic_info=", set_switch_sel);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int s2mm001_i2c_read_byte(const struct i2c_client *client, u8 command)
 {
 	int ret;
@@ -223,6 +226,52 @@ static int s2mm001_set_gpio_usb_sel(int uart_sel)
 }
 #endif /* GPIO_USB_SEL */
 
+<<<<<<< HEAD
+=======
+static int s2mm001_set_gpio_uart_sel(int uart_sel)
+{
+	const char *mode;
+	int uart_sel_gpio = muic_pdata.gpio_uart_sel;
+	int uart_sel_val;
+	int ret;
+
+	ret = gpio_request(uart_sel_gpio, "GPIO_UART_SEL");
+	if (ret) {
+		pr_err("failed to gpio_request GPIO_UART_SEL\n");
+		return ret;
+	}
+
+	uart_sel_val = gpio_get_value(uart_sel_gpio);
+
+	pr_info("%s: uart_sel(%d), GPIO_UART_SEL(%d)=%c ->", __func__, uart_sel,
+			uart_sel_gpio, (uart_sel_val == 0 ? 'L' : 'H'));
+
+	switch (uart_sel) {
+	case MUIC_PATH_UART_AP:
+		mode = "AP_UART";
+		if (gpio_is_valid(uart_sel_gpio))
+			gpio_direction_output(uart_sel_gpio, GPIO_LEVEL_HIGH);
+		break;
+	case MUIC_PATH_UART_CP:
+		mode = "CP_UART";
+		if (gpio_is_valid(uart_sel_gpio))
+			gpio_direction_output(uart_sel_gpio, GPIO_LEVEL_LOW);
+		break;
+	default:
+		mode = "Error";
+		break;
+	}
+
+	uart_sel_val = gpio_get_value(uart_sel_gpio);
+
+	gpio_free(uart_sel_gpio);
+
+	pr_info(" %s, GPIO_UART_SEL(%d)=%c\n", mode, uart_sel_gpio,
+			(uart_sel_val == 0 ? 'L' : 'H'));
+
+	return 0;
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(GPIO_DOC_SWITCH)
 static int s2mm001_set_gpio_doc_switch(int val)
 {
@@ -287,6 +336,124 @@ static ssize_t s2mm001_muic_set_uart_en(struct device *dev,
 	return count;
 }
 
+<<<<<<< HEAD
+static ssize_t s2mm001_muic_set_usb_en(struct device *dev,
+=======
+static ssize_t s2mm001_muic_show_uart_sel(struct device *dev,
+					   struct device_attribute *attr,
+					   char *buf)
+{
+	struct s2mm001_muic_data *muic_data = dev_get_drvdata(dev);
+	struct muic_platform_data *pdata = muic_data->pdata;
+
+	switch (pdata->uart_path) {
+	case MUIC_PATH_UART_AP:
+		pr_info("%s:%s AP\n", MUIC_DEV_NAME, __func__);
+		return sprintf(buf, "AP\n");
+	case MUIC_PATH_UART_CP:
+		pr_info("%s:%s CP\n", MUIC_DEV_NAME, __func__);
+		return sprintf(buf, "CP\n");
+	default:
+		break;
+	}
+
+	pr_info("%s:%s UNKNOWN\n", MUIC_DEV_NAME, __func__);
+	return sprintf(buf, "UNKNOWN\n");
+}
+
+static int switch_to_ap_uart(struct s2mm001_muic_data *muic_data);
+static int switch_to_cp_uart(struct s2mm001_muic_data *muic_data);
+
+static ssize_t s2mm001_muic_set_uart_sel(struct device *dev,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+					  struct device_attribute *attr,
+					  const char *buf, size_t count)
+{
+	struct s2mm001_muic_data *muic_data = dev_get_drvdata(dev);
+<<<<<<< HEAD
+	muic_attached_dev_t new_dev = ATTACHED_DEV_USB_MUIC;
+
+	if (!strncasecmp(buf, "1", 1))
+		s2mm001_muic_handle_attach(muic_data, new_dev, 0, 0);
+	else if (!strncasecmp(buf, "0", 1))
+		s2mm001_muic_handle_detach(muic_data);
+	else
+		pr_warn("%s:%s invalid value\n", MUIC_DEV_NAME, __func__);
+
+	pr_info("%s:%s attached_dev(%d)\n", MUIC_DEV_NAME, __func__,
+			muic_data->attached_dev);
+=======
+	struct muic_platform_data *pdata = muic_data->pdata;
+
+	if (!strncasecmp(buf, "AP", 2)) {
+		pdata->uart_path = MUIC_PATH_UART_AP;
+		switch_to_ap_uart(muic_data);
+	} else if (!strncasecmp(buf, "CP", 2)) {
+		pdata->uart_path = MUIC_PATH_UART_CP;
+		switch_to_cp_uart(muic_data);
+	} else {
+		pr_warn("%s:%s invalid value\n", MUIC_DEV_NAME, __func__);
+	}
+
+	pr_info("%s:%s uart_path(%d)\n", MUIC_DEV_NAME, __func__,
+			pdata->uart_path);
+
+	return count;
+}
+
+static ssize_t s2mm001_muic_show_usb_sel(struct device *dev,
+					   struct device_attribute *attr,
+					   char *buf)
+{
+	struct s2mm001_muic_data *muic_data = dev_get_drvdata(dev);
+	struct muic_platform_data *pdata = muic_data->pdata;
+
+	switch (pdata->usb_path) {
+	case MUIC_PATH_USB_AP:
+		return sprintf(buf, "PDA\n");
+	case MUIC_PATH_USB_CP:
+		return sprintf(buf, "MODEM\n");
+	default:
+		break;
+	}
+
+	pr_info("%s:%s UNKNOWN\n", MUIC_DEV_NAME, __func__);
+	return sprintf(buf, "UNKNOWN\n");
+}
+
+static ssize_t s2mm001_muic_set_usb_sel(struct device *dev,
+					  struct device_attribute *attr,
+					  const char *buf, size_t count)
+{
+	struct s2mm001_muic_data *muic_data = dev_get_drvdata(dev);
+	struct muic_platform_data *pdata = muic_data->pdata;
+
+	if (!strncasecmp(buf, "PDA", 3))
+		pdata->usb_path = MUIC_PATH_USB_AP;
+	else if (!strncasecmp(buf, "MODEM", 5))
+		pdata->usb_path = MUIC_PATH_USB_CP;
+	else
+		pr_warn("%s:%s invalid value\n", MUIC_DEV_NAME, __func__);
+
+	pr_info("%s:%s usb_path(%d)\n", MUIC_DEV_NAME, __func__,
+			pdata->usb_path);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+
+	return count;
+}
+
+static ssize_t s2mm001_muic_show_usb_en(struct device *dev,
+					   struct device_attribute *attr,
+					   char *buf)
+{
+	struct s2mm001_muic_data *muic_data = dev_get_drvdata(dev);
+
+	return sprintf(buf, "%s:%s attached_dev = %d\n",
+		MUIC_DEV_NAME, __func__, muic_data->attached_dev);
+}
+
+<<<<<<< HEAD
+=======
 static ssize_t s2mm001_muic_set_usb_en(struct device *dev,
 					  struct device_attribute *attr,
 					  const char *buf, size_t count)
@@ -307,16 +474,7 @@ static ssize_t s2mm001_muic_set_usb_en(struct device *dev,
 	return count;
 }
 
-static ssize_t s2mm001_muic_show_usb_en(struct device *dev,
-					   struct device_attribute *attr,
-					   char *buf)
-{
-	struct s2mm001_muic_data *muic_data = dev_get_drvdata(dev);
-
-	return sprintf(buf, "%s:%s attached_dev = %d\n",
-		MUIC_DEV_NAME, __func__, muic_data->attached_dev);
-}
-
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t s2mm001_muic_show_adc(struct device *dev,
 				      struct device_attribute *attr, char *buf)
 {
@@ -587,6 +745,13 @@ static ssize_t s2mm001_muic_set_apo_factory(struct device *dev,
 
 static DEVICE_ATTR(uart_en, 0664, s2mm001_muic_show_uart_en,
 					s2mm001_muic_set_uart_en);
+<<<<<<< HEAD
+=======
+static DEVICE_ATTR(uart_sel, 0664, s2mm001_muic_show_uart_sel,
+		s2mm001_muic_set_uart_sel);
+static DEVICE_ATTR(usb_sel, 0664,
+		s2mm001_muic_show_usb_sel, s2mm001_muic_set_usb_sel);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static DEVICE_ATTR(adc, 0664, s2mm001_muic_show_adc, NULL);
 #ifdef DEBUG_MUIC
 static DEVICE_ATTR(mansw1, 0664, s2mm001_muic_show_mansw1, NULL);
@@ -611,6 +776,11 @@ static DEVICE_ATTR(usb_en, 0664,
 
 static struct attribute *s2mm001_muic_attributes[] = {
 	&dev_attr_uart_en.attr,
+<<<<<<< HEAD
+=======
+	&dev_attr_uart_sel.attr,
+	&dev_attr_usb_sel.attr,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_adc.attr,
 #ifdef DEBUG_MUIC
 	&dev_attr_mansw1.attr,
@@ -1976,6 +2146,12 @@ static int s2mm001_muic_probe(struct i2c_client *i2c,
 	muic_data->i2c = i2c;
 	i2c_set_clientdata(i2c, muic_data);
 
+<<<<<<< HEAD
+=======
+	if (muic_pdata.gpio_uart_sel)
+		muic_pdata.set_gpio_uart_sel = s2mm001_set_gpio_uart_sel;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (muic_data->pdata->init_gpio_cb)
 		ret = muic_data->pdata->init_gpio_cb(get_switch_sel());
 	if (ret) {

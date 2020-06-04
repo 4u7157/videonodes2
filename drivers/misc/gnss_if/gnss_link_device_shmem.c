@@ -42,6 +42,7 @@
 
 struct shmem_conf shmem_conf;
 
+<<<<<<< HEAD
 void gnss_write_reg(struct gnss_shared_reg *gnss_reg, u32 value)
 {
 	if (gnss_reg) {
@@ -87,6 +88,8 @@ u32 gnss_read_reg(struct gnss_shared_reg *gnss_reg)
 	return ret;
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**
  * recv_int2ap
  * @shmd: pointer to an instance of shmem_link_device structure
@@ -105,7 +108,11 @@ static inline u16 recv_int2ap(struct shmem_link_device *shmd)
  */
 static inline void send_int2gnss(struct shmem_link_device *shmd, u16 mask)
 {
+<<<<<<< HEAD
 	gnss_write_reg(shmd->reg[GNSS_REG_TX_IPC_MSG], mask);
+=======
+	mbox_set_value(MCU_GNSS, shmd->reg_tx_ipc_msg, mask);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mbox_set_interrupt(MCU_GNSS, shmd->int_ap2gnss_ipc_msg);
 }
 
@@ -637,6 +644,7 @@ static int shmem_send(struct link_device *ld, struct io_device *iod,
 	return len;
 }
 
+<<<<<<< HEAD
 static void shmem_remap_ipc_region(struct shmem_link_device *shmd)
 {
 	struct shmem_ipc_device *dev;
@@ -652,10 +660,22 @@ static void shmem_remap_ipc_region(struct shmem_link_device *shmd)
 
 	shmd->ipc_reg_cnt = gnss->ipc_reg_cnt;
 	shmd->reg = gnss->reg;
+=======
+static void shmem_remap_2mb_ipc_region(struct shmem_link_device *shmd)
+{
+	struct shmem_2mb_phys_map *map;
+	struct shmem_ipc_device *dev;
+	struct gnss_data *gnss;
+
+	gnss = shmd->ld.mdm_data;
+
+	map = (struct shmem_2mb_phys_map *)shmd->base;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* FMT */
 	dev = &shmd->ipc_map.dev;
 
+<<<<<<< HEAD
 	sh_reg_size = shmd->ipc_reg_cnt * sizeof(u32);
 	rx_size = shmd->size / 2;
 	tx_size = shmd->size / 2 - sh_reg_size;
@@ -679,6 +699,13 @@ static void shmem_remap_ipc_region(struct shmem_link_device *shmd)
 			}
 		}
 	}
+=======
+	dev->txq.buff = (u8 __iomem *)&map->fmt_tx_buff[0];
+	dev->txq.size = SHM_2M_FMT_TX_BUFF_SZ;
+
+	dev->rxq.buff = (u8 __iomem *)&map->fmt_rx_buff[0];
+	dev->rxq.size = SHM_2M_FMT_RX_BUFF_SZ;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int shmem_init_ipc_map(struct shmem_link_device *shmd)
@@ -686,13 +713,20 @@ static int shmem_init_ipc_map(struct shmem_link_device *shmd)
 	struct gnss_data *gnss = shmd->ld.mdm_data;
 	int i;
 
+<<<<<<< HEAD
 	shmem_remap_ipc_region(shmd);
+=======
+	shmem_remap_2mb_ipc_region(shmd);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	memset(shmd->base, 0, shmd->size);
 
 	shmd->dev = &shmd->ipc_map.dev;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Retrieve SHMEM MBOX#, IRQ#, etc. */
 	shmd->int_ap2gnss_bcmd = gnss->mbx->int_ap2gnss_bcmd;
 	shmd->int_ap2gnss_ipc_msg = gnss->mbx->int_ap2gnss_ipc_msg;
@@ -704,6 +738,21 @@ static int shmem_init_ipc_map(struct shmem_link_device *shmd)
 		shmd->reg_bcmd_ctrl[i] = gnss->mbx->reg_bcmd_ctrl[i];
 	}
 
+<<<<<<< HEAD
+=======
+	shmd->reg_tx_ipc_msg = gnss->mbx->reg_tx_ipc_msg;
+	shmd->reg_rx_ipc_msg = gnss->mbx->reg_rx_ipc_msg;
+
+	shmd->reg_rx_head = gnss->mbx->reg_rx_head;
+	shmd->reg_rx_tail = gnss->mbx->reg_rx_tail;
+	shmd->reg_tx_head = gnss->mbx->reg_tx_head;
+	shmd->reg_tx_tail = gnss->mbx->reg_tx_tail;
+
+	for (i = 0; i < FAULT_INFO_COUNT; i++) {
+		shmd->reg_fault_info[i] = gnss->mbx->reg_fault_info[i];
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -807,7 +856,11 @@ static int __init gnss_if_reserved_mem_setup(struct reserved_mem *remem)
 
    return 0;
 }
+<<<<<<< HEAD
 RESERVEDMEM_OF_DECLARE(gnss_if, "exynos,gnss_if", gnss_if_reserved_mem_setup);
+=======
+RESERVEDMEM_OF_DECLARE(gnss_if, "exynos7870,gnss_if", gnss_if_reserved_mem_setup);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 struct link_device *gnss_shmem_create_link_device(struct platform_device *pdev)
@@ -866,6 +919,7 @@ struct link_device *gnss_shmem_create_link_device(struct platform_device *pdev)
 	gif_err("%s: gnss phys_addr:0x%08X virt_addr:0x%p size: %d\n", ld->name,
 		gnss->shmem_base, gnss->gnss_base, gnss->ipcmem_offset);
 
+<<<<<<< HEAD
 	/* Create fault info area */
 	if (gnss->fault_info.device == GNSS_IPC_SHMEM) {
 		gnss->fault_info.value.addr = gnss_shm_request_region(
@@ -876,6 +930,8 @@ struct link_device *gnss_shmem_create_link_device(struct platform_device *pdev)
 			gnss->fault_info.value.addr, gnss->fault_info.size);
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	shmd->start = gnss->shmem_base + gnss->ipcmem_offset;
 	shmd->size = gnss->ipc_size;
 	shmd->base = gnss_shm_request_region(shmd->start, shmd->size);
@@ -941,6 +997,10 @@ struct link_device *gnss_shmem_create_link_device(struct platform_device *pdev)
 
 error:
 	gif_err("xxx\n");
+<<<<<<< HEAD
 	devm_kfree(dev, shmd);
+=======
+	kfree(shmd);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return NULL;
 }

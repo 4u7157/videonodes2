@@ -183,6 +183,11 @@ struct lis2ds_data {
 	struct mutex mutex_enable;
 
 	struct regulator *reg_vdd;
+<<<<<<< HEAD
+=======
+
+	int lis2ds_ldo_pin;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 int lis2ds_common_probe(struct lis2ds_data *cdata, int irq, u16 bustype);

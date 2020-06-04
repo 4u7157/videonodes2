@@ -22,6 +22,10 @@ struct tee_object;
 int mc_admin_init(struct cdev *cdev, int (*tee_start_cb)(void),
 		  void (*tee_stop_cb)(void));
 void mc_admin_exit(void);
+<<<<<<< HEAD
+=======
+bool mc_is_admin_tgid(pid_t tgid);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct tee_object *tee_object_select(const struct mc_uuid_t *uuid);
 struct tee_object *tee_object_get(const struct mc_uuid_t *uuid, bool is_gp);

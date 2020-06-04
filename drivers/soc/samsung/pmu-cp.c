@@ -7,7 +7,10 @@
 #include <linux/clk.h>
 #include <linux/regmap.h>
 #include <linux/smc.h>
+<<<<<<< HEAD
 #include <linux/shm_ipc.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <soc/samsung/exynos-pmu.h>
 #include <soc/samsung/pmu-cp.h>
 
@@ -15,6 +18,7 @@
 static u32 exynos_smc_read(enum cp_control reg)
 {
 	u32 cp_ctrl;
+<<<<<<< HEAD
 	u32 cp_ctrl_low;
 	u32 cp_ctrl_high;
 
@@ -23,12 +27,19 @@ static u32 exynos_smc_read(enum cp_control reg)
 	if (!(cp_ctrl & 0xffff)) {
 		cp_ctrl >>= 16;
 		cp_ctrl_low = cp_ctrl;
+=======
+
+	cp_ctrl = exynos_smc(SMC_ID, READ_CTRL, 0, reg);
+	if (!(cp_ctrl & 0xffff)) {
+		cp_ctrl >>= 16;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		pr_err("%s: ERR! read Fail: %d\n", __func__, cp_ctrl & 0xffff);
 
 		return -1;
 	}
 
+<<<<<<< HEAD
 	cp_ctrl = exynos_smc(SMC_ID, READ_CTRL, 1, reg);
 
 	if (!(cp_ctrl & 0xffff)) {
@@ -41,6 +52,9 @@ static u32 exynos_smc_read(enum cp_control reg)
 	}
 
 	return (cp_ctrl_high << 16) | cp_ctrl_low;
+=======
+	return cp_ctrl;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static u32 exynos_smc_write(enum cp_control reg, u32 value)
@@ -74,16 +88,25 @@ int exynos_cp_reset(void)
 	if (cp_ctrl == -1)
 		return -1;
 
+<<<<<<< HEAD
 	ret = exynos_smc_write(CP_CTRL_NS, cp_ctrl | CP_RESET_SET | CP_PWRON);
+=======
+	ret = exynos_smc_write(CP_CTRL_NS, cp_ctrl | CP_RESET_SET);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		pr_err("%s: ERR! CP Reset Fail: %d\n", __func__, ret);
 		return -1;
 	}
 #else
+<<<<<<< HEAD
 	ret = exynos_pmu_read(EXYNOS_PMU_CP_CTRL_NS, &cp_ctrl);
 	cp_ctrl |= CP_RESET_SET | CP_PWRON;
 
 	ret = exynos_pmu_write(EXYNOS_PMU_CP_CTRL_NS, cp_ctrl);
+=======
+	ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_NS,
+			CP_RESET_SET, CP_RESET_SET);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0) {
 		pr_err("%s: ERR! CP Reset Fail: %d\n", __func__, ret);
 		return -1;
@@ -117,11 +140,15 @@ int exynos_cp_release(void)
 		pr_info("%s, cp_ctrl[0x%08x] -> [0x%08x]\n", __func__, cp_ctrl,
 			exynos_smc_read(CP_CTRL_S));
 #else
+<<<<<<< HEAD
 
 	ret = exynos_pmu_read(EXYNOS_PMU_CP_CTRL_S, &cp_ctrl);
 	cp_ctrl |= CP_START;
 
 	ret = exynos_pmu_write(EXYNOS_PMU_CP_CTRL_S, cp_ctrl);
+=======
+	ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_S, CP_START, CP_START);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		pr_err("ERR! CP Release Fail: %d\n", ret);
 	else {
@@ -153,11 +180,16 @@ int exynos_cp_active_clear(void)
 		pr_info("%s: cp_ctrl[0x%08x] -> [0x%08x]\n", __func__, cp_ctrl,
 			exynos_smc_read(CP_CTRL_NS));
 #else
+<<<<<<< HEAD
 
 	ret = exynos_pmu_read(EXYNOS_PMU_CP_CTRL_NS, &cp_ctrl);
 	cp_ctrl |= CP_ACTIVE_REQ_CLR;
 
 	ret = exynos_pmu_write(EXYNOS_PMU_CP_CTRL_NS, cp_ctrl);
+=======
+	ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_NS, CP_ACTIVE_REQ_CLR,
+			CP_ACTIVE_REQ_CLR);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		pr_err("%s: ERR! CP active_clear Fail: %d\n", __func__, ret);
 	else {
@@ -188,11 +220,16 @@ int exynos_clear_cp_reset(void)
 		pr_info("%s: cp_ctrl[0x%08x] -> [0x%08x]\n", __func__, cp_ctrl,
 			exynos_smc_read(CP_CTRL_NS));
 #else
+<<<<<<< HEAD
 
 	ret = exynos_pmu_read(EXYNOS_PMU_CP_CTRL_NS, &cp_ctrl);
 	cp_ctrl |= CP_RESET_REQ_CLR;
 
 	ret = exynos_pmu_write(EXYNOS_PMU_CP_CTRL_NS, cp_ctrl);
+=======
+	ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_NS, CP_RESET_REQ_CLR,
+			CP_RESET_REQ_CLR);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		pr_err("%s: ERR! CP clear_cp_reset Fail: %d\n", __func__, ret);
 	else {
@@ -234,7 +271,11 @@ int exynos_cp_init(void)
 	if (cp_ctrl == -1)
 		return -1;
 
+<<<<<<< HEAD
 	ret = exynos_smc_write(CP_CTRL_NS, cp_ctrl & ~CP_RESET_SET & ~CP_PWRON);
+=======
+	ret = exynos_smc_write(CP_CTRL_NS, cp_ctrl & ~CP_RESET & ~CP_PWRON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ret < 0)
 		pr_err("%s: ERR! write Fail: %d\n", __func__, ret);
 
@@ -246,6 +287,7 @@ int exynos_cp_init(void)
 	if (ret < 0)
 		pr_err("%s: ERR! write Fail: %d\n", __func__, ret);
 #else
+<<<<<<< HEAD
 	exynos_pmu_cp_init();
 
 	ret = exynos_pmu_read(EXYNOS_PMU_CP_CTRL_NS, &cp_ctrl);
@@ -276,6 +318,20 @@ int exynos_cp_init(void)
 	pr_err("EXYNOS_PMU_CP_CTRL_NS: %08X\n", cp_ctrl);
 #endif
 
+=======
+	ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_NS, CP_RESET_SET, 0);
+	if (ret < 0)
+		pr_err("%s: ERR! CP_RESET_SET Fail: %d\n", __func__, ret);
+
+	ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_NS, CP_PWRON, 0);
+	if (ret < 0)
+		pr_err("%s: ERR! CP_PWRON Fail: %d\n", __func__, ret);
+
+	ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_S, CP_START, 0);
+	if (ret < 0)
+		pr_err("%s: ERR! CP_START Fail: %d\n", __func__, ret);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -312,10 +368,14 @@ int exynos_set_cp_power_onoff(enum cp_mode mode)
 			pr_info("%s: CP Start: [0x%08X] -> [0x%08X]\n", __func__,
 				cp_ctrl, exynos_smc_read(CP_CTRL_S));
 	} else {
+<<<<<<< HEAD
 		/* set sys_pwr_cfg registers */
 		exynos_sys_powerdown_conf_cp();
 
 		ret = exynos_smc_write(CP_CTRL_NS, cp_ctrl | CP_RESET_SET | CP_PWRON);
+=======
+		ret = exynos_smc_write(CP_CTRL_NS, cp_ctrl & ~CP_PWRON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret < 0)
 			pr_err("ERR! write Fail: %d\n", ret);
 		else
@@ -326,15 +386,21 @@ int exynos_set_cp_power_onoff(enum cp_mode mode)
 	exynos_pmu_read(EXYNOS_PMU_CP_CTRL_NS, &cp_ctrl);
 	if (mode == CP_POWER_ON) {
 		if (!(cp_ctrl & CP_PWRON)) {
+<<<<<<< HEAD
 			ret = exynos_pmu_read(EXYNOS_PMU_CP_CTRL_NS, &cp_ctrl);
 			cp_ctrl |= CP_PWRON;
 
 			ret = exynos_pmu_write(EXYNOS_PMU_CP_CTRL_NS, cp_ctrl);
+=======
+			ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_NS,
+				CP_PWRON, CP_PWRON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (ret < 0)
 				pr_err("%s: ERR! write Fail: %d\n",
 						__func__, ret);
 		}
 
+<<<<<<< HEAD
 		ret = exynos_pmu_read(EXYNOS_PMU_CP_CTRL_S, &cp_ctrl);
 		cp_ctrl |= CP_START;
 
@@ -349,10 +415,23 @@ int exynos_set_cp_power_onoff(enum cp_mode mode)
 		cp_ctrl |= CP_RESET_SET | CP_PWRON;
 
 		ret = exynos_pmu_write(EXYNOS_PMU_CP_CTRL_NS, cp_ctrl);
+=======
+		ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_S,
+			CP_START, CP_START);
+		if (ret < 0)
+			pr_err("%s: ERR! write Fail: %d\n", __func__, ret);
+	} else {
+		ret = exynos_pmu_update(EXYNOS_PMU_CP_CTRL_NS,
+			CP_PWRON, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret < 0)
 			pr_err("ERR! write Fail: %d\n", ret);
 	}
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -360,20 +439,38 @@ void exynos_sys_powerdown_conf_cp(void)
 {
 	pr_info("%s\n", __func__);
 
+<<<<<<< HEAD
+=======
+	exynos_pmu_write(EXYNOS_PMU_CENTRAL_SEQ_CP_CONFIGURATION, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	exynos_pmu_write(EXYNOS_PMU_RESET_AHEAD_CP_SYS_PWR_REG, 0);
 	exynos_pmu_write(EXYNOS_PMU_LOGIC_RESET_CP_SYS_PWR_REG, 0);
 	exynos_pmu_write(EXYNOS_PMU_RESET_ASB_CP_SYS_PWR_REG, 0);
 	exynos_pmu_write(EXYNOS_PMU_TCXO_GATE_SYS_PWR_REG, 0);
 	exynos_pmu_write(EXYNOS_PMU_CLEANY_BUS_SYS_PWR_REG, 0);
+<<<<<<< HEAD
 	exynos_pmu_write(EXYNOS_PMU_CENTRAL_SEQ_CP_CONFIGURATION, 0);
 }
 
 #if !defined(CONFIG_CP_SECURE_BOOT)
 static void __init set_shdmem_size(unsigned memsz)
+=======
+}
+
+#if !defined(CONFIG_CP_SECURE_BOOT)
+
+#define MEMSIZE		136
+#define SHDMEM_BASE	0xF0000000
+#define MEMSIZE_OFFSET	16
+#define MEMBASE_ADDR_OFFSET	0
+
+static void __init set_shdmem_size(int memsz)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	u32 tmp;
 	pr_info("[Modem_IF]Set shared mem size: %dMB\n", memsz);
 
+<<<<<<< HEAD
 #if defined(CONFIG_SOC_EXYNOS7570)
 	memsz *= 256;
 #else
@@ -410,6 +507,28 @@ static void __init set_shdmem_base(unsigned long base)
 
 	exynos_pmu_read(EXYNOS_PMU_CP2AP_MIF_CONFIG2, &tmp);
 	pr_info("[Modem_IF] EXYNOS_PMU_CP2AP_MIF_CONFIG2: 0x%x\n", tmp);
+=======
+	memsz /= 4;
+	exynos_pmu_update(EXYNOS_PMU_CP2AP_MEM_CONFIG,
+			0x1ff << MEMSIZE_OFFSET, memsz << MEMSIZE_OFFSET);
+
+	exynos_pmu_read(EXYNOS_PMU_CP2AP_MEM_CONFIG, &tmp);
+	pr_info("[Modem_IF] EXYNOS_PMU_CP2AP_MEM_CONFIG: 0x%x\n", tmp);
+}
+
+static void __init set_shdmem_base(void)
+{
+	u32 tmp, base_addr;
+	pr_info("[Modem_IF]Set shared mem baseaddr : 0x%x\n", SHDMEM_BASE);
+
+	base_addr = (SHDMEM_BASE >> 22);
+
+	exynos_pmu_update(EXYNOS_PMU_CP2AP_MEM_CONFIG,
+			0x3fff << MEMBASE_ADDR_OFFSET,
+			base_addr << MEMBASE_ADDR_OFFSET);
+	exynos_pmu_read(EXYNOS_PMU_CP2AP_MEM_CONFIG, &tmp);
+	pr_info("[Modem_IF] EXYNOS_PMU_CP2AP_MEM_CONFIG: 0x%x\n", tmp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void set_batcher(void)
@@ -422,6 +541,7 @@ int exynos_pmu_cp_init(void)
 {
 
 #if !defined(CONFIG_CP_SECURE_BOOT)
+<<<<<<< HEAD
 	unsigned shm_size;
 	unsigned long shm_base;
 
@@ -441,6 +561,26 @@ int exynos_pmu_cp_init(void)
 	exynos_pmu_write(EXYNOS_PMU_CP2AP_MIF_ACCESS_WIN2, 0xffffffff);
 	exynos_pmu_write(EXYNOS_PMU_CP2AP_MIF_ACCESS_WIN3, 0xffffffff);
 	exynos_pmu_write(EXYNOS_PMU_CP2AP_PERI_ACCESS_WIN, 0xffffffff);
+=======
+	set_shdmem_size(136);
+	set_shdmem_base();
+	set_batcher();
+
+#ifdef CONFIG_SOC_EXYNOS8890
+	/* set access window for CP */
+	exynos_pmu_write(EXYNOS_PMU_CP2AP_MIF0_PERI_ACCESS_CON,
+			0xffffffff);
+	exynos_pmu_write(EXYNOS_PMU_CP2AP_MIF1_PERI_ACCESS_CON,
+			0xffffffff);
+	exynos_pmu_write(EXYNOS_PMU_CP2AP_MIF2_PERI_ACCESS_CON,
+			0xffffffff);
+	exynos_pmu_write(EXYNOS_PMU_CP2AP_MIF3_PERI_ACCESS_CON,
+			0xffffffff);
+	exynos_pmu_write(EXYNOS_PMU_CP2AP_CCORE_PERI_ACCESS_CON,
+			0xffffffff);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	return 0;

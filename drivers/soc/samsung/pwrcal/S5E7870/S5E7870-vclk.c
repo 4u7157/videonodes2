@@ -30,9 +30,15 @@ static struct pwrcal_clk_set pxmxdx_top_grp[] = {
 	{CLK_NONE,				0,	0},
 };
 static struct pwrcal_clk_set pxmxdx_disp_grp[] = {
+<<<<<<< HEAD
 	{CLK(DISPAUD_MUX_CLKCMU_DISPAUD_BUS_USER), 1, 0},
 	{CLK(DISPAUD_DIV_CLK_DISPAUD_APB), 1, -1},
 	{CLK(MIF_MUXGATE_CLKCMU_DISPAUD_BUS),	1,	0},
+=======
+	{CLK(DISPAUD_MUX_CLKCMU_DISPAUD_BUS_USER), 1, -1},
+	{CLK(DISPAUD_DIV_CLK_DISPAUD_APB), 1, -1},
+	{CLK(MIF_MUXGATE_CLKCMU_DISPAUD_BUS),	1,	-1},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	{CLK_NONE,				0,	0},
 };
 static struct pwrcal_clk_set pxmxdx_mfcmscl_grp[] = {
@@ -61,12 +67,29 @@ static struct pwrcal_clk_set pxmxdx_isp_isp_grp[] = {
 	{CLK_NONE,				0,	0},
 };
 
+<<<<<<< HEAD
+=======
+static struct pwrcal_clk_set pxmxdx_oscclk_aud_grp[] = {
+	{CLK(PMU_DEBUG_CLKOUT_SEL08),	1,	-1},
+	{CLK(PMU_DEBUG_CLKOUT_SEL09),	1,	-1},
+	{CLK(PMU_DEBUG_CLKOUT_SEL10),	1,	-1},
+	{CLK(PMU_DEBUG_CLKOUT_SEL11),	1,	-1},
+	{CLK(PMU_DEBUG_CLKOUT_SEL12),	1,	-1},
+	{CLK(PMU_DEBUG_CLKOUT_DISABLE),	0,	1},
+	{CLK_NONE,			0,	0},
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 PXMXDX(pxmxdx_top,	0,	pxmxdx_top_grp);
 PXMXDX(pxmxdx_disp,	dvfs_disp,	pxmxdx_disp_grp);
 PXMXDX(pxmxdx_mfcmscl,	0,	pxmxdx_mfcmscl_grp);
 PXMXDX(pxmxdx_isp_vra,	0,	pxmxdx_isp_vra_grp);
 PXMXDX(pxmxdx_isp_cam,	0,	pxmxdx_isp_cam_grp);
 PXMXDX(pxmxdx_isp_isp,	0,	pxmxdx_isp_isp_grp);
+<<<<<<< HEAD
+=======
+PXMXDX(pxmxdx_oscclk_aud,	0,	pxmxdx_oscclk_aud_grp);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 P1(p1_disp_pll, 0, DISP_PLL);
 P1(p1_aud_pll, 0, AUD_PLL);
@@ -94,7 +117,11 @@ M1D1G1(sclk_uart_btwififm, gate_peri_peric0, MIF_MUX_CLKCMU_PERI_UART_BTWIFIFM, 
 M1D1G1(sclk_uart_debug, gate_peri_peric0, MIF_MUX_CLKCMU_PERI_UART_DEBUG, MIF_DIV_CLKCMU_PERI_UART_DEBUG, MIF_GATE_CLKCMU_PERI_UART_DEBUG, 0);
 M1D1G1(sclk_spi_frontfrom, gate_peri_peric1, MIF_MUX_CLKCMU_PERI_SPI_FRONTFROM, MIF_DIV_CLKCMU_PERI_SPI_FRONTFROM, MIF_GATE_CLKCMU_PERI_SPI_FRONTFROM, 0);
 M1D1G1(sclk_spi_rearfrom, gate_peri_peric1, MIF_MUX_CLKCMU_PERI_SPI_REARFROM, MIF_DIV_CLKCMU_PERI_SPI_REARFROM, MIF_GATE_CLKCMU_PERI_SPI_REARFROM, 0);
+<<<<<<< HEAD
 M1D1G1(sclk_spi_ese, gate_peri_peris0, MIF_MUX_CLKCMU_PERI_SPI_ESE, MIF_DIV_CLKCMU_PERI_SPI_ESE, MIF_GATE_CLKCMU_PERI_SPI_ESE, 0);
+=======
+M1D1G1(sclk_spi_ese, 0, MIF_MUX_CLKCMU_PERI_SPI_ESE, MIF_DIV_CLKCMU_PERI_SPI_ESE, MIF_GATE_CLKCMU_PERI_SPI_ESE, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 M1D1G1(sclk_spi_voiceprocessor, gate_peri_peric1, MIF_MUX_CLKCMU_PERI_SPI_VOICEPROCESSOR, MIF_DIV_CLKCMU_PERI_SPI_VOICEPROCESSOR, MIF_GATE_CLKCMU_PERI_SPI_VOICEPROCESSOR, 0);
 M1D1G1(sclk_spi_sensorhub, gate_peri_peric1, MIF_MUX_CLKCMU_PERI_SPI_SENSORHUB, MIF_DIV_CLKCMU_PERI_SPI_SENSORHUB, MIF_GATE_CLKCMU_PERI_SPI_SENSORHUB, 0);
 M1D1G1(sclk_isp_sensor0, 0, MIF_MUX_CLKCMU_ISP_SENSOR0, MIF_DIV_CLKCMU_ISP_SENSOR0, MIF_GATE_CLKCMU_ISP_SENSOR0, 0);
@@ -187,10 +214,13 @@ static struct pwrcal_clk *gategrp_g3d_g3d[] = {
 	CLK(G3D_GATE_CLK_G3D_UID_SYSREG_G3D_IPCLKPORT_PCLK),
 	CLK_NONE,
 };
+<<<<<<< HEAD
 static struct pwrcal_clk *gategrp_peri_peris0[] = {
 	CLK(PERI_GATE_CLK_PERI_UID_BUSP1_PERIS0_IPCLKPORT_HCLK),
 	CLK_NONE,
 };
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct pwrcal_clk *gategrp_peri_peric0[] = {
 	CLK(PERI_GATE_CLK_PERI_UID_BUSP1_PERIC0_IPCLKPORT_HCLK),
 	CLK_NONE,
@@ -574,7 +604,10 @@ GRPGATE(gate_g3d_ppmu, gate_g3d_common, gategrp_g3d_ppmu);
 GRPGATE(gate_g3d_bts, gate_g3d_common, gategrp_g3d_bts);
 GRPGATE(gate_g3d_g3d, gate_g3d_common, gategrp_g3d_g3d);
 
+<<<<<<< HEAD
 GRPGATE(gate_peri_peris0, 0, gategrp_peri_peris0);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 GRPGATE(gate_peri_peric0, 0, gategrp_peri_peric0);
 GRPGATE(gate_peri_peric1, 0, gategrp_peri_peric1);
 GRPGATE(gate_peri_pwm_motor, gate_peri_peric1, gategrp_peri_pwm_motor);
@@ -614,7 +647,11 @@ GRPGATE(gate_peri_spi_rearfrom, sclk_spi_rearfrom, gategrp_peri_spi_rearfrom);
 GRPGATE(gate_peri_spi_frontfrom, sclk_spi_frontfrom, gategrp_peri_spi_frontfrom);
 GRPGATE(gate_peri_gpio_alive, gate_peri_peric1, gategrp_peri_gpio_alive);
 GRPGATE(gate_peri_chipid, 0, gategrp_peri_chipid);
+<<<<<<< HEAD
 GRPGATE(gate_peri_otp_con_top, gate_peri_peris0, gategrp_peri_otp_con_top);
+=======
+GRPGATE(gate_peri_otp_con_top, 0, gategrp_peri_otp_con_top);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 GRPGATE(gate_peri_rtc_alive, 0, gategrp_peri_rtc_alive);
 GRPGATE(gate_peri_rtc_top, 0, gategrp_peri_rtc_top);
 
@@ -736,6 +773,7 @@ void vclk_unused_disable(void)
 	vclk_disable(VCLK(gate_fsys_pdma0));
 	vclk_disable(VCLK(gate_fsys_pdma1));
 	vclk_disable(VCLK(gate_fsys_sromc));
+<<<<<<< HEAD
 	vclk_disable(VCLK(gate_dispaud_sysmmu));
 	vclk_disable(VCLK(gate_dispaud_ppmu));
 	vclk_disable(VCLK(gate_dispaud_bts));
@@ -746,6 +784,18 @@ void vclk_unused_disable(void)
 	vclk_disable(VCLK(gate_dispaud_mi2s_amp));
 	vclk_disable(VCLK(gate_dispaud_disp));
 	vclk_disable(VCLK(gate_dispaud_aud));
+=======
+//	vclk_disable(VCLK(gate_dispaud_sysmmu));
+//	vclk_disable(VCLK(gate_dispaud_ppmu));
+//	vclk_disable(VCLK(gate_dispaud_bts));
+//	vclk_disable(VCLK(gate_dispaud_decon));
+//	vclk_disable(VCLK(gate_dispaud_dsim0));
+//	vclk_disable(VCLK(gate_dispaud_mixer));
+//	vclk_disable(VCLK(gate_dispaud_mi2s_aud));
+//	vclk_disable(VCLK(gate_dispaud_mi2s_amp));
+//	vclk_disable(VCLK(gate_dispaud_disp));
+//	vclk_disable(VCLK(gate_dispaud_aud));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	vclk_disable(VCLK(gate_isp_sysmmu));
 	vclk_disable(VCLK(gate_isp_ppmu));
 	vclk_disable(VCLK(gate_isp_bts));
@@ -756,10 +806,17 @@ void vclk_unused_disable(void)
 	vclk_disable(VCLK(gate_mif_hsi2c_mif));
 
 
+<<<<<<< HEAD
 	vclk_disable(VCLK(sclk_decon_vclk));
 	vclk_disable(VCLK(sclk_decon_vclk_local));
 	vclk_disable(VCLK(sclk_decon_eclk));
 	vclk_disable(VCLK(sclk_decon_eclk_local));
+=======
+//	vclk_disable(VCLK(sclk_decon_vclk));
+//	vclk_disable(VCLK(sclk_decon_vclk_local));
+//	vclk_disable(VCLK(sclk_decon_eclk));
+//	vclk_disable(VCLK(sclk_decon_eclk_local));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	vclk_disable(VCLK(sclk_mmc0));
 	vclk_disable(VCLK(sclk_mmc1));
 	vclk_disable(VCLK(sclk_mmc2));
@@ -778,20 +835,33 @@ void vclk_unused_disable(void)
 	vclk_disable(VCLK(sclk_isp_sensor1));
 	vclk_disable(VCLK(sclk_isp_sensor2));
 
+<<<<<<< HEAD
 	vclk_disable(VCLK(p1_disp_pll));
+=======
+//	vclk_disable(VCLK(p1_disp_pll));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	vclk_disable(VCLK(p1_aud_pll));
 	vclk_disable(VCLK(p1_usb_pll));
 	vclk_disable(VCLK(p1_isp_pll));
 
 	vclk_disable(VCLK(pxmxdx_top));
+<<<<<<< HEAD
 	vclk_disable(VCLK(pxmxdx_disp));
+=======
+//	vclk_disable(VCLK(pxmxdx_disp));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	vclk_disable(VCLK(pxmxdx_mfcmscl));
 	vclk_disable(VCLK(pxmxdx_isp_vra));
 	vclk_disable(VCLK(pxmxdx_isp_cam));
 	vclk_disable(VCLK(pxmxdx_isp_isp));
 
+<<<<<<< HEAD
 	vclk_disable(VCLK(umux_dispaud_clkphy_dispaud_mipiphy_txbyteclkhs_user));
 	vclk_disable(VCLK(umux_dispaud_clkphy_dispaud_mipiphy_rxclkesc0_user));
+=======
+//	vclk_disable(VCLK(umux_dispaud_clkphy_dispaud_mipiphy_txbyteclkhs_user));
+//	vclk_disable(VCLK(umux_dispaud_clkphy_dispaud_mipiphy_rxclkesc0_user));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	vclk_disable(VCLK(umux_fsys_clkphy_fsys_usb20drd_phyclock_user));
 	vclk_disable(VCLK(umux_fsys_clkphy_fsys_ufs_tx0_symbol_user));
 	vclk_disable(VCLK(umux_fsys_clkphy_fsys_ufs_rx0_symbol_user));
@@ -808,6 +878,10 @@ void vclk_init(void)
 	ADD_LIST(vclk_pxmxdx_list, pxmxdx_isp_vra);
 	ADD_LIST(vclk_pxmxdx_list, pxmxdx_isp_cam);
 	ADD_LIST(vclk_pxmxdx_list, pxmxdx_isp_isp);
+<<<<<<< HEAD
+=======
+	ADD_LIST(vclk_pxmxdx_list, pxmxdx_oscclk_aud);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ADD_LIST(vclk_p1_list, p1_disp_pll);
 	ADD_LIST(vclk_p1_list, p1_aud_pll);
@@ -865,7 +939,10 @@ void vclk_init(void)
 	ADD_LIST(vclk_grpgate_list, gate_g3d_bts);
 	ADD_LIST(vclk_grpgate_list, gate_g3d_g3d);
 
+<<<<<<< HEAD
 	ADD_LIST(vclk_grpgate_list, gate_peri_peris0);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	ADD_LIST(vclk_grpgate_list, gate_peri_peric0);
 	ADD_LIST(vclk_grpgate_list, gate_peri_peric1);
 	ADD_LIST(vclk_grpgate_list, gate_peri_pwm_motor);

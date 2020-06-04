@@ -546,8 +546,11 @@ struct sec_battery_platform_data {
 
 	char *pmic_name;
 
+<<<<<<< HEAD
 	bool enable_water_resistance;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* battery */
 	char *vendor;
 	int technology;
@@ -579,16 +582,28 @@ struct sec_battery_platform_data {
 	int swelling_low_temp_recov_1st;
 	int swelling_low_temp_block_2nd;
 	int swelling_low_temp_recov_2nd;
+<<<<<<< HEAD
+=======
+	int swelling_low_temp_2step_mode;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int swelling_low_temp_current;
 	unsigned int swelling_low_temp_topoff;
 	unsigned int swelling_high_temp_current;
 	unsigned int swelling_high_temp_topoff;
+<<<<<<< HEAD
 	int swelling_low_temp_2step_mode;
 	unsigned int swelling_normal_float_voltage;
 	unsigned int swelling_drop_float_voltage;
 	unsigned int swelling_high_rechg_voltage;
 	unsigned int swelling_low_rechg_voltage;
 	unsigned int swelling_drop_voltage_condition;
+=======
+	unsigned int swelling_normal_float_voltage;
+	unsigned int swelling_drop_float_voltage;
+	unsigned int swelling_offset_voltage;
+	unsigned int swelling_high_rechg_voltage;
+	unsigned int swelling_low_rechg_voltage;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_CALC_TIME_TO_FULL)
 	unsigned int ttf_hv_charge_current;
@@ -601,6 +616,10 @@ struct sec_battery_platform_data {
 	unsigned int *step_charging_current;
 #endif
 
+<<<<<<< HEAD
+=======
+	bool factory_store_mode_en;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* self discharging */
 	bool self_discharging_en;
 	unsigned int discharging_adc_max;
@@ -611,6 +630,16 @@ struct sec_battery_platform_data {
 	int force_discharging_recov;
 	int factory_discharging;
 	unsigned int self_discharging_type;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SW_SELF_DISCHARGING)
+	/* sw self discharging */
+	int self_discharging_temp_block;
+	int self_discharging_volt_block;
+	int self_discharging_temp_recov;
+	int self_discharging_temp_pollingtime;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Monitor setting */
 	sec_battery_monitor_polling_t polling_type;
@@ -734,8 +763,16 @@ struct sec_battery_platform_data {
 	unsigned long recharging_total_time;
 	/* reset charging for abnormal malfunction (0: not use) */
 	unsigned long charging_reset_time;
+<<<<<<< HEAD
 
 	int call_event_siop_level;
+=======
+#if defined(CONFIG_CONDITIONAL_SAFETY_TIMER)
+	unsigned int hv_charging_total_time;
+	unsigned int normal_charging_total_time;
+	unsigned int usb_charging_total_time;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* fuel gauge */
 	char *fuelgauge_name;
@@ -807,14 +844,22 @@ struct sec_battery_platform_data {
 	bool fake_capacity;
 	bool always_enable;
 	bool chg_eoc_dualpath;
+<<<<<<< HEAD
 
 	/* ADC setting */
 	unsigned int adc_check_count;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int expired_time;
 	unsigned int recharging_expired_time;
 	int standard_curr;
 
+<<<<<<< HEAD
+=======
+	/* ADC setting */
+	unsigned int adc_check_count;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* ADC type for each channel */
 	unsigned int adc_type[];
 };
@@ -840,6 +885,10 @@ struct sec_charger_platform_data {
 	unsigned long chg_irq_attr;
 
 	bool support_slow_charging;
+<<<<<<< HEAD
+=======
+	unsigned int slow_current_threshold;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* otg_en setting */
 	int otg_en;

@@ -102,9 +102,13 @@ static struct {
 	.lock = __MUTEX_INITIALIZER(cpu_hotplug.lock),
 };
 
+<<<<<<< HEAD
 static inline void cpu_hotplug_suspend(bool enable)
 {
 	/* This lock guarantees completion of do_cpu_hotplug() */
+=======
+static inline void update_suspend_flag(bool enable) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_lock(&cpu_hotplug.lock);
 	cpu_hotplug.suspended = enable;
 	mutex_unlock(&cpu_hotplug.lock);
@@ -140,8 +144,13 @@ static struct cpumask create_cpumask(void)
 	int cpu;
 	struct cpumask mask;
 
+<<<<<<< HEAD
 	online_cpu_min = min(pm_qos_request(PM_QOS_CPU_ONLINE_MIN), nr_cpu_ids);
 	online_cpu_max = min(pm_qos_request(PM_QOS_CPU_ONLINE_MAX), nr_cpu_ids);
+=======
+	online_cpu_min = pm_qos_request(PM_QOS_CPU_ONLINE_MIN),
+	online_cpu_max = pm_qos_request(PM_QOS_CPU_ONLINE_MAX);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	cpumask_clear(&mask);
 
@@ -167,10 +176,14 @@ static int do_cpu_hotplug(void)
 
 	mutex_lock(&cpu_hotplug.lock);
 
+<<<<<<< HEAD
 	/*
 	 * If cpu hotplug is disabled or suspended,
 	 * do_cpu_hotplug() do nothing.
 	 */
+=======
+	/* If cpu hotplug is disabled, do_cpu_hotplug() do nothing. */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!cpu_hotplug.enabled || cpu_hotplug.suspended) {
 		mutex_unlock(&cpu_hotplug.lock);
 		return 0;
@@ -274,6 +287,57 @@ static struct notifier_block cpu_hotplug_qos_notifier = {
 };
 
 /*
+<<<<<<< HEAD
+=======
+ * User can change the number of online cpu by using control_online_cpus
+ * sysfs node. User input minimum and maxinum online cpu to this node as
+ * below:
+ *
+ * #echo min max > /sys/power/cpuhotplug/control_online_cpus
+ */
+struct pm_qos_request user_min_cpu_hotplug_request;
+struct pm_qos_request user_max_cpu_hotplug_request;
+struct pm_qos_request str_max_cpu_hotplug_request;
+
+static ssize_t show_control_online_cpus(struct kobject *kobj,
+		struct kobj_attribute *attr, char *buf)
+{
+	ssize_t count = 0;
+
+	count += snprintf(&buf[count], 40, "cpu online count(min/max) : %u/%u\n",
+					pm_qos_request(PM_QOS_CPU_ONLINE_MIN),
+					pm_qos_request(PM_QOS_CPU_ONLINE_MAX));
+
+	return count;
+}
+
+static ssize_t store_control_online_cpus(struct kobject *kobj,
+		struct kobj_attribute *attr, const char *buf,
+		size_t count)
+{
+	int min, max;
+
+	if (!sscanf(buf, "%1d %1d", &min, &max))
+		return -EINVAL;
+
+	/*
+	 * "min" and "max" has the number of online cpus,
+	 * so it must be bigger than 0.
+	 */
+	if (min <= 0 || max <= 0)
+		return -EINVAL;
+
+	pm_qos_update_request(&user_max_cpu_hotplug_request, max);
+	pm_qos_update_request(&user_min_cpu_hotplug_request, min);
+
+	return count;
+}
+
+static struct kobj_attribute control_online_cpus =
+__ATTR(control_online_cpus, 0644, show_control_online_cpus, store_control_online_cpus);
+
+/*
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * User can change the number of online cpu by using min_online_cpu and
  * max_online_cpu sysfs node. User input minimum and maxinum online cpu
  * to this node as below:
@@ -281,10 +345,13 @@ static struct notifier_block cpu_hotplug_qos_notifier = {
  * #echo min > /sys/power/cpuhotplug/min_online_cpu
  * #echo max > /sys/power/cpuhotplug/max_online_cpus
  */
+<<<<<<< HEAD
 
 struct pm_qos_request user_min_cpu_hotplug_request;
 struct pm_qos_request user_max_cpu_hotplug_request;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define attr_online_cpu(type)						\
 static ssize_t show_##type##_online_cpu(struct kobject *kobj,		\
 	struct kobj_attribute *attr, char *buf)				\
@@ -352,6 +419,10 @@ static struct kobj_attribute cpu_hotplug_enabled =
 __ATTR(enable, 0644, show_cpu_hotplug_enable, store_cpu_hotplug_enable);
 
 static struct attribute *cpu_hotplug_attrs[] = {
+<<<<<<< HEAD
+=======
+	&control_online_cpus.attr,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&min_online_cpu.attr,
 	&max_online_cpu.attr,
 	&cpu_hotplug_enabled.attr,
@@ -370,16 +441,41 @@ static void __init cpu_hotplug_dt_init(void)
 		pr_warn("boot_lock_time property is omitted!\n");
 }
 
+<<<<<<< HEAD
 static int exynos_cpu_hotplug_pm_notifier(struct notifier_block *notifier,
+=======
+#define CLUSTER0_NR_CPUS	4
+static int exynos_cpu_hotplug_pm_notifier_down(struct notifier_block *notifier,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				       unsigned long pm_event, void *v)
 {
 	switch (pm_event) {
 	case PM_SUSPEND_PREPARE:
+<<<<<<< HEAD
 		cpu_hotplug_suspend(true);
 		break;
 
 	case PM_POST_SUSPEND:
 		cpu_hotplug_suspend(false);
+=======
+		pm_qos_update_request(&str_max_cpu_hotplug_request, CLUSTER0_NR_CPUS);
+
+		update_suspend_flag(true);
+		break;
+	}
+
+	return NOTIFY_OK;
+}
+
+static int exynos_cpu_hotplug_pm_notifier_up(struct notifier_block *notifier,
+		unsigned long pm_event, void *v)
+{
+	switch (pm_event) {
+	case PM_POST_SUSPEND:
+		update_suspend_flag(false);
+		pm_qos_update_request(&str_max_cpu_hotplug_request, NR_CPUS);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		do_cpu_hotplug();
 		break;
 	}
@@ -387,10 +483,30 @@ static int exynos_cpu_hotplug_pm_notifier(struct notifier_block *notifier,
 	return NOTIFY_OK;
 }
 
+<<<<<<< HEAD
 static struct notifier_block exynos_cpu_hotplug_nb = {
 	.notifier_call = exynos_cpu_hotplug_pm_notifier,
 };
 
+=======
+static struct notifier_block exynos_cpu_hotplug_down_nb = {
+	.notifier_call = exynos_cpu_hotplug_pm_notifier_down,
+	/*
+	 * Adjust the priority for PM_SUSPEND_PREPARE, this pm notifier should be called
+	 * before calling pm notifier in exynos-hotplug_governor.c
+	 */
+	.priority       = INT_MAX,
+};
+
+static struct notifier_block exynos_cpu_hotplug_up_nb = {
+	.notifier_call = exynos_cpu_hotplug_pm_notifier_up,
+	/*
+	 * Adjust the priority for PM_POST_SUSPEND, this pm notifier should be called
+	 * before calling pm notifier in exynos-hotplug_governor.c
+	 */
+	.priority       = INT_MIN + 1,
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct pm_qos_request boot_min_cpu_hotplug_request;
 static void __init cpu_hotplug_pm_qos_init(void)
@@ -411,11 +527,21 @@ static void __init cpu_hotplug_pm_qos_init(void)
 		PM_QOS_CPU_ONLINE_MIN, PM_QOS_CPU_ONLINE_MIN_DEFAULT_VALUE);
 	pm_qos_add_request(&user_max_cpu_hotplug_request,
 		PM_QOS_CPU_ONLINE_MAX, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
+<<<<<<< HEAD
+=======
+	pm_qos_add_request(&str_max_cpu_hotplug_request,
+		PM_QOS_CPU_ONLINE_MAX, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 	pm_qos_add_request(&user_min_cpu_hotplug_request,
 		PM_QOS_CPU_ONLINE_MIN, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
 	pm_qos_add_request(&user_max_cpu_hotplug_request,
 		PM_QOS_CPU_ONLINE_MAX, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
+<<<<<<< HEAD
+=======
+	pm_qos_add_request(&str_max_cpu_hotplug_request,
+		PM_QOS_CPU_ONLINE_MAX, PM_QOS_CPU_ONLINE_MAX_DEFAULT_VALUE);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 }
 
@@ -460,11 +586,22 @@ static int __init cpu_hotplug_init(void)
 	cpu_hotplug_sysfs_init();
 
 	/* register pm notifier */
+<<<<<<< HEAD
 	register_pm_notifier(&exynos_cpu_hotplug_nb);
+=======
+	register_pm_notifier(&exynos_cpu_hotplug_down_nb);
+	register_pm_notifier(&exynos_cpu_hotplug_up_nb);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Enable cpu_hotplug */
 	update_enable_flag(true);
 
+<<<<<<< HEAD
+=======
+	/* Disable suspended flag */
+	update_suspend_flag(false);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 arch_initcall(cpu_hotplug_init);

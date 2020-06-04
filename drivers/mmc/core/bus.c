@@ -155,7 +155,7 @@ static int mmc_bus_suspend(struct device *dev)
 	struct mmc_driver *drv = to_mmc_driver(dev->driver);
 	struct mmc_card *card = mmc_dev_to_card(dev);
 	struct mmc_host *host = card->host;
-	int ret;
+	int ret = 0;
 
 	if (dev->driver && drv->suspend) {
 		ret = drv->suspend(card);
@@ -163,10 +163,19 @@ static int mmc_bus_suspend(struct device *dev)
 			return ret;
 	}
 
+<<<<<<< HEAD
     if (mmc_bus_needs_resume(host))
 		return 0;
 
 	ret = host->bus_ops->suspend(host);
+=======
+	if (mmc_bus_needs_resume(host))
+		return 0;
+
+	if (host->bus_ops && host->bus_ops->suspend) {
+		ret = host->bus_ops->suspend(host);
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -177,7 +186,11 @@ static int mmc_bus_resume(struct device *dev)
 	struct mmc_host *host = card->host;
 	int ret = 0;
 
+<<<<<<< HEAD
 	if (mmc_bus_manual_resume(host) ) {
+=======
+	if (mmc_bus_manual_resume(host)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		host->bus_resume_flags |= MMC_BUSRESUME_NEEDS_RESUME;
 	} else {
 		ret = host->bus_ops->resume(host);

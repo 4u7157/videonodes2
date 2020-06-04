@@ -61,7 +61,17 @@ obj-$(CONFIG_FB_I810)           += video/fbdev/i810/
 obj-$(CONFIG_FB_INTEL)          += video/fbdev/intelfb/
 
 obj-$(CONFIG_VBUS_NOTIFIER)	+= staging/samsung/sec_notifier/
+<<<<<<< HEAD
 obj-$(CONFIG_USE_MUIC)      += muic/
+=======
+# added by khoonk on 2018.01.02
+ifndef CONFIG_IFPMIC_SUPPORT
+obj-$(CONFIG_USE_MUIC)		+= muic/
+obj-y				+= ccic/
+else
+obj-y				+= ifpmic/
+endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 obj-$(CONFIG_PARPORT)		+= parport/
 obj-y				+= base/ block/ misc/ mfd/
@@ -156,14 +166,26 @@ obj-$(CONFIG_VIRT_DRIVERS)	+= virt/
 obj-$(CONFIG_HYPERV)		+= hv/
 
 obj-$(CONFIG_PM_DEVFREQ)	+= devfreq/
+<<<<<<< HEAD
+=======
+# added by khoonk on 2018.01.06
+ifndef CONFIG_IFPMIC_SUPPORT
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 ifeq ($(CONFIG_BATTERY_SAMSUNG_V2), y)
   obj-$(CONFIG_BATTERY_SAMSUNG)   += battery_v2/
 else
   obj-$(CONFIG_BATTERY_SAMSUNG)   += battery/
 endif
+<<<<<<< HEAD
+=======
+endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 obj-$(CONFIG_EXTCON)		+= extcon/
 obj-$(CONFIG_MEMORY)		+= memory/
 obj-$(CONFIG_IIO)		+= iio/
+
+#Sensor
+obj-$(CONFIG_SENSORS)		+= sensors/
 obj-$(CONFIG_VME_BUS)		+= vme/
 obj-$(CONFIG_IPACK_BUS)		+= ipack/
 obj-$(CONFIG_NTB)		+= ntb/
@@ -173,13 +195,18 @@ obj-$(CONFIG_MCB)		+= mcb/
 obj-$(CONFIG_RAS)		+= ras/
 obj-$(CONFIG_THUNDERBOLT)	+= thunderbolt/
 obj-$(CONFIG_EXYNOS_BTS)	+= bts/
+<<<<<<< HEAD
 
+=======
+obj-$(CONFIG_MARVELL_DRIVERS)	+= marvell/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 # Mobicore driver
 obj-$(CONFIG_TRUSTONIC_TEE)	+= gud/
 
 # FIVE TEE driver
 obj-$(CONFIG_FIVE_TEE_DRIVER)	+= five/
 
+<<<<<<< HEAD
 #Motor
 obj-$(CONFIG_SEC_VIB)		+= motor/
 # Sensor
@@ -187,3 +214,17 @@ obj-$(CONFIG_SENSORS)	+= sensors/
 
 #Fingerprint
 obj-$(CONFIG_SENSORS_FINGERPRINT)       += fingerprint/
+=======
+#haptic driver
+obj-$(CONFIG_ANDROID_TIMED_OUTPUT)	+= motor/
+
+#Fingerprint
+obj-$(CONFIG_SENSORS_FINGERPRINT)       += fingerprint/
+
+#Sensorhub
+obj-$(CONFIG_SENSORS_SSP)	+= sensorhub/
+
+#GPS
+obj-$(CONFIG_GPS_BCMxxxxx)	+= gps/
+obj-$(CONFIG_GPS_BCM4752)	+= gps/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

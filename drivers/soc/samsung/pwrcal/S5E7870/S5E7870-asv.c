@@ -656,7 +656,11 @@ static int dfscpu_set_ema(unsigned int volt)
 		ema_temp = (asv_tbl_info.cpu_cl_ema << 3) | (asv_tbl_info.cpu_cl_emaw << 1) | asv_tbl_info.cpu_cl_emas;
 		cpu_ema = (ema_temp << 12) | (ema_temp << 6) | ema_temp;
 		if (cpu_ema == 0)
+<<<<<<< HEAD
 			cpu_ema = 0x1A69A;
+=======
+			cpu_ema = 0x1B6D2;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pwrcal_writel(CPUCL0_EMA_CON, cpu_ema);
 		pwrcal_writel(CPUCL1_EMA_CON, cpu_ema);
 		}
@@ -1037,6 +1041,43 @@ static int asv_get_tablever(void)
 	return (int)(asv_tbl_info.asv_table_ver);
 }
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SEC_DEBUG)
+enum ids_info
+{
+	table_ver,
+	cpu_asv,
+	g3d_asv,
+	mif_asv
+};
+
+int asv_ids_information(enum ids_info id)
+{
+	int res = 0;
+
+	switch (id) {
+		case table_ver:
+			res = asv_tbl_info.asv_table_ver;
+			break;
+		case cpu_asv:
+			res = asv_tbl_info.cpucl0_asv_group;
+			break;
+		case g3d_asv:
+			res = asv_tbl_info.g3d_asv_group;
+			break;
+		case mif_asv:
+			res = asv_tbl_info.mif_asv_group;
+			break;
+		default:
+			break;
+	};
+
+	return res;
+}
+#endif /* CONFIG_SEC_DEBUG */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct cal_asv_ops cal_asv_ops = {
 	.print_asv_info = asv_print_info,
 	.print_rcc_info = rcc_print_info,

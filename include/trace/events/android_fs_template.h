@@ -18,11 +18,25 @@ DECLARE_EVENT_CLASS(android_fs_data_start_template,
 	),
 	TP_fast_assign(
 		{
+<<<<<<< HEAD
 			__assign_str(pathbuf, pathname);
+=======
+			/*
+			 * Replace the spaces in filenames and cmdlines
+			 * because this screws up the tooling that parses
+			 * the traces.
+			 */
+			__assign_str(pathbuf, pathname);
+			(void)strreplace(__get_str(pathbuf), ' ', '_');
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__entry->offset		= offset;
 			__entry->bytes		= bytes;
 			__entry->i_size		= i_size_read(inode);
 			__assign_str(cmdline, command);
+<<<<<<< HEAD
+=======
+			(void)strreplace(__get_str(cmdline), ' ', '_');
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			__entry->pid		= pid;
 			__entry->ino		= inode->i_ino;
 		}

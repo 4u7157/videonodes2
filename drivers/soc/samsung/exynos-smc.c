@@ -13,7 +13,10 @@
 #include <linux/sched.h>
 #include <linux/spinlock.h>
 #include <linux/smc.h>
+<<<<<<< HEAD
 #include <trace/events/exynos.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define CONFIG_EXYNOS_SMC_LOGGING
 
@@ -37,13 +40,20 @@ static unsigned int drm_smc_log_idx;
 
 int exynos_smc(unsigned long cmd, unsigned long arg1, unsigned long arg2, unsigned long arg3)
 {
+<<<<<<< HEAD
 	int smc_ret;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_EXYNOS_SMC_LOGGING
 	unsigned long flags;
 #endif
 
 #ifdef CONFIG_EXYNOS_SMC_LOGGING
+<<<<<<< HEAD
 	if ((uint32_t)cmd >= SMC_PROTECTION_SET && (uint32_t)cmd < MC_FC_SET_CFW_PROT) {
+=======
+	if ((uint32_t)cmd >= SMC_PROTECTION_SET && (uint32_t)cmd <= MC_FC_SET_CFW_PROT) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_debug("%s: cmd: 0x%x, arg1: 0x%x, arg2: 0x%x, arg3: 0x%x\n",
 			__func__, (u32)cmd, (u32)arg1, (u32)arg2, (u32)arg3);
 		spin_lock_irqsave(&drm_smc_log_lock, flags);
@@ -59,9 +69,13 @@ int exynos_smc(unsigned long cmd, unsigned long arg1, unsigned long arg2, unsign
 	}
 #endif
 
+<<<<<<< HEAD
 	trace_exynos_smc_in(cmd, arg1, arg2, arg3);
 	smc_ret = __exynos_smc(cmd, arg1, arg2, arg3);
 	trace_exynos_smc_out(cmd, arg1, arg2, arg3);
 
 	return smc_ret;
+=======
+	return __exynos_smc(cmd, arg1, arg2, arg3);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }

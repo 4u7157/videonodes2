@@ -319,6 +319,7 @@ static void recover_gpio_pins(struct exynos5_i2c *i2c)
 	int sda_val, scl_val, clk_cnt;
 	unsigned long timeout;
 	struct device_node *np = i2c->adap.dev.of_node;
+<<<<<<< HEAD
 
 	dev_err(i2c->dev, "Recover GPIO pins\n");
 
@@ -377,6 +378,66 @@ static void recover_gpio_pins(struct exynos5_i2c *i2c)
 			dev_err(i2c->dev, "SDA line is not recovered!!!\n");
 	}
 
+=======
+
+	dev_err(i2c->dev, "Recover GPIO pins\n");
+
+	gpio_sda = of_get_named_gpio(np, "gpio_sda", 0);
+	if (!gpio_is_valid(gpio_sda)) {
+		dev_err(i2c->dev, "Can't get gpio_sda!!!\n");
+		return ;
+	}
+	gpio_scl = of_get_named_gpio(np, "gpio_scl", 0);
+	if (!gpio_is_valid(gpio_scl)) {
+		dev_err(i2c->dev, "Can't get gpio_scl!!!\n");
+		return ;
+	}
+
+	sda_val = gpio_get_value(gpio_sda);
+	scl_val = gpio_get_value(gpio_scl);
+
+	dev_err(i2c->dev, "SDA line : %s, SCL line : %s\n",
+			sda_val ? "HIGH" : "LOW", scl_val ? "HIGH" : "LOW");
+
+	if (sda_val == 1)
+		return ;
+
+	/* Wait for SCL as high for 500msec */
+	if (scl_val == 0) {
+		timeout = jiffies + msecs_to_jiffies(500);
+		while (time_before(jiffies, timeout)) {
+			if (gpio_get_value(gpio_scl) != 0) {
+				timeout = 0;
+				break;
+			}
+			msleep(10);
+		}
+		if (timeout)
+			dev_err(i2c->dev, "SCL line is still LOW!!!\n");
+	}
+
+	sda_val = gpio_get_value(gpio_sda);
+
+	if (sda_val == 0) {
+		gpio_direction_output(gpio_scl, 1);
+		gpio_direction_input(gpio_sda);
+
+		for (clk_cnt = 0; clk_cnt < 100; clk_cnt++) {
+			/* Make clock for slave */
+			gpio_set_value(gpio_scl, 0);
+			udelay(5);
+			gpio_set_value(gpio_scl, 1);
+			udelay(5);
+			if (gpio_get_value(gpio_sda) == 1) {
+				dev_err(i2c->dev, "SDA line is recovered.\n");
+				break;
+			}
+		}
+		if (clk_cnt == 100)
+			dev_err(i2c->dev, "SDA line is not recovered!!!\n");
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Change I2C GPIO as default function */
 	change_i2c_gpio(i2c);
 }
@@ -388,6 +449,7 @@ static inline void dump_i2c_register(struct exynos5_i2c *i2c)
 	int buf_index;
 #endif
 
+<<<<<<< HEAD
 	dev_err(i2c->dev, "Register dump(suspended : %d)\n"
 		"CTL          0x%08x   "
 		"FIFO_CTL     0x%08x   "
@@ -423,6 +485,41 @@ static inline void dump_i2c_register(struct exynos5_i2c *i2c)
 		, readl(i2c->regs + HSI2C_TIMING_SLA)
 		, readl(i2c->regs + HSI2C_ADDR)
 	);
+=======
+	dev_err(i2c->dev, "Register dump(suspended : %d)\n", i2c->suspended);
+	dev_err(i2c->dev, ": CTL	0x%08x\n"
+			, readl(i2c->regs + HSI2C_CTL));
+	dev_err(i2c->dev, ": FIFO_CTL	0x%08x\n"
+			, readl(i2c->regs + HSI2C_FIFO_CTL));
+	dev_err(i2c->dev, ": INT_EN	0x%08x\n"
+			, readl(i2c->regs + HSI2C_INT_ENABLE));
+	dev_err(i2c->dev, ": INT_STAT	0x%08x\n"
+			, readl(i2c->regs + HSI2C_INT_STATUS));
+	dev_err(i2c->dev, ": FIFO_STAT	0x%08x\n"
+			, readl(i2c->regs + HSI2C_FIFO_STATUS));
+	dev_err(i2c->dev, ": CONF	0x%08x\n"
+			, readl(i2c->regs + HSI2C_CONF));
+	dev_err(i2c->dev, ": AUTO_CONF	0x%08x\n"
+			, readl(i2c->regs + HSI2C_AUTO_CONF));
+	dev_err(i2c->dev, ": TRANS_STAT	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TRANS_STATUS));
+	dev_err(i2c->dev, ": TIMING_HS1	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TIMING_HS1));
+	dev_err(i2c->dev, ": TIMING_HS2	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TIMING_HS2));
+	dev_err(i2c->dev, ": TIMING_HS3	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TIMING_HS3));
+	dev_err(i2c->dev, ": TIMING_FS1	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TIMING_FS1));
+	dev_err(i2c->dev, ": TIMING_FS2	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TIMING_FS2));
+	dev_err(i2c->dev, ": TIMING_FS3	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TIMING_FS3));
+	dev_err(i2c->dev, ": TIMING_SLA	0x%08x\n"
+			, readl(i2c->regs + HSI2C_TIMING_SLA));
+	dev_err(i2c->dev, ": ADDR	0x%08x\n"
+			, readl(i2c->regs + HSI2C_ADDR));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_EXYNOS_APM
 	if (i2c->use_apm_mode && i2c->msg != NULL) {
@@ -432,6 +529,7 @@ static inline void dump_i2c_register(struct exynos5_i2c *i2c)
 		}
 	}
 #endif
+<<<<<<< HEAD
 
 #ifdef CONFIG_GPIOLIB
 	recover_gpio_pins(i2c);
@@ -454,6 +552,30 @@ static void write_batcher(struct exynos5_i2c *i2c, unsigned int description,
 		writel(i2c->cmd_buffer, i2c->regs + HSI2C_BATCHER_OPCODE +
 			(i2c->cmd_pointer * 4));
 
+=======
+
+#ifdef CONFIG_GPIOLIB
+	recover_gpio_pins(i2c);
+#endif
+}
+
+static void write_batcher(struct exynos5_i2c *i2c, unsigned int description,
+			unsigned int opcode)
+{
+
+	if ((HSI2C_START_PAYLOAD + (i2c->desc_pointer * 4)) <=
+		HSI2C_END_PAYLOAD) {
+
+		/* clear cmd_buffer */
+		i2c->cmd_buffer &= ~(0xff << (8 * i2c->cmd_index));
+
+		/* write opcode to cmd_buffer */
+		i2c->cmd_buffer |= opcode << (8 * i2c->cmd_index);
+
+		writel(i2c->cmd_buffer, i2c->regs + HSI2C_BATCHER_OPCODE +
+			(i2c->cmd_pointer * 4));
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		writel(description, i2c->regs + HSI2C_START_PAYLOAD +
 			(i2c->desc_pointer++ * 4));
 	} else {
@@ -558,8 +680,15 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
 
 	if (mode == HSI2C_HIGH_SPD)
 		t_scl_h = ((clk_cycle + 10) / 3) - 5;
+<<<<<<< HEAD
 	else
 		t_scl_h = clk_cycle / 3;
+=======
+	else if (i2c->scl_extended_low)
+		t_scl_h = clk_cycle / 3;
+	else
+		t_scl_h = clk_cycle / 2;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	t_scl_l = clk_cycle - t_scl_h;
 
@@ -573,8 +702,17 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
 
 	if (mode == HSI2C_HIGH_SPD)
 		i2c_timing_s1 = t_start_su << 24 | t_start_hd << 16 | t_stop_su << 8 | t_sda_su;
+<<<<<<< HEAD
 	else
 		i2c_timing_s1 = t_start_su << 24 | t_start_hd << 16 | t_stop_su << 8;
+=======
+	else {
+		if (i2c->sda_trigger_timing)
+			i2c_timing_s1 = t_start_su << 24 | t_start_hd << 16 | t_stop_su << 8 | i2c->sda_trigger_timing;
+		else
+			i2c_timing_s1 = t_start_su << 24 | t_start_hd << 16 | t_stop_su << 8;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	i2c_timing_s2 = (0xF << 16) | t_data_su << 24 | t_scl_l << 8 | t_scl_h;
 	i2c_timing_s3 = (div << 16) | t_sr_release;
@@ -817,10 +955,17 @@ out:
 
 	/* Initialize Batcher */
 	set_batcher_idle(i2c);
+<<<<<<< HEAD
 
 	return IRQ_HANDLED;
 }
 
+=======
+
+	return IRQ_HANDLED;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
 {
 	struct exynos5_i2c *i2c = dev_id;
@@ -1281,6 +1426,7 @@ static int exynos5_i2c_xfer_batcher(struct exynos5_i2c *i2c,
 		timeout = wait_for_completion_timeout
 			(&i2c->msg_complete, EXYNOS5_BATCHER_TIMEOUT);
 
+<<<<<<< HEAD
 
 		/* disable batcher interrupt for preventing unintended interrupt */
 		stop_batcher(i2c);
@@ -1300,6 +1446,27 @@ static int exynos5_i2c_xfer_batcher(struct exynos5_i2c *i2c,
 			return ret;
 		}
 
+=======
+
+		/* disable batcher interrupt for preventing unintended interrupt */
+		stop_batcher(i2c);
+		disable_irq(i2c->irq);
+
+		if (i2c->trans_done < 0) {
+			dev_warn(i2c->dev, "Unexpected Batcher Interrupt at Read\n");
+
+			dev_warn(i2c->dev, "Batcher State= %x\n",
+			readl(i2c->regs + HSI2C_BATCHER_STATE));
+			dev_warn(i2c->dev, "Batcher FIFO Status= %x\n",
+			readl(i2c->regs + HSI2C_BATCHER_FIFO_STATUS));
+			dev_warn(i2c->dev, "Batcher INT Status= %x\n",
+			readl(i2c->regs + HSI2C_BATCHER_INT_STATUS));
+
+			ret = i2c->trans_done;
+			return ret;
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (timeout == 0) {
 			i2c_batcher_state = readl(i2c->regs + HSI2C_BATCHER_STATE);
 
@@ -1423,6 +1590,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
 
 	if ((i2c->need_hw_init) && !(i2c->support_hsi2c_batcher))
 		exynos5_i2c_reset(i2c);
+<<<<<<< HEAD
 
 	if (!(i2c->support_hsi2c_batcher)) {
 		if (unlikely(!(readl(i2c->regs + HSI2C_CONF)
@@ -1433,6 +1601,18 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
 		}
 	}
 
+=======
+
+	if (!(i2c->support_hsi2c_batcher)) {
+		if (unlikely(!(readl(i2c->regs + HSI2C_CONF)
+			& HSI2C_AUTO_MODE))) {
+			dev_err(i2c->dev, "HSI2C should be reconfigured\n");
+			exynos5_hsi2c_clock_setup(i2c);
+			exynos5_i2c_init(i2c);
+		}
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	for (retry = 0; retry < adap->retries; retry++) {
 		for (i = 0; i < num; i++) {
 			stop = (i == num - 1);
@@ -1454,10 +1634,17 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
 				goto out;
 			}
 		}
+<<<<<<< HEAD
 
 		if ((i == num) && (ret != -EAGAIN))
 			break;
 
+=======
+
+		if ((i == num) && (ret != -EAGAIN))
+			break;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		dev_dbg(i2c->dev, "retrying transfer (%d)\n", retry);
 
 		udelay(100);
@@ -1592,6 +1779,18 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
 	else
 		i2c->reset_before_trans = 0;
 
+<<<<<<< HEAD
+=======
+	ret = of_property_read_u32(np, "samsung.tsda-su-fs", &i2c->sda_trigger_timing);
+	if (ret)
+		dev_warn(&pdev->dev, "SDA trigger timing not needed.\n");
+
+	if (of_get_property(np, "samsung,scl-extended-low-period", NULL))
+		i2c->scl_extended_low = 1;
+	else
+		i2c->scl_extended_low = 0;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	i2c->idle_ip_index = exynos_get_idle_ip_index(dev_name(&pdev->dev));
 
 	strlcpy(i2c->adap.name, "exynos5-i2c", sizeof(i2c->adap.name));
@@ -1718,9 +1917,15 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
 	}
 
 	i2c->bus_id = of_alias_get_id(i2c->adap.dev.of_node, "hsi2c");
+<<<<<<< HEAD
 
 	exynos5_i2c_init(i2c);
 
+=======
+
+	exynos5_i2c_init(i2c);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	i2c->adap.nr = -1;
 	ret = i2c_add_numbered_adapter(&i2c->adap);
 	if (ret < 0) {
@@ -1805,8 +2010,14 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
 {
 	struct platform_device *pdev = to_platform_device(dev);
 	struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
+<<<<<<< HEAD
 
 	i2c_lock_adapter(&i2c->adap);
+=======
+
+	i2c_lock_adapter(&i2c->adap);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* I2C for batcher doesn't need reset */
 	if(!(i2c->support_hsi2c_batcher)) {
 		exynos_update_ip_idle_status(i2c->idle_ip_index, 0);
@@ -1817,7 +2028,21 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
 	}
 	i2c->suspended = 0;
 	i2c_unlock_adapter(&i2c->adap);
+<<<<<<< HEAD
 
+	return 0;
+}
+
+#else
+static int exynos5_i2c_suspend_noirq(struct device *dev)
+{
+	return 0;
+}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
+
+static int exynos5_i2c_resume_noirq(struct device *dev)
+{
 	return 0;
 }
 

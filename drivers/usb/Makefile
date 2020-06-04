@@ -62,6 +62,14 @@ obj-$(CONFIG_USB_GADGET)	+= gadget/
 obj-$(CONFIG_USB_COMMON)	+= common/
 
 obj-$(CONFIG_USBIP_CORE)	+= usbip/
+<<<<<<< HEAD
 
 obj-$(CONFIG_USB_NOTIFY_LAYER)	+= notify/
 obj-$(CONFIG_TYPEC)		+= typec/
+=======
+obj-$(CONFIG_USB_NOTIFY_LAYER)	+= notify/
+obj-$(CONFIG_TYPEC)		+= typec/
+ifndef CONFIG_IFPMIC_SUPPORT
+obj-$(CONFIG_USB_TYPEC_MANAGER_NOTIFIER)	+= manager/
+endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

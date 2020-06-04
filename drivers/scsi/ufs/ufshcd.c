@@ -42,6 +42,12 @@
 #include <linux/devfreq.h>
 #endif
 #include <linux/nls.h>
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_UFS_FMP_ECRYPT_FS)
+#include <linux/ecryptfs.h>
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <linux/blkdev.h>
 
 #include "ufshcd.h"
@@ -1177,12 +1183,27 @@ static int ufshcd_map_sg(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
 			hba->transferred_sector += prd_table[i].size;
 
 #if defined(CONFIG_UFS_FMP_ECRYPT_FS)
+<<<<<<< HEAD
 			if (!((unsigned long)(sg_page(sg)->mapping) & 0x1)) {
 				if (sg_page(sg)->mapping && sg_page(sg)->mapping->key && \
 						!sg_page(sg)->mapping->plain_text) {
 					if ((unsigned int)(sg_page(sg)->index) >= 2)
 						sector_key |= UFS_FILE_ENCRYPTION_SECTOR_BEGIN;
 					else
+=======
+			if (!PageAnon(sg_page(sg))) {
+				if (sg_page(sg)->mapping && sg_page(sg)->mapping->key && \
+						!sg_page(sg)->mapping->plain_text) {
+					if (page_index(sg_page(sg)) >= ECRYPTFS_HEADER_SIZE)
+						sector_key |= UFS_FILE_ENCRYPTION_SECTOR_BEGIN;
+						if ((strncmp(sg_page(sg)->mapping->alg, "aes", sizeof("aes")) &&
+								strncmp(sg_page(sg)->mapping->alg, "aesxts", sizeof("aesxts"))) ||
+								!sg_page(sg)->mapping->key_length) {
+							dev_info(hba->dev, "FMP file encryption is skipped due to invalid alg or key length\n");
+							sector_key &= ~UFS_FILE_ENCRYPTION_SECTOR_BEGIN;
+						}
+					} else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 						sector_key &= ~UFS_FILE_ENCRYPTION_SECTOR_BEGIN;
 				} else {
 					sector_key &= ~UFS_FILE_ENCRYPTION_SECTOR_BEGIN;
@@ -4962,9 +4983,12 @@ out:
 		dev_err(hba->dev, "%s failed with err %d, retrying:%d\n",
 			__func__, ret, re_cnt);
 		goto retry;
+<<<<<<< HEAD
 	} else if (ret && re_cnt == UFS_LINK_SETUP_RETRIES) {
 		pr_auto(ASL6, "%s %s: %s failed after retries with err %d\n",
 			dev_driver_string(hba->dev), dev_name(hba->dev), __func__, ret);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/*
@@ -6152,7 +6176,10 @@ void ufshcd_remove(struct ufs_hba *hba)
 
 	ufshcd_exit_clk_gating(hba);
 	ufshcd_exit_latency_hist(hba);
+<<<<<<< HEAD
 #if defined(CONFIG_PM_DEVFREQ)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ufshcd_is_clkscaling_enabled(hba))
 		devfreq_remove_device(hba->devfreq);
 #endif

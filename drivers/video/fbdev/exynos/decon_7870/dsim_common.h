@@ -18,6 +18,10 @@
 #define DSIM_PIXEL_FORMAT_RGB24		0x7
 #define DSIM_PIXEL_FORMAT_RGB18		0x6
 #define DSIM_PIXEL_FORMAT_RGB18_PACKED	0x5
+<<<<<<< HEAD
+=======
+#define DSIM_RX_FIFO_MAX_DEPTH		64
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* define DSI lane types. */
 enum {
@@ -28,6 +32,35 @@ enum {
 	DSIM_LANE_DATA3	= (1 << 4),
 };
 
+<<<<<<< HEAD
+=======
+/* DSI Error report bit definitions */
+enum {
+	MIPI_DSI_ERR_SOT			= (1 << 0),
+	MIPI_DSI_ERR_SOT_SYNC			= (1 << 1),
+	MIPI_DSI_ERR_EOT_SYNC			= (1 << 2),
+	MIPI_DSI_ERR_ESCAPE_MODE_ENTRY_CMD	= (1 << 3),
+	MIPI_DSI_ERR_LOW_POWER_TRANSMIT_SYNC	= (1 << 4),
+	MIPI_DSI_ERR_HS_RECEIVE_TIMEOUT		= (1 << 5),
+	MIPI_DSI_ERR_FALSE_CONTROL		= (1 << 6),
+	MIPI_DSI_ERR_CONTENTION_DETECTED	= (1 << 7),
+	MIPI_DSI_ERR_ECC_SINGLE_BIT		= (1 << 8),
+	MIPI_DSI_ERR_ECC_MULTI_BIT		= (1 << 9),
+	MIPI_DSI_ERR_CHECKSUM			= (1 << 10),
+	MIPI_DSI_ERR_DATA_TYPE_NOT_RECOGNIZED	= (1 << 11),
+	MIPI_DSI_ERR_VCHANNEL_ID_INVALID	= (1 << 12),
+	MIPI_DSI_ERR_INVALID_TRANSMIT_LENGTH	= (1 << 13),
+	/* Bit 14 is reserved */
+	MIPI_DSI_ERR_PROTOCAL_VIOLATION		= (1 << 15),
+	/* DSI_PROTOCAL_VIOLATION[15] is for protocol violation that is caused EoTp
+	 * missing So this bit is egnored because of not supportung @S.LSI AP */
+	/* FALSE_ERROR_CONTROL[6] is for detect invalid escape or turnaround sequence.
+	 * This bit is not supporting @S.LSI AP because of non standard
+	 * ULPS enter/exit sequence during power-gating */
+	/* Bit [14] is reserved */
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct dsim_pll_param {
 	u32 p;
 	u32 m;
@@ -74,6 +107,13 @@ int dsim_reg_set_hs_clock(u32 id, u32 en);
 void dsim_reg_set_int(u32 id, u32 en);
 int dsim_reg_set_ulps(u32 id, u32 en, u32 lanes);
 int dsim_reg_set_smddi_ulps(u32 id, u32 en, u32 lanes);
+<<<<<<< HEAD
+=======
+/* RX related APIs list */
+u32 dsim_reg_rx_fifo_is_empty(u32 id);
+u32 dsim_reg_get_rx_fifo(u32 id);
+int dsim_reg_rx_err_handler(u32 id, u32 rx_fifo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* CAL raw functions list */
 void dsim_reg_sw_reset(u32 id);
@@ -141,9 +181,16 @@ u32 dsim_reg_is_hs_clk_ready(u32 id);
 void dsim_reg_enable_per_frame_read(u32 id, u32 en);
 void dsim_reg_enable_qchannel(u32 id, u32 en);
 int dsim_reg_wait_hs_clk_ready(u32 id);
+<<<<<<< HEAD
 void dsim_reg_set_fifo_ctrl(u32 id, u32 cfg);
 void dsim_reg_force_dphy_stop_state(u32 id, u32 en);
 void dsim_reg_wr_tx_header(u32 id, u32 data_id, unsigned long data0, u32 data1);
+=======
+u32 dsim_reg_header_fifo_is_empty(u32 id);
+void dsim_reg_set_fifo_ctrl(u32 id, u32 cfg);
+void dsim_reg_force_dphy_stop_state(u32 id, u32 en);
+void dsim_reg_wr_tx_header(u32 id, u32 data_id, u32 data0, u32 data1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void dsim_reg_wr_tx_payload(u32 id, u32 payload);
 void dsim_reg_enter_ulps(u32 id, u32 enter);
 void dsim_reg_exit_ulps(u32 id, u32 exit);
@@ -152,7 +199,11 @@ int dsim_reg_wait_enter_ulps_state(u32 id, u32 lanes);
 int dsim_reg_wait_exit_ulps_state(u32 id);
 void dsim_reg_set_standby(u32 id, u32 en);
 void dsim_reg_set_bist(u32 id, u32 en, u32 vfp, u32 format, u32 type);
+<<<<<<< HEAD
 void dsim_reg_set_packet_ctrl(u32 id);
+=======
+void dsim_reg_set_packet_ctrl(u32 id, u32 en);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void dsim_reg_enable_loopback(u32 id, u32 en);
 void dsim_reg_set_loopback_id(u32 id, u32 en);
 void dsim_reg_set_pkt_go_enable(u32 id, bool en);

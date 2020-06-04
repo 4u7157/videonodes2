@@ -2715,7 +2715,12 @@ int regulator_set_voltage(struct regulator *regulator, int min_uV, int max_uV)
 	regulator->min_uV = min_uV;
 	regulator->max_uV = max_uV;
 
+<<<<<<< HEAD
 	if (rdev->constraints->expected_consumer > 0)
+=======
+	if ((rdev->open_count < rdev->constraints->expected_consumer)
+			&& rdev->constraints->expected_consumer)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto out;
 
 	ret = regulator_check_consumers(rdev, &min_uV, &max_uV);

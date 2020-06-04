@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
 *
 * File name: mtv319_port.h
 *
@@ -16,13 +17,38 @@
 * GNU General Public License for more details.
 *
 */
+=======
+ *
+ * File name: mtv319_port.h
+ *
+ * Description : Configuration for RAONTECH MTV319 Services.
+ *
+ * Copyright (C) (2013, RAONTECH)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2.
+ *
+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+ * kind, whether express or implied; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifndef __MTV319_PORT_H__
 #define __MTV319_PORT_H__
 
+<<<<<<< HEAD
 /*=============================================================================
  * Includes the user header files if neccessry.
  *===========================================================================*/
+=======
+/**
+ * Includes the user header files if neccessry.
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(__KERNEL__) /* Linux kernel */
 	#include <linux/io.h>
 	#include <linux/kernel.h>
@@ -50,6 +76,7 @@
 extern "C"{
 #endif
 
+<<<<<<< HEAD
 /*############################################################################
 #
 # COMMON configurations
@@ -63,6 +90,21 @@ extern "C"{
 /*============================================================================
 * Modifies the basic data types if neccessry.
 *===========================================================================*/
+=======
+/**
+ *
+ * COMMON configurations
+ */
+
+/**
+ * The slave address for I2C and SPI.
+ */
+#define RTV_CHIP_ADDR	0x86
+
+/**
+ * Modifies the basic data types if neccessry.
+ **/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define BOOL		int
 #define S8		s8
 #define U8		u8
@@ -78,6 +120,7 @@ extern "C"{
 
 #define INLINE		inline
 
+<<<<<<< HEAD
 /*============================================================================
 * Defines the package type of chip to target product.
 *===========================================================================*/
@@ -88,19 +131,38 @@ extern "C"{
 * Defines the external source freqenecy in KHz.
 * Ex> #define RTV_SRC_CLK_FREQ_KHz	36000 // 36MHz
 *===========================================================================*/
+=======
+/**
+ * Defines the package type of chip to target product.
+ **/
+#define RTV_CHIP_PKG_CSP
+/* #define RTV_CHIP_PKG_QFN */
+
+/**
+ * Defines the external source freqenecy in KHz.
+ * Ex> #define RTV_SRC_CLK_FREQ_KHz	36000 // 36MHz
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_TDMB_XTAL_FREQ
 #define RTV_SRC_CLK_FREQ_KHz		24000
 #else
 #define RTV_SRC_CLK_FREQ_KHz		24576
 #endif
 
+<<<<<<< HEAD
 /*============================================================================
 * Defines the Host interface.
 *===========================================================================*/
+=======
+/**
+ * Defines the Host interface.
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define RTV_IF_SPI /* AP: SPI Master Mode */
 /*#define RTV_IF_TSIF*/ /* I2C + TSIF Master Mode*/
 /* #define RTV_IF_SPI_SLAVE */ /* AP: SPI Slave Mode*/
 
+<<<<<<< HEAD
 /*============================================================================
 * Defines the polarity of interrupt if necessary.
 *===========================================================================*/
@@ -110,6 +172,17 @@ extern "C"{
 /*============================================================================
 * Defines the delay macro in milliseconds.
 *===========================================================================*/
+=======
+/**
+ * Defines the polarity of interrupt if necessary.
+ */
+#define RTV_INTR_POLARITY_LOW_ACTIVE
+/* #define RTV_INTR_POLARITY_HIGH_ACTIVE */
+
+/**
+ * Defines the delay macro in milliseconds.
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(__KERNEL__) /* Linux kernel */
 	static INLINE void RTV_DELAY_MS(UINT ms)
 	{
@@ -122,7 +195,12 @@ extern "C"{
 		do {
 			end_jiffies = get_jiffies_64();
 
+<<<<<<< HEAD
 			diff_time = jiffies_to_msecs(end_jiffies - start_jiffies);
+=======
+			diff_time
+				= jiffies_to_msecs(end_jiffies - start_jiffies);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (diff_time >= ms)
 				break;
 
@@ -135,6 +213,7 @@ extern "C"{
 
 #else
 	extern void mtv_delay_ms(int ms);
+<<<<<<< HEAD
 	#define RTV_DELAY_MS(ms)	mtv_delay_ms(ms) // TODO
 #endif
 
@@ -146,6 +225,21 @@ extern "C"{
     #define RTV_DBGMSG1(fmt, arg1)             printk(fmt, arg1)
     #define RTV_DBGMSG2(fmt, arg1, arg2)       printk(fmt, arg1, arg2)
     #define RTV_DBGMSG3(fmt, arg1, arg2, arg3) printk(fmt, arg1, arg2, arg3)
+=======
+	#define RTV_DELAY_MS(ms)	mtv_delay_ms(ms) /* TODO */
+#endif
+
+/**
+ * Defines the debug message macro.
+ */
+#if 1
+	#define RTV_DBGMSG(fmt, args...) pr_info("MTV319: %s(): " fmt, __func__, ## args)
+	#define RTV_DBGMSG0(fmt, args...) pr_info("MTV319: %s(): " fmt, __func__, ## args)
+	#define RTV_DBGMSG1(fmt, args...) pr_info("MTV319: %s(): " fmt, __func__, ## args)
+	#define RTV_DBGMSG2(fmt, args...) pr_info("MTV319: %s(): " fmt, __func__, ## args)
+	#define RTV_DBGMSG3(fmt, args...) pr_info("MTV319: %s(): " fmt, __func__, ## args)
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
     /* To eliminates the debug messages. */
     #define RTV_DBGMSG0(fmt)			do {} while (0)
@@ -156,11 +250,19 @@ extern "C"{
 /*#### End of Common ###########*/
 
 
+<<<<<<< HEAD
 /*#############################################################################
 #
 # T-DMB specific configurations
 #
 #############################################################################*/
+=======
+/**
+ *
+ * T-DMB specific configurations
+ */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* Determine if the FIC is not handled by interrupt. */
 /* #define RTV_FIC_POLLING_MODE */
 
@@ -193,10 +295,17 @@ extern "C"{
 #define RTV_SCAN_FIC_HDR_ENABLED /* Scan state */
 #endif
 /* Determine whether or not FIC header generated by MTV319 is enabled. */
+<<<<<<< HEAD
 //#define RTV_PLAY_FIC_HDR_ENABLED /* Play state */
 
 /* Determine whether or not MSC header generated by MTV319 is enabled. */
 //#define RTV_MSC_HDR_ENABLED
+=======
+/*#define RTV_PLAY_FIC_HDR_ENABLED */ /* Play state */
+
+/* Determine whether or not MSC header generated by MTV319 is enabled. */
+/*#define RTV_MSC_HDR_ENABLED*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 
 /* Determine if the output of error-tsp is disable. */
@@ -215,14 +324,24 @@ extern "C"{
 #define RTV_MCHDEC_IN_DRIVER
 
 #ifdef RTV_MCHDEC_IN_DRIVER
+<<<<<<< HEAD
 	/* Select the copying method of MCH decoded data(FIC and MSC).
 	CIF decoder copy the decoded data into user space buffer direcly
 	to fast operation.
 	NOTE: Only applicable in RTV_MULTIPLE_CHANNEL_MODE defined. */
+=======
+	/*
+	 * Select the copying method of MCH decoded data(FIC and MSC).
+	 * CIF decoder copy the decoded data into user space buffer direcly
+	 * to fast operation.
+	 * NOTE: Only applicable in RTV_MULTIPLE_CHANNEL_MODE defined.
+	 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* #define RTV_MCHDEC_DIRECT_COPY_USER_SPACE */
 #endif
 
 
+<<<<<<< HEAD
 /*############################################################################
 #
 # Host Interface specific configurations
@@ -233,6 +352,18 @@ extern "C"{
 	* Defines the register I/O macros.
 	*================================================================*/
 	void mtv319_set_port_if(unsigned long interface);	
+=======
+/**
+ *
+ * Host Interface specific configurations
+ *
+ */
+#if defined(RTV_IF_SPI)
+	/**
+	 * Defines the register I/O macros.
+	 */
+	void mtv319_set_port_if(unsigned long interface);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	U8 mtv319_spi_read(U8 page, U8 reg);
 	void mtv319_spi_read_burst(U8 page, U8 reg, U8 *buf, int size);
 	void mtv319_spi_write(U8 page, U8 reg, U8 val);
@@ -269,9 +400,15 @@ extern "C"{
 	#define RTV_TSP_XFER_SIZE	188
 
 #elif defined(RTV_IF_TSIF) || defined(RTV_IF_SPI_SLAVE)
+<<<<<<< HEAD
 	/*=================================================================
 	* Defines the TS format.
 	*================================================================*/
+=======
+	/**
+	 * Defines the TS format.
+	 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* #define RTV_TSIF_FORMAT_0 */ /* EN_high, CLK_rising */
 	/* #define RTV_TSIF_FORMAT_1 */ /* EN_high, CLK_falling */
 	/* #define RTV_TSIF_FORMAT_2 */ /* EN_low, CLK_rising */
@@ -280,9 +417,15 @@ extern "C"{
 	/* #define RTV_TSIF_FORMAT_5 */ /* EN_high, CLK_falling + 1CLK add */
 	/* #define RTV_TSIF_FORMAT_6 */ /* Parallel: EN_high, CLK_falling */
 
+<<<<<<< HEAD
 	/*=================================================================
 	* Defines the TSIF speed.
 	*================================================================*/
+=======
+	/**
+	 * Defines the TSIF speed.
+	 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* #define RTV_TSIF_SPEED_3_Mbps */ /* 2.41MHz */
 	#define RTV_TSIF_SPEED_4_Mbps   /* 3.62MHz */
 	/* #define RTV_TSIF_SPEED_5_Mbps */ /* 4.8MHz */
@@ -293,6 +436,7 @@ extern "C"{
 	/* #define RTV_TSIF_SPEED_30_Mbps */ /* 28.8MHz */
 	/* #define RTV_TSIF_SPEED_60_Mbps */ /* 58.5MHz */
 
+<<<<<<< HEAD
 	/*=================================================================
 	* Defines the TSP size. 188 or 204
 	*================================================================*/
@@ -301,6 +445,16 @@ extern "C"{
 	/*=================================================================
 	* Defines the register I/O macros.
 	*================================================================*/
+=======
+	/**
+	 * Defines the TSP size. 188 or 204
+	 */
+	#define RTV_TSP_XFER_SIZE	188
+
+	/**
+	 * Defines the register I/O macros.
+	 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	void mtv319_set_port_if(unsigned long interface);
 	U8 mtv319_i2c_read(U8 chipid, U8 reg);
 	void mtv319_i2c_read_burst(U8 reg, U8 *buf, int size);
@@ -329,8 +483,13 @@ extern "C"{
 		if (g_bRtvPage != 0xF)
 			mtv319_i2c_write(RTV_CHIP_ADDR, (U8)(reg), (U8)(val));
 		else {
+<<<<<<< HEAD
 			   mtv319_i2c_write(RTV_CHIP_ADDR, 0x02, (0x62|0x80));
 			   mtv319_i2c_write((0x62<<1), (U8)(reg), (U8)(val));
+=======
+			mtv319_i2c_write(RTV_CHIP_ADDR, 0x02, (0x62|0x80));
+			mtv319_i2c_write((0x62<<1), (U8)(reg), (U8)(val));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -343,9 +502,15 @@ extern "C"{
 		} while (0)
 
 #elif defined(RTV_IF_EBI2)
+<<<<<<< HEAD
 	/*=================================================================
 	* Defines the register I/O macros.
 	*================================================================*/
+=======
+	/**
+	 * Defines the register I/O macros.
+	 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	U8 tdmb_ebi2_read(U8 page, U8 reg);
 	void tdmb_ebi2_read_burst(U8 page, U8 reg, U8 *buf, int size);
 	void tdmb_ebi2_write(U8 page, U8 reg, U8 val);
@@ -384,11 +549,19 @@ extern "C"{
 #endif
 
 
+<<<<<<< HEAD
 /*############################################################################
 #
 # Pre-definintion by RAONTECH.
 #
 ############################################################################*/
+=======
+/**
+ *
+ * Pre-definintion by RAONTECH.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(RTV_IF_SPI) || defined(RTV_IF_EBI2)
 	#ifndef RTV_FIC_POLLING_MODE
 		#define RTV_FIC_SPI_INTR_ENABLED /* FIC SPI Interrupt use. */
@@ -419,11 +592,19 @@ extern "C"{
 	#define RTV_MCH_HEADER_SYNC_BYTE		0x47
 #endif
 
+<<<<<<< HEAD
 /*############################################################################
 #
 # Defines the critical object and macros.
 #
 ############################################################################*/
+=======
+/**
+ *
+ * Defines the critical object and macros.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if defined(__KERNEL__)
 extern struct mutex raontv_guard;
 #define RTV_GUARD_INIT		mutex_init(&raontv_guard)
@@ -447,11 +628,19 @@ extern CRITICAL_SECTION		raontv_guard;
 #endif
 
 
+<<<<<<< HEAD
 /*############################################################################
 #
 # Check erros by user-configurations.
 #
 ############################################################################*/
+=======
+/**
+ *
+ * Check erros by user-configurations.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if !defined(RTV_CHIP_PKG_CSP) && !defined(RTV_CHIP_PKG_QFN)
 	#error "Must define the package type !"
 #endif

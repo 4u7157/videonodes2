@@ -73,7 +73,11 @@ enum
 };
 
 extern int  sec_set_param(unsigned long offset, char val);
+<<<<<<< HEAD
 extern int  sec_set_param_str(unsigned long offset, const char *val, int size);
+=======
+extern int sec_set_param_str(unsigned long offset, const char *val, int size);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #else
 #define sec_set_param(a,b)			{-1)
 #endif /* CONFIG_SEC_PARAM */

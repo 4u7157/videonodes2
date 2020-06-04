@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2015 TRUSTONIC LIMITED
+=======
+ * Copyright (c) 2013-2017 TRUSTONIC LIMITED
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,8 +21,14 @@
 #include <linux/device.h>
 #include <linux/export.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 
 #include "public/mc_linux.h"
+=======
+#include <linux/mm_types.h>	/* struct vm_area_struct */
+
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "main.h"
 #include "user.h"
@@ -45,9 +55,14 @@ static int user_open(struct inode *inode, struct file *file)
 {
 	struct tee_client *client;
 
+<<<<<<< HEAD
 	mc_dev_devel("from %s\n", current->comm);
 
 	/* Create client */
+=======
+	/* Create client */
+	mc_dev_devel("from %s (%d)\n", current->comm, current->pid);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	client = client_create(false);
 	if (!client)
 		return -ENOMEM;
@@ -68,8 +83,13 @@ static int user_release(struct inode *inode, struct file *file)
 {
 	struct tee_client *client = get_client(file);
 
+<<<<<<< HEAD
 	mc_dev_devel("from %s\n", current->comm);
 
+=======
+	/* Close client */
+	mc_dev_devel("from %s (%d)\n", current->comm, current->pid);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (WARN(!client, "No client data available"))
 		return -EPROTO;
 
@@ -123,9 +143,18 @@ static long user_ioctl(struct file *file, unsigned int id, unsigned long arg)
 		return -EFAULT;
 
 	switch (id) {
+<<<<<<< HEAD
 	case MC_IO_FREEZE:
 		/* Freeze the client */
 		ret = client_freeze(client);
+=======
+	case MC_IO_HAS_SESSIONS:
+		/* Freeze the client */
+		if (client_has_sessions(client))
+			ret = -ENOTEMPTY;
+		else
+			ret = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 
 	case MC_IO_OPEN_SESSION: {
@@ -191,7 +220,12 @@ static long user_ioctl(struct file *file, unsigned int id, unsigned long arg)
 			ret = -EFAULT;
 			break;
 		}
+<<<<<<< HEAD
 		ret = client_waitnotif_session(client, wait.sid, wait.timeout);
+=======
+		ret = client_waitnotif_session(client, wait.sid, wait.timeout,
+					       wait.partial);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	}
 	case MC_IO_MAP: {
@@ -273,10 +307,21 @@ static long user_ioctl(struct file *file, unsigned int id, unsigned long arg)
 static int user_mmap(struct file *file, struct vm_area_struct *vmarea)
 {
 	struct tee_client *client = get_client(file);
+<<<<<<< HEAD
 	u32 len = (u32)(vmarea->vm_end - vmarea->vm_start);
 
 	/* Alloc contiguous buffer for this client */
 	return client_cbuf_create(client, len, NULL, vmarea);
+=======
+
+	if ((vmarea->vm_end - vmarea->vm_start) > BUFFER_LENGTH_MAX)
+		return -EINVAL;
+
+	/* Alloc contiguous buffer for this client */
+	return client_cbuf_create(client,
+				  (u32)(vmarea->vm_end - vmarea->vm_start),
+				  NULL, vmarea);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static const struct file_operations mc_user_fops = {

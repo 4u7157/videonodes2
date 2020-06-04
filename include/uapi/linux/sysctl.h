@@ -569,7 +569,11 @@ enum {
 	NET_IPV6_PROXY_NDP=23,
 	NET_IPV6_ACCEPT_SOURCE_ROUTE=25,
 	NET_IPV6_ACCEPT_RA_FROM_LOCAL=26,
+<<<<<<< HEAD
 	NET_IPV6_ACCEPT_RA_RT_INFO_MIN_PLEN = 27,
+=======
+	NET_IPV6_ACCEPT_RA_RT_INFO_MIN_PLEN=27,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	__NET_IPV6_MAX
 };
 

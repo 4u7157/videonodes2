@@ -47,8 +47,11 @@
 #define SMC_DRM_SECBUF_CFW_PROT		(0x82002030)
 #define SMC_DRM_SECBUF_CFW_UNPROT	(0x82002031)
 #define MC_FC_SET_CFW_PROT		(0x82002040)
+<<<<<<< HEAD
 #define SMC_DRM_SET_LOG_BUF		(0x82002050)
 #define SMC_DRM_SEC_SMMU_INFO		(0x820020D0)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MC_FC_DRM_SET_CFW_PROT		(0x10000000)
 #endif
 
@@ -122,10 +125,20 @@
 #elif defined(CONFIG_SOC_EXYNOS7870)
 #define EMMC0_FMP			(0x13541000)
 #define EMMC2_FMP			(0x13561000)
+<<<<<<< HEAD
 #elif defined(CONFIG_SOC_EXYNOS7570)
 #define EMMC0_FMP			(0x13541000)
 #endif
 
+=======
+#endif
+
+/*
+ * For SMC CMD for SRPMB
+ */
+#define SMC_SRPMB_WSM			(0x82003811)
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* For DTRNG Access */
 #define HWRNG_INIT			(0x0)
 #define HWRNG_EXIT			(0x1)
@@ -157,12 +170,15 @@
 #define PROT_G2D			(14)
 
 #ifndef __ASSEMBLY__
+<<<<<<< HEAD
 /* secure SysMMU SFR access */
 enum sec_sysmmu_sfr_access_t {
 	SEC_SMMU_SFR_READ,
 	SEC_SMMU_SFR_WRITE,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* Return value from DRM LDFW */
 enum drmdrv_result_t {
 	DRMDRV_OK				= 0x0000,

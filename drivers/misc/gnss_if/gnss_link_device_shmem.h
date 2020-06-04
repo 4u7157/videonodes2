@@ -25,6 +25,14 @@
 #define IPC_WAKELOCK_TIMEOUT		(HZ)
 #define BCMD_WAKELOCK_TIMEOUT		(HZ / 10) /* 100 msec */
 
+<<<<<<< HEAD
+=======
+struct shmem_2mb_phys_map {
+	u8 fmt_rx_buff[SHM_2M_FMT_RX_BUFF_SZ];
+	u8 fmt_tx_buff[SHM_2M_FMT_TX_BUFF_SZ];
+} __packed;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct shmem_circ {
 	u32 __iomem *head;
 	u32 __iomem *tail;
@@ -48,13 +56,19 @@ struct shmem_link_device {
 	struct link_device ld;
 
 	struct gnss_mbox *mbx;
+<<<<<<< HEAD
 	struct gnss_shared_reg **reg;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* SHMEM (SHARED MEMORY) address, size, IRQ# */
 	u32 start;		/* physical "start" address of SHMEM */
 	u32 size;		/* size of SHMEM */
 	u32 __iomem *base;	/* virtual address to the "IPC" region */
+<<<<<<< HEAD
 	u32 ipc_reg_cnt;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* IPC device map */
 	struct shmem_ipc_map ipc_map;
@@ -72,6 +86,18 @@ struct shmem_link_device {
 	int irq_gnss2ap_ipc_msg;
 
 	unsigned reg_bcmd_ctrl[BCMD_CTRL_COUNT];
+<<<<<<< HEAD
+=======
+	unsigned reg_rx_ipc_msg;
+	unsigned reg_tx_ipc_msg;
+
+	unsigned reg_rx_head;
+	unsigned reg_rx_tail;
+	unsigned reg_tx_head;
+	unsigned reg_tx_tail;
+
+	unsigned reg_fault_info[FAULT_INFO_COUNT];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Wakelock for SHMEM device */
 	struct wake_lock wlock;
@@ -106,9 +132,12 @@ struct shmem_link_device {
 #define to_shmem_link_device(linkdev) \
 		container_of(linkdev, struct shmem_link_device, ld)
 
+<<<<<<< HEAD
 void gnss_write_reg(struct gnss_shared_reg *gnss_reg, u32 value);
 u32 gnss_read_reg(struct gnss_shared_reg *gnss_reg);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**
  * get_txq_head
  * @shmd: pointer to an instance of shmem_link_device structure
@@ -117,7 +146,11 @@ u32 gnss_read_reg(struct gnss_shared_reg *gnss_reg);
  */
 static inline u32 get_txq_head(struct shmem_link_device *shmd)
 {
+<<<<<<< HEAD
 	return gnss_read_reg(shmd->reg[GNSS_REG_TX_HEAD]);
+=======
+	return mbox_get_value(MCU_GNSS, shmd->reg_tx_head);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -132,7 +165,11 @@ static inline u32 get_txq_head(struct shmem_link_device *shmd)
  */
 static inline u32 get_txq_tail(struct shmem_link_device *shmd)
 {
+<<<<<<< HEAD
 	return gnss_read_reg(shmd->reg[GNSS_REG_TX_TAIL]);
+=======
+	return mbox_get_value(MCU_GNSS, shmd->reg_tx_tail);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -169,7 +206,11 @@ static inline u32 get_txq_buff_size(struct shmem_link_device *shmd)
  */
 static inline u32 get_rxq_head(struct shmem_link_device *shmd)
 {
+<<<<<<< HEAD
 	return gnss_read_reg(shmd->reg[GNSS_REG_RX_HEAD]);
+=======
+	return mbox_get_value(MCU_GNSS, shmd->reg_rx_head);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -180,7 +221,11 @@ static inline u32 get_rxq_head(struct shmem_link_device *shmd)
  */
 static inline u32 get_rxq_tail(struct shmem_link_device *shmd)
 {
+<<<<<<< HEAD
 	return gnss_read_reg(shmd->reg[GNSS_REG_RX_TAIL]);
+=======
+	return mbox_get_value(MCU_GNSS, shmd->reg_rx_tail);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -212,7 +257,11 @@ static inline u32 get_rxq_buff_size(struct shmem_link_device *shmd)
  */
 static inline void set_txq_head(struct shmem_link_device *shmd, u32 in)
 {
+<<<<<<< HEAD
 	gnss_write_reg(shmd->reg[GNSS_REG_TX_HEAD], in);
+=======
+	mbox_set_value(MCU_GNSS, shmd->reg_tx_head, in);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -222,7 +271,11 @@ static inline void set_txq_head(struct shmem_link_device *shmd, u32 in)
  */
 static inline void set_txq_tail(struct shmem_link_device *shmd, u32 out)
 {
+<<<<<<< HEAD
 	gnss_write_reg(shmd->reg[GNSS_REG_TX_TAIL], out);
+=======
+	mbox_set_value(MCU_GNSS, shmd->reg_tx_tail, out);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -232,7 +285,11 @@ static inline void set_txq_tail(struct shmem_link_device *shmd, u32 out)
  */
 static inline void set_rxq_head(struct shmem_link_device *shmd, u32 in)
 {
+<<<<<<< HEAD
 	gnss_write_reg(shmd->reg[GNSS_REG_RX_HEAD], in);
+=======
+	mbox_set_value(MCU_GNSS, shmd->reg_rx_head, in);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**
@@ -242,7 +299,11 @@ static inline void set_rxq_head(struct shmem_link_device *shmd, u32 in)
  */
 static inline void set_rxq_tail(struct shmem_link_device *shmd, u32 out)
 {
+<<<<<<< HEAD
 	gnss_write_reg(shmd->reg[GNSS_REG_RX_TAIL], out);
+=======
+	mbox_set_value(MCU_GNSS, shmd->reg_rx_tail, out);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 /**

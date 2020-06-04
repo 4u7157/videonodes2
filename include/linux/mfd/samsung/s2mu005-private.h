@@ -145,6 +145,12 @@ enum s2mu005_reg {
 	S2MU005_REG_MUIC_CTRL2,
 	S2MU005_REG_MUIC_CTRL3,
 
+<<<<<<< HEAD
+=======
+	S2MU005_REG_MUIC_LDOADC_VSETL = 0xBF,
+	S2MU005_REG_MUIC_LDOADC_VSETH = 0xC0,
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	S2MU005_REG_END,
 };
 

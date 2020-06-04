@@ -20,7 +20,11 @@
 
 /* mandatory */
 extern void exynos_ss_task(int cpu, void *v_task);
+<<<<<<< HEAD
 extern void exynos_ss_work(void *worker, void *v_task, void *fn, int en);
+=======
+extern void exynos_ss_work(void *worker, void *work, void *fn, int en);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern void exynos_ss_cpuidle(int index, unsigned state, int diff, int en);
 extern void exynos_ss_suspend(void *fn, void *dev, int en);
 extern void exynos_ss_irq(int irq, void *fn, unsigned int val, int en);
@@ -31,26 +35,36 @@ extern int exynos_ss_save_context(void *regs);
 extern int exynos_ss_save_reg(void *regs);
 extern int exynos_ss_dump_panic(char *str, size_t len);
 extern int exynos_ss_prepare_panic(void);
+<<<<<<< HEAD
 extern int exynos_ss_post_panic(void *pv_regs);
+=======
+extern int exynos_ss_post_panic(void);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern int exynos_ss_post_reboot(void);
 extern int exynos_ss_set_hardlockup(int);
 extern int exynos_ss_get_hardlockup(void);
 extern unsigned int exynos_ss_get_item_size(char *);
 extern unsigned int exynos_ss_get_item_paddr(char *);
 extern void exynos_ss_panic_handler_safe(struct pt_regs *regs);
+<<<<<<< HEAD
 extern void exynos_ss_i2c_clk(void *clk, int en, int clk_en);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_EXYNOS_DRAMTEST
 extern int disable_mc_powerdn(void);
 #endif
 
 /* option */
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_ACPM
 void exynos_ss_acpm(unsigned long long timestamp, const char *log, unsigned int data);
 #else
 #define exynos_ss_acpm(a,b,c)         do { } while(0)
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_EXYNOS_SNAPSHOT_REGULATOR
 extern void exynos_ss_regulator(char* f_name, unsigned int addr, unsigned int volt, int en);
 #else
@@ -91,6 +105,7 @@ extern void exynos_ss_hrtimer(void *timer, s64 *now, void *fn, int en);
 #define exynos_ss_hrtimer(a,b,c,d)	do { } while(0);
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_I2C
 struct i2c_adapter;
 struct i2c_msg;
@@ -107,6 +122,8 @@ extern void exynos_ss_spi(struct spi_master *master, struct spi_message *cur_msg
 #define exynos_ss_spi(a,b,c)		do { } while(0);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_EXYNOS_SNAPSHOT_REG
 extern void exynos_ss_reg(unsigned int read, size_t val, size_t reg, int en);
 #else
@@ -159,8 +176,14 @@ void exynos_ss_dump_sfr(void);
 #define exynos_ss_dump_sfr()		do { } while(0)
 #endif
 
+<<<<<<< HEAD
 #else
 #define exynos_ss_acpm(a,b,c)		do { } while(0)
+=======
+extern void exynos_ss_i2c_clk(struct clk *clk, int bus_id, int en);
+
+#else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define exynos_ss_task(a,b)		do { } while(0)
 #define exynos_ss_work(a,b,c,d)		do { } while(0)
 #define exynos_ss_clockevent(a,b,c)	do { } while(0)
@@ -178,8 +201,11 @@ void exynos_ss_dump_sfr(void);
 #define exynos_ss_irq_exit_var(v)	do { v = 0; } while(0)
 #define exynos_ss_reg(a,b,c,d)		do { } while(0)
 #define exynos_ss_hrtimer(a,b,c,d)	do { } while(0)
+<<<<<<< HEAD
 #define exynos_ss_i2c(a,b,c,d)		do { } while(0)
 #define exynos_ss_spi(a,b,c)		do { } while(0)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define exynos_ss_hook_pmsg(a,b)	do { } while(0)
 #define exynos_ss_printk(...)		do { } while(0)
 #define exynos_ss_printkl(a,b)		do { } while(0)
@@ -190,13 +216,22 @@ void exynos_ss_dump_sfr(void);
 #define exynos_ss_dump_panic(a,b)	do { } while(0)
 #define exynos_ss_dump_sfr()		do { } while(0)
 #define exynos_ss_prepare_panic()	do { } while(0)
+<<<<<<< HEAD
 #define exynos_ss_post_panic(a)		do { } while(0)
+=======
+#define exynos_ss_post_panic()		do { } while(0)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define exynos_ss_post_reboot()		do { } while(0)
 #define exynos_ss_set_hardlockup(a)	do { } while(0)
 #define exynos_ss_get_hardlockup()	do { } while(0)
 #define exynos_ss_get_item_size(a)	do { } while(0)
 #define exynos_ss_get_item_paddr(a)	do { } while(0)
+<<<<<<< HEAD
 #define exynos_ss_check_crash_key(a,b)	do { } while(0);
+=======
+#define exynos_ss_check_crash_key(a, b)	do { } while (0)
+#define exynos_ss_i2c_clk(a, b)		do { } while (0)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* CONFIG_EXYNOS_SNAPSHOT */
 
 /**

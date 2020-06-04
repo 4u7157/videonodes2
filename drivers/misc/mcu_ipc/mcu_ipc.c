@@ -114,6 +114,7 @@ void mbox_set_value(enum mcu_ipc_region id, u32 mbx_num, u32 msg)
 }
 EXPORT_SYMBOL(mbox_set_value);
 
+<<<<<<< HEAD
 u32 mbox_extract_value(enum mcu_ipc_region id, u32 mbx_num, u32 mask, u32 pos)
 {
 	if (mbx_num < 64)
@@ -142,6 +143,8 @@ void mbox_update_value(enum mcu_ipc_region id, u32 mbx_num,
 }
 EXPORT_SYMBOL(mbox_update_value);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void mbox_sw_reset(enum mcu_ipc_region id)
 {
 	u32 reg_val;
@@ -291,8 +294,11 @@ static int mcu_ipc_probe(struct platform_device *pdev)
 	test_without_dev(id);
 #endif
 
+<<<<<<< HEAD
 	spin_lock_init(&mcu_dat[id].lock);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	dev_err(&pdev->dev, "%s: mcu_ipc probe done.\n", __func__);
 
 	return 0;

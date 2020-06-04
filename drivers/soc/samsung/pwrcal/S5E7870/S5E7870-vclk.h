@@ -23,7 +23,10 @@ enum {
 	gate_g3d_ppmu,
 	gate_g3d_bts,
 	gate_g3d_g3d,
+<<<<<<< HEAD
 	gate_peri_peris0,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	gate_peri_peric0,
 	gate_peri_peric1,
 	gate_peri_pwm_motor,
@@ -155,6 +158,10 @@ enum {
 	pxmxdx_isp_vra,
 	pxmxdx_isp_cam,
 	pxmxdx_isp_isp,
+<<<<<<< HEAD
+=======
+	pxmxdx_oscclk_aud,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	vclk_group_pxmxdx_end,
 	num_of_pxmxdx = vclk_group_pxmxdx_end - 0x0A050000,
 

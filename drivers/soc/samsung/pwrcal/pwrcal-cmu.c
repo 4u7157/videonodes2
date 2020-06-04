@@ -4,6 +4,20 @@
 
 struct pwrcal_clk_none clk_0;
 
+<<<<<<< HEAD
+=======
+#ifdef PWRCAL_TARGET_LINUX
+unsigned int _cal_clk_get(char *name)
+{
+	return 0;
+}
+
+struct pwrcal_clk *cal_get_clk(unsigned int id)
+{
+	return NULL;
+}
+#else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct pwrcal_pll clk_pll_start, clk_pll_end;
 struct pwrcal_clk_fixed_rate clk_fixed_rate_start, clk_fixed_rate_end;
 struct pwrcal_clk_fixed_factor clk_fixed_factor_start, clk_fixed_factor_end;
@@ -72,7 +86,11 @@ struct pwrcal_clk *cal_get_clk(unsigned int id)
 
 	return ret;
 }
+<<<<<<< HEAD
 
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 int pwrcal_gate_is_enabled(struct pwrcal_clk *clk)
 {
@@ -124,10 +142,15 @@ int pwrcal_mux_set_src(struct pwrcal_clk *clk, unsigned int src)
 	unsigned int mux_stat;
 	int muxgate = 1;
 
+<<<<<<< HEAD
 	if (!_pwrcal_is_private_mux_set_src(clk)) {
 		if (src >= (unsigned int)(mux->num_parents))
 			return -1;
 	}
+=======
+	if (src >= (unsigned int)(mux->num_parents))
+		return -1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (_pwrcal_is_private_mux_set_src(clk))
 		return _pwrcal_private_mux_set_src(clk, src);

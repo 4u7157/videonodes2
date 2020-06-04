@@ -23,7 +23,10 @@
 #define EXYNOS5420_SOC_ID	0xE5420000
 #define EXYNOS5440_SOC_ID	0xE5440000
 #define EXYNOS5800_SOC_ID	0xE5422000
+<<<<<<< HEAD
 #define EXYNOS7570_SOC_ID	0xE7570000
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define EXYNOS7870_SOC_ID	0xE7870000
 #define EXYNOS8890_SOC_ID	0xE8890000
 

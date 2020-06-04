@@ -40,10 +40,13 @@ enum exynos_pm_event {
 	SICD_AUD_EXIT,
 };
 
+<<<<<<< HEAD
 #define EXYNOS_PM_PREFIX	"EXYNOS-PM:"
 
 bool is_test_cp_call_set(void);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_CPU_IDLE
 int exynos_pm_register_notifier(struct notifier_block *nb);
 int exynos_pm_unregister_notifier(struct notifier_block *nb);

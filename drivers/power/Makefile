@@ -65,7 +65,10 @@ obj-$(CONFIG_CHARGER_SMB347)	+= smb347-charger.o
 obj-$(CONFIG_CHARGER_TPS65090)	+= tps65090-charger.o
 obj-$(CONFIG_POWER_RESET)	+= reset/
 obj-$(CONFIG_BATTERY_ANDROID)	+= android_battery.o
+<<<<<<< HEAD
 obj-$(CONFIG_SEC_CHARGER_S2MPU06) += s2mpu06_charger.o
 obj-$(CONFIG_SEC_FUELGAUGE_S2MPU06) += s2mpu06_fuelgauge.o
 obj-$(CONFIG_SEC_CHARGER_S2MPW01) += s2mpw01_charger.o
 obj-$(CONFIG_SEC_FUELGAUGE_S2MPW01) += s2mpw01_fuelgauge.o
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

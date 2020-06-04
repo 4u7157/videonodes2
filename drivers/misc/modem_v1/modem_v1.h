@@ -65,8 +65,21 @@ enum dev_format {
 	MAX_DEV_FORMAT,
 };
 
+<<<<<<< HEAD
 #define MAX_SIPC_DEVICES	(IPC_RFS + 1)	/* FMT, RAW, RFS */
 #define MAX_SIPC5_DEVICES	(IPC_RAW + 1)	/* FMT, RAW */
+=======
+enum legacy_ipc_map {
+	IPC_MAP_FMT = 0,
+#ifdef CONFIG_MODEM_IF_QOS
+	IPC_MAP_HPRIO_RAW,
+#endif
+	IPC_MAP_NORM_RAW,
+	MAX_SIPC_MAP,
+};
+
+#define MAX_SIPC5_DEVICES	(IPC_RAW + 1) /* FMT, RAW */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define MAX_SIPC_CHANNELS	256	/* 2 ^ 8		*/
 #define MAX_LINK_CHANNELS	32	/* up to 32 channels	*/
@@ -229,6 +242,10 @@ enum read_write {
 #define STR_CP_FAIL	"cp_fail"
 #define STR_CP_WDT	"cp_wdt"	/* CP watchdog timer */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* You can define modem specific attribute here.
  * It could be all the different behaviour between many modem vendor.
  */
@@ -343,10 +360,18 @@ enum shmem_type {
 struct modem_mbox {
 	unsigned int mbx_ap2cp_msg;
 	unsigned int mbx_cp2ap_msg;
+<<<<<<< HEAD
+=======
+	unsigned int mbx_ap2cp_active;	/* PDA_ACTIVE	*/
+	unsigned int mbx_cp2ap_active;	/* PHONE_ACTIVE	*/
+	unsigned int mbx_ap2cp_wakeup;	/* CP_WAKEUP	*/
+	unsigned int mbx_cp2ap_wakeup;	/* AP_WAKEUP	*/
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int mbx_ap2cp_status;	/* AP_STATUS	*/
 	unsigned int mbx_cp2ap_status;	/* CP_STATUS	*/
 
 	unsigned int int_ap2cp_msg;
+<<<<<<< HEAD
 	unsigned int int_ap2cp_status;
 	unsigned int int_ap2cp_active;
 	unsigned int int_ap2cp_uart_noti;
@@ -355,6 +380,16 @@ struct modem_mbox {
 	unsigned int irq_cp2ap_status;
 	unsigned int irq_cp2ap_active;
 	unsigned int irq_cp2ap_wake_lock;
+=======
+	unsigned int int_ap2cp_active;
+	unsigned int int_ap2cp_wakeup;
+	unsigned int int_ap2cp_status;
+
+	unsigned int irq_cp2ap_msg;
+	unsigned int irq_cp2ap_active;
+	unsigned int irq_cp2ap_wakeup;
+	unsigned int irq_cp2ap_status;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/* Performance request */
 	unsigned int mbx_ap2cp_perf_req;
@@ -364,10 +399,15 @@ struct modem_mbox {
 	unsigned int mbx_cp2ap_perf_req_int;
 
 	unsigned int int_ap2cp_perf_req;
+<<<<<<< HEAD
+=======
+	unsigned int irq_cp2ap_perf_req;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int irq_cp2ap_perf_req_cpu;
 	unsigned int irq_cp2ap_perf_req_mif;
 	unsigned int irq_cp2ap_perf_req_int;
 
+<<<<<<< HEAD
 	/* Status Bit Info */
 	unsigned int sbi_evs_mode_mask;
 	unsigned int sbi_evs_mode_pos;
@@ -385,6 +425,10 @@ struct modem_mbox {
 	unsigned int sbi_uart_noti_pos;
 
 	/* Clk table Info */
+=======
+	unsigned int mbx_ap2cp_lock_value;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned int *ap_clk_table;
 	unsigned int ap_clk_cnt;
 
@@ -442,7 +486,10 @@ struct modem_data {
 
 #ifdef CONFIG_LINK_DEVICE_SHMEM
 	struct modem_mbox *mbx;
+<<<<<<< HEAD
 	struct mem_link_device *mld;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	/* Switch with 2 links in a modem */

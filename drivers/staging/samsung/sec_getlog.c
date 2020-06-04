@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+=======
+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *      http://www.samsung.com
  *
  * Samsung TN debugging code - support GetLog

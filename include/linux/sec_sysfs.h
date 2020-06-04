@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
 * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+=======
+* Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 *      http://www.samsung.com
 *
 * This program is free software; you can redistribute it and/or modify
@@ -13,6 +17,10 @@
 
 #ifdef CONFIG_SEC_SYSFS
 extern struct device *sec_device_create(void *drvdata, const char *fmt);
+<<<<<<< HEAD
+=======
+extern struct device *sec_device_find(const char *name);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 extern void sec_device_destroy(dev_t devt);
 #else
 static inline struct device *sec_device_create(void *drvdata, const char *fmt)

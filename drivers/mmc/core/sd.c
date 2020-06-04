@@ -664,8 +664,23 @@ static int mmc_sd_init_uhs_card(struct mmc_card *card)
 		(card->host->ios.timing == MMC_TIMING_UHS_SDR50 ||
 		 card->host->ios.timing == MMC_TIMING_UHS_DDR50 ||
 		 card->host->ios.timing == MMC_TIMING_UHS_SDR104)) {
-		err = mmc_execute_tuning(card);
+		if (card->raw_cid[0] == abnormal_sd_cid0
+				&& card->raw_cid[1] == abnormal_sd_cid1) {
+			pr_warn("%s: abnormal mmc card(cid = %x%x)\n",
+					mmc_hostname(card->host),
+					abnormal_sd_cid0, abnormal_sd_cid1);
 
+			if (card->sw_caps.uhs_max_dtr == UHS_SDR104_MAX_DTR)
+				card->sw_caps.uhs_max_dtr = UHS_SDR50_MAX_DTR;
+			else if (card->sw_caps.uhs_max_dtr == UHS_SDR50_MAX_DTR)
+				card->sw_caps.uhs_max_dtr = UHS_SDR25_MAX_DTR;
+			else if (card->sw_caps.uhs_max_dtr == UHS_SDR25_MAX_DTR)
+				card->sw_caps.uhs_max_dtr = UHS_SDR12_MAX_DTR;
+
+			mmc_set_clock(card->host, card->sw_caps.uhs_max_dtr);
+		}
+
+		err = mmc_execute_tuning(card);
 		/*
 		 * As SD Specifications Part1 Physical Layer Specification
 		 * Version 3.01 says, CMD19 tuning is available for unlocked
@@ -1081,7 +1096,10 @@ static void mmc_sd_detect(struct mmc_host *host)
 	if (host->ops->get_cd && host->ops->get_cd(host) == 0) {
 		mmc_card_set_removed(host->card);
 		mmc_sd_remove(host);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mmc_claim_host(host);
 		mmc_detach_bus(host);
 		mmc_power_off(host);

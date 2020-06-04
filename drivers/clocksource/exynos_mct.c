@@ -474,6 +474,10 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
 
 	if (mct_int_type == MCT_INT_SPI) {
 		irq_force_affinity(mct_irqs[MCT_L0_IRQ + cpu], cpumask_of(cpu));
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		enable_irq(evt->irq);
 	} else {
 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
@@ -603,12 +607,19 @@ static void __init mct_init_dt(struct device_node *np, unsigned int int_type)
 	exynos4_timer_resources(np, of_iomap(np, 0));
 	exynos4_clocksource_init();
 	exynos4_clockevent_init();
+<<<<<<< HEAD
 
 #ifdef CONFIG_SEC_BOOTSTAT
 	sec_bootstat_mct_start(exynos4_read_count_64());
 #endif
 }
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
+#ifdef CONFIG_SEC_BOOTSTAT
+	sec_bootstat_mct_start(exynos4_read_count_64());
+#endif
+}
 
 static void __init mct_init_spi(struct device_node *np)
 {

@@ -1,6 +1,7 @@
 #ifndef _LINUX_FTS_I2C_H_
 #define _LINUX_FTS_I2C_H_
 
+<<<<<<< HEAD
 #define FTS_SUPPORT_NOISE_PARAM
 #undef FTS_SUPPORT_TOUCH_KEY
 #undef FTS_SUPPORT_SEC_SWIPE
@@ -9,6 +10,19 @@
 /*#define FTS_SUPPORT_2NDSCREEN*/
 /*#define FTS_SUPPORT_SIDE_SCROLL*/
 /*#define FTS_SUPPORT_STRINGLIB */
+=======
+//#define FTS_SUPPORT_NOISE_PARAM
+#define FTS_SUPPORT_TOUCH_KEY
+#define FTS_SUPPORT_SEC_SWIPE
+//#define FTS_SUPPORT_SIDE_GESTURE
+//#define FTS_SUPPORT_WATER_MODE
+/*#define FTS_SUPPORT_2NDSCREEN*/
+/*#define FTS_SUPPORT_SIDE_SCROLL*/
+#define FTS_SUPPORT_SELF_MODE
+
+//#define FTS_SUPPORT_STRINGLIB
+#undef FTS_SUPPORT_HOVER
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 extern struct fts_callbacks *fts_charger_callbacks;
 struct fts_callbacks {
@@ -30,8 +44,13 @@ struct fts_noise_param {
 #define TOUCH_KEY_NULL	0
 
 /* support 2 touch keys */
+<<<<<<< HEAD
 #define TOUCH_KEY_RECENT		0x01
 #define TOUCH_KEY_BACK		0x02
+=======
+#define TOUCH_KEY_RECENT		0x02
+#define TOUCH_KEY_BACK		0x01
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct fts_touchkey {
 	unsigned int value;
@@ -58,6 +77,10 @@ struct fts_i2c_platform_data {
 	const char *model_name;
 	const char *regulator_dvdd;
 	const char *regulator_avdd;
+<<<<<<< HEAD
+=======
+	const char *regulator_en;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	struct pinctrl *pinctrl;
 	struct pinctrl_state	*pins_default;
@@ -72,6 +95,12 @@ struct fts_i2c_platform_data {
 	unsigned tspid2;
 	unsigned gpio;
 	int irq_type;
+<<<<<<< HEAD
+=======
+	int stm_ver;
+	int stm_format_ver;
+	u32	device_num;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef FTS_SUPPORT_TOUCH_KEY
 	bool support_mskey;
@@ -80,9 +109,15 @@ struct fts_i2c_platform_data {
 	const char *regulator_tk_led;
 	int (*led_power) (void *, bool);
 #endif
+<<<<<<< HEAD
 #ifdef FTS_SUPPORT_SIDE_GESTURE
 	bool support_sidegesture;
 #endif
+=======
+
+	int support_sidegesture;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef FTS_SUPPORT_2NDSCREEN
 	bool support_2ndscreen;
 #endif
@@ -93,7 +128,11 @@ struct fts_i2c_platform_data {
 	unsigned gpio_sda;
 };
 
+<<<<<<< HEAD
 #undef SEC_TSP_FACTORY_TEST
+=======
+#define SEC_TSP_FACTORY_TEST
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 // #define FTS_SUPPORT_TA_MODE // DE version don't need.
 
@@ -104,4 +143,12 @@ extern struct class *sec_class;
 extern unsigned int lcdtype;
 
 void fts_charger_infom(bool en);
+<<<<<<< HEAD
 #endif
+=======
+#ifdef CONFIG_TRUSTONIC_TRUSTED_UI
+extern void trustedui_mode_on(void);
+#endif
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

@@ -36,7 +36,10 @@ struct tc300k_platform_data {
 	const char *regulator_ic;
 	const char *regulator_led;
 	bool boot_on_ldo;
+<<<<<<< HEAD
 	int bringup;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	int *keycode;
 	int key_num;

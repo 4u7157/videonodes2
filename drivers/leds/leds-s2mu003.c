@@ -513,7 +513,11 @@ static struct of_device_id s2mu003_fled_match_table[] = {
 
 static int s2mu003_led_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	int ret = 0, i = 0;
+=======
+	int ret = 0, i = 0, err = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	struct s2mu003_mfd_chip *s2mu003 = dev_get_drvdata(pdev->dev.parent);
 #ifndef CONFIG_OF
@@ -580,7 +584,11 @@ static int s2mu003_led_probe(struct platform_device *pdev)
 		pr_info("%s led%d setup ...\n", __func__, i);
 
 		data = kzalloc(sizeof(struct s2mu003_led), GFP_KERNEL);
+<<<<<<< HEAD
 		global_led_datas[i] = led_data;
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!data) {
 			pr_err("[%s] memory allocation error data\n",
 					__func__);
@@ -592,6 +600,10 @@ static int s2mu003_led_probe(struct platform_device *pdev)
 		led_data = devm_kzalloc(&pdev->dev,
 				sizeof(struct s2mu003_led_data), GFP_KERNEL);
 
+<<<<<<< HEAD
+=======
+		global_led_datas[i] = led_data;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		led_datas[i] = led_data;
 
 		if (!led_data) {
@@ -615,8 +627,13 @@ static int s2mu003_led_probe(struct platform_device *pdev)
 		mutex_init(&led_data->lock);
 		spin_lock_init(&led_data->value_lock);
 		INIT_WORK(&led_data->work, s2mu003_led_work);
+<<<<<<< HEAD
 		ret = led_classdev_register(&pdev->dev, &led_data->cdev);
 		if (ret < 0) {
+=======
+		err = led_classdev_register(&pdev->dev, &led_data->cdev);
+		if (err < 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			pr_err("unable to register LED\n");
 			cancel_work_sync(&led_data->work);
 			mutex_destroy(&led_data->lock);

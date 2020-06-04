@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
 *
 * drivers/media/tdmb/tdmb_port_mtv319.c
 *
@@ -16,6 +17,25 @@
 * GNU General Public License for more details.
 *
 */
+=======
+ *
+ * drivers/media/tdmb/tdmb_port_mtv319.c
+ *
+ * tdmb driver
+ *
+ * Copyright (C) (2013, Samsung Electronics)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2.
+ *
+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+ * kind, whether express or implied; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <linux/kernel.h>
 #include <linux/errno.h>
@@ -105,7 +125,11 @@ static bool __get_ensemble_info(struct ensemble_info_type *e_info
 
 static void mtv319_power_off(void)
 {
+<<<<<<< HEAD
 	DPRINTK("mtv319_power_off\n");
+=======
+	DPRINTK("%s\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (mtv319_pwr_on) {
 		mtv319_on_air = false;
@@ -124,6 +148,7 @@ static void mtv319_power_off(void)
 
 static bool mtv319_power_on(int param)
 {
+<<<<<<< HEAD
 	DPRINTK("mtv319_power_on\n");
 
 	if (mtv319_pwr_on) {
@@ -144,6 +169,25 @@ static bool mtv319_power_on(int param)
 			return true;
 		}
 	}
+=======
+	DPRINTK("%s\n", __func__);
+
+	if (mtv319_pwr_on)
+		return true;
+	tdmb_control_gpio(true);
+
+	RTV_GUARD_INIT;
+
+	if (rtvTDMB_Initialize(tdmb_get_if_handle()) != RTV_SUCCESS) {
+		tdmb_control_gpio(false);
+		return false;
+	}
+#if !defined(CONFIG_TDMB_TSIF_SLSI) && !defined(CONFIG_TDMB_TSIF_QC)
+	tdmb_control_irq(true);
+#endif
+	mtv319_pwr_on = true;
+	return true;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static void mtv319_get_dm(struct tdmb_dm *info)
@@ -170,12 +214,20 @@ static int rtv_fic_dec_timeout;
 static void dmb_drv_fic_cb(u8 *data, u32 length)
 {
 	int fic_size;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (rtv_fic_dec_result == RTV_FIC_RET_DONE)
 		return;
 
 	fic_size = mtv319_assemble_fic(fic_buf, data, length);
 	if (fic_size >= 96) {
 		enum E_RTV_FIC_DEC_RET_TYPE dc;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		dc = rtvFICDEC_Decode(fic_buf, fic_size);
 		rtv_fic_dec_result = dc;
 	}
@@ -188,12 +240,20 @@ static void dmb_drv_fic_cb(u8 *data, u32 length)
 
 static void dmb_drv_msc_cb(u8 *data, u32 length)
 {
+<<<<<<< HEAD
 /*	DPRINTK("%s : 0x%x 0x%x 0x%x 0x%x \n", __func__, data[0], data[1], data[3], data[4]); */
 	tdmb_store_data(data, length);
 }
 #endif
 static bool mtv319_set_ch(unsigned long freq
 						, unsigned char subchid
+=======
+/*	DPRINTK("%s : 0x%x 0x%x 0x%x 0x%x\n", __func__, data[0], data[1], data[3], data[4]); */
+	tdmb_store_data(data, length);
+}
+#endif
+static bool mtv319_set_ch(unsigned long freq, unsigned char subchid
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 						, bool factory_test)
 {
 	bool ret = false;
@@ -224,9 +284,15 @@ static bool mtv319_set_ch(unsigned long freq
 		|| ch_ret == RTV_ALREADY_OPENED_SUBCHANNEL_ID) {
 			mtv319_on_air = true;
 			ret = TRUE;
+<<<<<<< HEAD
 			DPRINTK("mtv319_set_ch Success\n");
 		} else {
 			DPRINTK("mtv319_set_ch Fail (%d)\n", ch_ret);
+=======
+			DPRINTK("%s Success\n", __func__);
+		} else {
+			DPRINTK("%s Fail (%d)\n", __func__, ch_ret);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -237,6 +303,10 @@ static bool mtv319_scan_ch(struct ensemble_info_type *e_info
 							, unsigned long freq)
 {
 	bool ret = false;
+<<<<<<< HEAD
+=======
+	int scan_result = 1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (mtv319_pwr_on == true && e_info != NULL) {
 		rtvTDMB_CloseAllSubChannels();
@@ -249,6 +319,7 @@ static bool mtv319_scan_ch(struct ensemble_info_type *e_info
 			return false;
 		rtvFICDEC_Init();
 #endif
+<<<<<<< HEAD
 		if (rtvTDMB_ScanFrequency(freq/1000) == RTV_SUCCESS) {
 #if defined(TDMB_FIC_USE_TSIF)
 			unsigned int lock_s;
@@ -257,6 +328,18 @@ static bool mtv319_scan_ch(struct ensemble_info_type *e_info
 				lock_s = tdmb_GetOfdmLockStatus();
 				if (!(lock_s & RTV_TDMB_OFDM_LOCK_MASK)) {
 					DPRINTK("##lock_s(0x%02X)\n",lock_s);
+=======
+		scan_result = rtvTDMB_ScanFrequency(freq/1000);
+		if (scan_result == RTV_SUCCESS) {
+#if defined(TDMB_FIC_USE_TSIF)
+			unsigned int lock_s;
+
+			while (rtv_fic_dec_result == RTV_FIC_RET_GOING
+					&& rtv_fic_dec_timeout > 0) {
+				lock_s = tdmb_GetOfdmLockStatus();
+				if (!(lock_s & RTV_TDMB_OFDM_LOCK_MASK)) {
+					DPRINTK("##lock_s(0x%02X)\n", lock_s);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					break;
 				}
 				RTV_DELAY_MS(FIC_WAIT_TIME);
@@ -269,21 +352,41 @@ static bool mtv319_scan_ch(struct ensemble_info_type *e_info
 #else
 			enum E_RTV_FIC_DEC_RET_TYPE dc;
 			unsigned int i;
+<<<<<<< HEAD
+=======
+			int parser_status = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			rtvFICDEC_Init(); /* FIC parser Init */
 
 			for (i = 0; i < 30; i++) {
 				int ret_size;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				ret_size = rtvTDMB_ReadFIC(fic_buf);
 				if (ret_size > 0) {
 					dc = rtvFICDEC_Decode(fic_buf, 384);
 					if (dc == RTV_FIC_RET_GOING)
 						continue;
 
+<<<<<<< HEAD
 					if (dc == RTV_FIC_RET_DONE)
 						ret = true;
 
 					break; /* Stop */
+=======
+					if (dc == RTV_FIC_RET_DONE) {
+						parser_status = 1;
+						break; /* Stop */
+					}
+
+					if (dc == RTV_FIC_RET_SEMI_DONE) {
+						parser_status = 2;
+						continue;
+					}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				} else {
 					DPRINTK("mtv319_scan_ch READ Fail\n");
 				}
@@ -291,10 +394,19 @@ static bool mtv319_scan_ch(struct ensemble_info_type *e_info
 
 			rtvTDMB_CloseFIC();
 #endif
+<<<<<<< HEAD
 			if (ret == true)
 				ret = __get_ensemble_info(e_info, (freq));
 		} else {
 			DPRINTK("%s : Scan fail : %ld\n", __func__, freq);
+=======
+			if ((parser_status == 1) || (parser_status == 2))
+				ret = __get_ensemble_info(e_info, (freq));
+
+			DPRINTK("%s : parser_status : %d\n", __func__, parser_status);
+		} else {
+			DPRINTK("%s : Scan fail : %ld : %d\n", __func__, freq, scan_result);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			ret = false;
 		}
 	}

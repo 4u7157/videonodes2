@@ -49,7 +49,10 @@ static LIST_HEAD(drvdata_list);
 
 #define MAX_SPI_PORTS		10
 #define SPI_AUTOSUSPEND_TIMEOUT		(100)
+<<<<<<< HEAD
 #define SPI_TIMEOUT (msecs_to_jiffies(100))
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* Registers and bit-fields */
 
@@ -239,6 +242,7 @@ static void s3c64xx_spi_dump_reg(struct s3c64xx_spi_driver_data *sdd)
 	void __iomem *regs = sdd->regs;
 	struct device *dev = &sdd->pdev->dev;
 
+<<<<<<< HEAD
 	dev_err(dev, "Register dump for SPI\n"
 		"	CH_CFG       0x%08x\n"
 		"	MODE_CFG     0x%08x\n"
@@ -251,6 +255,19 @@ static void s3c64xx_spi_dump_reg(struct s3c64xx_spi_driver_data *sdd)
 		, readl(regs + S3C64XX_SPI_STATUS)
 		, readl(regs + S3C64XX_SPI_PACKET_CNT)
 	);
+=======
+	dev_err(dev, "Register dump for SPI\n");
+	dev_err(dev, "- CH_CFG 0x%08x\n",
+				readl(regs + S3C64XX_SPI_CH_CFG));
+	dev_err(dev, "- MODE_CFG 0x%08x\n",
+				readl(regs + S3C64XX_SPI_MODE_CFG));
+	dev_err(dev, "- CS_REG 0x%08x\n",
+				readl(regs + S3C64XX_SPI_SLAVE_SEL));
+	dev_err(dev, "- STATUS 0x%08x\n",
+				readl(regs + S3C64XX_SPI_STATUS));
+	dev_err(dev, "- PACKET_CNT 0x%08x\n",
+				readl(regs + S3C64XX_SPI_PACKET_CNT));
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 }
 static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
@@ -383,6 +400,7 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
 	info.fp_param = dma;
 	info.direction = dma->direction;
 	info.buf = buf;
+<<<<<<< HEAD
 
 #ifdef CONFIG_ARM64
 	sdd->ops->prepare((unsigned long)dma->ch, &info);
@@ -399,6 +417,24 @@ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
 	struct samsung_dma_req req;
 	struct device *dev = &sdd->pdev->dev;
 
+=======
+
+#ifdef CONFIG_ARM64
+	sdd->ops->prepare((unsigned long)dma->ch, &info);
+	sdd->ops->trigger((unsigned long)dma->ch);
+#else
+	sdd->ops->prepare((enum dma_ch)dma->ch, &info);
+	sdd->ops->trigger((enum dma_ch)dma->ch);
+#endif
+
+}
+
+static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+{
+	struct samsung_dma_req req;
+	struct device *dev = &sdd->pdev->dev;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sdd->ops = samsung_dma_get_ops();
 
 	req.cap = DMA_SLAVE;
@@ -421,7 +457,10 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
 #ifdef CONFIG_PM_RUNTIME
+<<<<<<< HEAD
 	unsigned long timeout;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret;
 #endif
 
@@ -430,6 +469,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
 		/* Acquire DMA channels */
 		while (!acquire_dma(sdd))
 			usleep_range(10000, 11000);
+<<<<<<< HEAD
 	}
 #endif
 
@@ -445,8 +485,12 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
 			ret = 0;
 			break;
 		}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
+#endif
 
+<<<<<<< HEAD
 	if (ret < 0) {
 		dev_err(&sdd->pdev->dev, "Error: SPI runtime get sync failed after 100msec waiting ret: %d\n", ret);
 		return ret;
@@ -457,6 +501,17 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
 	if (sci->need_hw_init)
 		s3c64xx_spi_hwinit(sdd, sdd->port_id);
 
+=======
+#ifdef CONFIG_PM_RUNTIME
+	ret = pm_runtime_get_sync(&sdd->pdev->dev);
+	if(ret < 0)
+		return ret;
+#endif
+
+	if (sci->need_hw_init)
+		s3c64xx_spi_hwinit(sdd, sdd->port_id);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -513,7 +568,11 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
 				struct spi_transfer *xfer, int dma_mode)
 {
 	void __iomem *regs = sdd->regs;
+<<<<<<< HEAD
 	u32 modecfg, chcfg, dma_burst_len, packet_cnt_en;
+=======
+	u32 modecfg, chcfg, dma_burst_len;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	chcfg = readl(regs + S3C64XX_SPI_CH_CFG);
 	chcfg &= ~S3C64XX_SPI_CH_TXCH_ON;
@@ -966,6 +1025,7 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
 		/* verify cpu mode */
 		if (sci->dma_mode != DMA_MODE) {
 			use_dma = 0;
+<<<<<<< HEAD
 
 			/* backup original tx, rx buf ptr & xfer length */
 			origin_tx_buf = xfer->tx_buf;
@@ -1028,6 +1088,70 @@ try_transfer:
 			goto out;
 		}
 
+=======
+
+			/* backup original tx, rx buf ptr & xfer length */
+			origin_tx_buf = xfer->tx_buf;
+			origin_rx_buf = xfer->rx_buf;
+			origin_len = xfer->len;
+
+			target_len = xfer->len;
+			if (xfer->len > fifo_lvl)
+				xfer->len = fifo_lvl;
+		} else {
+		/* Polling method for xfers not bigger than FIFO capacity */
+			if (xfer->len <= fifo_lvl) {
+				use_dma = 0;
+			} else {
+				use_dma = 1;
+			}
+		}
+try_transfer:
+		spin_lock_irqsave(&sdd->lock, flags);
+
+		/* Pending only which is to be done */
+		sdd->state &= ~RXBUSY;
+		sdd->state &= ~TXBUSY;
+
+		if (cs->cs_mode == AUTO_CS_MODE) {
+			/* Slave Select */
+			enable_cs(sdd, spi);
+
+			enable_datapath(sdd, spi, xfer, use_dma);
+		} else {
+			enable_datapath(sdd, spi, xfer, use_dma);
+
+			/* Slave Select */
+			enable_cs(sdd, spi);
+		}
+
+		spin_unlock_irqrestore(&sdd->lock, flags);
+
+		status = wait_for_xfer(sdd, xfer, use_dma);
+
+		if (status) {
+			dev_err(&spi->dev, "I/O Error: rx-%d tx-%d res:rx-%c tx-%c len-%d\n",
+				xfer->rx_buf ? 1 : 0, xfer->tx_buf ? 1 : 0,
+				(sdd->state & RXBUSY) ? 'f' : 'p',
+				(sdd->state & TXBUSY) ? 'f' : 'p',
+				xfer->len);
+
+			if (use_dma) {
+				if (xfer->tx_buf != NULL
+						&& (sdd->state & TXBUSY))
+					s3c64xx_spi_dma_stop(sdd, &sdd->tx_dma);
+				if (xfer->rx_buf != NULL
+						&& (sdd->state & RXBUSY))
+					s3c64xx_spi_dma_stop(sdd, &sdd->rx_dma);
+			}
+
+			s3c64xx_spi_dump_reg(sdd);
+			flush_fifo(sdd);
+
+			goto out;
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (xfer->delay_usecs)
 			udelay(xfer->delay_usecs);
 
@@ -1164,6 +1288,13 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
 	if (sdd->port_id == CONFIG_SENSORS_FP_SPI_NUMBER)
 		return 0;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+	if (sdd->port_id == CONFIG_ESE_SECURE_SPI_PORT)
+		return 0;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!spi_get_ctldata(spi)) {
 		if(cs->line != 0) {
@@ -1336,6 +1467,13 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
 	if (channel == CONFIG_SENSORS_FP_SPI_NUMBER)
 		return;
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ESE_SECURE
+	if (channel == CONFIG_ESE_SECURE_SPI_PORT)
+		return;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	sdd->cur_speed = 0;
 
@@ -1682,12 +1820,24 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
 
 	if (1
 #ifdef ENABLE_SENSORS_FPRINT_SECURE
+<<<<<<< HEAD
 	&& sdd->port_id != CONFIG_SENSORS_FP_SPI_NUMBER
 #endif
 	) {
 		writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
 		       S3C64XX_SPI_INT_TX_OVERRUN_EN | S3C64XX_SPI_INT_TX_UNDERRUN_EN,
 		       sdd->regs + S3C64XX_SPI_INT_EN);
+=======
+			&& sdd->port_id != CONFIG_SENSORS_FP_SPI_NUMBER
+#endif
+#ifdef CONFIG_ESE_SECURE
+			&& sdd->port_id != CONFIG_ESE_SECURE_SPI_PORT
+#endif
+	   ){
+		writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
+				S3C64XX_SPI_INT_TX_OVERRUN_EN | S3C64XX_SPI_INT_TX_UNDERRUN_EN,
+				sdd->regs + S3C64XX_SPI_INT_EN);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 #ifdef CONFIG_PM_RUNTIME
@@ -1765,6 +1915,7 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM
 static void s3c64xx_spi_pin_ctrl(struct device *dev, int en)
 {
@@ -1816,16 +1967,49 @@ static int s3c64xx_spi_runtime_suspend(struct device *dev)
 	}
 
 	s3c64xx_spi_pin_ctrl(dev, 0);
+=======
+#ifdef CONFIG_PM_SLEEP
+static int s3c64xx_spi_suspend_operation(struct device *dev)
+{
+	struct spi_master *master = dev_get_drvdata(dev);
+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+#ifndef CONFIG_PM_RUNTIME
+	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+#endif
+	int ret;
+
+	ret = spi_master_suspend(master);
+	if (ret) {
+		dev_warn(dev, "cannot suspend master\n");
+		return ret;
+	}
+
+#ifndef CONFIG_PM_RUNTIME
+	if (sci->domain == DOMAIN_TOP) {
+		/* Disable the clock */
+		clk_disable_unprepare(sdd->src_clk);
+		clk_disable_unprepare(sdd->clk);
+		exynos_update_ip_idle_status(sdd->idle_ip_index, 1);
+	}
+#endif
+	sdd->cur_speed = 0; /* Output Clock is stopped */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int s3c64xx_spi_runtime_resume(struct device *dev)
+=======
+static int s3c64xx_spi_resume_operation(struct device *dev)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct spi_master *master = dev_get_drvdata(dev);
 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+	int ret;
 
+<<<<<<< HEAD
 	s3c64xx_spi_pin_ctrl(dev, 1);
 
 	if (sci->dma_mode == DMA_MODE && sdd->is_probed) {
@@ -1835,11 +2019,31 @@ static int s3c64xx_spi_runtime_resume(struct device *dev)
 	}
 
 	if (sci->domain == DOMAIN_TOP) {
+=======
+	if (sci->domain == DOMAIN_TOP) {
+		/* Enable the clock */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		exynos_update_ip_idle_status(sdd->idle_ip_index, 0);
 		clk_prepare_enable(sdd->src_clk);
 		clk_prepare_enable(sdd->clk);
+
+		if (sci->cfg_gpio)
+			sci->cfg_gpio();
+
+		if (sci->secure_mode)
+			sci->need_hw_init = 1;
+		else
+			s3c64xx_spi_hwinit(sdd, sdd->port_id);
+
+#ifdef CONFIG_PM_RUNTIME
+		/* Disable the clock */
+		clk_disable_unprepare(sdd->src_clk);
+		clk_disable_unprepare(sdd->clk);
+		exynos_update_ip_idle_status(sdd->idle_ip_index, 1);
+#endif
 	}
 
+<<<<<<< HEAD
 #if defined(CONFIG_VIDEO_EXYNOS_FIMC_IS) || defined(CONFIG_VIDEO_EXYNOS_FIMC_IS2)
 	else if (sci->domain == DOMAIN_CAM1 || sci->domain == DOMAIN_ISP) {
 		exynos_update_ip_idle_status(sdd->idle_ip_index, 0);
@@ -1850,10 +2054,86 @@ static int s3c64xx_spi_runtime_resume(struct device *dev)
 	}
 #endif
 
+=======
+	/* Start the queue running */
+	ret = spi_master_resume(master);
+	if (ret)
+		dev_err(dev, "problem starting queue (%d)\n", ret);
+	else
+		dev_dbg(dev, "resumed\n");
+
+	return ret;
+}
+
+static int s3c64xx_spi_suspend(struct device *dev)
+{
+	struct spi_master *master = dev_get_drvdata(dev);
+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+
+	if (sci->dma_mode != DMA_MODE)
+		return 0;
+
+	dev_dbg(dev, "spi suspend is handled in device suspend, dma mode = %d\n",
+			sci->dma_mode);
+	return s3c64xx_spi_suspend_operation(dev);
+}
+
+static int s3c64xx_spi_suspend_noirq(struct device *dev)
+{
+	struct spi_master *master = dev_get_drvdata(dev);
+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+
+	if (sci->dma_mode == DMA_MODE)
+		return 0;
+
+	dev_dbg(dev, "spi suspend is handled in suspend_noirq, dma mode = %d\n",
+			sci->dma_mode);
+	return s3c64xx_spi_suspend_operation(dev);
+}
+
+static int s3c64xx_spi_resume(struct device *dev)
+{
+	struct spi_master *master = dev_get_drvdata(dev);
+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+
+	if (sci->dma_mode != DMA_MODE)
+		return 0;
+
+	dev_dbg(dev, "spi resume is handled in device resume, dma mode = %d\n",
+			sci->dma_mode);
+	return s3c64xx_spi_resume_operation(dev);
+}
+
+static int s3c64xx_spi_resume_noirq(struct device *dev)
+{
+	struct spi_master *master = dev_get_drvdata(dev);
+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+
+	if (sci->dma_mode == DMA_MODE)
+		return 0;
+
+	dev_dbg(dev, "spi resume is handled in resume_noirq, dma mode = %d\n",
+			sci->dma_mode);
+	return s3c64xx_spi_resume_operation(dev);
+}
+#else
+static int s3c64xx_spi_suspend(struct device *dev)
+{
+	return 0;
+}
+
+static int s3c64xx_spi_resume(struct device *dev)
+{
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 #endif /* CONFIG_PM */
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int s3c64xx_spi_suspend_operation(struct device *dev)
 {
@@ -1882,6 +2162,59 @@ static int s3c64xx_spi_suspend_operation(struct device *dev)
 	        s3c64xx_spi_runtime_suspend(dev);
 
 	sdd->cur_speed = 0; /* Output Clock is stopped */
+=======
+#ifdef CONFIG_PM_RUNTIME
+static void s3c64xx_spi_pin_ctrl(struct device *dev, int en)
+{
+	struct spi_master *master = dev_get_drvdata(dev);
+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+	struct pinctrl_state *pin_stat;
+
+	if (!sdd->pin_idle)
+		return;
+
+	pin_stat = en ? sdd->pin_def : sdd->pin_idle;
+	if (!IS_ERR(pin_stat)) {
+		sdd->pinctrl->state = NULL;
+		if (pinctrl_select_state(sdd->pinctrl, pin_stat))
+			dev_err(dev, "could not set pinctrl.\n");
+	} else {
+		dev_warn(dev, "pinctrl stat is null pointer.\n");
+	}
+}
+
+static int s3c64xx_spi_runtime_suspend(struct device *dev)
+{
+	struct spi_master *master = dev_get_drvdata(dev);
+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+
+	if (sdd->clk->enable_count)
+		clk_disable_unprepare(sdd->clk);
+	if (sdd->src_clk->enable_count)
+		clk_disable_unprepare(sdd->src_clk);
+
+	exynos_update_ip_idle_status(sdd->idle_ip_index, 1);
+
+	/* Free DMA channels */
+	if (sci->dma_mode == DMA_MODE && sdd->is_probed && sdd->ops != NULL) {
+	#ifdef CONFIG_ARM64
+		sdd->ops->release((unsigned long)sdd->rx_dma.ch,
+					&s3c64xx_spi_dma_client);
+		sdd->ops->release((unsigned long)sdd->tx_dma.ch,
+						&s3c64xx_spi_dma_client);
+	#else
+		sdd->ops->release((enum dma_ch)sdd->rx_dma.ch,
+						&s3c64xx_spi_dma_client);
+		sdd->ops->release((enum dma_ch)sdd->tx_dma.ch,
+						&s3c64xx_spi_dma_client);
+	#endif
+		sdd->rx_dma.ch = NULL;
+		sdd->tx_dma.ch = NULL;
+	}
+
+	s3c64xx_spi_pin_ctrl(dev, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -1891,6 +2224,7 @@ static int s3c64xx_spi_resume_operation(struct device *dev)
 	struct spi_master *master = dev_get_drvdata(dev);
 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+<<<<<<< HEAD
 	int ret;
 
 	if (!pm_runtime_status_suspended(dev))
@@ -1989,6 +2323,33 @@ static int s3c64xx_spi_resume_noirq(struct device *dev)
 #else
 static int s3c64xx_spi_suspend(struct device *dev)
 {
+=======
+
+	s3c64xx_spi_pin_ctrl(dev, 1);
+
+	if (sci->dma_mode == DMA_MODE && sdd->is_probed) {
+		/* Acquire DMA channels */
+		while (!acquire_dma(sdd))
+			usleep_range(10000, 11000);
+	}
+
+	if (sci->domain == DOMAIN_TOP) {
+		exynos_update_ip_idle_status(sdd->idle_ip_index, 0);
+		clk_prepare_enable(sdd->src_clk);
+		clk_prepare_enable(sdd->clk);
+	}
+
+#if defined(CONFIG_VIDEO_EXYNOS_FIMC_IS) || defined(CONFIG_VIDEO_EXYNOS_FIMC_IS2)
+	else if (sci->domain == DOMAIN_CAM1 || sci->domain == DOMAIN_ISP) {
+		exynos_update_ip_idle_status(sdd->idle_ip_index, 0);
+		clk_prepare_enable(sdd->src_clk);
+		clk_prepare_enable(sdd->clk);
+
+		s3c64xx_spi_hwinit(sdd, sdd->port_id);
+	}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 

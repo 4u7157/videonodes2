@@ -331,3 +331,10 @@ endmenu
 
 endif
 
+<<<<<<< HEAD
+=======
+menu "Samsung thermal drivers"
+depends on ARCH_EXYNOS
+source "drivers/thermal/samsung/Kconfig"
+endmenu
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

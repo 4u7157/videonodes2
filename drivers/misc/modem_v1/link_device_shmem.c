@@ -33,6 +33,10 @@
 
 #include <linux/shm_ipc.h>
 #include <linux/mcu_ipc.h>
+<<<<<<< HEAD
+=======
+#include <linux/modem_notifier.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include <soc/samsung/pmu-cp.h>
 #if defined(CONFIG_ECT)
 #include <soc/samsung/ect_parser.h>
@@ -44,6 +48,7 @@
 #include "link_ctrlmsg_iosm.h"
 #include <linux/modem_notifier.h>
 
+<<<<<<< HEAD
 #define MIF_TX_QUOTA 64
 
 #if !defined(CONFIG_CP_SECURE_BOOT)
@@ -110,6 +115,12 @@ static const unsigned long CRC32_TABLE[256] =
 #ifdef CONFIG_SHARE_MIF_FREQ_INFO
 static struct mem_link_device *mld_freq = NULL;
 #endif
+=======
+#include "link_device_ect.h"
+
+#define MIF_TX_QUOTA 64
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef GROUP_MEM_LINK_COMMAND
 
@@ -117,7 +128,11 @@ static inline void reset_ipc_map(struct mem_link_device *mld)
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_SIPC5_DEVICES; i++) {
+=======
+	for (i = 0; i < MAX_SIPC_MAP; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		struct mem_ipc_device *dev = mld->dev[i];
 
 		set_txq_head(dev, 0);
@@ -139,7 +154,11 @@ static int shmem_reset_ipc_link(struct mem_link_device *mld)
 
 	reset_ipc_map(mld);
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_SIPC5_DEVICES; i++) {
+=======
+	for (i = 0; i < MAX_SIPC_MAP; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		struct mem_ipc_device *dev = mld->dev[i];
 
 		skb_queue_purge(dev->skb_txq);
@@ -204,7 +223,11 @@ static inline void purge_txq(struct mem_link_device *mld)
 	struct link_device *ld = &mld->link_dev;
 	int i;
 
+<<<<<<< HEAD
 	/* Purge the skb_txq in every IPC device (IPC_FMT, IPC_RAW, etc.) */
+=======
+	/* Purge the skb_txq in every rb */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (ld->sbd_ipc) {
 		struct sbd_link_device *sl = &mld->sbd_link_dev;
 
@@ -214,7 +237,12 @@ static inline void purge_txq(struct mem_link_device *mld)
 		}
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_SIPC5_DEVICES; i++) {
+=======
+	/* Purge the skb_txq in every IPC device (IPC_MAP_FMT, IPC_MAP_HPRIO_RAW, etc.) */
+	for (i = 0; i < MAX_SIPC_MAP; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		struct mem_ipc_device *dev = mld->dev[i];
 		skb_queue_purge(dev->skb_txq);
 	}
@@ -281,8 +309,12 @@ static void handle_no_cp_crash_ack(unsigned long arg)
 	}
 }
 
+<<<<<<< HEAD
 static void shmem_forced_cp_crash(struct mem_link_device *mld,
 	u32 crash_reason_owner, char * crash_reason_string)
+=======
+static void shmem_forced_cp_crash(struct mem_link_device *mld)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct link_device *ld = &mld->link_dev;
 	struct modem_ctl *mc = ld->mc;
@@ -306,10 +338,13 @@ static void shmem_forced_cp_crash(struct mem_link_device *mld,
 	/* Disable debug Snapshot */
 	mif_set_snapshot(false);
 
+<<<<<<< HEAD
 	mld->crash_reason.owner = crash_reason_owner;
 	strlcpy(mld->crash_reason.string, crash_reason_string,
 		MEM_CRASH_REASON_SIZE);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (mld->attrs & LINK_ATTR(LINK_ATTR_MEM_DUMP)) {
 		stop_net_ifaces(ld);
 
@@ -326,8 +361,12 @@ static void shmem_forced_cp_crash(struct mem_link_device *mld,
 		/* Send CRASH_EXIT command to a CP */
 		send_ipc_irq(mld, cmd2int(CMD_CRASH_EXIT));
 	} else {
+<<<<<<< HEAD
 		shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 			"Crash by shmem_forced_cp_crash()");
+=======
+		shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	evt_log(0, "%s->%s: CP_CRASH_REQ <%pf>\n", ld->name, mc->name, CALLER);
@@ -396,6 +435,7 @@ static void cmd_init_start_handler(struct mem_link_device *mld)
 	mif_info("%s: PIF_INIT_DONE -> %s\n", ld->name, mc->name);
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_SOC_EXYNOS7570)
 static void write_clk_table_to_shmem(struct mem_link_device *mld)
 {
@@ -404,12 +444,25 @@ static void write_clk_table_to_shmem(struct mem_link_device *mld)
 	int i, j;
 
 	if (mld->clk_table == NULL)	{
+=======
+#if defined(CONFIG_ECT)
+static void write_clk_table_to_shmem(struct mem_link_device *mld)
+{
+	struct clock_table *clk_tb;
+	u32 *clk_data_base, *clk_data_entry;
+	struct ect_table_data *ect_table_data = &mld->ect_table_data;
+	struct freq_table *ect_table;
+	int i, j;
+
+	if (mld->clk_table == NULL) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		mif_err("clk_table is not defined\n");
 		return;
 	}
 
 	clk_tb = (struct clock_table *)mld->clk_table;
 
+<<<<<<< HEAD
 	strcpy(clk_tb->parser_version, "CT0");
 	clk_tb->total_table_count = 3;
 
@@ -469,18 +522,61 @@ static void write_clk_table_to_shmem(struct mem_link_device *mld)
 
 	for (i = 0; i < clk_tb->total_table_count; i++) {
 		mif_info("TABLE_NAME[%d] : %s\n", i+1,
+=======
+	strlcpy(clk_tb->parser_version, ect_table_data->parser_version,
+			sizeof(clk_tb->parser_version));
+	clk_tb->total_table_count = get_total_table_count(ect_table_data);
+
+	/* Write ECT TOC */
+	for (i = 0; i < clk_tb->total_table_count; i++) {
+		ect_table = get_ordered_table(ect_table_data, i);
+
+		strlcpy(clk_tb->table_info[i].table_name, ect_table->tag,
+				sizeof(clk_tb->table_info[i].table_name));
+		clk_tb->table_info[i].table_count = ect_table->num_of_table;
+	}
+
+	clk_data_base = (u32 *)&clk_tb->table_info[clk_tb->total_table_count];
+
+	/* Write ECT Values */
+	clk_data_entry = clk_data_base;
+
+	for (i = 0; i < clk_tb->total_table_count; i++) {
+		ect_table = get_ordered_table(ect_table_data, i);
+
+		for (j = 0; j < ect_table->num_of_table; j++) {
+			*clk_data_entry = ect_table->freq[j];
+			clk_data_entry++;
+		}
+ 	}
+
+	/* Print all ECT values */
+	mif_info("PARSER_VERSION: %.4s\n", clk_tb->parser_version);
+	mif_info("TOTAL_TABLE_COUNT: %d\n", clk_tb->total_table_count);
+
+	for (i = 0; i < clk_tb->total_table_count; i++) {
+		mif_info("TABLE_NAME[%d] : %.4s\n", i+1,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			clk_tb->table_info[i].table_name);
 		mif_info("TABLE_COUNT[%d]: %d\n", i+1,
 			clk_tb->table_info[i].table_count);
 	}
 
+<<<<<<< HEAD
 	clk_data = (u32 *)
 		clk_tb->table_info[clk_tb->total_table_count].table_name;
+=======
+	clk_data_entry = clk_data_base;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	for (i = 0; i < clk_tb->total_table_count; i++) {
 		for (j = 0; j < clk_tb->table_info[i].table_count; j++)
 			mif_info("CLOCK_TABLE[%d][%d] : %d\n",
+<<<<<<< HEAD
 				i+1, j+1, *clk_data++);
+=======
+				i+1, j+1, *clk_data_entry++);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 #else
@@ -496,6 +592,7 @@ static void cmd_phone_start_handler(struct mem_link_device *mld)
 	struct modem_ctl *mc = ld->mc;
 	unsigned long flags;
 	int err;
+<<<<<<< HEAD
 #ifdef CONFIG_FREE_CP_RSVD_MEMORY
 	struct page *page;
 	size_t sh_addr = (size_t)shm_get_phys_base();
@@ -503,6 +600,8 @@ static void cmd_phone_start_handler(struct mem_link_device *mld)
 	int i;
 	volatile u8 __iomem *addr;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mif_info("%s: CP_START <- %s (%s.state:%s cp_boot_done:%d)\n",
 		ld->name, mc->name, mc->name, mc_state(mc),
@@ -542,6 +641,7 @@ static void cmd_phone_start_handler(struct mem_link_device *mld)
 
 	mld->state = LINK_STATE_IPC;
 	complete_all(&mc->init_cmpl);
+<<<<<<< HEAD
 #ifdef CONFIG_FREE_CP_RSVD_MEMORY
 	addr = ioremap(0x10480000, 0x50);
 
@@ -562,6 +662,10 @@ static void cmd_phone_start_handler(struct mem_link_device *mld)
 		free_reserved_page(page);
 	}
 #endif
+=======
+	modem_notify_event(MODEM_EVENT_ONLINE);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 exit:
 	spin_unlock_irqrestore(&mld->state_lock, flags);
 }
@@ -610,6 +714,70 @@ static void cmd_crash_exit_handler(struct mem_link_device *mld)
 	shmem_handle_cp_crash(mld, STATE_CRASH_EXIT);
 }
 
+<<<<<<< HEAD
+=======
+static void shmem_irq_handler(void *data)
+{
+	struct mem_link_device *mld = (struct mem_link_device *)data;
+	struct mst_buff *msb;
+	struct link_device *ld = &mld->link_dev;
+	struct modem_ctl *mc = ld->mc;
+
+	msb = mem_take_snapshot(mld, RX);
+	if (!msb)
+		return;
+
+	if (unlikely(!int_valid(msb->snapshot.int2ap))) {
+		mif_err("%s: ERR! invalid intr 0x%X\n",
+				ld->name, msb->snapshot.int2ap);
+		msb_free(msb);
+		return;
+	}
+
+	if (unlikely(!rx_possible(mc))) {
+		mif_err("%s: ERR! %s.state == %s\n", ld->name, mc->name,
+			mc_state(mc));
+		msb_free(msb);
+		return;
+	}
+
+	msb_queue_tail(&mld->msb_rxq, msb);
+	tasklet_schedule(&mld->rx_tsk);
+}
+
+#ifdef CONFIG_FREE_CP_RSVD_MEMORY
+static void free_cp_reserved_memory(struct mem_link_device *mld)
+{
+	struct link_device *ld = &mld->link_dev;
+	struct page *page;
+	size_t sh_addr = (size_t)shm_get_phys_base();
+	size_t size = (size_t)shm_get_phys_size();
+	int i;
+	volatile u8 __iomem *addr;
+	int err;
+
+	addr = ioremap(0x10480000, 0x50);
+
+	while((readl(addr + 0x38) & 0xff) != 0x1) {
+		usleep_range(10000, 20000);
+		mif_info("%s: CP_STAT:  0x%08X\n", ld->name, readl(addr + 0x38));
+	}
+
+	mif_info("%s: free reserved memory(addr: 0x%08X, size: 0x%08X)\n",
+		    ld->name, (unsigned int)sh_addr, (unsigned int)size);
+
+	err = exynos_smc(SMC_ID, 2, 0, 0);
+
+	for (i = 0; i < (size >> PAGE_SHIFT); i++) {
+		page = phys_to_page(sh_addr);
+		sh_addr += PAGE_SIZE;
+
+		free_reserved_page(page);
+	}
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void shmem_cmd_handler(struct mem_link_device *mld, u16 cmd)
 {
 	struct link_device *ld = &mld->link_dev;
@@ -621,6 +789,14 @@ static void shmem_cmd_handler(struct mem_link_device *mld, u16 cmd)
 
 	case CMD_PHONE_START:
 		cmd_phone_start_handler(mld);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_FREE_CP_RSVD_MEMORY
+		free_cp_reserved_memory(mld);
+		mcu_ipc_unregister_handler(MCU_CP, mld->irq_cp2ap_msg, shmem_irq_handler);
+		cancel_delayed_work_sync(&mld->udl_rx_dwork);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 
 	case CMD_CRASH_RESET:
@@ -767,7 +943,11 @@ static enum hrtimer_restart tx_timer_func(struct hrtimer *timer)
 	}
 #endif
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_SIPC5_DEVICES; i++) {
+=======
+	for (i = 0; i < MAX_SIPC_MAP; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		struct mem_ipc_device *dev = mld->dev[i];
 		int ret;
 
@@ -778,8 +958,12 @@ static enum hrtimer_restart tx_timer_func(struct hrtimer *timer)
 					need_schedule = true;
 					continue;
 				} else {
+<<<<<<< HEAD
 					shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 						"check_tx_flow_ctrl error");
+=======
+					shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					need_schedule = false;
 					goto exit;
 				}
@@ -791,6 +975,7 @@ static enum hrtimer_restart tx_timer_func(struct hrtimer *timer)
 			if (ret == -EBUSY || ret == -ENOSPC) {
 				need_schedule = true;
 				txq_stop(mld, dev);
+<<<<<<< HEAD
 				/* If txq has 2 or more packet and 2nd packet
 				  has -ENOSPC return, It request irq to consume
 				  the TX ring-buffer from CP */
@@ -799,6 +984,11 @@ static enum hrtimer_restart tx_timer_func(struct hrtimer *timer)
 			} else {
 				shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 					"tx_frames_to_dev error");
+=======
+				continue;
+			} else {
+				shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				need_schedule = false;
 				goto exit;
 			}
@@ -864,8 +1054,12 @@ static int tx_func(struct mem_link_device *mld, struct hrtimer *timer,
 				skb_queue_tail(skb_txq, skb);
 				need_schedule = true;
 			} else {
+<<<<<<< HEAD
 				shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 					"func check_tx_flow_ctrl error");
+=======
+				shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				need_schedule = false;
 			}
 			goto exit;
@@ -883,8 +1077,12 @@ static int tx_func(struct mem_link_device *mld, struct hrtimer *timer,
 			  the TX ring-buffer from CP */
 			send_ipc_irq(mld, mask2int(mask));
 		} else {
+<<<<<<< HEAD
 			shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 				"func tx_frames_to_dev error");
+=======
+			shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			need_schedule = false;
 		}
 		goto exit;
@@ -1014,8 +1212,12 @@ static enum hrtimer_restart sbd_tx_timer_func(struct hrtimer *timer)
 				mask = MASK_SEND_DATA;
 				continue;
 			} else {
+<<<<<<< HEAD
 				shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 					"tx_frames_to_rb error");
+=======
+				shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				need_schedule = false;
 				goto exit;
 			}
@@ -1082,8 +1284,12 @@ static int sbd_tx_func(struct mem_link_device *mld, struct hrtimer *timer,
 			need_schedule = true;
 			send_ipc_irq(mld, mask2int(mask));
 		} else {
+<<<<<<< HEAD
 			shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 				"func tx_frames_to_rb error");
+=======
+			shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			need_schedule = false;
 		}
 		goto exit;
@@ -1177,7 +1383,11 @@ static int xmit_ipc_to_dev(struct mem_link_device *mld, enum sipc_ch_id ch,
 	struct link_device *ld = &mld->link_dev;
 	struct io_device *iod = skbpriv(skb)->iod;
 	struct modem_ctl *mc = ld->mc;
+<<<<<<< HEAD
 	struct mem_ipc_device *dev = mld->dev[dev_id(ch)];
+=======
+	struct mem_ipc_device *dev = mld->dev[get_mmap_idx(ch, skb)];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct sk_buff_head *skb_txq;
 	unsigned long flags = 0;
 	int quota = MIF_TX_QUOTA;
@@ -1302,7 +1512,11 @@ static int xmit_udl(struct mem_link_device *mld, struct io_device *iod,
 		    enum sipc_ch_id ch, struct sk_buff *skb)
 {
 	int ret;
+<<<<<<< HEAD
 	struct mem_ipc_device *dev = mld->dev[IPC_RAW];
+=======
+	struct mem_ipc_device *dev = mld->dev[IPC_MAP_NORM_RAW];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int count = skb->len;
 	int tried = 0;
 
@@ -1351,8 +1565,12 @@ static void pass_skb_to_demux(struct mem_link_device *mld, struct sk_buff *skb)
 	if (unlikely(!iod)) {
 		mif_err("%s: ERR! No IOD for CH.%d\n", ld->name, ch);
 		dev_kfree_skb_any(skb);
+<<<<<<< HEAD
 		shmem_forced_cp_crash(mld, MEM_CRASH_REASON_RIL,
 			"ERR! No IOD for CH.XX in pass_skb_to_demux()");
+=======
+		shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 	}
 
@@ -1374,7 +1592,11 @@ static inline void link_to_demux(struct mem_link_device  *mld)
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_SIPC5_DEVICES; i++) {
+=======
+	for (i = 0; i < MAX_SIPC_MAP; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		struct mem_ipc_device *dev = mld->dev[i];
 		struct sk_buff_head *skb_rxq = dev->skb_rxq;
 
@@ -1471,8 +1693,12 @@ bad_msg:
 		FUNC, ld->name, arrow(RX), ld->mc->name,
 		hdr[0], hdr[1], hdr[2], hdr[3]);
 	set_rxq_tail(dev, in);	/* Reset tail (out) pointer */
+<<<<<<< HEAD
 	shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 		"ERR! BAD MSG from CP in rxq_read()");
+=======
+	shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 no_mem:
 	return NULL;
@@ -1509,8 +1735,12 @@ static int rx_frames_from_dev(struct mem_link_device *mld,
 				ld->name, dev->name, ch, get_rxq_tail(dev));
 			pr_skb("CRASH", skb);
 			dev_kfree_skb_any(skb);
+<<<<<<< HEAD
 			shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 				"ERR! No IOD from CP in rx_frames_from_dev()");
+=======
+			shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			break;
 		}
 
@@ -1541,7 +1771,11 @@ static int recv_ipc_frames(struct mem_link_device *mld,
 	int i;
 	u16 intr = mst->int2ap;
 
+<<<<<<< HEAD
 	for (i = 0; i < MAX_SIPC5_DEVICES; i++) {
+=======
+	for (i = 0; i < MAX_SIPC_MAP; i++) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		struct mem_ipc_device *dev = mld->dev[i];
 		int rcvd;
 
@@ -1576,8 +1810,12 @@ static void pass_skb_to_net(struct mem_link_device *mld, struct sk_buff *skb)
 	if (unlikely(!priv)) {
 		mif_err("%s: ERR! No PRIV in skb@%pK\n", ld->name, skb);
 		dev_kfree_skb_any(skb);
+<<<<<<< HEAD
 		shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 			"ERR! No PRIV in pass_skb_to_net()");
+=======
+		shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 	}
 
@@ -1585,8 +1823,12 @@ static void pass_skb_to_net(struct mem_link_device *mld, struct sk_buff *skb)
 	if (unlikely(!iod)) {
 		mif_err("%s: ERR! No IOD in skb@%pK\n", ld->name, skb);
 		dev_kfree_skb_any(skb);
+<<<<<<< HEAD
 		shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 			"ERR! No IOD in pass_skb_to_net()");
+=======
+		shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return;
 	}
 
@@ -1667,8 +1909,12 @@ static int rx_ipc_frames_from_rb(struct sbd_ring_buffer *rb)
 				mif_err("frm.ch:%d != rb.ch:%d\n", fch, ch);
 				pr_skb("CRASH", skb);
 				dev_kfree_skb_any(skb);
+<<<<<<< HEAD
 				shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 					"frm.ch != rb.ch in rx_ipc_frames_from_rb()");
+=======
+				shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				continue;
 			}
 		}
@@ -1907,6 +2153,7 @@ static int shmem_send(struct link_device *ld, struct io_device *iod,
 	switch (id) {
 	case IPC_RAW:
 		if (unlikely(atomic_read(&ld->netif_stopped) > 0)) {
+<<<<<<< HEAD
 			if (in_interrupt()) {
 				mif_err("raw tx is suspended, drop size=%d\n",
 						skb->len);
@@ -1917,6 +2164,23 @@ static int shmem_send(struct link_device *ld, struct io_device *iod,
 			init_completion(&ld->raw_tx_resumed);
 			wait_for_completion(&ld->raw_tx_resumed);
 			mif_info("TX resumed done.\n");
+=======
+			if (skb->queue_mapping != 1) {
+				if (in_interrupt()) {
+					mif_err("raw tx is suspended, drop size=%d\n",
+							skb->len);
+					return -EBUSY;
+				}
+
+				mif_info("wait TX RESUME CMD...\n");
+				init_completion(&ld->raw_tx_resumed);
+				wait_for_completion_timeout(&ld->raw_tx_resumed,
+						msecs_to_jiffies(3000));
+				mif_info("TX resumed done.\n");
+			} else {
+				mif_err_limited("Tx_flowctrl, but received ack from ch %d\n", ch);
+			}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 
 	case IPC_RFS:
@@ -2014,12 +2278,15 @@ static int shmem_xmit_boot(struct link_device *ld, struct io_device *iod,
 
 	dst = (void __iomem *)(v_base + mf.m_offset);
 	src = (void __user *)((unsigned long)mf.binary);
+<<<<<<< HEAD
 
 	if (mf.m_offset == (u32)cpmem_info->start)
 	{
 		mld->cp_binary_size = mf.size;
 	}
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifndef CONFIG_FREE_CP_RSVD_MEMORY
 	if (mf.m_offset == (u32)cpmem_info->start) {
 		mem_info = (u32 *)src;
@@ -2044,6 +2311,7 @@ static int shmem_xmit_boot(struct link_device *ld, struct io_device *iod,
 	return 0;
 }
 
+<<<<<<< HEAD
 #if !defined(CONFIG_CP_SECURE_BOOT)
 unsigned long shmem_calculate_CRC32(const unsigned char *buf, unsigned long len)
 {
@@ -2078,23 +2346,33 @@ void shmem_check_modem_binary_crc(struct link_device *ld)
 }
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int shmem_security_request(struct link_device *ld, struct io_device *iod,
 				unsigned long arg)
 {
 	unsigned long param2, param3;
 	int err = 0;
+<<<<<<< HEAD
 	int ret = 0;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct modem_sec_req msr;
 
 	err = copy_from_user(&msr, (const void __user *)arg, sizeof(msr));
 	if (err) {
 		mif_err("%s: ERR! copy_from_user fail\n", ld->name);
+<<<<<<< HEAD
 		ret = -EFAULT;
+=======
+		err = -EFAULT;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto exit;
 	}
 
 	param2 = shm_get_security_param2(msr.mode, msr.size_boot);
 	param3 = shm_get_security_param3(msr.mode, msr.size_main);
+<<<<<<< HEAD
 
 #if !defined(CONFIG_CP_SECURE_BOOT)
 	if (msr.mode == 0)
@@ -2116,6 +2394,15 @@ static int shmem_security_request(struct link_device *ld, struct io_device *iod,
 	mif_info("%s: return_value=%d\n", ld->name, ret);
 exit:
 	return ret;
+=======
+	mif_info("mode=%u, size=%lu, addr=%lu\n", msr.mode, param2, param3);
+	exynos_smc(SMC_ID_CLK, SSS_CLK_ENABLE, 0, 0);
+	err = exynos_smc(SMC_ID, msr.mode, param2, param3);
+	exynos_smc(SMC_ID_CLK, SSS_CLK_DISABLE, 0, 0);
+	mif_info("%s: return_value=%d\n", ld->name, err);
+exit:
+	return err;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int shmem_start_download(struct link_device *ld, struct io_device *iod)
@@ -2168,8 +2455,12 @@ static int shmem_force_dump(struct link_device *ld, struct io_device *iod)
 {
 	struct mem_link_device *mld = to_mem_link_device(ld);
 	mif_err("+++\n");
+<<<<<<< HEAD
 	shmem_forced_cp_crash(mld, MEM_CRASH_REASON_AP,
 		"shmem_force_dump() is called");
+=======
+	shmem_forced_cp_crash(mld);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mif_err("---\n");
 	return 0;
 }
@@ -2270,6 +2561,7 @@ static void shmem_close_tx(struct link_device *ld)
 	purge_txq(mld);
 }
 
+<<<<<<< HEAD
 static int shmem_crash_reason(struct link_device *ld, struct io_device *iod,
 		unsigned long arg)
 {
@@ -2302,6 +2594,8 @@ static int shmem_airplane_mode(struct link_device *ld, struct io_device *iod,
 
 	return 0;
 }
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 /*============================================================================*/
@@ -2418,11 +2712,15 @@ static void shmem_tx_state_handler(void *data)
 
 	int2ap_status = mld->recv_cp2ap_status(mld);
 
+<<<<<<< HEAD
 #if defined(CONFIG_SOC_EXYNOS7570)
 	switch ((int2ap_status & FLOW_CTRL_BIT) << 1) {
 #else
 	switch (int2ap_status & FLOW_CTRL_BIT) {
 #endif
+=======
+	switch (int2ap_status & 0x0010) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case MASK_TX_FLOWCTL_SUSPEND:
 		if (!chk_same_cmd(mld, int2ap_status))
 			tx_flowctrl_suspend(mld);
@@ -2444,6 +2742,7 @@ static void shmem_tx_state_handler(void *data)
 	}
 }
 
+<<<<<<< HEAD
 static void shmem_irq_handler(void *data)
 {
 	struct mem_link_device *mld = (struct mem_link_device *)data;
@@ -2479,6 +2778,12 @@ static struct pm_qos_request pm_qos_req_int;
 #if defined(CONFIG_SOC_EXYNOS7570)
 static struct pm_qos_request pm_qos_req_mif_max;
 #endif
+=======
+static struct pm_qos_request pm_qos_req_mif;
+static struct pm_qos_request pm_qos_req_cl0;
+static struct pm_qos_request pm_qos_req_cl1;
+static struct pm_qos_request pm_qos_req_int;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if 0
 static void shmem_qos_work(struct work_struct *work)
@@ -2525,6 +2830,7 @@ static void shmem_qos_work(struct work_struct *work)
 }
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_SHARE_MIF_FREQ_INFO
 void shm_set_mif_freq(u32 freq)
 {
@@ -2539,6 +2845,40 @@ EXPORT_SYMBOL(shm_set_mif_freq);
 #if defined(CONFIG_SOC_EXYNOS7570)
 #define PM_QOS_BUS_NORMAL_FRQ 690000
 #endif
+=======
+static void shmem_qos_work_cpu(struct work_struct *work)
+{
+	struct mem_link_device *mld =
+		container_of(work, struct mem_link_device, pm_qos_work_cpu);
+	struct freq_table *cpu_table;
+	struct pm_qos_request *pm_qos_req_cpu;
+	int qos_val;
+	int cpu_val;
+
+	qos_val = mbox_get_value(MCU_CP, mld->mbx_perf_req_cpu);
+	mif_info("pm_qos:0x%x requested\n", qos_val);
+	
+	if (mld->ect_table_data.ect_table[CL1_TABLE].num_of_table > 0 &&
+			!(qos_val & BIT(31))) {
+		cpu_table = &mld->ect_table_data.ect_table[CL1_TABLE];
+		pm_qos_req_cpu = &pm_qos_req_cl1;
+	} else {
+		cpu_table = &mld->ect_table_data.ect_table[CL0_TABLE];
+		pm_qos_req_cpu = &pm_qos_req_cl0;
+	}
+
+	cpu_val = (qos_val & 0xff);
+	if (cpu_val > 0 && cpu_val <= cpu_table->num_of_table) {
+		mif_err("Lock CPU[%d] : %u\n", cpu_val,
+				cpu_table->freq[cpu_val - 1]);
+		pm_qos_update_request(pm_qos_req_cpu,
+				cpu_table->freq[cpu_val - 1]);
+	} else {
+		mif_err("Unlock CPU(req_val : %d)\n", qos_val);
+		pm_qos_update_request(pm_qos_req_cpu, 0);
+	}
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void shmem_qos_work_mif(struct work_struct *work)
 {
@@ -2551,6 +2891,7 @@ static void shmem_qos_work_mif(struct work_struct *work)
 	mif_info("pm_qos:0x%x requested\n", qos_val);
 
 	mif_val = (qos_val & 0xff);
+<<<<<<< HEAD
 	if (mif_val > 0 && mif_val <= mld->mif_table.num_of_table) {
 		mif_info("Lock MIF[%d] : %u\n", mif_val,
 				mld->mif_table.freq[mif_val - 1]);
@@ -2657,6 +2998,72 @@ static int exynos_devfreq_parse_ect(struct mem_link_device *mld, char *dvfs_doma
 	return 0;
 }
 #endif
+=======
+	if (mif_val > 0 && mif_val <= mld->ect_table_data.ect_table[MIF_TABLE].num_of_table) {
+		mif_err("Lock MIF[%d] : %u\n", mif_val,
+				mld->ect_table_data.ect_table[MIF_TABLE].freq[mif_val - 1]);
+		pm_qos_update_request(&pm_qos_req_mif,
+				mld->ect_table_data.ect_table[MIF_TABLE].freq[mif_val - 1]);
+	} else {
+		mif_err("Unlock MIF(req_val : %d)\n", qos_val);
+		pm_qos_update_request(&pm_qos_req_mif, 0);
+	}
+}
+
+static void shmem_qos_work_int(struct work_struct *work)
+{
+	struct mem_link_device *mld =
+		container_of(work, struct mem_link_device, pm_qos_work_int);
+	int qos_val;
+	int int_val;
+
+	qos_val = mbox_get_value(MCU_CP, mld->mbx_perf_req_int);
+	mif_info("pm_qos:0x%x requested\n", qos_val);
+
+	int_val = (qos_val & 0xff);
+	if (int_val > 0 && int_val <= mld->ect_table_data.ect_table[INT_TABLE].num_of_table) {
+		mif_err("Lock INT[%d] : %u\n", int_val,
+				mld->ect_table_data.ect_table[INT_TABLE].freq[int_val - 1]);
+		pm_qos_update_request(&pm_qos_req_int,
+				mld->ect_table_data.ect_table[INT_TABLE].freq[int_val - 1]);
+	} else {
+		mif_err("Unlock INT(req_val : %d)\n", qos_val);
+		pm_qos_update_request(&pm_qos_req_int, 0);
+	}
+}
+
+static void shmem_qos_req_handler(void *data)
+{
+	struct mem_link_device *mld = (struct mem_link_device *)data;
+	mif_info("%s\n", __func__);
+
+	schedule_work(&mld->pm_qos_work);
+}
+
+static void shmem_qos_cpu_req_handler(void *data)
+{
+	struct mem_link_device *mld = (struct mem_link_device *)data;
+	mif_info("%s\n", __func__);
+
+	schedule_work(&mld->pm_qos_work_cpu);
+}
+
+static void shmem_qos_mif_req_handler(void *data)
+{
+	struct mem_link_device *mld = (struct mem_link_device *)data;
+	mif_info("%s\n", __func__);
+
+	schedule_work(&mld->pm_qos_work_mif);
+}
+
+static void shmem_qos_int_req_handler(void *data)
+{
+	struct mem_link_device *mld = (struct mem_link_device *)data;
+	mif_info("%s\n", __func__);
+
+	schedule_work(&mld->pm_qos_work_int);
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void remap_4mb_map_to_ipc_dev(struct mem_link_device *mld)
 {
@@ -2669,6 +3076,7 @@ static void remap_4mb_map_to_ipc_dev(struct mem_link_device *mld)
 	/* magic code and access enable fields */
 	mld->magic = (u32 __iomem *)&map->magic;
 	mld->access = (u32 __iomem *)&map->access;
+<<<<<<< HEAD
 
 	/* To share ECT clock table with CP */
 	mld->clk_table = (u32 __iomem *)map->reserved;
@@ -2677,6 +3085,16 @@ static void remap_4mb_map_to_ipc_dev(struct mem_link_device *mld)
 	dev = &mld->ipc_dev[IPC_FMT];
 
 	dev->id = IPC_FMT;
+=======
+	
+	/* To share ECT clock table with CP */
+	mld->clk_table = (u32 __iomem *)map->reserved;
+
+	/* IPC_MAP_FMT */
+	dev = &mld->ipc_dev[IPC_MAP_FMT];
+
+	dev->id = IPC_MAP_FMT;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	strcpy(dev->name, "FMT");
 
 	spin_lock_init(&dev->txq.lock);
@@ -2697,12 +3115,20 @@ static void remap_4mb_map_to_ipc_dev(struct mem_link_device *mld)
 	dev->req_ack_mask = MASK_REQ_ACK_FMT;
 	dev->res_ack_mask = MASK_RES_ACK_FMT;
 
+<<<<<<< HEAD
 	dev->skb_txq = &ld->sk_fmt_tx_q;
 	dev->skb_rxq = &ld->sk_fmt_rx_q;
+=======
+	dev->skb_txq = &ld->skb_txq[IPC_MAP_FMT];
+	dev->skb_rxq = &ld->skb_rxq[IPC_MAP_FMT];
+	skb_queue_head_init(dev->skb_txq);
+	skb_queue_head_init(dev->skb_rxq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	dev->req_ack_cnt[TX] = 0;
 	dev->req_ack_cnt[RX] = 0;
 
+<<<<<<< HEAD
 	mld->dev[IPC_FMT] = dev;
 
 	/* IPC_RAW */
@@ -2710,6 +3136,51 @@ static void remap_4mb_map_to_ipc_dev(struct mem_link_device *mld)
 
 	dev->id = IPC_RAW;
 	strcpy(dev->name, "RAW");
+=======
+	mld->dev[IPC_MAP_FMT] = dev;
+
+#ifdef CONFIG_MODEM_IF_QOS
+	/* IPC_MAP_HPRIO_RAW */
+	dev = &mld->ipc_dev[IPC_MAP_HPRIO_RAW];
+
+	dev->id = IPC_MAP_HPRIO_RAW;
+	strcpy(dev->name, "HPRIO_RAW");
+
+	spin_lock_init(&dev->txq.lock);
+	atomic_set(&dev->txq.busy, 0);
+	dev->txq.head = &map->raw_hprio_tx_head;
+	dev->txq.tail = &map->raw_hprio_tx_tail;
+	dev->txq.buff = &map->raw_hprio_tx_buff[0];
+	dev->txq.size = SHM_4M_RAW_HPRIO_TX_BUFF_SZ;
+
+	spin_lock_init(&dev->rxq.lock);
+	atomic_set(&dev->rxq.busy, 0);
+	dev->rxq.head = &map->raw_hprio_rx_head;
+	dev->rxq.tail = &map->raw_hprio_rx_tail;
+	dev->rxq.buff = &map->raw_hprio_rx_buff[0];
+	dev->rxq.size = SHM_4M_RAW_HPRIO_RX_BUFF_SZ;
+
+	dev->msg_mask = MASK_SEND_RAW;
+	dev->req_ack_mask = MASK_REQ_ACK_RAW;
+	dev->res_ack_mask = MASK_RES_ACK_RAW;
+
+	dev->skb_txq = &ld->skb_txq[IPC_MAP_HPRIO_RAW];
+	dev->skb_rxq = &ld->skb_rxq[IPC_MAP_HPRIO_RAW];
+	skb_queue_head_init(dev->skb_txq);
+	skb_queue_head_init(dev->skb_rxq);
+
+	dev->req_ack_cnt[TX] = 0;
+	dev->req_ack_cnt[RX] = 0;
+
+	mld->dev[IPC_MAP_HPRIO_RAW] = dev;
+#endif
+
+	/* IPC_MAP_NORM_RAW */
+	dev = &mld->ipc_dev[IPC_MAP_NORM_RAW];
+
+	dev->id = IPC_MAP_NORM_RAW;
+	strcpy(dev->name, "NORM_RAW");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	spin_lock_init(&dev->txq.lock);
 	atomic_set(&dev->txq.busy, 0);
@@ -2729,13 +3200,24 @@ static void remap_4mb_map_to_ipc_dev(struct mem_link_device *mld)
 	dev->req_ack_mask = MASK_REQ_ACK_RAW;
 	dev->res_ack_mask = MASK_RES_ACK_RAW;
 
+<<<<<<< HEAD
 	dev->skb_txq = &ld->sk_raw_tx_q;
 	dev->skb_rxq = &ld->sk_raw_rx_q;
+=======
+	dev->skb_txq = &ld->skb_txq[IPC_MAP_NORM_RAW];
+	dev->skb_rxq = &ld->skb_rxq[IPC_MAP_NORM_RAW];
+	skb_queue_head_init(dev->skb_txq);
+	skb_queue_head_init(dev->skb_rxq);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	dev->req_ack_cnt[TX] = 0;
 	dev->req_ack_cnt[RX] = 0;
 
+<<<<<<< HEAD
 	mld->dev[IPC_RAW] = dev;
+=======
+	mld->dev[IPC_MAP_NORM_RAW] = dev;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int shmem_rx_setup(struct link_device *ld)
@@ -2853,6 +3335,7 @@ struct link_device *shmem_create_link_device(struct platform_device *pdev)
 		ld->dump_start = shmem_start_upload;
 
 	ld->close_tx = shmem_close_tx;
+<<<<<<< HEAD
 	ld->crash_reason = shmem_crash_reason;
 	ld->airplane_mode = shmem_airplane_mode;
 
@@ -2864,6 +3347,11 @@ struct link_device *shmem_create_link_device(struct platform_device *pdev)
 	skb_queue_head_init(&ld->sk_fmt_rx_q);
 	skb_queue_head_init(&ld->sk_raw_rx_q);
 
+=======
+
+	INIT_LIST_HEAD(&ld->list);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spin_lock_init(&ld->netif_lock);
 	atomic_set(&ld->netif_stopped, 0);
 	ld->tx_flowctrl_mask = 0;
@@ -2980,10 +3468,29 @@ struct link_device *shmem_create_link_device(struct platform_device *pdev)
 			ld->name, mld->irq_cp2ap_msg, err);
 		goto error;
 	}
+<<<<<<< HEAD
 
 	mld->mbx_perf_req = modem->mbx->mbx_cp2ap_perf_req;
 	mld->mbx_perf_req_mif = modem->mbx->mbx_cp2ap_perf_req_mif;
 	mld->irq_perf_req_mif = modem->mbx->irq_cp2ap_perf_req_mif;
+=======
+	
+	/* Parsing devfreq, cpufreq table from ECT */
+	err = exynos_devfreq_parse_ect(&mld->ect_table_data);
+	if (err) {
+		mif_err("%s: Failed to parse ECT\n", ld->name);
+		goto error;
+	}
+
+	mld->mbx_perf_req = modem->mbx->mbx_cp2ap_perf_req;
+	mld->mbx_perf_req_cpu = modem->mbx->mbx_cp2ap_perf_req_cpu;
+	mld->mbx_perf_req_mif = modem->mbx->mbx_cp2ap_perf_req_mif;
+	mld->mbx_perf_req_int = modem->mbx->mbx_cp2ap_perf_req_int;
+	mld->irq_perf_req = modem->mbx->irq_cp2ap_perf_req;
+	mld->irq_perf_req_cpu = modem->mbx->irq_cp2ap_perf_req_cpu;
+	mld->irq_perf_req_mif = modem->mbx->irq_cp2ap_perf_req_mif;
+	mld->irq_perf_req_int = modem->mbx->irq_cp2ap_perf_req_int;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mld->ap_clk_table = modem->mbx->ap_clk_table;
 	mld->ap_clk_cnt = modem->mbx->ap_clk_cnt;
@@ -2994,6 +3501,7 @@ struct link_device *shmem_create_link_device(struct platform_device *pdev)
 	mld->int_clk_table = modem->mbx->int_clk_table;
 	mld->int_clk_cnt = modem->mbx->int_clk_cnt;
 
+<<<<<<< HEAD
 	pm_qos_add_request(&pm_qos_req_cpu, PM_QOS_CLUSTER0_FREQ_MIN, 0);
 	pm_qos_add_request(&pm_qos_req_mif, PM_QOS_BUS_THROUGHPUT, 0);
 	pm_qos_add_request(&pm_qos_req_int, PM_QOS_DEVICE_THROUGHPUT, 0);
@@ -3026,6 +3534,44 @@ struct link_device *shmem_create_link_device(struct platform_device *pdev)
 	err = exynos_devfreq_parse_ect(mld, "dvfs_int");
 	if (err < 0)
 		mif_err("Can't get INT table!!!!!\n");
+=======
+	pm_qos_add_request(&pm_qos_req_cl0, PM_QOS_CLUSTER0_FREQ_MIN, 0);
+	pm_qos_add_request(&pm_qos_req_cl1, PM_QOS_CLUSTER1_FREQ_MIN, 0);
+	pm_qos_add_request(&pm_qos_req_mif, PM_QOS_BUS_THROUGHPUT, 0);
+	pm_qos_add_request(&pm_qos_req_int, PM_QOS_DEVICE_THROUGHPUT, 0);
+
+	INIT_WORK(&mld->pm_qos_work_cpu, shmem_qos_work_cpu);
+	INIT_WORK(&mld->pm_qos_work_mif, shmem_qos_work_mif);
+	INIT_WORK(&mld->pm_qos_work_int, shmem_qos_work_int);
+
+	err = mbox_request_irq(MCU_CP, mld->irq_perf_req, shmem_qos_req_handler, mld);
+	if (err) {
+		mif_err("%s: ERR! mbox_request_irq(%u) fail (%d)\n",
+			ld->name, mld->irq_perf_req, err);
+		goto error;
+	}
+
+	err = mbox_request_irq(MCU_CP, mld->irq_perf_req_cpu, shmem_qos_cpu_req_handler, mld);
+	if (err) {
+		mif_err("%s: ERR! mbox_request_irq(%u) fail (%d)\n",
+			ld->name, mld->irq_perf_req_cpu, err);
+		goto error;
+	}
+
+	err = mbox_request_irq(MCU_CP, mld->irq_perf_req_mif, shmem_qos_mif_req_handler, mld);
+	if (err) {
+		mif_err("%s: ERR! mbox_request_irq(%u) fail (%d)\n",
+			ld->name, mld->irq_perf_req_mif, err);
+		goto error;
+	}
+
+	err = mbox_request_irq(MCU_CP, mld->irq_perf_req_int, shmem_qos_int_req_handler, mld);
+	if (err) {
+		mif_err("%s: ERR! mbox_request_irq(%u) fail (%d)\n",
+			ld->name, mld->irq_perf_req_int, err);
+		goto error;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	/**
 	 * For TX Flow-control command from CP
@@ -3048,6 +3594,7 @@ struct link_device *shmem_create_link_device(struct platform_device *pdev)
 
 	mld->syscp_info = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 
+<<<<<<< HEAD
 #ifdef DEBUG_MODEM_IF
 	INIT_WORK(&mld->dump_work, mem_dump_work);
 #endif
@@ -3059,6 +3606,8 @@ struct link_device *shmem_create_link_device(struct platform_device *pdev)
 	/* Link mem_link_device to modem_data */
 	modem->mld = mld;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mif_info("---\n");
 	return ld;
 

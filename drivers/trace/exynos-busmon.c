@@ -20,6 +20,10 @@
 #include <linux/list.h>
 #include <linux/interrupt.h>
 #include <linux/exynos-busmon.h>
+<<<<<<< HEAD
+=======
+#include <linux/exynos-modem-ctrl.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
@@ -35,6 +39,10 @@
 #define BUSMON_REG_ERRLOG4		(0x24)
 #define BUSMON_REG_ERRLOG5		(0x28)
 #define BUSMON_EINVAL			(99)
+<<<<<<< HEAD
+=======
+#define BUSMON_ERR_THRESHOLD		(0x2)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define START				(0)
 #define END				(1)
@@ -73,6 +81,12 @@ static char *busmon_opcode[] = {
 #define BUSMON_USERSIGNAL_DESC_STRING	"usersignal-desc"
 #define BUSMON_UNSUPPORTED_STRING	"unsupported"
 
+<<<<<<< HEAD
+=======
+static bool busmon_in_progress = false;
+static unsigned int busmon_threshold = 0;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct busmon_timeout {
 	char *name;
 	void __iomem *regs;
@@ -217,8 +231,12 @@ static void busmon_logging_dump_raw(struct busmon_dev *busmon)
 	axuser = busmon_get_bits(pdata->errlog5_axuser_bits, errlog5) >>
 					pdata->errlog5_axuser_bits[START];
 	user_desc = busmon_get_string(busmon->dev->of_node,
+<<<<<<< HEAD
 					BUSMON_USERSIGNAL_DESC_STRING,
 					(pdata->init_flow << 4) | axuser);
+=======
+					BUSMON_USERSIGNAL_DESC_STRING, axuser);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	axprot = busmon_get_bits(pdata->errlog5_axprot_bits, errlog5) >>
 					pdata->errlog5_axprot_bits[START];
 	axqos = busmon_get_bits(pdata->errlog5_axqos_bits, errlog5) >>
@@ -357,6 +375,57 @@ static void busmon_logging_dump(struct busmon_dev *busmon)
 	busmon_logging_dump_raw(busmon);
 }
 
+<<<<<<< HEAD
+=======
+static void busmon_timeout_init(struct busmon_dev *busmon, unsigned int enabled)
+{
+	struct busmon_timeout *timeout;
+	struct list_head *entry;
+	u32 val;
+
+	if (list_empty(&busmon->pdata->timeout_list))
+		return;
+
+	list_for_each(entry, &busmon->pdata->timeout_list) {
+		timeout = list_entry(entry, struct busmon_timeout, list);
+		if (timeout && timeout->enabled) {
+			val = __raw_readl(timeout->regs);
+			if (enabled)
+				val |= (0x1) << timeout->enable_bit;
+			else
+				val = enabled;
+			__raw_writel(val, timeout->regs);
+
+			dev_dbg(busmon->dev,
+				"Exynos Bus Monitor timeout enabled(%s, bit:%d)\n",
+				timeout->name, timeout->enable_bit);
+		}
+	}
+}
+
+static void busmon_logging_init(struct busmon_dev *busmon, unsigned int enabled)
+{
+	struct busmon_platdata *pdata = busmon->pdata;
+	unsigned int bits;
+
+	if (pdata->enabled) {
+		if (enabled) {
+			/* first of all, error clear at occurs previous */
+			bits = busmon_get_bits(pdata->errclr_bits, 1);
+			__raw_writel(bits, busmon->regs + BUSMON_REG_ERRCLR);
+
+			/* enable logging init */
+			bits = busmon_get_bits(pdata->faulten_bits, 1);
+		} else {
+			bits = enabled;
+		}
+		__raw_writel(bits, busmon->regs + BUSMON_REG_FAULTEN);
+	}
+	dev_dbg(busmon->dev, "Exynos BUS Monitor logging %s\n",
+				enabled ? "enabled" : "disabled");
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static irqreturn_t busmon_logging_irq(int irq, void *data)
 {
 	struct busmon_dev *busmon = (struct busmon_dev *)data;
@@ -370,6 +439,10 @@ static irqreturn_t busmon_logging_irq(int irq, void *data)
 
 	if (bits) {
 		char *init_desc;
+<<<<<<< HEAD
+=======
+		char *master_desc;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		dev_info(busmon->dev, "BUS monitor information: %d interrupt occurs.\n", (irq - 32));
 		busmon_logging_dump(busmon);
@@ -378,6 +451,7 @@ static irqreturn_t busmon_logging_irq(int irq, void *data)
 		bits = busmon_get_bits(pdata->errclr_bits, 1);
 		__raw_writel(bits, busmon->regs + BUSMON_REG_ERRCLR);
 
+<<<<<<< HEAD
 		/* This code is for finding out the source */
 		init_desc = busmon_get_string(busmon->dev->of_node,
 				BUSMON_INIT_DESC_STRING, pdata->init_flow);
@@ -391,6 +465,55 @@ static irqreturn_t busmon_logging_irq(int irq, void *data)
 			panic("Error detected by BUS monitor.");
 	}
 
+=======
+		if (busmon_in_progress) {
+			/*
+			 * busmon is detected in the other group,
+			 * So this error should be ignored. Just disabling.
+			 */
+			dev_info(busmon->dev, "BUS monitor is in progress,"
+					      "Waiting for completing CP dump\n");
+			busmon_timeout_init(busmon, false);
+			busmon_logging_init(busmon, false);
+			goto out;
+		}
+
+		/* This code is for finding out the source */
+		init_desc = pdata->notifier_info.init_desc;
+		master_desc = pdata->notifier_info.masterip_desc;
+
+		if (init_desc && !strncmp(init_desc, "CPU", strlen("CPU"))) {
+			/* In this case, we expect that CPU exception is occurred */
+			dev_err(busmon->dev, "Skipped to PANIC (Master: CPU), refer to exception\n");
+		} else if (init_desc && (!strncmp(init_desc, "MODEM", strlen("MODEM")) ||
+					!strncmp(init_desc, "CP", strlen("CP")))) {
+			if (master_desc && strncmp(master_desc, "TL3MtoL2", strlen("TL3MtoL2"))
+					&& strncmp(master_desc, "UNKNOWN", strlen("UNKNOWN"))) {
+				/* CP && not TL3Mto L2 && not UNKNOWN */
+				busmon_timeout_init(busmon, false);
+				busmon_logging_init(busmon, false);
+				busmon_in_progress = true;
+#if defined(CONFIG_UMTS_MODEM_SS310AP)
+				ss310ap_force_crash_exit_ext();
+#endif
+			} else {
+				/*
+				 * CP && (master is UNKNOWN || master is TL3MtoL2)
+				 * We expect other group's interrupt.
+				 */
+				dev_err(busmon->dev, "Skipped to PANIC (Master: CP), refer to other "
+						     "GROUP information\n");
+			}
+		} else {
+			if (busmon_threshold++ > BUSMON_ERR_THRESHOLD)
+				panic("Error detected by BUS monitor");
+			else
+				dev_err(busmon->dev,
+					"Error detected(cnt: %u)\n", busmon_threshold);
+		}
+	}
+out:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return IRQ_HANDLED;
 }
 
@@ -422,6 +545,7 @@ static int busmon_logging_panic_handler(struct notifier_block *nb,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void busmon_timeout_init(struct busmon_dev *busmon)
 {
 	struct busmon_timeout *timeout;
@@ -463,6 +587,8 @@ static void busmon_logging_init(struct busmon_dev *busmon)
 			pdata->enabled ? "enabled" : "disabled");
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int busmon_dt_parse(struct device_node *np,
 				struct busmon_dev *busmon)
 {
@@ -666,8 +792,13 @@ static int busmon_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, busmon);
 
+<<<<<<< HEAD
 	busmon_timeout_init(busmon);
 	busmon_logging_init(busmon);
+=======
+	busmon_timeout_init(busmon, true);
+	busmon_logging_init(busmon, true);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
@@ -690,8 +821,13 @@ static int busmon_resume(struct device *dev)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct busmon_dev *busmon = platform_get_drvdata(pdev);
 
+<<<<<<< HEAD
 	busmon_timeout_init(busmon);
 	busmon_logging_init(busmon);
+=======
+	busmon_timeout_init(busmon, true);
+	busmon_logging_init(busmon, true);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }

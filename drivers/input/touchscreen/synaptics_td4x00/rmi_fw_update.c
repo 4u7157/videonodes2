@@ -3100,7 +3100,16 @@ static void fwu_parse_image_header_05_06(struct synaptics_rmi4_data *rmi4_data)
 				fwu->img_data.ui_firmware.size;
 	}
 
+<<<<<<< HEAD
 	if (fwu->img_data.contains_bootloader|| header->options_tddi)
+=======
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_TD4X01_A2CORELTE
+	if (fwu->img_data.contains_bootloader|| header->options_tddi)
+#else
+	if ((fwu->img_data.bl_version == BL_V5 && fwu->img_data.contains_bootloader) ||
+			(fwu->img_data.bl_version == BL_V6 && header->options_tddi))
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		fwu->img_data.contains_disp_config = true;
 	else
 		fwu->img_data.contains_disp_config = false;

@@ -17,8 +17,11 @@
 #include <linux/slab.h>
 #include <linux/cpu.h>
 #include <linux/cpuidle_profiler.h>
+<<<<<<< HEAD
 #include <linux/irq.h>
 #include <linux/irqchip/arm-gic.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <asm/smp_plat.h>
 #include <asm/psci.h>
@@ -28,7 +31,19 @@
 #include <soc/samsung/exynos-powermode.h>
 
 #include "pwrcal/pwrcal.h"
+<<<<<<< HEAD
 #include <trace/events/exynos.h>
+=======
+
+#if defined(CONFIG_SEC_PM) && defined(CONFIG_MUIC_NOTIFIER)
+#include <linux/device.h>
+#include <linux/muic/muic.h>
+#include <linux/muic/muic_notifier.h>
+#ifdef CONFIG_CCIC_NOTIFIER
+#include <linux/ccic/ccic_notifier.h>
+#endif
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define NUM_WAKEUP_MASK		3
 
@@ -63,18 +78,29 @@ struct exynos_powermode_info {
 	int		idle_ip_mask[NUM_SYS_POWERDOWN][NUM_IDLE_IP];
 };
 
+<<<<<<< HEAD
 static struct exynos_powermode_info *powermode_info;
 
 int is_sicd_factory(void)
 {
 	if (powermode_info->sicd_factory)
+=======
+static struct exynos_powermode_info *pm_info;
+
+int is_sicd_factory(void)
+{
+	if (pm_info->sicd_factory)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return true;
 	else
 		return false;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64_EXYNOS_CPUIDLE
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /******************************************************************************
  *                                  IDLE_IP                                   *
  ******************************************************************************/
@@ -89,7 +115,11 @@ static int exynos_check_idle_ip_stat(int mode, int reg_index)
 	int ret;
 
 	exynos_pmu_read(PMU_IDLE_IP(reg_index), &val);
+<<<<<<< HEAD
 	mask = powermode_info->idle_ip_mask[mode][reg_index];
+=======
+	mask = pm_info->idle_ip_mask[mode][reg_index];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ret = (val & ~mask) == ~mask ? 0 : -EBUSY;
 
@@ -135,10 +165,18 @@ static void exynos_set_idle_ip_mask(enum sys_powerdown mode)
 	spin_lock_irqsave(&idle_ip_mask_lock, flags);
 	for_each_idle_ip(i)
 		exynos_pmu_write(PMU_IDLE_IP_MASK(i),
+<<<<<<< HEAD
 				powermode_info->idle_ip_mask[mode][i]);
 	spin_unlock_irqrestore(&idle_ip_mask_lock, flags);
 }
 
+=======
+				pm_info->idle_ip_mask[mode][i]);
+	spin_unlock_irqrestore(&idle_ip_mask_lock, flags);
+}
+
+#ifdef CONFIG_CPU_IDLE
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**
  * There are 4 IDLE_IP registers in PMU, IDLE_IP therefore supports 128 index,
  * 0 from 127. To access the IDLE_IP register, convert_idle_ip_index() converts
@@ -162,7 +200,11 @@ static void idle_ip_unmask(int mode, int ip_index)
 	unsigned long flags;
 
 	spin_lock_irqsave(&idle_ip_mask_lock, flags);
+<<<<<<< HEAD
 	powermode_info->idle_ip_mask[mode][reg_index] &= ~(0x1 << ip_index);
+=======
+	pm_info->idle_ip_mask[mode][reg_index] &= ~(0x1 << ip_index);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	spin_unlock_irqrestore(&idle_ip_mask_lock, flags);
 }
 
@@ -298,6 +340,10 @@ void exynos_get_idle_ip_list(char *(*idle_ip_list)[IDLE_IP_REG_SIZE])
 		}
 	}
 }
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /******************************************************************************
  *                          Local power gating (C2)                           *
@@ -322,9 +368,15 @@ static DEFINE_SPINLOCK(c2_lock);
 static void update_c2_state(bool down, unsigned int cpu)
 {
 	if (down)
+<<<<<<< HEAD
 		cpumask_set_cpu(cpu, &powermode_info->c2_mask);
 	else
 		cpumask_clear_cpu(cpu, &powermode_info->c2_mask);
+=======
+		cpumask_set_cpu(cpu, &pm_info->c2_mask);
+	else
+		cpumask_clear_cpu(cpu, &pm_info->c2_mask);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static s64 get_next_event_time_us(unsigned int cpu)
@@ -344,7 +396,11 @@ static int is_cpus_busy(unsigned int target_residency,
 	 * than "target_residency", it returns -EBUSY.
 	 */
 	for_each_cpu_and(cpu, cpu_online_mask, mask) {
+<<<<<<< HEAD
 		if (!cpumask_test_cpu(cpu, &powermode_info->c2_mask))
+=======
+		if (!cpumask_test_cpu(cpu, &pm_info->c2_mask))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return -EBUSY;
 
 		/*
@@ -359,19 +415,31 @@ static int is_cpus_busy(unsigned int target_residency,
 }
 
 /**
+<<<<<<< HEAD
  * powermode_info->cpd_blocked prevents to power down the cluster while cpu
+=======
+ * pm_info->cpd_blocked prevents to power down the cluster while cpu
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * frequency is changed. Before frequency changing, cpufreq driver call
  * block_cpd() to block cluster power down. After finishing changing
  * frequency, call release_cpd() to allow cluster power down again.
  */
 void block_cpd(void)
 {
+<<<<<<< HEAD
 	powermode_info->cpd_blocked = true;
+=======
+	pm_info->cpd_blocked = true;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void release_cpd(void)
 {
+<<<<<<< HEAD
 	powermode_info->cpd_blocked = false;
+=======
+	pm_info->cpd_blocked = false;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static unsigned int get_cluster_id(unsigned int cpu)
@@ -391,7 +459,11 @@ static int is_cpd_available(unsigned int cpu)
 {
 	struct cpumask mask;
 
+<<<<<<< HEAD
 	if (powermode_info->cpd_blocked)
+=======
+	if (pm_info->cpd_blocked)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return false;
 
 	/*
@@ -402,7 +474,11 @@ static int is_cpd_available(unsigned int cpu)
 		return false;
 
 	cpumask_and(&mask, cpu_coregroup_mask(cpu), cpu_online_mask);
+<<<<<<< HEAD
 	if (is_cpus_busy(powermode_info->cpd_residency, &mask))
+=======
+	if (is_cpus_busy(pm_info->cpd_residency, &mask))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return false;
 
 	return true;
@@ -428,6 +504,23 @@ static void update_cluster_idle_state(int idle, unsigned int cpu)
 	cluster_idle_state[get_cluster_id(cpu)] = idle;
 }
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SEC_PM) && defined(CONFIG_MUIC_NOTIFIER)
+static bool jig_is_attached;
+
+static inline bool is_jig_attached(void)
+{
+	return jig_is_attached;
+}
+#else
+static inline bool is_jig_attached(void)
+{
+	return false;
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /**
  * If AP put into SICD, console cannot work normally. For development,
  * support sysfs to enable or disable SICD.
@@ -442,7 +535,14 @@ static int is_sicd_available(unsigned int cpu)
 {
 	int index;
 
+<<<<<<< HEAD
 	if (!powermode_info->sicd_enabled)
+=======
+	if (!pm_info->sicd_enabled)
+		return false;
+
+	if (is_jig_attached())
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return false;
 
 	/*
@@ -453,7 +553,11 @@ static int is_sicd_available(unsigned int cpu)
 	if (!is_cpu_boot_cluster(cpu))
 		return false;
 
+<<<<<<< HEAD
 	if (is_cpus_busy(powermode_info->sicd_residency, cpu_online_mask))
+=======
+	if (is_cpus_busy(pm_info->sicd_residency, cpu_online_mask))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return false;
 
 	if (!exynos_check_cp_status())
@@ -474,11 +578,16 @@ static int is_sicd_available(unsigned int cpu)
 int enter_c2(unsigned int cpu, int index)
 {
 	unsigned int cluster = get_cluster_id(cpu);
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 	cal_cpu_disable(cpu);
 #else
 	exynos_cpu.power_down(cpu);
 #endif
+=======
+
+	exynos_cpu.power_down(cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	spin_lock(&c2_lock);
 	update_c2_state(true, cpu);
@@ -488,6 +597,7 @@ int enter_c2(unsigned int cpu, int index)
 	 * or not. If idle time of cpu is not enough, go out of this function.
 	 */
 	if (get_next_event_time_us(cpu) <
+<<<<<<< HEAD
 			min(powermode_info->cpd_residency, powermode_info->sicd_residency))
 		goto out;
 
@@ -497,12 +607,20 @@ int enter_c2(unsigned int cpu, int index)
 #else
 		exynos_cpu.cluster_down(cluster);
 #endif
+=======
+			min(pm_info->cpd_residency, pm_info->sicd_residency))
+		goto out;
+
+	if (is_cpd_available(cpu)) {
+		exynos_cpu.cluster_down(cluster);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		update_cluster_idle_state(true, cpu);
 
 		index = PSCI_CLUSTER_SLEEP;
 	}
 
 	if (is_sicd_available(cpu)) {
+<<<<<<< HEAD
 		exynos_prepare_sys_powerdown(SYS_SICD, false);
 		index = PSCI_SYSTEM_IDLE;
 
@@ -511,6 +629,22 @@ int enter_c2(unsigned int cpu, int index)
 
 		exynos_ss_cpuidle(EXYNOS_SS_SICD_INDEX, 0, 0, ESS_FLAG_IN);
 		trace_exynos_cpuidle_in(EXYNOS_SS_SICD_INDEX);
+=======
+		if (check_cluster_idle_state(cpu)) {
+#if defined(CONFIG_SOC_EXYNOS8890)
+			exynos_prepare_sys_powerdown(SYS_SICD_CPD);
+			index = PSCI_SYSTEM_IDLE_CLUSTER_SLEEP;
+#endif
+		} else {
+			exynos_prepare_sys_powerdown(SYS_SICD);
+			index = PSCI_SYSTEM_IDLE;
+		}
+
+		s3c24xx_serial_fifo_wait();
+		pm_info->sicd_entered = SYS_SICD;
+
+		exynos_ss_cpuidle(EXYNOS_SS_SICD_INDEX, 0, 0, ESS_FLAG_IN);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 out:
 	spin_unlock(&c2_lock);
@@ -521,15 +655,20 @@ out:
 void wakeup_from_c2(unsigned int cpu, int early_wakeup)
 {
 	if (early_wakeup)
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 		cal_cpu_enable(cpu);
 #else
 		exynos_cpu.power_up(cpu);
 #endif
+=======
+		exynos_cpu.power_up(cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	spin_lock(&c2_lock);
 
 	if (check_cluster_idle_state(cpu)) {
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 		cal_cluster_enable(get_cluster_id(cpu));
 #else
@@ -544,6 +683,17 @@ void wakeup_from_c2(unsigned int cpu, int early_wakeup)
 
 		exynos_ss_cpuidle(EXYNOS_SS_SICD_INDEX, 0, 0, ESS_FLAG_OUT);
 		trace_exynos_cpuidle_out(EXYNOS_SS_SICD_INDEX);
+=======
+		exynos_cpu.cluster_up(get_cluster_id(cpu));
+		update_cluster_idle_state(false, cpu);
+	}
+
+	if (pm_info->sicd_entered != -1) {
+		exynos_wakeup_sys_powerdown(pm_info->sicd_entered, early_wakeup);
+		pm_info->sicd_entered = -1;
+
+		exynos_ss_cpuidle(EXYNOS_SS_SICD_INDEX, 0, 0, ESS_FLAG_OUT);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	update_c2_state(false, cpu);
@@ -563,7 +713,11 @@ static ssize_t show_##file_name(struct kobject *kobj,	\
 	struct kobj_attribute *attr, char *buf)		\
 {							\
 	return snprintf(buf, 3, "%d\n",			\
+<<<<<<< HEAD
 				powermode_info->object);	\
+=======
+				pm_info->object);	\
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #define store_one(file_name, object)			\
@@ -576,7 +730,11 @@ static ssize_t store_##file_name(struct kobject *kobj,	\
 	if (!sscanf(buf, "%1d", &input))		\
 		return -EINVAL;				\
 							\
+<<<<<<< HEAD
 	powermode_info->object = !!input;				\
+=======
+	pm_info->object = !!input;				\
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 							\
 	return count;					\
 }
@@ -585,6 +743,10 @@ static ssize_t store_##file_name(struct kobject *kobj,	\
 static struct kobj_attribute _name =			\
 __ATTR(_name, 0644, show_##_name, store_##_name)
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_PM
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 show_one(blocking_cpd, cpd_blocked);
 show_one(sicd, sicd_enabled);
 show_one(sicd_factory_mode, sicd_factory);
@@ -595,6 +757,7 @@ store_one(sicd_factory_mode, sicd_factory);
 attr_rw(blocking_cpd);
 attr_rw(sicd);
 attr_rw(sicd_factory_mode);
+<<<<<<< HEAD
 
 /**
  * To determine which power mode system enter, check clock or power
@@ -651,6 +814,10 @@ static struct notifier_block __refdata cpuidle_hotcpu_notifier = {
 
 #endif /* __CONFIG_ARM64_EXYNOS_CPUIDLE__ */
 
+=======
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /******************************************************************************
  *                          Wakeup mask configuration                         *
  ******************************************************************************/
@@ -658,8 +825,11 @@ static struct notifier_block __refdata cpuidle_hotcpu_notifier = {
 #define PMU_WAKEUP_MASK		0x610
 #define PMU_WAKEUP_MASK2	0x614
 #define PMU_WAKEUP_MASK3	0x618
+<<<<<<< HEAD
 #define WAKEUP_MASK_RTC_TICK	BIT(2)
 #define WAKEUP_MASK_RTC_ALARM	BIT(1)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void exynos_set_wakeupmask(enum sys_powerdown mode)
 {
@@ -668,6 +838,7 @@ static void exynos_set_wakeupmask(enum sys_powerdown mode)
 	/* Set external interrupt mask */
 	exynos_pmu_write(PMU_EINT_WAKEUP_MASK, (u32)eintmask);
 
+<<<<<<< HEAD
 	exynos_pmu_write(PMU_WAKEUP_MASK, powermode_info->wakeup_mask[mode][0]);
 	exynos_pmu_write(PMU_WAKEUP_MASK2, powermode_info->wakeup_mask[mode][1]);
 	exynos_pmu_write(PMU_WAKEUP_MASK3, powermode_info->wakeup_mask[mode][2]);
@@ -685,41 +856,69 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int on)
 }
 
 static int __maybe_unused parsing_dt_wakeup_mask(struct device_node *np)
+=======
+	exynos_pmu_write(PMU_WAKEUP_MASK, pm_info->wakeup_mask[mode][0]);
+	exynos_pmu_write(PMU_WAKEUP_MASK2, pm_info->wakeup_mask[mode][1]);
+	exynos_pmu_write(PMU_WAKEUP_MASK3, pm_info->wakeup_mask[mode][2]);
+}
+
+static int parsing_dt_wakeup_mask(struct device_node *np)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	int ret;
 	unsigned int pdn_num;
 
 	for_each_syspower_mode(pdn_num) {
 		ret = of_property_read_u32_index(np, "wakeup_mask",
+<<<<<<< HEAD
 				pdn_num, &powermode_info->wakeup_mask[pdn_num][0]);
+=======
+				pdn_num, &pm_info->wakeup_mask[pdn_num][0]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret)
 			return ret;
 
 		ret = of_property_read_u32_index(np, "wakeup_mask2",
+<<<<<<< HEAD
 				pdn_num, &powermode_info->wakeup_mask[pdn_num][1]);
+=======
+				pdn_num, &pm_info->wakeup_mask[pdn_num][1]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret)
 			return ret;
 
 		ret = of_property_read_u32_index(np, "wakeup_mask3",
+<<<<<<< HEAD
 				pdn_num, &powermode_info->wakeup_mask[pdn_num][2]);
+=======
+				pdn_num, &pm_info->wakeup_mask[pdn_num][2]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
 /******************************************************************************
  *                           System power down mode                           *
  ******************************************************************************/
+<<<<<<< HEAD
 void exynos_prepare_sys_powerdown(enum sys_powerdown mode, bool is_suspend)
+=======
+void exynos_prepare_sys_powerdown(enum sys_powerdown mode)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	/*
 	 * exynos_prepare_sys_powerdown() is called by only cpu0.
 	 */
 	unsigned int cpu = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64_EXYNOS_CPUIDLE
 	if (is_suspend)
 		exynos_set_idle_ip_mask(SYS_SLEEP);
@@ -730,6 +929,11 @@ void exynos_prepare_sys_powerdown(enum sys_powerdown mode, bool is_suspend)
 		exynos_set_wakeupmask(SYS_SLEEP);
 	else
 		exynos_set_wakeupmask(mode);
+=======
+
+	exynos_set_idle_ip_mask(mode);
+	exynos_set_wakeupmask(mode);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	cal_pm_enter(mode);
 
@@ -737,6 +941,7 @@ void exynos_prepare_sys_powerdown(enum sys_powerdown mode, bool is_suspend)
 	case SYS_SICD:
 		exynos_pm_sicd_enter();
 		break;
+<<<<<<< HEAD
 
 	case SYS_AFTR:
 #ifdef CONFIG_PMUCAL_MOD
@@ -744,6 +949,11 @@ void exynos_prepare_sys_powerdown(enum sys_powerdown mode, bool is_suspend)
 #else
 		exynos_cpu.power_down(cpu);
 #endif
+=======
+	case SYS_AFTR:
+		exynos_cpu.power_down(cpu);
+		exynos_cpu.power_down(cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	default:
 		break;
@@ -766,6 +976,7 @@ void exynos_wakeup_sys_powerdown(enum sys_powerdown mode, bool early_wakeup)
 	case SYS_SICD:
 		exynos_pm_sicd_exit();
 		break;
+<<<<<<< HEAD
 
 	case SYS_AFTR:
 		if (early_wakeup)
@@ -774,12 +985,102 @@ void exynos_wakeup_sys_powerdown(enum sys_powerdown mode, bool early_wakeup)
 #else
 			exynos_cpu.power_up(cpu);
 #endif
+=======
+	case SYS_AFTR:
+		if (early_wakeup)
+			exynos_cpu.power_up(cpu);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	default:
 		break;
 	}
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * To determine which power mode system enter, check clock or power
+ * registers and other devices by notifier.
+ */
+int determine_lpm(void)
+{
+#if !defined(CONFIG_SOC_EXYNOS7870)
+	int index;
+#endif
+
+	if (!exynos_check_cp_status())
+		return SYS_AFTR;
+
+#if !defined(CONFIG_SOC_EXYNOS7870)
+	for_each_idle_ip(index) {
+		if (exynos_check_idle_ip_stat(SYS_ALPA, index))
+			return SYS_AFTR;
+	}
+	return SYS_ALPA;
+#else
+	return SYS_AFTR;
+#endif
+}
+
+void exynos_prepare_cp_call(void)
+{
+	exynos_set_idle_ip_mask(SYS_SLEEP);
+	exynos_set_wakeupmask(SYS_SLEEP);
+
+#if !defined(CONFIG_SOC_EXYNOS7870)
+	cal_pm_enter(SYS_ALPA);
+#else
+	cal_pm_enter(SYS_LPD);
+#endif
+}
+
+void exynos_wakeup_cp_call(bool early_wakeup)
+{
+
+#if !defined(CONFIG_SOC_EXYNOS7870)
+	if (early_wakeup)
+		cal_pm_earlywakeup(SYS_ALPA);
+	else
+		cal_pm_exit(SYS_ALPA);
+#else
+	if (early_wakeup)
+		cal_pm_earlywakeup(SYS_LPD);
+	else
+		cal_pm_exit(SYS_LPD);
+#endif
+}
+
+/*
+ * In case of non-boot cluster, CPU sequencer should be disabled
+ * even each cpu wake up through hotplug in.
+ */
+static int exynos_cpuidle_hotcpu_callback(struct notifier_block *nfb,
+                                       unsigned long action, void *hcpu)
+{
+       unsigned int cpu = (unsigned long)hcpu;
+       int ret = NOTIFY_OK;
+
+       switch (action) {
+       case CPU_STARTING:
+       case CPU_STARTING_FROZEN:
+               spin_lock(&c2_lock);
+
+               if (!is_cpu_boot_cluster(cpu))
+                       exynos_cpu.cluster_up(get_cluster_id(cpu));
+
+               spin_unlock(&c2_lock);
+               break;
+       }
+
+       return ret;
+}
+
+static struct notifier_block __refdata cpuidle_hotcpu_notifier = {
+       .notifier_call = exynos_cpuidle_hotcpu_callback,
+       .priority = INT_MAX,
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /******************************************************************************
  *                              Driver initialized                            *
  ******************************************************************************/
@@ -792,6 +1093,7 @@ static int __init dt_init_exynos_powermode(void)
 	if (ret)
 		pr_warn("Fail to initialize the wakeup mask with err = %d\n", ret);
 
+<<<<<<< HEAD
 	if (of_property_read_u32(np, "cpd_residency", &powermode_info->cpd_residency))
 		pr_warn("No matching property: cpd_residency\n");
 
@@ -799,6 +1101,15 @@ static int __init dt_init_exynos_powermode(void)
 		pr_warn("No matching property: sicd_residency\n");
 
 	if (of_property_read_u32(np, "sicd_enabled", &powermode_info->sicd_enabled))
+=======
+	if (of_property_read_u32(np, "cpd_residency", &pm_info->cpd_residency))
+		pr_warn("No matching property: cpd_residency\n");
+
+	if (of_property_read_u32(np, "sicd_residency", &pm_info->sicd_residency))
+		pr_warn("No matching property: sicd_residency\n");
+
+	if (of_property_read_u32(np, "sicd_enabled", &pm_info->sicd_enabled))
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_warn("No matching property: sicd_enabled\n");
 
 	return 0;
@@ -808,19 +1119,34 @@ int __init exynos_powermode_init(void)
 {
 	int mode, index;
 
+<<<<<<< HEAD
 	powermode_info = kzalloc(sizeof(struct exynos_powermode_info), GFP_KERNEL);
 	if (powermode_info == NULL) {
+=======
+	pm_info = kzalloc(sizeof(struct exynos_powermode_info), GFP_KERNEL);
+	if (pm_info == NULL) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		pr_err("%s: failed to allocate exynos_powermode_info\n", __func__);
 		return -ENOMEM;
 	}
 
 	dt_init_exynos_powermode();
 
+<<<<<<< HEAD
 	for_each_syspower_mode(mode)
 		for_each_idle_ip(index)
 			powermode_info->idle_ip_mask[mode][index] = 0xFFFFFFFF;
 
 #ifdef CONFIG_ARM64_EXYNOS_CPUIDLE
+=======
+	pm_info->sicd_entered = -1;
+
+	for_each_syspower_mode(mode)
+		for_each_idle_ip(index)
+			pm_info->idle_ip_mask[mode][index] = 0xFFFFFFFF;
+
+#ifdef CONFIG_PM
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (sysfs_create_file(power_kobj, &blocking_cpd.attr))
 		pr_err("%s: failed to create sysfs to control CPD\n", __func__);
 
@@ -830,9 +1156,64 @@ int __init exynos_powermode_init(void)
 	if (sysfs_create_file(power_kobj, &sicd_factory_mode.attr))
 		pr_err("%s: failed to create sysfs to control SICD Factory mode\n", __func__);
 
+<<<<<<< HEAD
 	register_hotcpu_notifier(&cpuidle_hotcpu_notifier);
 #endif
 
 	return 0;
 }
 arch_initcall(exynos_powermode_init);
+=======
+#endif
+
+	register_hotcpu_notifier(&cpuidle_hotcpu_notifier);
+
+	return 0;
+}
+arch_initcall(exynos_powermode_init);
+
+#if defined(CONFIG_SEC_PM) && defined(CONFIG_MUIC_NOTIFIER)
+struct notifier_block cpuidle_muic_nb;
+
+static int exynos_cpuidle_muic_notifier(struct notifier_block *nb,
+				unsigned long action, void *data)
+{
+#ifdef CONFIG_CCIC_NOTIFIER
+	CC_NOTI_ATTACH_TYPEDEF *pnoti = (CC_NOTI_ATTACH_TYPEDEF *)data;
+	muic_attached_dev_t attached_dev = pnoti->cable_type;
+#else
+	muic_attached_dev_t attached_dev = *(muic_attached_dev_t *)data;
+#endif
+
+	switch (attached_dev) {
+	case ATTACHED_DEV_JIG_UART_OFF_MUIC:
+	case ATTACHED_DEV_JIG_UART_OFF_VB_MUIC:
+	case ATTACHED_DEV_JIG_UART_OFF_VB_OTG_MUIC:
+	case ATTACHED_DEV_JIG_UART_OFF_VB_FG_MUIC:
+	case ATTACHED_DEV_JIG_UART_ON_MUIC:
+	case ATTACHED_DEV_JIG_UART_ON_VB_MUIC:
+		if (action == MUIC_NOTIFY_CMD_DETACH)
+			jig_is_attached = false;
+		else if (action == MUIC_NOTIFY_CMD_ATTACH)
+			jig_is_attached = true;
+		else
+			pr_err("%s: ACTION Error!\n", __func__);
+		break;
+	default:
+		break;
+	}
+
+	pr_info("%s: dev=%d, action=%lu\n", __func__, attached_dev, action);
+
+	return NOTIFY_DONE;
+}
+
+static int __init exynos_powermode_muic_notifier_init(void)
+{
+	return muic_notifier_register(&cpuidle_muic_nb,
+			exynos_cpuidle_muic_notifier, MUIC_NOTIFY_DEV_CPUIDLE);
+}
+late_initcall(exynos_powermode_muic_notifier_init);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

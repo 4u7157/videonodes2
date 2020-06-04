@@ -28,7 +28,11 @@ extern int tima_debug_modify_kernel(const char *val, struct kernel_param *kp);
 #define SECURE_RKP_LOG_START	TIMA_SEC_LOG 
 #endif
 #define	DEBUG_LOG_SIZE	(1<<20)
+<<<<<<< HEAD
 #define TIMA_DEBUG_LOGGING_START	(0x52800000)
+=======
+#define TIMA_DEBUG_LOGGING_START	(0x52A00000)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define TIMA_SECURE_LOGGING_START (TIMA_DEBUG_LOGGING_START + DEBUG_LOG_SIZE)
 #define	DEBUG_LOG_MAGIC	(0xaabbccdd)
 #define	DEBUG_LOG_ENTRY_SIZE	128

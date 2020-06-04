@@ -1806,6 +1806,7 @@ void __init ect_init(phys_addr_t address, phys_addr_t size)
 	ect_size = size;
 }
 
+<<<<<<< HEAD
 unsigned long long ect_read_value64(unsigned int *address, int index)
 {
 	unsigned int top, half;
@@ -1818,6 +1819,8 @@ unsigned long long ect_read_value64(unsigned int *address, int index)
 	return ((unsigned long long)top << 32 | half);
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void *ect_get_block(char *block_name)
 {
 	int i;

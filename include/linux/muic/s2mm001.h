@@ -22,7 +22,10 @@
 #define __S2MM001_H__
 
 #include <linux/muic/muic.h>
+<<<<<<< HEAD
 #include <linux/wakelock.h>
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define MUIC_DEV_NAME	"muic-s2mm001"
 

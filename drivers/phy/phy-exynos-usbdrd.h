@@ -101,6 +101,7 @@ enum exynos_usbdrd_phy_id {
 	EXYNOS_DRDPHYS_NUM,
 };
 
+<<<<<<< HEAD
 enum exynos_usbdrd_ext_refclk_state {
 	EXYNOS_EXTCLK_SUCCESS = 0,
 	EXYNOS_EXTCLK_STARTED,
@@ -109,6 +110,8 @@ enum exynos_usbdrd_ext_refclk_state {
 	EXYNOS_NOT_STOPPED,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct phy_usb_instance;
 struct exynos_usbdrd_phy;
 
@@ -156,13 +159,17 @@ struct exynos_usbdrd_phy {
 		u32 index;
 		struct regmap *reg_pmu;
 		u32 pmu_offset;
+<<<<<<< HEAD
 		u32 uart_io_share_en;
 		u32 uart_io_share_offset;
 		u32 uart_io_share_mask;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		const struct exynos_usbdrd_phy_config *phy_cfg;
 	} phys[EXYNOS_DRDPHYS_NUM];
 	u32 extrefclk;
 	u32 use_additional_tuning;
+<<<<<<< HEAD
 	u32 request_extrefclk;
 	bool extrefclk_requested;
 	struct completion can_use_extrefclk;
@@ -173,6 +180,11 @@ struct exynos_usbdrd_phy {
 	struct exynos_usbphy_info usbphy_info;
 	struct exynos_usbphy_ss_tune ss_value[2];
 	struct exynos_usbphy_hs_tune hs_value[2];
+=======
+	struct clk *ref_clk;
+	struct regulator *vbus;
+	struct exynos_usbphy_info usbphy_info;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #endif	/* __PHY_EXYNOS_USBDRD_H__ */

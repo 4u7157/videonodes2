@@ -37,7 +37,10 @@
 
 #define FSOP_AUDIT_FAIL_ENCRYPT		51
 #define FSOP_AUDIT_FAIL_DECRYPT		52
+<<<<<<< HEAD
 #define FSOP_AUDIT_FAIL_ACCESS		53
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 // opcode, ret, inode
 typedef void (*fs_request_cb_t)(int, int, unsigned long);

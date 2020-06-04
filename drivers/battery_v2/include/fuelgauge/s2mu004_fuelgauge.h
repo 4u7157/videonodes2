@@ -14,8 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
+<<<<<<< HEAD
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+=======
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  */
 
 #ifndef __S2MU004_FUELGAUGE_H
@@ -27,6 +31,11 @@
 
 #include "../sec_charging_common.h"
 
+<<<<<<< HEAD
+=======
+extern unsigned int lpcharge;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* Slave address should be shifted to the right 1bit.
  * R/W bit should NOT be included.
  */
@@ -49,6 +58,7 @@
 #define S2MU004_REG_COFFSET             0x5A
 
 enum {
+<<<<<<< HEAD
 	CURRENT_MODE = 0,
 	LOW_SOC_VOLTAGE_MODE,
 	HIGH_SOC_VOLTAGE_MODE,
@@ -93,22 +103,85 @@ struct sec_fg_info {
 		unsigned long fullcap_check_interval;
 		int full_check_flag;
 		bool is_first_check;
+=======
+        CURRENT_MODE = 0,
+        LOW_SOC_VOLTAGE_MODE,
+        HIGH_SOC_VOLTAGE_MODE,
+        END_MODE,
+};
+
+struct sec_fg_info {
+        /* test print count */
+        int pr_cnt;
+        /* full charge comp */
+        /* struct delayed_work     full_comp_work; */
+        u32 previous_fullcap;
+        u32 previous_vffullcap;
+        /* low battery comp */
+        int low_batt_comp_flag;
+        /* low battery boot */
+        int low_batt_boot_flag;
+        bool is_low_batt_alarm;
+
+        /* battery info */
+        int soc;
+
+#if !defined(CONFIG_BATTERY_AGE_FORECAST)
+        /* copy from platform data /
+         * DTS or update by shell script */
+        int battery_table1[88]; // evt1
+        int battery_table2[22]; // evt1
+        int battery_table3[88]; // evt2
+        int battery_table4[22]; // evt2
+        int soc_arr_val[22];
+        int ocv_arr_val[22];
+        int batcap[4];
+        int accum[2];
+#endif
+        /* miscellaneous */
+        unsigned long fullcap_check_interval;
+        int full_check_flag;
+        bool is_first_check;
+	int data_ver;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
 struct fg_age_data_info {
+<<<<<<< HEAD
 	int battery_table3[88]; // evt2
 	int battery_table4[22]; // evt2
 	int batcap[4];
 	int accum[2];
 	int soc_arr_val[22];
 	int ocv_arr_val[22];
+=======
+        int battery_table3[88]; // evt2
+        int battery_table4[22]; // evt2
+        int batcap[4];
+        int accum[2];
+	int soc_arr_val[22];
+        int ocv_arr_val[22];
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #define	fg_age_data_info_t \
 	struct fg_age_data_info
 #endif
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_FUELGAUGE_ASOC_FROM_CYCLES)
+struct sec_cycles_to_asoc {
+	unsigned int cycle;
+	unsigned int asoc;
+};
+
+#define sec_cycles_to_asoc_t \
+	struct sec_cycles_to_asoc
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 typedef struct s2mu004_fuelgauge_platform_data {
 	int capacity_max;
 	int capacity_max_margin;
@@ -124,6 +197,7 @@ typedef struct s2mu004_fuelgauge_platform_data {
 	char *fuelgauge_name;
 
 	bool repeated_fuelalert;
+<<<<<<< HEAD
 } s2mu004_fuelgauge_platform_data_t;
 
 struct s2mu004_fuelgauge_data {
@@ -184,6 +258,68 @@ struct s2mu004_fuelgauge_data {
 		u16 coffset_old;
 		bool coffset_flag;
 		bool probe_done;
+=======
+
+#if defined(CONFIG_FUELGAUGE_ASOC_FROM_CYCLES)
+	int fixed_asoc_levels;
+	sec_cycles_to_asoc_t *cycles_to_asoc;
+#endif
+} s2mu004_fuelgauge_platform_data_t;
+
+struct s2mu004_fuelgauge_data {
+        struct device           *dev;
+        struct i2c_client       *i2c;
+        struct i2c_client       *pmic;
+        struct mutex            fuelgauge_mutex;
+        s2mu004_fuelgauge_platform_data_t *pdata;
+        struct power_supply     psy_fg;
+        /* struct delayed_work isr_work; */
+
+        int cable_type;
+        bool is_charging;
+        int mode;
+        int revision;
+
+        /* HW-dedicated fuel guage info structure
+         * used in individual fuel gauge file only
+         * (ex. dummy_fuelgauge.c)
+         */
+        struct sec_fg_info      info;
+#if defined(CONFIG_BATTERY_AGE_FORECAST)
+	fg_age_data_info_t*	age_data_info;
+	int fg_num_age_step;
+	int fg_age_step;
+	int age_reset_status;
+        struct mutex fg_reset_lock;
+#endif
+        bool is_fuel_alerted;
+        struct wake_lock fuel_alert_wake_lock;
+
+        unsigned int capacity_old;      /* only for atomic calculation */
+        unsigned int capacity_max;      /* only for dynamic calculation */
+        unsigned int standard_capacity;
+
+        bool initial_update_of_soc;
+	bool sleep_initial_update_of_soc;
+        struct mutex fg_lock;
+        struct delayed_work isr_work;
+
+        /* register programming */
+        int reg_addr;
+        u8 reg_data[2];
+		u8 reg_OTP_4F;
+		u8 reg_OTP_4E;
+
+        unsigned int pre_soc;
+        int fg_irq;
+        int diff_soc;
+        int target_ocv;
+        int vm_soc;
+        bool cc_on;
+        u16 coffset_old;
+        bool coffset_flag;
+        bool probe_done;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 #endif /* __S2MU004_FUELGAUGE_H */

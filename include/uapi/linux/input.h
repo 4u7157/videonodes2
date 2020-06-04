@@ -16,6 +16,98 @@
 #include <linux/types.h>
 #endif
 
+/*
+ * sec Log
+ */
+#define SECLOG			"[sec_input]"
+#define INPUT_LOG_BUF_SIZE	512
+
+#ifdef CONFIG_SEC_DEBUG_TSP_LOG
+#include <linux/sec_debug.h>
+
+#define input_dbg(mode, dev, fmt, ...)						\
+({										\
+	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
+	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
+	dev_dbg(dev, input_log_buf, ## __VA_ARGS__);				\
+	if (mode) {								\
+		if (dev)							\
+			snprintf(input_log_buf, sizeof(input_log_buf), "%s %s",	\
+					dev_driver_string(dev), dev_name(dev));	\
+		else								\
+			snprintf(input_log_buf, sizeof(input_log_buf), "NULL");	\
+		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
+	}									\
+})
+#define input_info(mode, dev, fmt, ...)						\
+({										\
+	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
+	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
+	dev_info(dev, input_log_buf, ## __VA_ARGS__);				\
+	if (mode) {								\
+		if (dev)							\
+			snprintf(input_log_buf, sizeof(input_log_buf), "%s %s",	\
+					dev_driver_string(dev), dev_name(dev));	\
+		else								\
+			snprintf(input_log_buf, sizeof(input_log_buf), "NULL");	\
+		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
+	}									\
+})
+#define input_err(mode, dev, fmt, ...)						\
+({										\
+	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
+	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
+	dev_err(dev, input_log_buf, ## __VA_ARGS__);				\
+	if (mode) {								\
+		if (dev)							\
+			snprintf(input_log_buf, sizeof(input_log_buf), "%s %s",	\
+					dev_driver_string(dev), dev_name(dev));	\
+		else								\
+			snprintf(input_log_buf, sizeof(input_log_buf), "NULL");	\
+		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
+	}									\
+})
+#define input_raw_info(mode, dev, fmt, ...)					\
+({										\
+	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
+	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
+	dev_info(dev, input_log_buf, ## __VA_ARGS__);				\
+	if (mode) {								\
+		if (dev)							\
+			snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", \
+					dev_driver_string(dev), dev_name(dev)); \
+		else								\
+			snprintf(input_log_buf, sizeof(input_log_buf), "NULL"); \
+		sec_debug_tsp_log_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
+		sec_debug_tsp_raw_data_msg(input_log_buf, fmt, ## __VA_ARGS__);	\
+	}									\
+})
+#define input_log_fix() {}
+#define input_raw_data_clear() sec_tsp_raw_data_clear()
+#else
+#define input_dbg(mode, dev, fmt, ...)						\
+({										\
+	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
+	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
+	dev_dbg(dev, input_log_buf, ## __VA_ARGS__);				\
+})
+#define input_info(mode, dev, fmt, ...)						\
+({										\
+	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
+	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
+	dev_info(dev, input_log_buf, ## __VA_ARGS__);				\
+})
+#define input_err(mode, dev, fmt, ...)						\
+({										\
+	static char input_log_buf[INPUT_LOG_BUF_SIZE];				\
+	snprintf(input_log_buf, sizeof(input_log_buf), "%s %s", SECLOG, fmt);	\
+	dev_err(dev, input_log_buf, ## __VA_ARGS__);				\
+})
+#define input_raw_info(mode, dev, fmt, ...) input_info(mode, dev, fmt, ...)
+#define input_log_fix() {}
+#define input_raw_data_clear() {}
+#endif
+
 
 /*
  * The event structure itself
@@ -486,8 +578,14 @@ struct input_keymap_entry {
 #define KEY_DUMMY_MENU		251
 #define KEY_DUMMY_HOME		252
 #define KEY_DUMMY_BACK		253
+<<<<<<< HEAD
 #define KEY_RECENT		254
 #define KEY_WINK            0x2bf    /* Intelligence Key */
+=======
+
+#define KEY_WAKEUP_UNLOCK	253	/* Wake-up to recent view, ex: AOP */
+#define KEY_RECENT		254
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* Code 255 is reserved for special needs of AT keyboard driver */
 
@@ -766,6 +864,8 @@ struct input_keymap_entry {
 #define KEY_KBDINPUTASSIST_ACCEPT		0x264
 #define KEY_KBDINPUTASSIST_CANCEL		0x265
 
+#define KEY_WINK		0x2bf	/* Intelligence Key */
+
 #define BTN_TRIGGER_HAPPY		0x2c0
 #define BTN_TRIGGER_HAPPY1		0x2c0
 #define BTN_TRIGGER_HAPPY2		0x2c1
@@ -809,8 +909,13 @@ struct input_keymap_entry {
 #define BTN_TRIGGER_HAPPY40		0x2e7
 
 /* 0x2f1~2f8 is key event for specail event. */
+<<<<<<< HEAD
 #define KEY_CP_GRIP				0x2f1	/* grip sensor for CP */
 #define KEY_TSP_NONE_KEY2		0x2f2	/* grip sensor for WIFI */
+=======
+#define KEY_CP_GRIP	0x2f1	/* grip sensor for CP */
+#define KEY_TSP_NONE_KEY2	0x2f2	/* grip sensor for WIFI */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_USB_HMT_SAMSUNG_INPUT
 #define KEY_START_NOTA_CMD		0x2fc
@@ -891,6 +996,10 @@ struct input_keymap_entry {
 #define ABS_MT_TOOL_Y		0x3d	/* Center Y tool position */
 
 #define ABS_MT_PALM		0x3e	/* palm touch */
+<<<<<<< HEAD
+=======
+#define ABS_MT_CUSTOM		0x3e	/* custom event */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define ABS_MT_GRIP             0x3f    /* grip touch */
 
 #define ABS_MAX			0x3f
@@ -919,9 +1028,14 @@ struct input_keymap_entry {
 #define SW_MUTE_DEVICE		0x0e  /* set = device disabled */
 #define SW_GLOVE		0x0f	/* set = glove mode */
 #define SW_PEN_INSERT		0x13	/* set = pen out */
+<<<<<<< HEAD
 #define SW_FLIP                 0x15    /* set = flip cover */
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define SW_MAX			0x20
 #define SW_CNT			(SW_MAX+1)
+#define SW_FLIP			0x15	/* set = flip cover */
+#define	SW_CERTIFYHALL	0x1b	/* set = certify_hall... */
 
 /*
  * Misc events

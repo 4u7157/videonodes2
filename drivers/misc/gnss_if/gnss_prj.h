@@ -49,6 +49,7 @@ enum sensor_power {
 	SENSOR_ON,
 };
 
+<<<<<<< HEAD
 #ifndef ARCH_EXYNOS
 /* Exynos PMU API functions are only available when ARCH_EXYNOS is defined.
  * Otherwise, we must hardcode the PMU address for setting the PMU registers.
@@ -70,6 +71,13 @@ enum sensor_power {
 #define PMU_SIZE		(SZ_64K)
 #endif
 #endif /* USE_IOREMAP_NOPMU */
+=======
+/* #define USE_IOREMAP_NOPMU */
+#define USE_SIMPLE_WAKE_LOCK
+
+#define PMU_ADDR_7870		(0x10480000)
+#define PMU_SIZE_7870		(SZ_64K)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct kepler_bcmd_args {
 	u16 flags;
@@ -375,7 +383,11 @@ struct gnssctl_ops {
 	int (*gnss_hold_reset)(struct gnss_ctl *);
 	int (*gnss_release_reset)(struct gnss_ctl *);
 	int (*gnss_power_on)(struct gnss_ctl *);
+<<<<<<< HEAD
 	int (*gnss_req_fault_info)(struct gnss_ctl *, u32 **);
+=======
+	int (*gnss_req_fault_info)(struct gnss_ctl *, u32 *);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int (*suspend_gnss_ctrl)(struct gnss_ctl *);
 	int (*resume_gnss_ctrl)(struct gnss_ctl *);
 	int (*change_sensor_gpio)(struct gnss_ctl *);
@@ -388,10 +400,17 @@ struct gnss_ctl {
 	struct gnss_data *gnss_data;
 	enum gnss_state gnss_state;
 
+<<<<<<< HEAD
 	struct clk *ccore_qch_lh_gnss;
 
 #ifdef USE_IOREMAP_NOPMU
 	void __iomem *pmu_reg;
+=======
+#ifdef USE_IOREMAP_NOPMU
+	void __iomem *pmu_reg;
+#else
+	struct regmap *pmu_reg;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 	struct delayed_work dwork;

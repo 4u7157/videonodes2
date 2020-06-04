@@ -24,6 +24,11 @@ source "drivers/staging/samsung/sec_notifier/Kconfig"
 
 source "drivers/muic/Kconfig"
 
+<<<<<<< HEAD
+=======
+source "drivers/ifpmic/Kconfig"
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 source "drivers/ide/Kconfig"
 
 source "drivers/scsi/Kconfig"
@@ -192,18 +197,38 @@ source "drivers/thunderbolt/Kconfig"
 
 source "drivers/trace/Kconfig"
 
+<<<<<<< HEAD
+=======
+source "drivers/ccic/Kconfig"
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 source "drivers/bts/Kconfig"
 
 source "drivers/gud/Kconfig"
 
 source "drivers/mailbox/samsung/Kconfig"
 
+<<<<<<< HEAD
 source "drivers/motor/Kconfig"
 
 source "drivers/sensors/Kconfig"
 
 source "drivers/fingerprint/Kconfig"
 
+=======
+source "drivers/marvell/Kconfig"
+
+source "drivers/sensors/Kconfig"
+
+source "drivers/motor/Kconfig"
+
+source "drivers/fingerprint/Kconfig"
+
+source "drivers/gps/Kconfig"
+
+source "drivers/sensorhub/Kconfig"
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 source "drivers/five/Kconfig"
 
 endmenu

@@ -24,6 +24,7 @@
 #include <linux/sec_sysfs.h>
 #endif
 
+<<<<<<< HEAD
 #include <linux/muic/muic.h>
 #ifdef CONFIG_MUIC_NOTIFIER
 #include <linux/muic/muic_notifier.h>
@@ -73,11 +74,21 @@ void config_pmu_sel(int path)
 		pr_err("%s: ERR(%d) set USBDEV_PHY_ENABLE\n", __func__, ret);
 }
 #endif
+=======
+#ifdef CONFIG_MUIC_NOTIFIER
+#include <linux/muic/muic.h>
+#include <linux/muic/muic_notifier.h>
+#endif
+
+#include <linux/mcu_ipc.h>
+#include "uart_sel.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static void uart_dir_work(void)
 {
 	u32 info_value = 0;
 
+<<<<<<< HEAD
 	if (switch_data == NULL)
 		return;
 
@@ -125,20 +136,45 @@ static void uart_dir_work(void)
 			mbox_set_interrupt(MCU_CP, switch_data->int_uart_noti);
 	}
 #endif
+=======
+	info_value = (switch_data->uart_connect && switch_data->uart_switch_sel);
+
+	if (info_value != mbox_get_value(MCU_CP, switch_data->mbx_uart_noti)) {
+		pr_err("%s: change uart state to %s\n", __func__,
+			info_value ? "CP" : "AP");
+
+		mbox_set_value(MCU_CP, switch_data->mbx_uart_noti, info_value);
+		if (mbox_get_value(MCU_CP, switch_data->mbx_uart_noti))
+			mbox_set_interrupt(MCU_CP, switch_data->int_uart_noti);
+	}
+	else {
+		pr_info("%s: Fail change uart state. C[0x%02x] S[0x%02x] M[0x%02x]\n", __func__,
+			switch_data->uart_connect, switch_data->uart_switch_sel, mbox_get_value(MCU_CP, switch_data->mbx_uart_noti));
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 void cp_recheck_uart_dir(void)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_MCU_IPC
 	u32 mbx_uart_noti;
 
 	mbx_uart_noti = mbox_extract_value(MCU_CP, switch_data->mbx_ap_united_status,
 			switch_data->sbi_uart_noti_mask, switch_data->sbi_uart_noti_pos);
+=======
+	u32 mbx_uart_noti;
+
+	mbx_uart_noti = mbox_get_value(MCU_CP, switch_data->mbx_uart_noti);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (switch_data->uart_switch_sel != mbx_uart_noti)
 		pr_err("Uart notifier data is not matched with mbox!\n");
 
 	uart_dir_work();
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 EXPORT_SYMBOL_GPL(cp_recheck_uart_dir);
 
@@ -146,12 +182,25 @@ EXPORT_SYMBOL_GPL(cp_recheck_uart_dir);
 static int switch_handle_notification(struct notifier_block *nb,
 				unsigned long action, void *data)
 {
+<<<<<<< HEAD
 	muic_attached_dev_t attached_dev = *(muic_attached_dev_t *)data;
 
+=======
+#if defined(CONFIG_CCIC_NOTIFIER)
+	CC_NOTI_ATTACH_TYPEDEF *p_noti = (CC_NOTI_ATTACH_TYPEDEF *)data;
+	muic_attached_dev_t attached_dev = p_noti->cable_type;
+#else
+	muic_attached_dev_t attached_dev = *(muic_attached_dev_t *)data;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pr_err("%s: action=%lu attached_dev=%d\n", __func__, action, (int)attached_dev);
 
 	if ((attached_dev == ATTACHED_DEV_JIG_UART_OFF_MUIC) ||
 		(attached_dev == ATTACHED_DEV_JIG_UART_ON_MUIC) ||
+<<<<<<< HEAD
+=======
+		(attached_dev == ATTACHED_DEV_JIG_UART_ON_VB_MUIC) ||
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		(attached_dev == ATTACHED_DEV_JIG_UART_OFF_VB_MUIC)) {
 		switch (action) {
 		case MUIC_NOTIFY_CMD_DETACH:
@@ -177,6 +226,7 @@ static int set_uart_sel(void)
 
 	if (switch_data->uart_switch_sel == CP) {
 		pr_err("Change Uart to CP\n");
+<<<<<<< HEAD
 #ifdef CONFIG_SOC_EXYNOS7570
 		/* There is bit[8] converting in JAVA platform only */
 		ret = exynos_pmu_update(EXYNOS_PMU_UART_IO_SHARE_CTRL,
@@ -185,10 +235,15 @@ static int set_uart_sel(void)
 		ret = exynos_pmu_update(EXYNOS_PMU_UART_IO_SHARE_CTRL,
 			SEL_CP_UART_DBG, SEL_CP_UART_DBG);
 #endif
+=======
+		ret = exynos_pmu_update(EXYNOS_PMU_UART_IO_SHARE_CTRL,
+			SEL_CP_UART_DBG, SEL_CP_UART_DBG);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret < 0)
 			pr_err("%s: ERR! write Fail: %d\n", __func__, ret);
 	} else {
 		pr_err("Change UART to AP\n");
+<<<<<<< HEAD
 #ifdef CONFIG_SOC_EXYNOS7570
 		ret = exynos_pmu_update(EXYNOS_PMU_UART_IO_SHARE_CTRL,
 			SEL_CP_UART_DBG, SEL_CP_UART_DBG);
@@ -196,6 +251,10 @@ static int set_uart_sel(void)
 		ret = exynos_pmu_update(EXYNOS_PMU_UART_IO_SHARE_CTRL,
 			SEL_CP_UART_DBG, 0);
 #endif
+=======
+		ret = exynos_pmu_update(EXYNOS_PMU_UART_IO_SHARE_CTRL,
+			SEL_CP_UART_DBG, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (ret < 0)
 			pr_err("%s: ERR! write Fail: %d\n", __func__, ret);
 	}
@@ -226,6 +285,7 @@ uart_sel_show(struct device *dev, struct device_attribute *attr, char *buf)
 
 	if (ret < PAGE_SIZE - 1) {
 		exynos_pmu_read(EXYNOS_PMU_UART_IO_SHARE_CTRL, &uart_ctrl);
+<<<<<<< HEAD
 #ifdef CONFIG_SOC_EXYNOS7570
 		ret += snprintf(buf + ret, PAGE_SIZE - ret, (uart_ctrl & SEL_CP_UART_DBG) ?
 			"AP\n":"CP\n");
@@ -233,6 +293,10 @@ uart_sel_show(struct device *dev, struct device_attribute *attr, char *buf)
 		ret += snprintf(buf + ret, PAGE_SIZE - ret, (uart_ctrl & SEL_CP_UART_DBG) ?
 			"CP\n":"AP\n");
 #endif
+=======
+		ret += snprintf(buf + ret, PAGE_SIZE - ret, (uart_ctrl & SEL_CP_UART_DBG) ?
+			"CP\n":"AP\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		buf[PAGE_SIZE-2] = '\n';
 		buf[PAGE_SIZE-1] = '\0';
@@ -246,7 +310,11 @@ static ssize_t
 uart_sel_store(struct device *dev, struct device_attribute *attr,
 				const char *buf, size_t count)
 {
+<<<<<<< HEAD
 	pr_err("%s Change UART port path\n", __func__);
+=======
+	pr_err("Change UART port path\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!strncasecmp(buf, "AP", 2)) {
 		switch_data->uart_switch_sel = AP;
@@ -289,12 +357,17 @@ static int uart_sel_probe(struct platform_device *pdev)
 		pr_err("SWITCH_SEL parse error! [id]\n");
 		return err;
 	}
+<<<<<<< HEAD
 	err = of_property_read_u32(dev->of_node, "mbx_ap2cp_united_status",
 			&switch_data->mbx_ap_united_status);
 	err = of_property_read_u32(dev->of_node, "sbi_uart_noti_mask",
 			&switch_data->sbi_uart_noti_mask);
 	err = of_property_read_u32(dev->of_node, "sbi_uart_noti_pos",
 			&switch_data->sbi_uart_noti_pos);
+=======
+	err = of_property_read_u32(dev->of_node, "mbx_ap2cp_uart_noti",
+			&switch_data->mbx_uart_noti);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (err) {
 		pr_err("SWITCH_SEL parse error! [id]\n");
 		return err;
@@ -304,8 +377,11 @@ static int uart_sel_probe(struct platform_device *pdev)
 	if (err)
 			pr_err("can't create modem_ctrl!!!\n");
 
+<<<<<<< HEAD
 #if defined(CONFIG_MUIC_RT8973) || defined(CONFIG_MUIC_SM5504) \
 					|| defined(CONFIG_MUIC_UNIVERSAL_SM5504)
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if ((get_switch_sel() & 0xff) != 0) {
 		if ((get_switch_sel() & SWITCH_SEL_UART_MASK))
 			switch_data->uart_switch_sel = AP;
@@ -314,9 +390,12 @@ static int uart_sel_probe(struct platform_device *pdev)
 	} else {
 		switch_data->uart_switch_sel = AP;
 	}
+<<<<<<< HEAD
 #else
 	switch_data->uart_switch_sel = AP;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	switch_data->uart_connect = false;
 	set_uart_sel();

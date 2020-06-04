@@ -12,8 +12,13 @@
  * GNU General Public License for more details.
  */
 
+<<<<<<< HEAD
 #ifndef _MC_USER_H_
 #define _MC_USER_H_
+=======
+#ifndef _USER_H_
+#define _USER_H_
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct cdev;
 
@@ -22,4 +27,8 @@ static inline void mc_user_exit(void)
 {
 }
 
+<<<<<<< HEAD
 #endif /* _MC_USER_H_ */
+=======
+#endif /* _USER_H_ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

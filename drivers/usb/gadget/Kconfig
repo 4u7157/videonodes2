@@ -428,12 +428,15 @@ config USB_CONFIGFS_UEVENT
 	  state changes. The gadget can be in any of the following
 	  three states: "CONNECTED/DISCONNECTED/CONFIGURED"
 
+<<<<<<< HEAD
 config USB_RNDIS_MULTIPACKET
 	boolean "Samsung Rndis Multi Packet support"
 	depends on USB_CONFIGFS_UEVENT
 	help
 		Rndis Multipacket Support.
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 config USB_CONFIGFS_F_MIDI
         boolean "MIDI function"
         depends on USB_CONFIGFS
@@ -509,6 +512,7 @@ config USB_RNDIS_MULTIPACKET
 	depends on USB_G_ANDROID
 	help
 		Rndis Multipacket Support.
+<<<<<<< HEAD
 
 config USB_RNDIS_VZW_REQ
 	boolean "Samsung USB RNDIS 5.x function"
@@ -519,6 +523,14 @@ config USB_RNDIS_VZW_REQ
 		If you enable this option,
 		you can connect via RNDIS 5.x.
  		It's VZW carrier concept.
+=======
+		
+config USB_ANDROID_SAMSUNG_CCR_PROTOCOL
+	boolean "Samsung USB CCR Protocol support"
+	depends on USB_G_ANDROID
+	help
+		CCR Protocol Support.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 config USB_ANDROID_RNDIS_DWORD_ALIGNED
 	boolean "Use double word aligned"

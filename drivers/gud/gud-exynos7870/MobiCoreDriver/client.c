@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2015 TRUSTONIC LIMITED
+=======
+ * Copyright (c) 2013-2017 TRUSTONIC LIMITED
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,8 +21,21 @@
 #include <linux/mm.h>
 #include <linux/sched.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 
 #include "public/mc_linux.h"
+=======
+#include <linux/sched.h>	/* struct task_struct */
+#include <linux/version.h>
+#if KERNEL_VERSION(4, 11, 0) <= LINUX_VERSION_CODE
+#include <linux/sched/mm.h>	/* get_task_mm */
+#include <linux/sched/task.h>	/* put_task_struct */
+#endif
+#include <net/sock.h>		/* sockfd_lookup */
+#include <linux/file.h>		/* fput */
+
+#include "public/mc_user.h"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "public/mc_admin.h"
 
 #include "main.h"
@@ -201,6 +218,7 @@ static inline bool client_is_kernel(struct tee_client *client)
  * Once in "closing" state, system "close" can be called.
  * Return: 0 if this state could be set.
  */
+<<<<<<< HEAD
 int client_freeze(struct tee_client *client)
 {
 	int ret;
@@ -209,6 +227,15 @@ int client_freeze(struct tee_client *client)
 	mutex_lock(&client->sessions_lock);
 	ret = list_empty(&client->sessions) ? 0 : -ENOTEMPTY;
 	client->closing = ret == 0;
+=======
+bool client_has_sessions(struct tee_client *client)
+{
+	bool ret;
+
+	/* Check for sessions */
+	mutex_lock(&client->sessions_lock);
+	ret = !list_empty(&client->sessions);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&client->sessions_lock);
 	mc_dev_devel("client %p, exit with %d\n", client, ret);
 	return ret;
@@ -370,7 +397,11 @@ int client_open_trustlet(struct tee_client *client, u32 *session_id, u32 spid,
 {
 	struct tee_object *obj;
 	struct mc_identity identity = {
+<<<<<<< HEAD
 		.login_type = TEEC_LOGIN_PUBLIC,
+=======
+		.login_type = LOGIN_PUBLIC,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	};
 	u32 sid = 0;
 	int err = 0;
@@ -435,6 +466,7 @@ int client_add_session(struct tee_client *client, const struct tee_object *obj,
 		goto err;
 
 	mutex_lock(&client->sessions_lock);
+<<<<<<< HEAD
 	if (unlikely(client->closing)) {
 		/* Client has been frozen, no more sessions allowed */
 		ret = -ENODEV;
@@ -445,6 +477,12 @@ int client_add_session(struct tee_client *client, const struct tee_object *obj,
 		*session_id = session->mcp_session.id;
 	}
 
+=======
+	/* Add session to client */
+	list_add_tail(&session->list, &client->sessions);
+	/* Set sid returned by SWd */
+	*session_id = session->mcp_session.id;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_unlock(&client->sessions_lock);
 
 err:
@@ -539,7 +577,11 @@ int client_notify_session(struct tee_client *client, u32 session_id)
  * @return driver error code
  */
 int client_waitnotif_session(struct tee_client *client, u32 session_id,
+<<<<<<< HEAD
 			     s32 timeout)
+=======
+			     s32 timeout, bool silent_expiry)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct tee_session *session;
 	int ret;
@@ -549,7 +591,11 @@ int client_waitnotif_session(struct tee_client *client, u32 session_id,
 	if (!session)
 		return -ENXIO;
 
+<<<<<<< HEAD
 	ret = session_waitnotif(session, timeout);
+=======
+	ret = session_waitnotif(session, timeout, silent_expiry);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Put session */
 	session_put(session);
 	mc_dev_devel("session %x, exit with %d\n", session_id, ret);
@@ -637,7 +683,11 @@ static void cbuf_vm_close(struct vm_area_struct *vmarea)
 	cbuf_put(cbuf);
 }
 
+<<<<<<< HEAD
 static struct vm_operations_struct cbuf_vm_ops = {
+=======
+static const struct vm_operations_struct cbuf_vm_ops = {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	.open = cbuf_vm_open,
 	.close = cbuf_vm_close,
 };
@@ -790,19 +840,32 @@ struct tee_mmu *client_mmu_create(struct tee_client *client, uintptr_t va,
 	if (cbuf) {
 		uintptr_t offset;
 
+<<<<<<< HEAD
 		if (client_is_kernel(client))
 			offset = va - cbuf->addr;
 		else
 			offset = va - cbuf->uaddr;
+=======
+		if (client_is_kernel(client)) {
+			offset = va - cbuf->addr;
+		} else {
+			offset = va - cbuf->uaddr;
+			/* Update va to point to kernel address */
+			va = cbuf->addr + offset;
+		}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 		if ((offset + len) > cbuf->len) {
 			mc_dev_err("crosses cbuf boundary\n");
 			cbuf_put(cbuf);
 			return ERR_PTR(-EINVAL);
 		}
+<<<<<<< HEAD
 
 		/* Provide kernel virtual address */
 		va = cbuf->addr + offset;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else if (!client_is_kernel(client)) {
 		/* Provide task if buffer was allocated in user space */
 		task = current;
@@ -836,9 +899,15 @@ void client_init(void)
 static inline int cbuf_debug_structs(struct kasnprintf_buf *buf,
 				     struct cbuf *cbuf)
 {
+<<<<<<< HEAD
 	return kasnprintf(buf, "\tcbuf %p [%d]: addr %lx uaddr %lx len %u\n",
 			  cbuf, kref_read(&cbuf->kref), cbuf->addr,
 			  cbuf->uaddr, cbuf->len);
+=======
+	return kasnprintf(buf, "\tcbuf %pK [%d]: addr %pK uaddr %pK len %u\n",
+			  cbuf, kref_read(&cbuf->kref), (void *)cbuf->addr,
+			  (void *)cbuf->uaddr, cbuf->len);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static int client_debug_structs(struct kasnprintf_buf *buf,
@@ -849,12 +918,20 @@ static int client_debug_structs(struct kasnprintf_buf *buf,
 	int ret;
 
 	if (client->pid)
+<<<<<<< HEAD
 		ret = kasnprintf(buf, "client %p [%d]: %s (%d)%s\n",
+=======
+		ret = kasnprintf(buf, "client %pK [%d]: %s (%d)%s\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				 client, kref_read(&client->kref),
 				 client->comm, client->pid,
 				 is_closing ? " <closing>" : "");
 	else
+<<<<<<< HEAD
 		ret = kasnprintf(buf, "client %p [%d]: [kernel]%s\n",
+=======
+		ret = kasnprintf(buf, "client %pK [%d]: [kernel]%s\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				 client, kref_read(&client->kref),
 				 is_closing ? " <closing>" : "");
 

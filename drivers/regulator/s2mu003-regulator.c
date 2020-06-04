@@ -364,9 +364,12 @@ static int s2mu003_pmic_remove(struct platform_device *pdev)
 		if (s2mu003->rdev[i])
 			regulator_unregister(s2mu003->rdev[i]);
 
+<<<<<<< HEAD
 	kfree(s2mu003->rdev);
 	kfree(s2mu003);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 

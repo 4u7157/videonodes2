@@ -41,7 +41,11 @@
 #define MIP_R1_INFO_PROTOCOL_VERSION			0x58
 #define MIP_R1_INFO_IC_ID				0x70
 
+<<<<<<< HEAD
 #define MIP_TS_CMD_SENSITIVITY_MODE		0x14
+=======
+#define MIP_TS_CMD_SENSITIVITY_MODE		0x1A
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MIP_TS_READ_SENSITIVITY_VALUE	0x26
 
 #define MIP_R0_EVENT					0x02

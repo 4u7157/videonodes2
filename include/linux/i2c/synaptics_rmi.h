@@ -59,9 +59,12 @@ struct synaptics_rmi4_platform_data {
 	u32 panel_revision;	/* to identify panel info */
 	bool regulator_en;
 	unsigned gpio;
+<<<<<<< HEAD
 #if defined(CONFIG_TOUCHSCREEN_KLIMTVE)
 	unsigned reset;
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int irq_type;
 	int (*gpio_config)(unsigned interrupt_gpio, bool configure);
 	int (*power)(void *data, bool on);
@@ -91,4 +94,16 @@ struct synaptics_rmi4_platform_data {
 
 extern unsigned int lcdtype;
 
+<<<<<<< HEAD
+=======
+#undef input_dbg
+#define input_dbg(mode, dev, fmt, ...)	dev_dbg(dev, fmt, ## __VA_ARGS__);
+
+#undef input_info
+#define input_info(mode, dev, fmt, ...)	dev_info(dev, fmt, ## __VA_ARGS__);
+
+#undef input_err
+#define input_err(mode, dev, fmt, ...)	dev_err(dev, fmt, ## __VA_ARGS__);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif

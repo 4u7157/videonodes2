@@ -9,8 +9,11 @@
 #include "u_f.h"
 #include "u_os_desc.h"
 #include <linux/soc/samsung/exynos-soc.h>
+<<<<<<< HEAD
 #include "../dwc3/core.h"
 #include "../dwc3/otg.h"
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_USB_CONFIGFS_UEVENT
 #include <linux/platform_device.h>
@@ -1714,6 +1717,7 @@ functions_store(struct device *pdev, struct device_attribute *attr,
 	strlcpy(buf, buff, sizeof(buf));
 	b = strim(buf);
 
+<<<<<<< HEAD
 #if CONFIG_SOC_EXYNOS7570
 	if (strstr(b, "mtp")) {
 		list_for_each_entry(c, &cdev->configs, list) {
@@ -1775,6 +1779,8 @@ functions_store(struct device *pdev, struct device_attribute *attr,
 		}
 	}
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	while (b) {
 		name = strsep(&b, ",");
 		if (!name)
@@ -1784,7 +1790,10 @@ functions_store(struct device *pdev, struct device_attribute *attr,
 			cfg = container_of(c, struct config_usb_cfg, c);
 			list_for_each_entry_safe(f, tmp, &dev->linked_func, list) {
 				if (!strcmp(f->name, name)) {
+<<<<<<< HEAD
 					pr_err("%s: enable device[%s]\n", __func__, name);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 					list_move_tail(&f->list, &cfg->func_list);
 				}
 			}
@@ -1812,7 +1821,10 @@ static ssize_t enable_store(struct device *pdev, struct device_attribute *attr,
 	struct usb_configuration *c;
 	struct config_usb_cfg *cfg;
 	struct usb_function *f, *tmp;
+<<<<<<< HEAD
 	struct dwc3 *dwc;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int enabled = 0;
 
 	if (!dev)
@@ -1823,10 +1835,13 @@ static ssize_t enable_store(struct device *pdev, struct device_attribute *attr,
 		return -ENODEV;
 
 	gadget = cdev->gadget;
+<<<<<<< HEAD
 	if (gadget) {
 		dwc = container_of(gadget, struct dwc3, gadget);
 		mutex_lock(&dwc->dotg->fsm.lock);
 	}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_lock(&dev->lock);
 
 	sscanf(buff, "%d", &enabled);
@@ -1860,9 +1875,12 @@ static ssize_t enable_store(struct device *pdev, struct device_attribute *attr,
 	}
 
 	mutex_unlock(&dev->lock);
+<<<<<<< HEAD
 	if (gadget) {
 		mutex_unlock(&dwc->dotg->fsm.lock);
 	}
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return size;
 }
 

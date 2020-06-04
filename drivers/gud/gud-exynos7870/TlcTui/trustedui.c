@@ -12,6 +12,7 @@
  * GNU General Public License for more details.
  */
 
+<<<<<<< HEAD
 /**
  * File            : trustedui.c
  * Created         : 26-02-2010
@@ -23,6 +24,14 @@
 
 static int trustedui_mode = TRUSTEDUI_MODE_OFF;
 static int trustedui_blank_counter;
+=======
+#include <linux/spinlock.h>
+#include <linux/module.h>
+#include "t-base-tui.h"
+
+static int trustedui_mode = TRUSTEDUI_MODE_OFF;
+static int trustedui_blank_counter = 0;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static DEFINE_SPINLOCK(trustedui_lock);
 
@@ -125,6 +134,9 @@ int trustedui_clear_mask(int mask)
 }
 EXPORT_SYMBOL(trustedui_clear_mask);
 
+<<<<<<< HEAD
 MODULE_AUTHOR("Trustonic Limited");
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("<t-base TUI");

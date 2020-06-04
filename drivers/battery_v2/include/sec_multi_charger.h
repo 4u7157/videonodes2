@@ -58,7 +58,11 @@ struct sec_multi_charger_platform_data {
 struct sec_multi_charger_info {
 	struct device *dev;
 	struct sec_multi_charger_platform_data *pdata;
+<<<<<<< HEAD
 	struct power_supply		*psy_chg;
+=======
+	struct power_supply		psy_chg;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	int cable_type;
 	int siop_level;
@@ -72,8 +76,11 @@ struct sec_multi_charger_info {
 	sec_charging_current_t main_current;
 	sec_charging_current_t sub_current;
 
+<<<<<<< HEAD
 	unsigned int full_check_current_1st;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int chg_mode;
 #if 0
 	int cable_type;

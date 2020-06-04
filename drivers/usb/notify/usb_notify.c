@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2011-2013 Samsung Electronics Co. Ltd.
+=======
+ * Copyright (C) 2014-2017 Samsung Electronics Co. Ltd.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -7,7 +11,12 @@
  * (at your option) any later version.
  */
 
+<<<<<<< HEAD
  /* usb notify layer v2.0 */
+=======
+ /* usb notify layer v3.0 */
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define pr_fmt(fmt) "usb_notify: " fmt
 
@@ -59,6 +68,13 @@ struct otg_booting_delay {
 	unsigned long reserve_state;
 };
 
+<<<<<<< HEAD
+=======
+struct typec_info {
+	int data_role;
+	int power_role;
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct usb_notify {
 	struct otg_notify *o_notify;
 	struct atomic_notifier_head	otg_notifier;
@@ -74,12 +90,25 @@ struct usb_notify {
 	struct ovc ovc_info;
 	struct otg_booting_delay b_delay;
 	struct delayed_work check_work;
+<<<<<<< HEAD
 	int is_device;
 	int check_work_complete;
 	int oc_noti;
 	int diable_v_drive;
 	unsigned long c_type;
 	int c_status;
+=======
+	struct typec_info typec_status;
+	int is_device;
+	int check_work_complete;
+	int oc_noti;
+	int disable_v_drive;
+	unsigned long c_type;
+	int c_status;
+#if defined(CONFIG_USB_HW_PARAM)
+	unsigned long long hw_param[USB_CCIC_HW_PARAM_MAX];
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 struct usb_notify_core {
@@ -113,6 +142,10 @@ static int check_event_type(enum otg_notify_events event)
 	case NOTIFY_EVENT_DEVICE_CONNECT:
 	case NOTIFY_EVENT_GAMEPAD_CONNECT:
 	case NOTIFY_EVENT_LANHUB_CONNECT:
+<<<<<<< HEAD
+=======
+	case NOTIFY_EVENT_POWER_SOURCE:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ret |= NOTIFY_EVENT_EXTRA;
 		break;
 	case NOTIFY_EVENT_VBUS:
@@ -126,6 +159,13 @@ static int check_event_type(enum otg_notify_events event)
 		ret |= (NOTIFY_EVENT_STATE | NOTIFY_EVENT_NEED_VBUSDRIVE
 				| NOTIFY_EVENT_DELAY | NOTIFY_EVENT_NEED_HOST);
 		break;
+<<<<<<< HEAD
+=======
+	case NOTIFY_EVENT_POGO:
+		ret |= (NOTIFY_EVENT_STATE | NOTIFY_EVENT_DELAY
+				| NOTIFY_EVENT_NEED_HOST);
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case NOTIFY_EVENT_ALL_DISABLE:
 	case NOTIFY_EVENT_HOST_DISABLE:
 	case NOTIFY_EVENT_CLIENT_DISABLE:
@@ -140,10 +180,16 @@ static int check_event_type(enum otg_notify_events event)
 		ret |= (NOTIFY_EVENT_STATE | NOTIFY_EVENT_NOSAVE
 				| NOTIFY_EVENT_NEED_HOST);
 		break;
+<<<<<<< HEAD
 	case NOTIFY_EVENT_LANHUB:
 		ret |= NOTIFY_EVENT_DELAY;
 	case NOTIFY_EVENT_SMARTDOCK_TA:
 	case NOTIFY_EVENT_AUDIODOCK:
+=======
+	case NOTIFY_EVENT_SMARTDOCK_TA:
+	case NOTIFY_EVENT_AUDIODOCK:
+	case NOTIFY_EVENT_LANHUB:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case NOTIFY_EVENT_MMDOCK:
 		ret |= NOTIFY_EVENT_NEED_HOST;
 	case NOTIFY_EVENT_CHARGER:
@@ -194,6 +240,11 @@ const char *event_string(enum otg_notify_events event)
 		return virt ? "hmt(virtual)" : "hmt";
 	case NOTIFY_EVENT_GAMEPAD:
 		return virt ? "gamepad(virtual)" : "gamepad";
+<<<<<<< HEAD
+=======
+	case NOTIFY_EVENT_POGO:
+		return virt ? "pogo(virtual)" : "pogo";
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case NOTIFY_EVENT_DRIVE_VBUS:
 		return "drive_vbus";
 	case NOTIFY_EVENT_ALL_DISABLE:
@@ -222,6 +273,11 @@ const char *event_string(enum otg_notify_events event)
 		return "gamepad_connect";
 	case NOTIFY_EVENT_LANHUB_CONNECT:
 		return "lanhub_connect";
+<<<<<<< HEAD
+=======
+	case NOTIFY_EVENT_POWER_SOURCE:
+		return "power_role_source";
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		return "undefined";
 	}
@@ -375,7 +431,11 @@ static int ovc_scan_thread(void *data)
 			ovcinfo->thread_remove = 1;
 	}
 
+<<<<<<< HEAD
 	pr_info("ovc_scan_thread exit\n");
+=======
+	pr_info("%s exit\n", __func__);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	complete_and_exit(&ovcinfo->scanning_done, 0);
 	return 0;
 }
@@ -559,6 +619,12 @@ int do_notify_blockstate(struct otg_notify *n, unsigned long event,
 		break;
 	case NOTIFY_EVENT_SMARTDOCK_USB:
 	case NOTIFY_EVENT_VBUS:
+<<<<<<< HEAD
+=======
+		if (enable)
+			if (n->set_chg_current)
+				n->set_chg_current(1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case NOTIFY_EVENT_LANHUB:
 	case NOTIFY_EVENT_HMT:
@@ -567,6 +633,10 @@ int do_notify_blockstate(struct otg_notify *n, unsigned long event,
 	case NOTIFY_EVENT_SMARTDOCK_TA:
 	case NOTIFY_EVENT_AUDIODOCK:
 	case NOTIFY_EVENT_GAMEPAD:
+<<<<<<< HEAD
+=======
+	case NOTIFY_EVENT_POGO:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (n->unsupport_host) {
 			pr_err("This model doesn't support usb host\n");
 			goto skip;
@@ -626,6 +696,10 @@ static void otg_notify_state(struct otg_notify *n,
 	pr_info("%s+ event=%s(%lu), enable=%s\n", __func__,
 		event_string(event), event, enable == 0 ? "off" : "on");
 
+<<<<<<< HEAD
+=======
+	prev_c_type = u_notify->c_type;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	virtual = IS_VIRTUAL(event);
 	event = PHY_EVENT(event);
 
@@ -661,6 +735,12 @@ static void otg_notify_state(struct otg_notify *n,
 			if (gpio_is_valid(n->redriver_en_gpio))
 				gpio_direction_output
 					(n->redriver_en_gpio, 1);
+<<<<<<< HEAD
+=======
+			if (n->pre_peri_delay_us)
+				usleep_range(n->pre_peri_delay_us * 1000,
+					n->pre_peri_delay_us * 1000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			if (n->set_peripheral)
 				n->set_peripheral(true);
 		} else {
@@ -675,7 +755,11 @@ static void otg_notify_state(struct otg_notify *n,
 		}
 		break;
 	case NOTIFY_EVENT_LANHUB_TA:
+<<<<<<< HEAD
 		u_notify->diable_v_drive = enable;
+=======
+		u_notify->disable_v_drive = enable;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (enable)
 			u_notify->oc_noti = 0;
 		if (n->set_lanhubta)
@@ -686,7 +770,11 @@ static void otg_notify_state(struct otg_notify *n,
 			pr_err("This model doesn't support usb host\n");
 			goto err;
 		}
+<<<<<<< HEAD
 		u_notify->diable_v_drive = enable;
+=======
+		u_notify->disable_v_drive = enable;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (enable) {
 			u_notify->oc_noti = 0;
 			u_notify->ndev.mode = NOTIFY_HOST_MODE;
@@ -717,9 +805,16 @@ static void otg_notify_state(struct otg_notify *n,
 			pr_err("This model doesn't support usb host\n");
 			goto err;
 		}
+<<<<<<< HEAD
 		u_notify->diable_v_drive = 0;
 		if (enable) {
 			if (check_same_event_type(prev_c_type, event)) {
+=======
+		u_notify->disable_v_drive = 0;
+		if (enable) {
+			if (check_same_event_type(prev_c_type, event)
+				&& !virtual) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				pr_err("now host mode, skip this command\n");
 				goto err;
 			}
@@ -734,6 +829,11 @@ static void otg_notify_state(struct otg_notify *n,
 				u_notify->oc_noti = 1;
 				if (n->vbus_drive)
 					n->vbus_drive(1);
+<<<<<<< HEAD
+=======
+				u_notify->typec_status.power_role
+							= HNOTIFY_SOURCE;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 			if (n->set_host)
 				n->set_host(true);
@@ -741,6 +841,11 @@ static void otg_notify_state(struct otg_notify *n,
 				u_notify->oc_noti = 1;
 				if (n->vbus_drive)
 					n->vbus_drive(1);
+<<<<<<< HEAD
+=======
+				u_notify->typec_status.power_role
+							= HNOTIFY_SOURCE;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 		} else { /* disable */
 			u_notify->ndev.mode = NOTIFY_NONE_MODE;
@@ -748,6 +853,11 @@ static void otg_notify_state(struct otg_notify *n,
 				u_notify->oc_noti = 0;
 				if (n->vbus_drive)
 					n->vbus_drive(0);
+<<<<<<< HEAD
+=======
+				u_notify->typec_status.power_role
+							= HNOTIFY_SINK;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 			if (n->set_host)
 				n->set_host(false);
@@ -755,6 +865,11 @@ static void otg_notify_state(struct otg_notify *n,
 				u_notify->oc_noti = 0;
 				if (n->vbus_drive)
 					n->vbus_drive(0);
+<<<<<<< HEAD
+=======
+				u_notify->typec_status.power_role
+							= HNOTIFY_SINK;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			}
 			if (gpio_is_valid(n->redriver_en_gpio))
 				gpio_direction_output
@@ -774,13 +889,21 @@ static void otg_notify_state(struct otg_notify *n,
 		if (enable)
 			host_state_notify(&u_notify->ndev,
 							NOTIFY_HOST_NONE);
+<<<<<<< HEAD
+=======
+	case NOTIFY_EVENT_POGO:
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case NOTIFY_EVENT_SMARTDOCK_TA:
 	case NOTIFY_EVENT_AUDIODOCK:
 		if (n->unsupport_host) {
 			pr_err("This model doesn't support usb host\n");
 			goto err;
 		}
+<<<<<<< HEAD
 		u_notify->diable_v_drive = enable;
+=======
+		u_notify->disable_v_drive = enable;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (enable) {
 			u_notify->ndev.mode = NOTIFY_HOST_MODE;
 			if (n->is_wakelock)
@@ -800,7 +923,11 @@ static void otg_notify_state(struct otg_notify *n,
 			pr_err("This model doesn't support usb host\n");
 			goto no_save_event;
 		}
+<<<<<<< HEAD
 		if (u_notify->diable_v_drive) {
+=======
+		if (u_notify->disable_v_drive) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			pr_info("cable type=%s disable vbus draw\n",
 					event_string(u_notify->c_type));
 			goto no_save_event;
@@ -815,15 +942,32 @@ static void otg_notify_state(struct otg_notify *n,
 			goto no_save_event;
 		}
 		if (enable) {
+<<<<<<< HEAD
+=======
+			send_external_notify(EXTERNAL_NOTIFY_HOSTBLOCK_PRE, 1);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			set_bit(NOTIFY_BLOCK_TYPE_HOST,
 				&u_notify->udev.disable_state);
 			set_bit(NOTIFY_BLOCK_TYPE_CLIENT,
 				&u_notify->udev.disable_state);
+<<<<<<< HEAD
 		} else {
+=======
+			send_external_notify(EXTERNAL_NOTIFY_HOSTBLOCK_POST, 1);
+		} else {
+			send_external_notify(EXTERNAL_NOTIFY_HOSTBLOCK_PRE, 0);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			clear_bit(NOTIFY_BLOCK_TYPE_HOST,
 				&u_notify->udev.disable_state);
 			clear_bit(NOTIFY_BLOCK_TYPE_CLIENT,
 				&u_notify->udev.disable_state);
+<<<<<<< HEAD
+=======
+
+			send_external_notify(EXTERNAL_NOTIFY_HOSTBLOCK_POST, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		goto no_save_event;
 	case NOTIFY_EVENT_HOST_DISABLE:
@@ -832,10 +976,19 @@ static void otg_notify_state(struct otg_notify *n,
 			goto no_save_event;
 		}
 		if (enable) {
+<<<<<<< HEAD
+=======
+			send_external_notify(EXTERNAL_NOTIFY_HOSTBLOCK_PRE, 1);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			clear_bit(NOTIFY_BLOCK_TYPE_CLIENT,
 				&u_notify->udev.disable_state);
 			set_bit(NOTIFY_BLOCK_TYPE_HOST,
 				&u_notify->udev.disable_state);
+<<<<<<< HEAD
+=======
+			send_external_notify(EXTERNAL_NOTIFY_HOSTBLOCK_POST, 1);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 		goto no_save_event;
 	case NOTIFY_EVENT_CLIENT_DISABLE:
@@ -852,7 +1005,12 @@ static void otg_notify_state(struct otg_notify *n,
 		goto no_save_event;
 #if defined(CONFIG_USB_OTG_WHITELIST_FOR_MDM)
 	case NOTIFY_EVENT_MDM_ON_OFF:
+<<<<<<< HEAD
 		pr_info("%s : enable=%d!\n", __func__, enable);
+=======
+		pr_info("%s : mdm block enable for usb whiltelist = %d\n",
+			__func__, enable);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (enable) {
 			send_external_notify(EXTERNAL_NOTIFY_MDMBLOCK_PRE, 1);
 			/*whilte list start*/
@@ -868,8 +1026,14 @@ static void otg_notify_state(struct otg_notify *n,
 		break;
 	}
 
+<<<<<<< HEAD
 	if ((type & NOTIFY_EVENT_NEED_VBUSDRIVE)
 				&& event != NOTIFY_EVENT_HOST) {
+=======
+	if (((type & NOTIFY_EVENT_NEED_VBUSDRIVE)
+				&& event != NOTIFY_EVENT_HOST)
+				|| event == NOTIFY_EVENT_POGO) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (enable) {
 			if (n->device_check_sec) {
 				if (prev_c_type != NOTIFY_EVENT_HOST)
@@ -918,9 +1082,15 @@ static void extra_notify_state(struct otg_notify *n,
 		pr_err("OTG overcurrent!!!!!!\n");
 		break;
 	case NOTIFY_EVENT_VBUSPOWER:
+<<<<<<< HEAD
 		 if (enable)
 			u_notify->ndev.booster = NOTIFY_POWER_ON;
 		 else
+=======
+		if (enable)
+			u_notify->ndev.booster = NOTIFY_POWER_ON;
+		else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			u_notify->ndev.booster = NOTIFY_POWER_OFF;
 		break;
 	case NOTIFY_EVENT_SMSC_OVC:
@@ -962,6 +1132,15 @@ static void extra_notify_state(struct otg_notify *n,
 			send_external_notify(EXTERNAL_NOTIFY_DEVICE_CONNECT,
 					EXTERNAL_NOTIFY_LANHUB);
 		break;
+<<<<<<< HEAD
+=======
+	case NOTIFY_EVENT_POWER_SOURCE:
+		if (enable)
+			u_notify->typec_status.power_role = HNOTIFY_SOURCE;
+		else
+			u_notify->typec_status.power_role = HNOTIFY_SINK;
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		break;
 	}
@@ -1040,7 +1219,11 @@ static int create_usb_notify(void)
 	if (u_notify_core)
 		goto err;
 
+<<<<<<< HEAD
 	u_notify_core = kzalloc(sizeof(struct usb_notify), GFP_KERNEL);
+=======
+	u_notify_core = kzalloc(sizeof(struct usb_notify_core), GFP_KERNEL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!u_notify_core) {
 		ret = -ENOMEM;
 		goto err;
@@ -1096,6 +1279,10 @@ static void device_connect_check(struct work_struct *work)
 
 		if (u_notify->o_notify->vbus_drive)
 			u_notify->o_notify->vbus_drive(0);
+<<<<<<< HEAD
+=======
+		u_notify->typec_status.power_role = HNOTIFY_SINK;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	u_notify->check_work_complete = 1;
 	pr_info("%s finished\n", __func__);
@@ -1106,6 +1293,14 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 	struct otg_notify *n = udev->o_notify;
 	struct usb_notify *u_notify = (struct usb_notify *)(n->u_notify);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_NOTIFY_PROC_LOG
+	unsigned long usb_notify;
+	int usb_notify_state;
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!n->disable_control) {
 		pr_err("%s disable_control is not supported\n", __func__);
 		goto skip;
@@ -1124,13 +1319,29 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 					VIRT_EVENT(u_notify->c_type));
 
 			if (!n->auto_drive_vbus &&
+<<<<<<< HEAD
 				check_event_type(u_notify->c_type)
 					& NOTIFY_EVENT_NEED_VBUSDRIVE)
+=======
+				(u_notify->typec_status.power_role
+						== HNOTIFY_SOURCE) &&
+				check_event_type(u_notify->c_type)
+						& NOTIFY_EVENT_NEED_VBUSDRIVE)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				send_otg_notify(n, NOTIFY_EVENT_DRIVE_VBUS, 0);
 
 			send_otg_notify(n, VIRT_EVENT(u_notify->c_type), 0);
 		}
 		send_otg_notify(n, NOTIFY_EVENT_ALL_DISABLE, 1);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_NOTIFY_PROC_LOG
+		usb_notify = NOTIFY_EVENT_ALL_DISABLE;
+		usb_notify_state = NOTIFY_EVENT_BLOCKED;
+		store_usblog_notify(NOTIFY_EVENT,
+			(void *)&usb_notify, (void *)&usb_notify_state);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case NOTIFY_BLOCK_TYPE_HOST:
 		if (is_host_cable_enable(n)) {
@@ -1140,8 +1351,15 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 					VIRT_EVENT(u_notify->c_type));
 
 			if (!n->auto_drive_vbus &&
+<<<<<<< HEAD
 				check_event_type(u_notify->c_type)
 					& NOTIFY_EVENT_NEED_VBUSDRIVE)
+=======
+				(u_notify->typec_status.power_role
+					== HNOTIFY_SOURCE) &&
+				check_event_type(u_notify->c_type)
+						& NOTIFY_EVENT_NEED_VBUSDRIVE)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				send_otg_notify(n, NOTIFY_EVENT_DRIVE_VBUS, 0);
 
 			send_otg_notify(n, VIRT_EVENT(u_notify->c_type), 0);
@@ -1149,6 +1367,16 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 
 		send_otg_notify(n, NOTIFY_EVENT_HOST_DISABLE, 1);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_NOTIFY_PROC_LOG
+		usb_notify = NOTIFY_EVENT_HOST_DISABLE;
+		usb_notify_state = NOTIFY_EVENT_BLOCKED;
+		store_usblog_notify(NOTIFY_EVENT,
+			(void *)&usb_notify, (void *)&usb_notify_state);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!is_client_cable_block(n))
 			goto skip;
 
@@ -1170,6 +1398,16 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 
 		send_otg_notify(n, NOTIFY_EVENT_CLIENT_DISABLE, 1);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_NOTIFY_PROC_LOG
+		usb_notify = NOTIFY_EVENT_CLIENT_DISABLE;
+		usb_notify_state = NOTIFY_EVENT_BLOCKED;
+		store_usblog_notify(NOTIFY_EVENT,
+			(void *)&usb_notify, (void *)&usb_notify_state);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!is_host_cable_block(n))
 			goto skip;
 
@@ -1180,6 +1418,11 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 			event_string(VIRT_EVENT(u_notify->c_type)),
 				VIRT_EVENT(u_notify->c_type));
 		if (!n->auto_drive_vbus &&
+<<<<<<< HEAD
+=======
+			(u_notify->typec_status.power_role
+					== HNOTIFY_SOURCE) &&
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			check_event_type(u_notify->c_type)
 					& NOTIFY_EVENT_NEED_VBUSDRIVE)
 			send_otg_notify(n, NOTIFY_EVENT_DRIVE_VBUS, 1);
@@ -1188,6 +1431,15 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 		break;
 	case NOTIFY_BLOCK_TYPE_NONE:
 		send_otg_notify(n, NOTIFY_EVENT_ALL_DISABLE, 0);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_NOTIFY_PROC_LOG
+		usb_notify = NOTIFY_EVENT_ALL_DISABLE;
+		usb_notify_state = NOTIFY_EVENT_DISABLED;
+		store_usblog_notify(NOTIFY_EVENT,
+			(void *)&usb_notify, (void *)&usb_notify_state);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!is_host_cable_block(n) && !is_client_cable_block(n))
 			goto skip;
 
@@ -1199,6 +1451,11 @@ int set_notify_disable(struct usb_notify_dev *udev, int disable)
 			event_string(VIRT_EVENT(u_notify->c_type)),
 				VIRT_EVENT(u_notify->c_type));
 		if (!n->auto_drive_vbus &&
+<<<<<<< HEAD
+=======
+			(u_notify->typec_status.power_role
+						== HNOTIFY_SOURCE) &&
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			check_event_type(u_notify->c_type)
 					& NOTIFY_EVENT_NEED_VBUSDRIVE)
 			send_otg_notify(n, NOTIFY_EVENT_DRIVE_VBUS, 1);
@@ -1274,6 +1531,7 @@ int get_class_index(int ch9_class_num)
 	return internal_class_index;
 }
 
+<<<<<<< HEAD
 int usb_match_one_id_intf_for_mdm(struct usb_device *dev,
 			  struct usb_host_interface *intf, int *whitelist_array)
 {
@@ -1282,6 +1540,8 @@ int usb_match_one_id_intf_for_mdm(struct usb_device *dev,
 	return 0;
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static bool usb_match_any_interface_for_mdm(struct usb_device *udev,
 				    int *whitelist_array)
 {
@@ -1294,16 +1554,31 @@ static bool usb_match_any_interface_for_mdm(struct usb_device *udev,
 		for (j = 0; j < cfg->desc.bNumInterfaces; ++j) {
 			struct usb_interface_cache *cache;
 			struct usb_host_interface *intf;
+<<<<<<< HEAD
+=======
+			int intf_class;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 			cache = cfg->intf_cache[j];
 			if (cache->num_altsetting == 0)
 				continue;
 
 			intf = &cache->altsetting[0];
+<<<<<<< HEAD
 			if (!usb_match_one_id_intf_for_mdm(udev, intf,
 					whitelist_array)) {
 				return false;
 			}
+=======
+			intf_class = intf->desc.bInterfaceClass;
+			if (!whitelist_array[get_class_index(intf_class)]) {
+				pr_info("%s : FAIL,%x interface, it's not in whitelist\n",
+					__func__, intf_class);
+				return false;
+			}
+			pr_info("%s : SUCCESS,%x interface, it's in whitelist\n",
+				__func__, intf_class);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 	return true;
@@ -1335,10 +1610,13 @@ int usb_check_whitelist_for_mdm(struct usb_device *dev)
 			return 1;
 		}
 
+<<<<<<< HEAD
 		dev_err(&dev->dev, "device v%04x p%04x is not supported\n",
 			le16_to_cpu(dev->descriptor.idVendor),
 			le16_to_cpu(dev->descriptor.idProduct));
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 0;
 	}
 	return 1;
@@ -1350,6 +1628,7 @@ void set_notify_mdm(struct usb_notify_dev *udev, int disable)
 	struct usb_notify *u_notify = (struct usb_notify *)(n->u_notify);
 
 	switch (disable) {
+<<<<<<< HEAD
 		case NOTIFY_MDM_TYPE_ON:
 			send_otg_notify(n, NOTIFY_EVENT_MDM_ON_OFF, 1);
 			if (is_host_cable_enable(n)) {
@@ -1368,6 +1647,27 @@ void set_notify_mdm(struct usb_notify_dev *udev, int disable)
 		case NOTIFY_MDM_TYPE_OFF:
 			send_otg_notify(n, NOTIFY_EVENT_MDM_ON_OFF, 0);
 			break;
+=======
+	case NOTIFY_MDM_TYPE_ON:
+		send_otg_notify(n, NOTIFY_EVENT_MDM_ON_OFF, 1);
+		if (is_host_cable_enable(n)) {
+			pr_info("%s event=%s(%lu) disable\n", __func__,
+				event_string(VIRT_EVENT(u_notify->c_type)),
+				VIRT_EVENT(u_notify->c_type));
+			if (!n->auto_drive_vbus &&
+				(u_notify->typec_status.power_role
+				 == HNOTIFY_SOURCE)
+				&& check_event_type(u_notify->c_type)
+				& NOTIFY_EVENT_NEED_VBUSDRIVE)
+				send_otg_notify(n, NOTIFY_EVENT_DRIVE_VBUS, 0);
+
+			send_otg_notify(n, VIRT_EVENT(u_notify->c_type), 0);
+		}
+		break;
+	case NOTIFY_MDM_TYPE_OFF:
+		send_otg_notify(n, NOTIFY_EVENT_MDM_ON_OFF, 0);
+		break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 }
 #endif
@@ -1623,11 +1923,19 @@ int set_otg_notify(struct otg_notify *n)
 
 	u_notify->notifier_wq
 		= create_singlethread_workqueue("usb_notify");
+<<<<<<< HEAD
 	 if (!u_notify->notifier_wq) {
 		pr_err("%s failed to create work queue\n", __func__);
 		ret = -ENOMEM;
 		goto err2;
 	 }
+=======
+	if (!u_notify->notifier_wq) {
+		pr_err("%s failed to create work queue\n", __func__);
+		ret = -ENOMEM;
+		goto err2;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	ovc_init(u_notify);
 
@@ -1737,6 +2045,10 @@ void put_otg_notify(struct otg_notify *n)
 		pr_err("%s u_notify structure is null\n", __func__);
 		return;
 	}
+<<<<<<< HEAD
+=======
+	unregister_usblog_proc();
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unregister_usbdev_notify();
 	if (n->booting_delay_sec)
 		cancel_delayed_work_sync(&u_notify->b_delay.booting_work);
@@ -1753,10 +2065,156 @@ void put_otg_notify(struct otg_notify *n)
 				&u_notify->otg_nb);
 	flush_workqueue(u_notify->notifier_wq);
 	destroy_workqueue(u_notify->notifier_wq);
+<<<<<<< HEAD
+=======
+	u_notify->o_notify = NULL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	kfree(u_notify);
 }
 EXPORT_SYMBOL(put_otg_notify);
 
+<<<<<<< HEAD
+=======
+bool is_blocked(struct otg_notify *n, int type)
+{
+	struct usb_notify *u_notify = NULL;
+	int ret = 0;
+
+	if (!n) {
+		pr_err("%s otg_notify is null\n", __func__);
+		goto end;
+	}
+	u_notify = (struct usb_notify *)(n->u_notify);
+
+	if (!u_notify) {
+		pr_err("%s u_notify structure is null\n", __func__);
+		goto end;
+	}
+
+	if (!u_notify_core) {
+		ret = create_usb_notify();
+		if (ret) {
+			pr_err("unable create_usb_notify\n");
+		goto end;
+		}
+	}
+	pr_info("%s type=%d, disable_state=%lu\n",
+		__func__, type, u_notify->udev.disable_state);
+
+	if (type == NOTIFY_BLOCK_TYPE_HOST) {
+		if (test_bit(NOTIFY_BLOCK_TYPE_HOST,
+				&u_notify->udev.disable_state))
+			goto end2;
+	} else if (type == NOTIFY_BLOCK_TYPE_CLIENT) {
+		if (test_bit(NOTIFY_BLOCK_TYPE_CLIENT,
+				&u_notify->udev.disable_state))
+			goto end2;
+	} else if (type == NOTIFY_BLOCK_TYPE_ALL) {
+		if (test_bit(NOTIFY_BLOCK_TYPE_HOST,
+			&u_notify->udev.disable_state) &&
+				test_bit(NOTIFY_BLOCK_TYPE_CLIENT,
+					&u_notify->udev.disable_state))
+			goto end2;
+	}
+end:
+	return false;
+end2:
+	return true;
+}
+EXPORT_SYMBOL(is_blocked);
+
+#if defined(CONFIG_USB_HW_PARAM)
+unsigned long long *get_hw_param(struct otg_notify *n,
+	enum usb_hw_param index)
+{
+	struct usb_notify *u_notify = (struct usb_notify *)(n->u_notify);
+	int ret = 0;
+
+	if (index < 0 || index >= USB_CCIC_HW_PARAM_MAX) {
+		pr_err("%s usb_hw_param is out of bound\n", __func__);
+		return NULL;
+	}
+	if (!u_notify) {
+		pr_err("%s u_notify structure is null\n", __func__);
+		return NULL;
+	}
+	if (!u_notify_core) {
+		ret = create_usb_notify();
+		if (ret) {
+			pr_err("unable create_usb_notify\n");
+			return NULL;
+		}
+	}
+	return &(u_notify->hw_param[index]);
+}
+EXPORT_SYMBOL(get_hw_param);
+
+int inc_hw_param(struct otg_notify *n,
+	enum usb_hw_param index)
+{
+	struct usb_notify *u_notify;
+	int ret = 0;
+
+	if (!n) {
+		pr_err("%s otg_notify is null\n", __func__);
+		return -ENODEV;
+	}
+
+	u_notify = (struct usb_notify *)(n->u_notify);
+
+	if (index < 0 || index >= USB_CCIC_HW_PARAM_MAX) {
+		pr_err("%s usb_hw_param is out of bound\n", __func__);
+		ret = -ENOMEM;
+		return ret;
+	}
+	if (!u_notify) {
+		pr_err("%s u_notify structure is null\n", __func__);
+		ret = -ENOENT;
+		return ret;
+	}
+	if (!u_notify_core) {
+		ret = create_usb_notify();
+		if (ret) {
+			pr_err("unable create_usb_notify\n");
+			return ret;
+		}
+	}
+	u_notify->hw_param[index]++;
+	return ret;
+}
+EXPORT_SYMBOL(inc_hw_param);
+
+int inc_hw_param_host(struct host_notify_dev *dev,
+	enum usb_hw_param index)
+{
+	struct usb_notify *u_notify = container_of(dev,
+			struct usb_notify, ndev);
+	int ret = 0;
+
+	if (index < 0 || index >= USB_CCIC_HW_PARAM_MAX) {
+		pr_err("%s usb_hw_param is out of bound\n", __func__);
+		ret = -ENOMEM;
+		return ret;
+	}
+	if (!u_notify) {
+		pr_err("%s u_notify structure is null\n", __func__);
+		ret = -ENOENT;
+		return ret;
+	}
+	if (!u_notify_core) {
+		ret = create_usb_notify();
+		if (ret) {
+			pr_err("unable create_usb_notify\n");
+			return ret;
+		}
+	}
+	u_notify->hw_param[index]++;
+	return ret;
+}
+EXPORT_SYMBOL(inc_hw_param_host);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int __init usb_notify_init(void)
 {
 	return create_usb_notify();
@@ -1775,4 +2233,7 @@ module_exit(usb_notify_exit);
 MODULE_AUTHOR("Samsung USB Team");
 MODULE_DESCRIPTION("USB Notify Layer");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

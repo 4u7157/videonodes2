@@ -268,7 +268,10 @@ struct audio_dev {
 	/* number of frames sent since start_time */
 	s64				frames_sent;
 	struct audio_source_config	*config;
+<<<<<<< HEAD
 	
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static inline struct audio_dev *func_to_audio(struct usb_function *f)

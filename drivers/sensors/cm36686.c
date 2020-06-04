@@ -32,12 +32,21 @@
 #include <linux/module.h>
 #include <linux/uaccess.h>
 #include <linux/of_gpio.h>
+<<<<<<< HEAD
 #include <linux/regulator/consumer.h>
 
 #include <linux/sensor/sensors_core.h>
 #include "cm36686.h"
 
 #undef PROXIMITY_FOR_TEST	/* for HW to tune up */
+=======
+#include <linux/types.h>
+#include <linux/regulator/consumer.h>
+
+#include <linux/sensor/sensors_core.h>
+
+#define PROXIMITY_FOR_TEST	/* for HW to tune up */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define MODULE_NAME_PROX   "proximity_sensor"
 #define MODULE_NAME_LIGHT  "light_sensor"
@@ -129,7 +138,10 @@ struct cm36686_data {
 	struct wake_lock prox_wake_lock;
 	struct input_dev *proximity_input_dev;
 	struct input_dev *light_input_dev;
+<<<<<<< HEAD
 	struct cm36686_platform_data *pdata;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct mutex power_lock;
 	struct mutex read_lock;
 	struct hrtimer light_timer;
@@ -146,7 +158,29 @@ struct cm36686_data {
 	ktime_t light_poll_delay;
 	ktime_t prox_poll_delay;
 
+<<<<<<< HEAD
 	int irq;
+=======
+	int ps_conf1;
+	int ps_conf3;
+	int default_hi_thd;
+	int default_low_thd;
+	int cancel_hi_thd;
+	int cancel_low_thd;
+	int default_trim;
+
+	int cal_skip_adc;
+	int cal_fail_adc;
+
+	int vdd_always_on; /* 1: vdd is always on, 0: enable only when proximity is on */
+	int vled_same_vdd;
+
+	int vled_ldo; /*0: vled(anode) source regulator, other: get power by LDO control */
+
+	int irq;
+	int irq_gpio;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u8 power_state;
 	int avg[3];
 	u16 als_data;
@@ -320,7 +354,11 @@ static int proximity_open_cancelation(struct cm36686_data *data)
 		return err;
 	}
 
+<<<<<<< HEAD
 	err = cancel_filp->f_op->read(cancel_filp,
+=======
+	err = vfs_read(cancel_filp,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		(char *)&ps_reg_init_setting[PS_CANCEL][CMD],
 		sizeof(u16), &cancel_filp->f_pos);
 	if (err != sizeof(u16)) {
@@ -329,6 +367,7 @@ static int proximity_open_cancelation(struct cm36686_data *data)
 	}
 
 	/*If there is an offset cal data. */
+<<<<<<< HEAD
 	if (ps_reg_init_setting[PS_CANCEL][CMD] != data->pdata->default_trim) {
 		ps_reg_init_setting[PS_THD_HIGH][CMD] =
 			data->pdata->cancel_hi_thd ?
@@ -337,6 +376,16 @@ static int proximity_open_cancelation(struct cm36686_data *data)
 		ps_reg_init_setting[PS_THD_LOW][CMD] =
 			data->pdata->cancel_low_thd ?
 			data->pdata->cancel_low_thd :
+=======
+	if (ps_reg_init_setting[PS_CANCEL][CMD] != data->default_trim) {
+		ps_reg_init_setting[PS_THD_HIGH][CMD] =
+			data->cancel_hi_thd ?
+			data->cancel_hi_thd :
+			CANCEL_HI_THD;
+		ps_reg_init_setting[PS_THD_LOW][CMD] =
+			data->cancel_low_thd ?
+			data->cancel_low_thd :
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			CANCEL_LOW_THD;
 	}
 
@@ -366,6 +415,7 @@ static int proximity_store_cancelation(struct device *dev, bool do_calib)
 
 		SENSOR_INFO("do cal read data %d\n", ps_data);
 
+<<<<<<< HEAD
 		if (ps_data < cm36686->pdata->cal_skip_adc) {
 			/* SKIP. CAL_SKIP_ADC */
 			ps_reg_init_setting[PS_CANCEL][CMD] =
@@ -376,18 +426,36 @@ static int proximity_store_cancelation(struct device *dev, bool do_calib)
 			/* CANCELATION. CAL_FAIL_ADC */
 			ps_reg_init_setting[PS_CANCEL][CMD] =
 				cm36686->pdata->default_trim + ps_data;
+=======
+		if (ps_data < cm36686->cal_skip_adc) {
+			/* SKIP. CAL_SKIP_ADC */
+			ps_reg_init_setting[PS_CANCEL][CMD] =
+				cm36686->default_trim;
+			SENSOR_INFO("crosstalk < %d SKIP!!\n", cm36686->cal_skip_adc);
+			cm36686->prox_cal_result = CAL_SKIP;
+		} else if (ps_data <= cm36686->cal_fail_adc) {
+			/* CANCELATION. CAL_FAIL_ADC */
+			ps_reg_init_setting[PS_CANCEL][CMD] =
+				cm36686->default_trim + ps_data;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			SENSOR_INFO("crosstalk_offset = %u Canceled", ps_data);
 			cm36686->prox_cal_result = CAL_CANCELATION;
 		} else {
 			/*FAIL*/
 			ps_reg_init_setting[PS_CANCEL][CMD] =
+<<<<<<< HEAD
 				cm36686->pdata->default_trim;
 			SENSOR_INFO("crosstalk > %d\n", cm36686->pdata->cal_fail_adc);
+=======
+				cm36686->default_trim;
+			SENSOR_INFO("crosstalk > %d\n", cm36686->cal_fail_adc);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			cm36686->prox_cal_result = CAL_FAIL;
 		}
 
 		if (cm36686->prox_cal_result == CAL_CANCELATION) {
 			ps_reg_init_setting[PS_THD_HIGH][CMD] =
+<<<<<<< HEAD
 				cm36686->pdata->cancel_hi_thd ?
 				cm36686->pdata->cancel_hi_thd :
 				CANCEL_HI_THD;
@@ -403,10 +471,28 @@ static int proximity_store_cancelation(struct device *dev, bool do_calib)
 			ps_reg_init_setting[PS_THD_LOW][CMD] =
 				cm36686->pdata->default_low_thd ?
 				cm36686->pdata->default_low_thd :
+=======
+				cm36686->cancel_hi_thd ?
+				cm36686->cancel_hi_thd :
+				CANCEL_HI_THD;
+			ps_reg_init_setting[PS_THD_LOW][CMD] =
+				cm36686->cancel_low_thd ?
+				cm36686->cancel_low_thd :
+				CANCEL_LOW_THD;
+		} else {
+			ps_reg_init_setting[PS_THD_HIGH][CMD] =
+				cm36686->default_hi_thd ?
+				cm36686->default_hi_thd :
+				DEFAULT_HI_THD;
+			ps_reg_init_setting[PS_THD_LOW][CMD] =
+				cm36686->default_low_thd ?
+				cm36686->default_low_thd :
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 				DEFAULT_LOW_THD;
 		}
 	} else { /* reset */
 		ps_reg_init_setting[PS_CANCEL][CMD] =
+<<<<<<< HEAD
 			cm36686->pdata->default_trim;
 		ps_reg_init_setting[PS_THD_HIGH][CMD] =
 			cm36686->pdata->default_hi_thd ?
@@ -415,6 +501,16 @@ static int proximity_store_cancelation(struct device *dev, bool do_calib)
 		ps_reg_init_setting[PS_THD_LOW][CMD] =
 			cm36686->pdata->default_low_thd ?
 			cm36686->pdata->default_low_thd :
+=======
+			cm36686->default_trim;
+		ps_reg_init_setting[PS_THD_HIGH][CMD] =
+			cm36686->default_hi_thd ?
+			cm36686->default_hi_thd :
+			DEFAULT_HI_THD;
+		ps_reg_init_setting[PS_THD_LOW][CMD] =
+			cm36686->default_low_thd ?
+			cm36686->default_low_thd :
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			DEFAULT_LOW_THD;
 	}
 
@@ -450,7 +546,11 @@ static int proximity_store_cancelation(struct device *dev, bool do_calib)
 		return err;
 	}
 
+<<<<<<< HEAD
 	err = cancel_filp->f_op->write(cancel_filp,
+=======
+	err = vfs_write(cancel_filp,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		(char *)&ps_reg_init_setting[PS_CANCEL][CMD],
 		sizeof(u16), &cancel_filp->f_pos);
 	if (err != sizeof(u16)) {
@@ -509,6 +609,24 @@ static ssize_t proximity_cancel_pass_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%u\n", cm36686->prox_cal_result);
 }
 
+<<<<<<< HEAD
+=======
+static void cm36686_check_first_far_event(struct cm36686_data *cm36686)
+{
+	u16 ps_data = 0;
+
+	cm36686_i2c_read_word(cm36686, REG_PS_DATA, &ps_data);
+
+	pr_info("[Sensor] first adc = %d\n", ps_data);
+
+	if (ps_data < ps_reg_init_setting[PS_THD_HIGH][CMD]) {
+		pr_info("[Sensor] first far event reported\n");
+		input_report_abs(cm36686->proximity_input_dev, ABS_DISTANCE, 1);
+		input_sync(cm36686->proximity_input_dev);
+	}
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t proximity_enable_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t size)
 {
@@ -527,13 +645,20 @@ static ssize_t proximity_enable_store(struct device *dev,
 	SENSOR_INFO("new_value = %d\n", new_value);
 	mutex_lock(&cm36686->power_lock);
 	if (new_value && !(cm36686->power_state & PROXIMITY_ENABLED)) {
+<<<<<<< HEAD
 		u8 val = 1;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		int i;
 		int err = 0;
 
 		cm36686->power_state |= PROXIMITY_ENABLED;
 
+<<<<<<< HEAD
 		if (!cm36686->pdata->vled_same_vdd)
+=======
+		if (!cm36686->vled_same_vdd)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			proximity_vled_onoff(dev, ON);
 
 		/* open cancelation data */
@@ -548,6 +673,7 @@ static ssize_t proximity_enable_store(struct device *dev,
 				ps_reg_init_setting[i][REG_ADDR],
 				ps_reg_init_setting[i][CMD]);
 
+<<<<<<< HEAD
 		/*send far for input update*/
 		input_report_abs(cm36686->proximity_input_dev, ABS_DISTANCE,
 			val);
@@ -557,6 +683,14 @@ static ssize_t proximity_enable_store(struct device *dev,
 			val);
 		input_sync(cm36686->proximity_input_dev);
 
+=======
+		// Allow chip to update ADC value
+		usleep_range(40000, 40000);
+
+		// Need to check for first far only. First close is reported via interrupt
+		cm36686_check_first_far_event(cm36686);
+		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		enable_irq(cm36686->irq);
 		enable_irq_wake(cm36686->irq);
 	} else if (!new_value && (cm36686->power_state & PROXIMITY_ENABLED)) {
@@ -567,7 +701,11 @@ static ssize_t proximity_enable_store(struct device *dev,
 		/* disable settings */
 		cm36686_i2c_write_word(cm36686, REG_PS_CONF1, 0x0001);
 
+<<<<<<< HEAD
 		if (!cm36686->pdata->vled_same_vdd)
+=======
+		if (!cm36686->vled_same_vdd)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			proximity_vled_onoff(dev, OFF);
 	}
 	mutex_unlock(&cm36686->power_lock);
@@ -583,6 +721,7 @@ static ssize_t proximity_enable_show(struct device *dev,
 		(cm36686->power_state & PROXIMITY_ENABLED) ? 1 : 0);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(poll_delay, S_IRUGO | S_IWUSR | S_IWGRP,
 	cm36686_poll_delay_show, cm36686_poll_delay_store);
 
@@ -591,6 +730,16 @@ static struct device_attribute dev_attr_light_enable =
 	light_enable_show, light_enable_store);
 static struct device_attribute dev_attr_proximity_enable =
 	__ATTR(enable, S_IRUGO | S_IWUSR | S_IWGRP,
+=======
+static DEVICE_ATTR(poll_delay, 0664,
+	cm36686_poll_delay_show, cm36686_poll_delay_store);
+
+static struct device_attribute dev_attr_light_enable =
+	__ATTR(enable, 0664,
+	light_enable_show, light_enable_store);
+static struct device_attribute dev_attr_proximity_enable =
+	__ATTR(enable, 0664,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	proximity_enable_show, proximity_enable_store);
 
 static struct attribute *light_sysfs_attrs[] = {
@@ -625,6 +774,7 @@ static ssize_t cm36686_name_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%s\n", CHIP_ID);
 }
 static struct device_attribute dev_attr_prox_sensor_vendor =
+<<<<<<< HEAD
 	__ATTR(vendor, S_IRUSR | S_IRGRP, cm36686_vendor_show, NULL);
 static struct device_attribute dev_attr_light_sensor_vendor =
 	__ATTR(vendor, S_IRUSR | S_IRGRP, cm36686_vendor_show, NULL);
@@ -632,6 +782,15 @@ static struct device_attribute dev_attr_prox_sensor_name =
 	__ATTR(name, S_IRUSR | S_IRGRP, cm36686_name_show, NULL);
 static struct device_attribute dev_attr_light_sensor_name =
 	__ATTR(name, S_IRUSR | S_IRGRP, cm36686_name_show, NULL);
+=======
+	__ATTR(vendor, 0444, cm36686_vendor_show, NULL);
+static struct device_attribute dev_attr_light_sensor_vendor =
+	__ATTR(vendor, 0444, cm36686_vendor_show, NULL);
+static struct device_attribute dev_attr_prox_sensor_name =
+	__ATTR(name, 0444, cm36686_name_show, NULL);
+static struct device_attribute dev_attr_light_sensor_name =
+	__ATTR(name, 0444, cm36686_name_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* proximity sensor sysfs */
 static ssize_t proximity_trim_show(struct device *dev,
@@ -639,7 +798,11 @@ static ssize_t proximity_trim_show(struct device *dev,
 {
 	struct cm36686_data *cm36686 = dev_get_drvdata(dev);
 
+<<<<<<< HEAD
 	return snprintf(buf, PAGE_SIZE, "%u\n", cm36686->pdata->default_trim);
+=======
+	return snprintf(buf, PAGE_SIZE, "%u\n", cm36686->default_trim);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 #if defined(PROXIMITY_FOR_TEST)
@@ -658,9 +821,15 @@ static ssize_t proximity_trim_store(struct device *dev,
 	SENSOR_INFO("trim_value: %u\n", trim_value);
 
 	if (trim_value > -1) {
+<<<<<<< HEAD
 		data->pdata->default_trim = trim_value;
 		ps_reg_init_setting[PS_CANCEL][CMD] = trim_value;
 		data->pdata->default_trim = trim_value;
+=======
+		data->default_trim = trim_value;
+		ps_reg_init_setting[PS_CANCEL][CMD] = trim_value;
+		data->default_trim = trim_value;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		err = cm36686_i2c_write_word(data, REG_PS_CANC,
 			ps_reg_init_setting[PS_CANCEL][CMD]);
 		if (err < 0)
@@ -813,7 +982,11 @@ static ssize_t proximity_register_write_store(struct device *dev,
 	unsigned int regist = 0, val = 0;
 	struct cm36686_data *data = dev_get_drvdata(dev);
 
+<<<<<<< HEAD
 	if (sscanf(buf, "%2x,%2x", &regist, &val) != 2) {
+=======
+	if (sscanf(buf, "%2x,%4x", &regist, &val) != 2) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("The number of data are wrong\n");
 		return -EINVAL;
 	}
@@ -843,6 +1016,7 @@ static ssize_t proximity_register_read_show(struct device *dev,
 }
 #endif
 
+<<<<<<< HEAD
 
 static DEVICE_ATTR(prox_cal, S_IRUGO | S_IWUSR | S_IWGRP,
 	proximity_cancel_show, proximity_cancel_store);
@@ -866,6 +1040,67 @@ static DEVICE_ATTR(prox_register, S_IRUGO | S_IWUSR | S_IWGRP,
 static DEVICE_ATTR(prox_trim, S_IRUSR | S_IRGRP,
 	proximity_trim_show, NULL);
 #endif
+=======
+static ssize_t proximity_dhr_sensor_info_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	struct cm36686_data *cm36686 = dev_get_drvdata(dev);
+	u16 cs_conf1;
+	u16 ps_conf1, ps_conf3;
+	u8 als_it;
+	u8 ps_period, ps_pers, ps_it;
+	u8 ps_smart_pers, ps_led_current;
+	u16 ps_canc;
+	u16 ps_low_thresh, ps_hi_thresh;
+
+	mutex_lock(&cm36686->read_lock);
+	cm36686_i2c_read_word(cm36686, REG_CS_CONF1, &cs_conf1);
+	cm36686_i2c_read_word(cm36686, REG_PS_CONF1, &ps_conf1);
+	cm36686_i2c_read_word(cm36686, REG_PS_CONF3, &ps_conf3);
+	cm36686_i2c_read_word(cm36686, REG_PS_CANC, &ps_canc);
+	cm36686_i2c_read_word(cm36686, REG_PS_THD_LOW, &ps_low_thresh);
+	cm36686_i2c_read_word(cm36686, REG_PS_THD_HIGH, &ps_hi_thresh);
+	mutex_unlock(&cm36686->read_lock);
+
+	als_it = (cs_conf1 & 0x0c) >> 2;
+	ps_period = (ps_conf1 & 0xc0) >> 6;
+	ps_pers = (ps_conf1 & 0x30) >> 4;
+	ps_it = (ps_conf1 & 0xc000) >> 14;
+	ps_smart_pers = (ps_conf1 & 0x02) >> 1;
+	ps_led_current = (ps_conf3 & 0x0700) >> 8;
+
+	return snprintf(buf, PAGE_SIZE,
+			"\"THD\":\"%u %u\", \"ALS_IT\":\"0x%x\", \"PS_PERIOD\":\"0x%x\", \"PS_PERS\":\"0x%x\", \"PS_IT\":\"0x%x\", \"PS_SMART_PERS\":\"0x%x\", \"PS_LED_CURRENT\":\"0x%x\", \"PS_CANC\":\"0x%x\"\n",
+			ps_low_thresh, ps_hi_thresh,
+			als_it, ps_period, ps_pers, ps_it,
+			ps_smart_pers, ps_led_current, ps_canc);
+}
+
+static DEVICE_ATTR(prox_cal, 0664,
+	proximity_cancel_show, proximity_cancel_store);
+static DEVICE_ATTR(prox_offset_pass, 0444, proximity_cancel_pass_show,
+	NULL);
+static DEVICE_ATTR(prox_avg, 0664,
+	proximity_avg_show, proximity_avg_store);
+static DEVICE_ATTR(state, 0444, proximity_state_show, NULL);
+static struct device_attribute dev_attr_prox_raw = __ATTR(raw_data,
+	0444, proximity_state_show, NULL);
+static DEVICE_ATTR(thresh_high, 0664,
+	proximity_thresh_high_show, proximity_thresh_high_store);
+static DEVICE_ATTR(thresh_low, 0664,
+	proximity_thresh_low_show, proximity_thresh_low_store);
+#if defined(PROXIMITY_FOR_TEST)
+static DEVICE_ATTR(prox_trim, 0664,
+	proximity_trim_show, proximity_trim_store);
+static DEVICE_ATTR(prox_register, 0664,
+	proximity_register_read_show, proximity_register_write_store);
+#else
+static DEVICE_ATTR(prox_trim, 0440,
+	proximity_trim_show, NULL);
+#endif
+static DEVICE_ATTR(dhr_sensor_info, 0440,
+	proximity_dhr_sensor_info_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct device_attribute *prox_sensor_attrs[] = {
 	&dev_attr_prox_sensor_vendor,
@@ -881,6 +1116,10 @@ static struct device_attribute *prox_sensor_attrs[] = {
 #endif
 	&dev_attr_prox_cal,
 	&dev_attr_prox_offset_pass,
+<<<<<<< HEAD
+=======
+	&dev_attr_dhr_sensor_info,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NULL,
 };
 
@@ -903,8 +1142,13 @@ static ssize_t light_data_show(struct device *dev,
 		cm36686->white_data);
 }
 
+<<<<<<< HEAD
 static DEVICE_ATTR(lux, S_IRUGO, light_lux_show, NULL);
 static DEVICE_ATTR(raw_data, S_IRUGO, light_data_show, NULL);
+=======
+static DEVICE_ATTR(lux, 0444, light_lux_show, NULL);
+static DEVICE_ATTR(raw_data, 0444, light_data_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct device_attribute *light_sensor_attrs[] = {
 	&dev_attr_light_sensor_vendor,
@@ -921,6 +1165,7 @@ irqreturn_t cm36686_irq_thread_fn(int irq, void *data)
 	u8 val;
 	u16 ps_data = 0;
 
+<<<<<<< HEAD
 	val = gpio_get_value(cm36686->pdata->irq);
 	cm36686_i2c_read_word(cm36686, REG_PS_DATA, &ps_data);
 
@@ -934,6 +1179,30 @@ irqreturn_t cm36686_irq_thread_fn(int irq, void *data)
 
 	SENSOR_INFO("val = %u, ps_data = %u (close:0, far:1)\n", val, ps_data);
 
+=======
+	val = gpio_get_value(cm36686->irq_gpio);
+	cm36686_i2c_read_word(cm36686, REG_PS_DATA, &ps_data);
+
+	if (cm36686->power_state & PROXIMITY_ENABLED) {
+#ifdef CONFIG_SEC_FACTORY
+		SENSOR_INFO("FACTORY: near/far=%d, ps data = %d (close:0, far:1)\n",
+				val, ps_data);
+#else
+		SENSOR_INFO("near/far=%d, ps data = %d (close:0, far:1)\n",
+				val, ps_data);
+		if (((!val) && (ps_data >= cm36686->default_hi_thd)) ||
+			(val && (ps_data <= cm36686->default_low_thd)))
+#endif
+		{
+			/* 0 is close, 1 is far */
+			input_report_abs(cm36686->proximity_input_dev, ABS_DISTANCE,
+				val);
+			input_sync(cm36686->proximity_input_dev);
+		}
+	}
+	wake_lock_timeout(&cm36686->prox_wake_lock, 3 * HZ);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return IRQ_HANDLED;
 }
 
@@ -1075,11 +1344,19 @@ static int proximity_vled_onoff(struct device *dev, bool onoff)
 	int ret;
 
 	SENSOR_INFO("%s, ldo:%d\n",
+<<<<<<< HEAD
 		(onoff) ? "on" : "off", data->pdata->vled_ldo);
 
 	/* ldo control */
 	if (data->pdata->vled_ldo) {
 		gpio_set_value(data->pdata->vled_ldo, onoff);
+=======
+		(onoff) ? "on" : "off", data->vled_ldo);
+
+	/* ldo control */
+	if (data->vled_ldo) {
+		gpio_set_value(data->vled_ldo, onoff);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 0;
 	}
 
@@ -1160,6 +1437,7 @@ static int cm36686_setup_reg(struct cm36686_data *cm36686)
 static int cm36686_setup_irq(struct cm36686_data *cm36686)
 {
 	int rc;
+<<<<<<< HEAD
 	struct cm36686_platform_data *pdata = cm36686->pdata;
 
 	rc = gpio_request(pdata->irq, "gpio_proximity_out");
@@ -1177,14 +1455,37 @@ static int cm36686_setup_irq(struct cm36686_data *cm36686)
 	}
 
 	cm36686->irq = gpio_to_irq(pdata->irq);
+=======
+
+	rc = gpio_request(cm36686->irq_gpio, "gpio_proximity_out");
+	if (rc < 0) {
+		SENSOR_ERR("gpio %d request failed (%d)\n", cm36686->irq_gpio, rc);
+		return rc;
+	}
+
+	rc = gpio_direction_input(cm36686->irq_gpio);
+	if (rc < 0) {
+		SENSOR_ERR("failed to set gpio %d as input (%d)\n",
+			cm36686->irq_gpio, rc);
+		gpio_free(cm36686->irq_gpio);
+		return rc;
+	}
+
+	cm36686->irq = gpio_to_irq(cm36686->irq_gpio);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* add IRQF_NO_SUSPEND option in case of Spreadtrum AP */
 	rc = request_threaded_irq(cm36686->irq, NULL, cm36686_irq_thread_fn,
 		IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
 		"proximity_int", cm36686);
 	if (rc < 0) {
 		SENSOR_ERR("irq:%d failed for qpio:%d err:%d\n",
+<<<<<<< HEAD
 			cm36686->irq, pdata->irq, rc);
 		gpio_free(pdata->irq);
+=======
+			cm36686->irq, cm36686->irq_gpio, rc);
+		gpio_free(cm36686->irq_gpio);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return rc;
 	}
 
@@ -1198,12 +1499,17 @@ static int cm36686_setup_irq(struct cm36686_data *cm36686)
 #ifdef CONFIG_OF
 /* device tree parsing function */
 static int cm36686_parse_dt(struct device *dev,
+<<<<<<< HEAD
 	struct cm36686_platform_data *pdata)
+=======
+	struct cm36686_data *cm36686)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	struct device_node *np = dev->of_node;
 	enum of_gpio_flags flags;
 	int ret;
 
+<<<<<<< HEAD
 	if (!pdata) {
 		SENSOR_ERR("missing pdata\n");
 		return -ENOMEM;
@@ -1211,11 +1517,16 @@ static int cm36686_parse_dt(struct device *dev,
 
 	pdata->irq = of_get_named_gpio_flags(np, "cm36686,irq_gpio", 0, &flags);
 	if (pdata->irq < 0) {
+=======
+	cm36686->irq_gpio = of_get_named_gpio_flags(np, "cm36686,irq_gpio", 0, &flags);
+	if (cm36686->irq_gpio < 0) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		SENSOR_ERR("get prox_int error\n");
 		return -ENODEV;
 	}
 
 	ret = of_property_read_u32(np, "cm36686,vled_same_vdd",
+<<<<<<< HEAD
 		&pdata->vled_same_vdd);
 	if ((ret < 0) || (!pdata->vled_same_vdd)) {
 		SENSOR_ERR("vled is controled\n");
@@ -1234,11 +1545,32 @@ static int cm36686_parse_dt(struct device *dev,
 				return ret;
 			}
 			gpio_direction_output(pdata->vled_ldo, 0);
+=======
+		&cm36686->vled_same_vdd);
+	if ((ret < 0) || (!cm36686->vled_same_vdd)) {
+		SENSOR_ERR("vled is controled\n");
+		cm36686->vled_same_vdd = 0;
+
+		cm36686->vled_ldo = of_get_named_gpio_flags(np, "cm36686,vled_ldo",
+			0, &flags);
+		if (cm36686->vled_ldo < 0) {
+			SENSOR_ERR("fail to get vled_ldo but using regulator\n");
+			cm36686->vled_ldo = 0;
+		} else {
+			ret = gpio_request(cm36686->vled_ldo, "prox_vled_en");
+			if (ret < 0) {
+				SENSOR_ERR("gpio %d request failed (%d)\n",
+					cm36686->vled_ldo, ret);
+				return ret;
+			}
+			gpio_direction_output(cm36686->vled_ldo, 0);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	} else
 		SENSOR_ERR("vled & vdd is same regulator\n");
 
 	ret = of_property_read_u32(np, "cm36686,vdd_always_on",
+<<<<<<< HEAD
 		&pdata->vdd_always_on);
 	if (ret < 0) {
 		SENSOR_ERR("vdd is controled\n");
@@ -1297,11 +1629,91 @@ static int cm36686_parse_dt(struct device *dev,
 	ps_reg_init_setting[PS_THD_LOW][CMD] = pdata->default_low_thd;
 	ps_reg_init_setting[PS_THD_HIGH][CMD] = pdata->default_hi_thd;
 	ps_reg_init_setting[PS_CANCEL][CMD] = pdata->default_trim;
+=======
+		&cm36686->vdd_always_on);
+	if (ret < 0) {
+		SENSOR_ERR("vdd is controled\n");
+		cm36686->vdd_always_on = 0;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,ps_conf1",
+		&cm36686->ps_conf1);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set ps_conf1 through DTSI\n");
+		cm36686->ps_conf1 = DEFAULT_CONF1;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,ps_conf3",
+		&cm36686->ps_conf3);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set ps_conf3 through DTSI\n");
+		cm36686->ps_conf3 = DEFAULT_CONF3;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,default_hi_thd",
+		&cm36686->default_hi_thd);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set default_hi_thd through DTSI\n");
+		cm36686->default_hi_thd = DEFAULT_HI_THD;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,default_low_thd",
+		&cm36686->default_low_thd);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set default_low_thd through DTSI\n");
+		cm36686->default_low_thd = DEFAULT_LOW_THD;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,cancel_hi_thd",
+		&cm36686->cancel_hi_thd);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set cancel_hi_thd through DTSI\n");
+		cm36686->cancel_hi_thd = CANCEL_HI_THD;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,cancel_low_thd",
+		&cm36686->cancel_low_thd);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set cancel_low_thd through DTSI\n");
+		cm36686->cancel_low_thd = CANCEL_LOW_THD;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,cal_skip_adc",
+		&cm36686->cal_skip_adc);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set cal_skip_adc through DTSI\n");
+		cm36686->cal_skip_adc = CAL_SKIP_ADC;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,cal_fail_adc",
+		&cm36686->cal_fail_adc);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set cal_fail_adc through DTSI\n");
+		cm36686->cal_fail_adc = CAL_FAIL_ADC;
+	}
+
+	ret = of_property_read_u32(np, "cm36686,default_trim",
+			&cm36686->default_trim);
+	if (ret < 0) {
+		SENSOR_ERR("Cannot set default_trim\n");
+		cm36686->default_trim = DEFAULT_TRIM;
+	}
+
+	ps_reg_init_setting[PS_CONF1][CMD] = cm36686->ps_conf1;
+	ps_reg_init_setting[PS_CONF3][CMD] = cm36686->ps_conf3;
+	ps_reg_init_setting[PS_THD_LOW][CMD] = cm36686->default_low_thd;
+	ps_reg_init_setting[PS_THD_HIGH][CMD] = cm36686->default_hi_thd;
+	ps_reg_init_setting[PS_CANCEL][CMD] = cm36686->default_trim;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }
 #else
+<<<<<<< HEAD
 static int cm36686_parse_dt(struct device *dev, struct cm36686_platform_data)
+=======
+static int cm36686_parse_dt(struct device *dev, struct cm36686_data cm36686)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 {
 	return -ENODEV;
 }
@@ -1312,7 +1724,10 @@ static int cm36686_i2c_probe(struct i2c_client *client,
 {
 	int ret;
 	struct cm36686_data *cm36686 = NULL;
+<<<<<<< HEAD
 	struct cm36686_platform_data *pdata = NULL;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	SENSOR_INFO("start\n");
 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
@@ -1326,6 +1741,7 @@ static int cm36686_i2c_probe(struct i2c_client *client,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	if (client->dev.of_node) {
 		pdata = devm_kzalloc(&client->dev,
 			sizeof(struct cm36686_platform_data), GFP_KERNEL);
@@ -1344,6 +1760,8 @@ static int cm36686_i2c_probe(struct i2c_client *client,
 	}
 
 	cm36686->pdata = pdata;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	cm36686->i2c_client = client;
 	i2c_set_clientdata(client, cm36686);
 
@@ -1356,7 +1774,11 @@ static int cm36686_i2c_probe(struct i2c_client *client,
 
 	sensor_vdd_onoff(&client->dev, ON);
 
+<<<<<<< HEAD
 	if (!cm36686->pdata->vled_same_vdd)
+=======
+	if (!cm36686->vled_same_vdd)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		proximity_vled_onoff(&client->dev, ON);
 
 	/* Check if the device is there or not. */
@@ -1373,6 +1795,15 @@ static int cm36686_i2c_probe(struct i2c_client *client,
 		goto err_setup_reg;
 	}
 
+<<<<<<< HEAD
+=======
+	ret = cm36686_parse_dt(&client->dev, cm36686);
+	if (ret) {
+		SENSOR_ERR("error in device tree");
+		goto err_devicetree;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* allocate proximity input_device */
 	cm36686->proximity_input_dev = input_allocate_device();
 	if (!cm36686->proximity_input_dev) {
@@ -1500,7 +1931,11 @@ static int cm36686_i2c_probe(struct i2c_client *client,
 		goto light_sensor_register_failed;
 	}
 
+<<<<<<< HEAD
 	if (!cm36686->pdata->vled_same_vdd)
+=======
+	if (!cm36686->vled_same_vdd)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		proximity_vled_onoff(&client->dev, OFF);
 
 	SENSOR_INFO("success\n");
@@ -1524,7 +1959,11 @@ err_input_allocate_device_light:
 	destroy_workqueue(cm36686->prox_wq);
 err_create_prox_workqueue:
 	free_irq(cm36686->irq, cm36686);
+<<<<<<< HEAD
 	gpio_free(cm36686->pdata->irq);
+=======
+	gpio_free(cm36686->irq_gpio);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 err_setup_irq:
 	sysfs_remove_group(&cm36686->proximity_input_dev->dev.kobj,
 		&proximity_attribute_group);
@@ -1535,15 +1974,26 @@ err_sensors_create_symlink_prox:
 	input_unregister_device(cm36686->proximity_input_dev);
 err_input_register_device_proximity:
 err_input_allocate_device_proximity:
+<<<<<<< HEAD
 err_setup_reg:
 	proximity_vled_onoff(&client->dev, OFF);
 	if (cm36686->pdata->vled_ldo)
 		gpio_free(cm36686->pdata->vled_ldo);
+=======
+err_devicetree:
+err_setup_reg:
+	proximity_vled_onoff(&client->dev, OFF);
+	if (cm36686->vled_ldo)
+		gpio_free(cm36686->vled_ldo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sensor_vdd_onoff(&client->dev, OFF);
 	wake_lock_destroy(&cm36686->prox_wake_lock);
 	mutex_destroy(&cm36686->read_lock);
 	mutex_destroy(&cm36686->power_lock);
+<<<<<<< HEAD
 err_devicetree:
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	kfree(cm36686);
 
 	SENSOR_ERR("failed (%d)\n", ret);

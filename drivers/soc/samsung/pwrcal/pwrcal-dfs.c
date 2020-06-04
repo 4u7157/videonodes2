@@ -29,14 +29,18 @@ unsigned int dfs_set_rate_switch(unsigned int rate_from,
 					table->switches[i].mux_value))
 					goto errorout;
 
+<<<<<<< HEAD
 			exynos_ss_printk("%s : switch %d, div %d", __func__,
 						table->switches[i].switch_rate,
 						table->switches[i].div_value);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			return table->switches[i].switch_rate;
 		}
 	}
 
+<<<<<<< HEAD
 	if (is_div(table->switch_src_div))
 		if (pwrcal_div_set_ratio(
 			table->switch_src_div,
@@ -50,6 +54,9 @@ unsigned int dfs_set_rate_switch(unsigned int rate_from,
 			goto errorout;
 
 	return table->switches[i - 1].switch_rate;
+=======
+	return table->switches[table->num_of_switches - 1].switch_rate;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 errorout:
 	return 0;
 }
@@ -492,8 +499,13 @@ int dfs_get_target_rate_table(struct dfs_table *dfs,
 {
 	int m, d, i;
 	int num_of_parent;
+<<<<<<< HEAD
 	struct pwrcal_clk *parents[32];
 	unsigned int parents_rate[32];
+=======
+	struct pwrcal_clk *parents[32] = {NULL, };
+	unsigned int parents_rate[32] = {0, };
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	unsigned long long rate;
 	unsigned int src, ratio;
 

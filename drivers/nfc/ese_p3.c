@@ -294,7 +294,10 @@ static int p3_regulator_onoff(struct p3_data *data, int onoff)
 				__func__, rc);
 			goto err_ret;
 		}
+<<<<<<< HEAD
 		msleep(20);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		rc = regulator_disable(data->regulator_vdd_1p8);
 		if (rc) {
@@ -317,6 +320,12 @@ static int p3_power_onoff(struct p3_data *data, int onoff)
 	else if (data->regulator_vdd_1p8)
 		ret = p3_regulator_onoff(data, onoff);
 
+<<<<<<< HEAD
+=======
+	if (onoff)
+		msleep(10);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -435,7 +444,10 @@ static int spip3_open(struct inode *inode, struct file *filp)
 	ret = p3_power_onoff(p3_dev, 1);
 	if (ret < 0)
 		P3_ERR_MSG(" test: failed to turn on LDO()\n");
+<<<<<<< HEAD
 	usleep_range(5000, 5500);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_ESE_SECURE
 	p3_clk_control(p3_dev, true);
@@ -461,6 +473,10 @@ static int spip3_release(struct inode *inode, struct file *filp)
 #ifdef CONFIG_ESE_SECURE
 	p3_clk_control(p3_dev, false);
 	p3_suspend();
+<<<<<<< HEAD
+=======
+	usleep_range(1000, 1000);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #ifdef FEATURE_ESE_WAKELOCK
 	if (wake_lock_active(&p3_dev->ese_lock)) {

@@ -33,6 +33,14 @@
 
 #include "exynos_thermal_common.h"
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_GPU_THERMAL)
+extern int gpu_dvfs_get_max_freq(void);
+extern int gpu_dvfs_get_min_freq(void);
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 unsigned long cpu_max_temp[2];
 
 struct exynos_thermal_zone {
@@ -150,7 +158,13 @@ static int exynos_bind(struct thermal_zone_device *thermal,
 	struct exynos_thermal_zone *th_zone = thermal->devdata;
 	struct thermal_sensor_conf *data = th_zone->sensor_conf;
 	enum thermal_trip_type type;
+<<<<<<< HEAD
 	struct cpufreq_policy policy;
+=======
+#ifdef CONFIG_ARM_EXYNOS_MP_CPUFREQ
+	struct cpufreq_policy policy;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_GPU_THERMAL
 	int gpu_max_freq, gpu_min_freq;
 #endif
@@ -174,6 +188,10 @@ static int exynos_bind(struct thermal_zone_device *thermal,
 	for (i = 0; i < tab_size; i++) {
 		clip_data = (struct freq_clip_table *)&(tab_ptr[i]);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARM_EXYNOS_MP_CPUFREQ
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if(data->d_type == CLUSTER0 || data->d_type == CLUSTER1) {
 			ret = cpufreq_get_policy(&policy, data->d_type);
 			if (ret)
@@ -187,6 +205,10 @@ static int exynos_bind(struct thermal_zone_device *thermal,
 				clip_data->freq_clip_max = policy.min;
 			 }
 		}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_GPU_THERMAL
 		if(data->d_type == GPU) {
@@ -627,6 +649,10 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
 		return;
 	}
 	
+#if defined(CONFIG_GPU_THERMAL) && defined(CONFIG_MALI_DEBUG_KERNEL_SYSFS)
+	gpu_thermal_conf_ptr = NULL;
+#endif
+
 #if defined(CONFIG_GPU_THERMAL) && defined(CONFIG_MALI_DEBUG_KERNEL_SYSFS)
 	gpu_thermal_conf_ptr = NULL;
 #endif

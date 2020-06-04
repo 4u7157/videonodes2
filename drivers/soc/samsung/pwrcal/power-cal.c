@@ -7,6 +7,7 @@
 #include "pwrcal-rae.h"
 #include "pwrcal-asv.h"
 #include <linux/exynos-ss.h>
+<<<<<<< HEAD
 #include <trace/events/exynos.h>
 
 #ifdef CONFIG_PMUCAL_MOD
@@ -15,6 +16,8 @@
 #include "./pmucal_mod/pmucal_cpu.h"
 #include "./pmucal_mod/pmucal_rae.h"
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #define MARGIN_UNIT 6250
 
@@ -190,6 +193,7 @@ int cal_clk_disable(unsigned int id)
 
 int cal_pd_control(unsigned int id, int on)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 	unsigned int index;
 
@@ -203,6 +207,8 @@ int cal_pd_control(unsigned int id, int on)
 	else
 		return pmucal_local_disable(index);
 #else
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct cal_pd *pd;
 	unsigned int index;
 
@@ -220,11 +226,15 @@ int cal_pd_control(unsigned int id, int on)
 		return cal_pd_ops.pd_control(pd, on);
 
 	return -1;
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int cal_pd_status(unsigned int id)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 	unsigned int index;
 
@@ -235,6 +245,8 @@ int cal_pd_status(unsigned int id)
 
 	return pmucal_local_is_enabled(index);
 #else
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct cal_pd *pd;
 	unsigned int index;
 
@@ -252,44 +264,63 @@ int cal_pd_status(unsigned int id)
 		return cal_pd_ops.pd_status(pd);
 
 	return -1;
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 
 
 int cal_pm_enter(int mode)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 	return pmucal_system_enter(mode);
 #else
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (cal_pm_ops.pm_enter)
 		cal_pm_ops.pm_enter(mode);
 
 	return 0;
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int cal_pm_exit(int mode)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 	return pmucal_system_exit(mode);
 #else
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (cal_pm_ops.pm_exit)
 		cal_pm_ops.pm_exit(mode);
 
 	return 0;
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 int cal_pm_earlywakeup(int mode)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 	return pmucal_system_earlywakeup(mode);
 #else
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (cal_pm_ops.pm_earlywakeup)
 		cal_pm_ops.pm_earlywakeup(mode);
 
 	return 0;
+<<<<<<< HEAD
 #endif
 }
 
@@ -324,6 +355,10 @@ int cal_cluster_status(unsigned int cluster)
 	return pmucal_cpu_cluster_is_enabled(cluster);
 }
 #endif
+=======
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 unsigned int cal_dfs_get(char *name)
 {
@@ -364,7 +399,11 @@ int cal_dfs_set_rate(unsigned int id, unsigned long rate)
 	struct vclk *vclk;
 	unsigned long flag;
 	int ret = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CLK
+=======
+#if defined(CONFIG_EXYNOS_SNAPSHOT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *name = "cal_dfs_set_rate";
 #endif
 
@@ -382,7 +421,10 @@ int cal_dfs_set_rate(unsigned int id, unsigned long rate)
 	}
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_clk_in(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (dfs->table->private_trans)
 		ret = dfs->table->private_trans(vclk->vfreq, rate, dfs->table);
@@ -394,11 +436,16 @@ int cal_dfs_set_rate(unsigned int id, unsigned long rate)
 	if (!ret) {
 		vclk->vfreq = rate;
 		exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
+<<<<<<< HEAD
 		trace_exynos_clk_out(vclk, __func__);
 	} else {
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
 		trace_exynos_clk_on(vclk, __func__);
 	}
+=======
+	} else
+		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 out:
 	spin_unlock_irqrestore(dfs->lock, flag);
 	return ret;
@@ -444,7 +491,11 @@ unsigned long cal_dfs_cached_get_rate(unsigned int id)
 	struct vclk *vclk;
 	unsigned long flag;
 	unsigned long ret = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CLK
+=======
+#if defined(CONFIG_EXYNOS_SNAPSHOT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *name = "cal_dfs_get_rate";
 #endif
 
@@ -457,19 +508,28 @@ unsigned long cal_dfs_cached_get_rate(unsigned int id)
 	spin_lock_irqsave(dfs->lock, flag);
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_clk_in(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!vclk->ref_count) {
 		pr_err("%s : %s reference count is zero \n", __func__, vclk->name);
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+<<<<<<< HEAD
 		trace_exynos_clk_on(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		goto out;
 	}
 
 	ret = vclk->vfreq;
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
+<<<<<<< HEAD
 	trace_exynos_clk_out(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 out:
 	spin_unlock_irqrestore(dfs->lock, flag);
 	return ret;
@@ -481,7 +541,11 @@ unsigned long cal_dfs_get_rate(unsigned int id)
 	struct vclk *vclk;
 	unsigned long flag;
 	unsigned long ret = 0;
+<<<<<<< HEAD
 #ifdef CONFIG_EXYNOS_SNAPSHOT_CLK
+=======
+#if defined(CONFIG_EXYNOS_SNAPSHOT)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *name = "cal_dfs_get_rate";
 #endif
 
@@ -494,14 +558,23 @@ unsigned long cal_dfs_get_rate(unsigned int id)
 	spin_lock_irqsave(dfs->lock, flag);
 
 	exynos_ss_clk(vclk, name, ESS_FLAG_IN);
+<<<<<<< HEAD
 	trace_exynos_clk_in(vclk, __func__);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (!vclk->ref_count) {
 		pr_err("%s : %s reference count is zero \n", __func__, vclk->name);
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+<<<<<<< HEAD
 		trace_exynos_clk_on(vclk, __func__);
 		goto out;
 	}
+=======
+		goto out;
+	}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (dfs->table->private_getrate)
 		ret = dfs->table->private_getrate(dfs->table);
 	else
@@ -510,11 +583,16 @@ unsigned long cal_dfs_get_rate(unsigned int id)
 	if (ret > 0) {
 		vclk->vfreq = (unsigned long)ret;
 		exynos_ss_clk(vclk, name, ESS_FLAG_OUT);
+<<<<<<< HEAD
 		trace_exynos_clk_out(vclk, __func__);
 	} else {
 		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
 		trace_exynos_clk_on(vclk, __func__);
 	}
+=======
+	} else
+		exynos_ss_clk(vclk, name, ESS_FLAG_ON);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 out:
 	spin_unlock_irqrestore(dfs->lock, flag);
 	return ret;
@@ -550,6 +628,7 @@ int cal_dfs_get_asv_table(unsigned int id, unsigned int *table)
 	int volt_offset = 0;
 	int org_volt, percent_volt;
 
+<<<<<<< HEAD
 	if (dfsops) {
 		if (dfsops->get_margin_param)
 			volt_offset = dfsops->get_margin_param(id);
@@ -567,6 +646,26 @@ int cal_dfs_get_asv_table(unsigned int id, unsigned int *table)
 			}
 			return num_of_entry;
 		}
+=======
+	if (!dfsops)
+		return 0;
+
+	if (dfsops->get_margin_param)
+		volt_offset = dfsops->get_margin_param(id);
+
+	if (dfsops->get_asv_table) {
+		num_of_entry = dfsops->get_asv_table(table);
+
+		for (i = 0; i < num_of_entry; i++) {
+			org_volt = (int)table[i];
+			percent_volt = set_percent_offset(org_volt);
+			table[i] = (unsigned int)(percent_volt + volt_offset);
+			pr_info("L%2d: %7d uV, percent_offset(%d)-> %7d uV, volt_offset(%d uV)-> %7duV\n",
+						i, org_volt, offset_percent,
+						percent_volt, volt_offset, table[i]);
+		}
+		return num_of_entry;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return 0;
@@ -733,6 +832,7 @@ void cal_asv_set_ssa0(unsigned int id, unsigned int ssa0)
 		cal_asv_ops.set_ssa0(id, ssa0);
 }
 
+<<<<<<< HEAD
 int cal_get_cp_cpu_freq(void)
 {
 	if (cal_asv_ops.get_cp_cpu_freq)
@@ -747,6 +847,11 @@ int __init cal_init(void)
 #ifdef CONFIG_PMUCAL_MOD
 	int ret;
 #endif
+=======
+int cal_init(void)
+{
+	static int pwrcal_vclk_initialized;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (pwrcal_vclk_initialized == 1)
 		return 0;
@@ -765,6 +870,7 @@ int __init cal_init(void)
 #endif
 	}
 
+<<<<<<< HEAD
 #ifdef CONFIG_PMUCAL_MOD
 	ret = pmucal_rae_init();
 	if (ret < 0)
@@ -793,6 +899,16 @@ int __init cal_init(void)
 		if (cal_pd_ops.pd_init())
 			return -1;
 #endif
+=======
+	if (cal_pm_ops.pm_init)
+		cal_pm_ops.pm_init();
+
+	vclk_unused_disable();
+
+	if (cal_pd_ops.pd_init)
+		if (cal_pd_ops.pd_init())
+			return -1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 
 	pwrcal_vclk_initialized = 1;

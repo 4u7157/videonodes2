@@ -468,7 +468,11 @@ static bool s2mu005_chg_init(struct s2mu005_charger_data *charger)
 			charger->dev_id);
 	s2mu005_update_reg(charger->client, 0x59, 0x00, 0x01 << 3);
 	s2mu005_update_reg(charger->client, 0x20, 0x7 << 3, 0x07 << 3);
+<<<<<<< HEAD
 	s2mu005_update_reg(charger->client, 0x7C, 0x00, 0x01);
+=======
+	s2mu005_update_reg(charger->client, 0x7C, 0x01, 0x01);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	s2mu005_update_reg(charger->client, 0x29, 0x00, 0x01 << 7);
 	s2mu005_update_reg(charger->client, 0x13, 0x00, 0x01 << 7);
 	s2mu005_update_reg(charger->client, 0x1A, 0x00, 0x01 << 4);
@@ -1513,11 +1517,23 @@ static int s2mu005_charger_remove(struct platform_device *pdev)
 #if defined CONFIG_PM
 static int s2mu005_charger_suspend(struct device *dev)
 {
+<<<<<<< HEAD
+=======
+	struct s2mu005_charger_data *charger = dev_get_drvdata(dev);
+	cancel_delayed_work_sync(&charger->polling_work);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
 static int s2mu005_charger_resume(struct device *dev)
 {
+<<<<<<< HEAD
+=======
+	struct s2mu005_charger_data *charger = dev_get_drvdata(dev);
+	schedule_delayed_work(&charger->polling_work, 0);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 #else

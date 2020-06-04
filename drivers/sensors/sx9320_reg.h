@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
  * Copyright (C) 2016 Semtech Corporation. All rights reserved.
  *
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -19,6 +20,14 @@
  */
 #ifndef _SX9320_I2C_REG_H_
 #define _SX9320_I2C_REG_H_
+=======
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#ifndef _SX9320_I2C_REG_H_
+#define _SX9320_I2C_REG_H_
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /*
  *  I2C Registers
  */
@@ -98,6 +107,10 @@ enum registers1 {
 	SX9320_WHOAMI_REG = 0xFA,
 	SX9320_REV_REG = 0xFE,
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* IrqStat 0:Inactive 1:Active */
 #define SX9320_IRQSTAT_RESET_FLAG	0x80
 #define SX9320_IRQSTAT_TOUCH_FLAG	0x40
@@ -107,24 +120,45 @@ enum registers1 {
 #define SX9320_IRQSTAT_PROG2_FLAG	0x04
 #define SX9320_IRQSTAT_PROG1_FLAG	0x02
 #define SX9320_IRQSTAT_PROG0_FLAG	0x01
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* CpsStat */
 #define SX9320_STAT0_PROXSTAT_PH3_FLAG  0x08
 #define SX9320_STAT0_PROXSTAT_PH2_FLAG  0x04
 #define SX9320_STAT0_PROXSTAT_PH1_FLAG  0x02
 #define SX9320_STAT0_PROXSTAT_PH0_FLAG  0x01
+<<<<<<< HEAD
 /* SoftReset */
 #define SX9320_SOFTRESET  0xDE
+=======
+
+/* SoftReset */
+#define SX9320_SOFTRESET  0xDE
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* Manual Compensation */
 #define SX9320_STAT2_COMPSTAT_PH3_FLAG 0x08
 #define SX9320_STAT2_COMPSTAT_PH2_FLAG 0x04
 #define SX9320_STAT2_COMPSTAT_PH1_FLAG 0x02
 #define SX9320_STAT2_COMPSTAT_PH0_FLAG 0x01
 #define SX9320_STAT2_COMPSTAT_ALL_FLAG (SX9320_STAT2_COMPSTAT_PH3_FLAG | \
+<<<<<<< HEAD
 										SX9320_STAT2_COMPSTAT_PH2_FLAG | \
 										SX9320_STAT2_COMPSTAT_PH1_FLAG | \
 										SX9320_STAT2_COMPSTAT_PH0_FLAG)
 #define SX9320_SMALL_RANGE_VALUE	26500
 #define SX9320_LARGE_RANGE_VALUE	53000
+=======
+					SX9320_STAT2_COMPSTAT_PH2_FLAG | \
+					SX9320_STAT2_COMPSTAT_PH1_FLAG | \
+					SX9320_STAT2_COMPSTAT_PH0_FLAG)
+
+#define SX9320_SMALL_RANGE_VALUE	26500
+#define SX9320_LARGE_RANGE_VALUE	53000
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* for device tree parse */
 #define SX9320_PHEN		"sx9320,phen"
 #define SX9320_GAIN		"sx9320,gain"
@@ -140,24 +174,41 @@ enum registers1 {
 #define SX9320_AVGTHRESH	"sx9320,avgthresh"
 #define SX9320_DEBOUNCER	"sx9320,debouncer"
 #define SX9320_NORMALTHD	"sx9320,normal_thd"
+<<<<<<< HEAD
 #define SX9320_NORMALTHD_TA		"sx9320,normal_thd_ta"
+=======
+#define SX9320_NORMALTHD_TA	"sx9320,normal_thd_ta"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define SX9320_AFEPH0		"sx9320,afeph0"
 #define SX9320_AFEPH1		"sx9320,afeph1"
 #define SX9320_AFEPH2		"sx9320,afeph2"
 #define SX9320_AFEPH3		"sx9320,afeph3"
 
 #define SX9320_CS2_GND
+<<<<<<< HEAD
 /* #define SX9320_CS0_GND */
+=======
+//#define SX9320_CS0_GND
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct smtc_reg_data {
 	unsigned char reg;
 	unsigned char val;
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define SX9320_PHEN_SELECT 0x02 /* PH3, PH2, PH1, PH0 : 4bits*/
 /*
  * this struct sets each register as a default in case of
  * scan_period, phase, analog gain, sampling_freq, raw_filt, gain, analog_gain,
  * avgposfilt, avgnegfilt, avgthresh, threshold, hysteresis, range.
  */
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct smtc_reg_data setup_reg[] = {
 	{
 		.reg = SX9320_GNRLCTRL0_REG, /* 0 - SCANPERIOD */
@@ -242,7 +293,11 @@ static struct smtc_reg_data setup_reg[] = {
 		.val = 0x08, /* 32 */
 	},
 	{
+<<<<<<< HEAD
 		.reg = SX9320_ADVCTRL0_REG, /* 20 */
+=======
+		.reg = SX9320_ADVCTRL0_REG, //20
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		.val = 0x00,
 	},
 	{
@@ -282,7 +337,11 @@ static struct smtc_reg_data setup_reg[] = {
 		.val = 0x00,
 	},
 	{
+<<<<<<< HEAD
 		.reg = SX9320_ADVCTRL10_REG, /* 30 */
+=======
+		.reg = SX9320_ADVCTRL10_REG,// 30
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		.val = 0x40,
 	},
 	{

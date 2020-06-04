@@ -1,12 +1,20 @@
 /*
  *  drivers/usb/notify/host_notify_class.c
  *
+<<<<<<< HEAD
  * Copyright (C) 2011 Samsung, Inc.
+=======
+ * Copyright (C) 2011-2017 Samsung, Inc.
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * Author: Dongrak Shin <dongrak.shin@samsung.com>
  *
 */
 
+<<<<<<< HEAD
  /* usb notify layer v2.0 */
+=======
+ /* usb notify layer v3.0 */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <linux/module.h>
 #include <linux/types.h>
@@ -16,7 +24,13 @@
 #include <linux/fs.h>
 #include <linux/err.h>
 #include <linux/host_notify.h>
+<<<<<<< HEAD
 #include <linux/usb_notify.h>
+=======
+#if defined(CONFIG_USB_HW_PARAM)
+#include <linux/usb_notify.h>
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct notify_data {
 	struct class *host_notify_class;
@@ -120,7 +134,10 @@ static ssize_t booster_store(
 
 	if (size < strlen(buf))
 		goto error;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	booster = kzalloc(size+1, GFP_KERNEL);
 	if (!booster)
 		goto error;
@@ -184,6 +201,17 @@ int host_state_notify(struct host_notify_dev *ndev, int state)
 		ndev->state = state;
 		if (state != NOTIFY_HOST_NONE)
 			kobject_uevent(&ndev->dev->kobj, KOBJ_CHANGE);
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_USB_HW_PARAM)
+		if (state == NOTIFY_HOST_ADD)
+			inc_hw_param_host(ndev, USB_CCIC_OTG_USE_COUNT);
+		else if (state == NOTIFY_HOST_OVERCURRENT)
+			inc_hw_param_host(ndev, USB_CCIC_OVC_COUNT);
+		else
+			;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return 1;
 	}
 	return 0;
@@ -196,8 +224,12 @@ host_notify_uevent(struct device *dev, struct kobj_uevent_env *env)
 	struct host_notify_dev *ndev = (struct host_notify_dev *)
 		dev_get_drvdata(dev);
 	char *state;
+<<<<<<< HEAD
 	struct otg_notify *o_notify = get_otg_notify();
 	
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (!ndev) {
 		/* this happens when the device is first created */
 		return 0;
@@ -211,8 +243,11 @@ host_notify_uevent(struct device *dev, struct kobj_uevent_env *env)
 		break;
 	case NOTIFY_HOST_OVERCURRENT:
 		state = "OVERCURRENT";
+<<<<<<< HEAD
 		if (o_notify)
 			o_notify->hw_param[USB_CCIC_OVC_COUNT]++;		
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		break;
 	case NOTIFY_HOST_LOWBATT:
 		state = "LOWBATT";

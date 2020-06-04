@@ -230,6 +230,10 @@ struct ffs_data {
 		kuid_t				uid;
 		kgid_t				gid;
 	}				file_perms;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct eventfd_ctx *ffs_eventfd;
 	/*
 	 * The endpoint files, filled by ffs_epfiles_create(),
@@ -347,6 +351,10 @@ struct ffs_io_data {
 
 	struct usb_ep *ep;
 	struct usb_request *req;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct ffs_data *ffs;
 };
 
@@ -779,15 +787,25 @@ static void ffs_user_copy_worker(struct work_struct *work)
 	int ret = io_data->req->status ? io_data->req->status :
 					 io_data->req->actual;
 	bool kiocb_has_eventfd = 0;
+<<<<<<< HEAD
 	
 	if (io_data->kiocb->ki_eventfd)
 		kiocb_has_eventfd = 1;
 
+=======
+
+	if (io_data->kiocb->ki_eventfd)
+		kiocb_has_eventfd = 1;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (io_data->read && ret > 0) {
 		int i;
 		size_t pos = 0;
 		mm_segment_t oldfs = get_fs();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		set_fs(USER_DS);
 		/*
 		 * Since req->length may be bigger than io_data->len (after
@@ -818,6 +836,9 @@ static void ffs_user_copy_worker(struct work_struct *work)
 	if (io_data->ffs->ffs_eventfd && !kiocb_has_eventfd)
        		 eventfd_signal(io_data->ffs->ffs_eventfd, 1);
 
+
+	if (io_data->ffs->ffs_eventfd && !kiocb_has_eventfd)
+       		 eventfd_signal(io_data->ffs->ffs_eventfd, 1);
 
 	usb_ep_free_request(io_data->ep, io_data->req);
 
@@ -973,6 +994,10 @@ static ssize_t ffs_epfile_io(struct file *file, struct ffs_io_data *io_data)
 			io_data->ep = ep->ep;
 			io_data->req = req;
 			io_data->ffs = epfile->ffs;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			req->context  = io_data;
 			req->complete = ffs_epfile_async_io_complete;
 
@@ -1084,7 +1109,11 @@ ffs_epfile_open(struct inode *inode, struct file *file)
 	if (atomic_read(&epfile->ffs->opened) >= epfile->ffs->eps_count + 1) {
 		if (!test_and_set_bit(FFS_FL_CALL_CLOSED_CALLBACK,
 					&epfile->ffs->flags)) {
+<<<<<<< HEAD
 			pr_info("functionfs is ready\n");
+=======
+			pr_info("functionfs is ready add delay \n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			mdelay(20);
 			/* REVISIT: what shall we do if the callback fails? */
 			if (functionfs_ready_callback(epfile->ffs) < 0)
@@ -1579,6 +1608,7 @@ static void ffs_data_closed(struct ffs_data *ffs)
 
 	if (atomic_dec_and_test(&ffs->opened)) {
 		ffs->state = FFS_CLOSING;
+<<<<<<< HEAD
 		/* call closed callback even if all ep is closed */
 		if (test_and_clear_bit(FFS_FL_CALL_CLOSED_CALLBACK, &ffs->flags)) {
 			pr_info("functionfs closed\n");
@@ -1586,6 +1616,15 @@ static void ffs_data_closed(struct ffs_data *ffs)
 			functionfs_closed_callback(ffs);
 		}
 		
+=======
+		/* call closed callback even if only one file is closed */
+		if (test_and_clear_bit(FFS_FL_CALL_CLOSED_CALLBACK, &ffs->flags)) {
+			pr_info("functionfs closed add delay \n");
+			mdelay(20);
+			functionfs_closed_callback(ffs);
+		}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		ffs_data_reset(ffs);
 	}
 
@@ -1623,6 +1662,9 @@ static void ffs_data_clear(struct ffs_data *ffs)
 	if (ffs->epfiles)
 		ffs_epfiles_destroy(ffs->epfiles, ffs->eps_count);
 	
+	if (ffs->ffs_eventfd)
+		eventfd_ctx_put(ffs->ffs_eventfd);
+
 	if (ffs->ffs_eventfd)
 		eventfd_ctx_put(ffs->ffs_eventfd);
 
@@ -2156,7 +2198,11 @@ static int __ffs_data_got_descs(struct ffs_data *ffs,
 	default:
 		goto error;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (flags & FUNCTIONFS_EVENTFD) {
 		if (len < 4)
 			goto error;

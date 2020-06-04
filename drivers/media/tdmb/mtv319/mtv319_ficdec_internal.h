@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
 *
 * File name: mtv319_ficdec_internal.h
 *
@@ -16,6 +17,25 @@
 * GNU General Public License for more details.
 *
 */
+=======
+ *
+ * File name: mtv319_ficdec_internal.h
+ *
+ * Description : RAONTECH TV  FIC Decoder internal header file.
+ *
+ * Copyright (C) (2013, RAONTECH)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation version 2.
+ *
+ * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+ * kind, whether express or implied; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifndef __MTV319_FICDEC_INTERNAL_H__
 #define __MTV319_FICDEC_INTERNAL_H__
@@ -39,6 +59,12 @@
 #define FIC_APP_TYPE    0x10
 #define FIC_DONE        0x11
 #define FIC_CRC_ERR       0x44
+<<<<<<< HEAD
+=======
+#define FIC_SEMI_DONE	0x55
+
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 
 /**************************/
@@ -234,6 +260,7 @@ extern char *EWS_OFFICIAL_ORGANIZATION_TABLE[4];
 /****************************/
 /*   FIC Parser function    */
 /****************************/
+<<<<<<< HEAD
 S32  FIB_Init_Dec(U8 *);
 S32  MCI_SI_DEC(U8);
 S32  SI_LABEL_DEC1(U8);
@@ -243,6 +270,17 @@ S32  CA_DEC(U8);
 S32  RESERVED1(U8);
 S32  RESERVED2(U8);
 S32  RESERVED3(U8);
+=======
+/* S32  FIB_Init_Dec(U8 *); */
+S32  MCI_SI_DEC(U8 fic_cmd);
+S32  SI_LABEL_DEC1(U8 fic_cmd);
+S32  SI_LABEL_DEC2(U8 fic_cmd);
+S32  FIDC_DEC(U8 fic_cmd);
+S32  CA_DEC(U8 fic_cmd);
+S32  RESERVED1(U8 fic_cmd);
+S32  RESERVED2(U8 fic_cmd);
+S32  RESERVED3(U8 fic_cmd);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /*****************************/
 /*  FIG Data Type structure  */

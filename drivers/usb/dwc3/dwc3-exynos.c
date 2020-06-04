@@ -33,6 +33,12 @@
 #include <linux/regulator/consumer.h>
 #include <linux/workqueue.h>
 #include <linux/of_gpio.h>
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TYPEC)
+#include <linux/usb/typec.h>
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include <linux/io.h>
 #include <linux/pinctrl/consumer.h>
@@ -46,12 +52,23 @@
  */
 static const char *dwc3_exynos5_clk_names[] = {"aclk", "aclk_axius", "sclk_ref",
 	"sclk", "oscclk_phy", "phyclock", "pipe_pclk", "aclk_ahb_usblinkh", NULL};
+<<<<<<< HEAD
 static const char *dwc3_exynos8890_clk_names[] = {"aclk", "sclk",
 				"phyclock", "pipe_pclk", NULL};
 static const char *dwc2_exynos8890_clk_names[] = {"aclk", "sclk",
 				"phyclock", "phy_ref", NULL};
 static const char *dwc2_exynos7870_clk_names[] = {"usbdrd20", NULL};
 static const char *dwc2_exynos7570_clk_names[] = {"usbdrd20", NULL};
+=======
+
+static const char *dwc3_exynos8890_clk_names[] = {"aclk", "sclk",
+				"phyclock", "pipe_pclk", NULL};
+
+static const char *dwc2_exynos8890_clk_names[] = {"aclk", "sclk",
+				"phyclock", "phy_ref", NULL};
+
+static const char *dwc2_exynos7870_clk_names[] = {"usbdrd20", NULL};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /**
  * Structures for Samsung Exynos DWC3 glue layer
@@ -67,6 +84,19 @@ struct dwc3_exynos_drvdata {
 	int cpu_type;
 	int ip_type;
 };
+<<<<<<< HEAD
+=======
+
+#if defined(CONFIG_TYPEC)
+struct intf_typec {
+	/* struct mutex lock; */ /* device lock */
+	struct device *dev;
+	struct typec_port *port;
+	struct typec_capability cap;
+	struct typec_partner *partner;
+};
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 struct dwc3_exynos {
 	struct platform_device	*usb2_phy;
@@ -83,6 +113,12 @@ struct dwc3_exynos {
 
 	struct dwc3_exynos_rsw	rsw;
 	const struct dwc3_exynos_drvdata *drv_data;
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_TYPEC)
+	struct intf_typec	*typec;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #ifdef CONFIG_PM_DEVFREQ
 	unsigned int int_min_lock;
@@ -109,14 +145,21 @@ static struct dwc3_exynos_drvdata dwc2_exynos8890 = {
 	.ip_type	= TYPE_USB2HOST,
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct dwc3_exynos_drvdata dwc2_exynos7870 = {
 	.cpu_type	= TYPE_EXYNOS7870,
 };
 
+<<<<<<< HEAD
 static struct dwc3_exynos_drvdata dwc2_exynos7570 = {
 	.cpu_type	= TYPE_EXYNOS7570,
 };
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static const struct of_device_id exynos_dwc3_match[] = {
 	{
 		.compatible = "samsung,exynos5250-dwusb3",
@@ -133,9 +176,12 @@ static const struct of_device_id exynos_dwc3_match[] = {
 	}, {
 		.compatible = "samsung,exynos7870-dwusb2",
 		.data = &dwc2_exynos7870,
+<<<<<<< HEAD
 	}, {
 		.compatible = "samsung,exynos7570-dwusb2",
 		.data = &dwc2_exynos7570,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	},
 	{},
 };
@@ -638,10 +684,13 @@ static int dwc3_exynos_clk_get(struct dwc3_exynos *exynos)
                clk_ids = dwc2_exynos7870_clk_names;
                clk_count = ARRAY_SIZE(dwc2_exynos7870_clk_names);
                break;
+<<<<<<< HEAD
 	case TYPE_EXYNOS7570:
                clk_ids = dwc2_exynos7570_clk_names;
                clk_count = ARRAY_SIZE(dwc2_exynos7570_clk_names);
                break;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	default:
 		dev_err(exynos->dev, "couldn't get clock : unknown cpu type\n");
 		return -EINVAL;
@@ -673,6 +722,9 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
 	struct device		*dev = &pdev->dev;
 	struct device_node	*node = dev->of_node;
 	int			ret;
+#if defined(CONFIG_TYPEC)
+	struct intf_typec	*typec;
+#endif
 
 	exynos = devm_kzalloc(dev, sizeof(*exynos), GFP_KERNEL);
 	if (!exynos)
@@ -690,6 +742,10 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, exynos);
 
 	exynos->dev	= dev;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #if IS_ENABLED(CONFIG_OF)
 	exynos->drv_data = dwc3_exynos_get_driver_data(pdev);
 #endif
@@ -765,6 +821,27 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
 		goto err5;
 	}
 
+#if defined(CONFIG_TYPEC)
+		typec = devm_kzalloc(dev, sizeof(*typec), GFP_KERNEL);
+		if (!typec)
+			return -ENOMEM;
+
+		/* mutex_init(&md05->lock); */
+		typec->dev = dev;
+
+		typec->cap.type = TYPEC_PORT_DRP;
+		typec->cap.revision = USB_TYPEC_REV_1_1;
+		typec->cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
+
+		typec->port = typec_register_port(dev, &typec->cap);
+		if (!typec->port)
+			return -ENODEV;
+
+		typec_set_data_role(typec->port, TYPEC_DEVICE);
+		typec_set_pwr_role(typec->port, TYPEC_SINK);
+		typec_set_pwr_opmode(typec->port, TYPEC_PWR_MODE_USB);
+		exynos->typec = typec;
+#endif
 	return 0;
 
 err5:
@@ -781,7 +858,10 @@ err2:
 	dwc3_exynos_clk_disable(exynos);
 	dwc3_exynos_clk_unprepare(exynos);
 	pm_runtime_set_suspended(&pdev->dev);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return ret;
 }
 
@@ -804,6 +884,14 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
 		pm_runtime_set_suspended(&pdev->dev);
 	}
 	dwc3_exynos_clk_unprepare(exynos);
+<<<<<<< HEAD
+=======
+
+#if defined(CONFIG_TYPEC)
+	typec_unregister_partner(exynos->typec->partner);
+	typec_unregister_port(exynos->typec->port);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	return 0;
 }

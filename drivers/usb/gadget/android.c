@@ -52,6 +52,10 @@
 #include "../function/f_dm.c"
 #include "../function/u_ether.c"
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 MODULE_AUTHOR("Mike Lockwood");
 MODULE_DESCRIPTION("Android Composite USB Driver");
 MODULE_LICENSE("GPL");
@@ -115,10 +119,17 @@ struct android_dev {
 	struct list_head enabled_functions;
 	struct usb_composite_dev *cdev;
 	struct device *dev;
+<<<<<<< HEAD
 #ifndef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 	void (*setup_complete)(struct usb_ep *ep,
 				struct usb_request *req);
 #endif
+=======
+
+	void (*setup_complete)(struct usb_ep *ep,
+				struct usb_request *req);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	bool enabled;
 	int disable_depth;
 	struct mutex mutex;
@@ -131,7 +142,11 @@ struct android_dev {
 #ifndef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
 	int usb210_count;
 	int usb310_count;
+<<<<<<< HEAD
 #endif	
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	char ffs_aliases[256];
 };
 
@@ -155,16 +170,29 @@ static char serial_string[256];
 #endif
 #ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 int g_rndis;
+<<<<<<< HEAD
 
 bool		log_usb=false;
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int is_rndis_use(void)
 {
 	return g_rndis;
 }
 EXPORT_SYMBOL_GPL(is_rndis_use);
 #endif
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
+void set_usb_enumeration_state(int state);
+void set_usb_enable_state(void);
+#endif
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_CCR_PROTOCOL
+#include "../function/u_ccr.c"
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /* String Table */
 static struct usb_string strings_dev[] = {
 	[STRING_MANUFACTURER_IDX].s = manufacturer_string,
@@ -221,6 +249,7 @@ int microusb_get_usb310_count(void)
 EXPORT_SYMBOL(microusb_get_usb310_count);
 #endif
 
+<<<<<<< HEAD
 #ifndef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
 static int usb_enum_state;
 void set_usb_enumeration_state(int state)
@@ -238,6 +267,8 @@ bool get_usb_enumeration_state(void)
 EXPORT_SYMBOL(get_usb_enumeration_state);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void android_work(struct work_struct *data)
 {
 	struct android_dev *dev = container_of(data, struct android_dev, work);
@@ -253,9 +284,36 @@ static void android_work(struct work_struct *data)
 			dev->sw_connected);
 	spin_lock_irqsave(&cdev->lock, flags);
 	if (cdev->config)
+<<<<<<< HEAD
 		uevent_envp = configured;
 	else if (dev->connected != dev->sw_connected)
 		uevent_envp = dev->connected ? connected : disconnected;
+=======
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_CCR_PROTOCOL
+	{
+		if (dev->connected != dev->sw_connected) {
+			uevent_envp = connected;
+			schedule_work(&dev->work);
+		} else {
+#endif
+			uevent_envp = configured;
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_CCR_PROTOCOL
+		}
+	}
+#endif
+	else if (dev->connected != dev->sw_connected) {
+		uevent_envp = dev->connected ? connected : disconnected;
+#ifdef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
+		if (dev->connected) {
+			if (dev->cdev->desc.bcdUSB == 0x310) {
+				set_usb_enumeration_state(0x310);	// Super-Speed	
+			} else {
+				set_usb_enumeration_state(0x210);	// High-Speed
+			}
+		}
+#endif
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	dev->sw_connected = dev->connected;
 	spin_unlock_irqrestore(&cdev->lock, flags);
 
@@ -265,6 +323,7 @@ static void android_work(struct work_struct *data)
 		store_usblog_notify(NOTIFY_USBSTATE, (void *)uevent_envp[0], NULL);
 #endif
 #ifndef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
+<<<<<<< HEAD
 	if(uevent_envp == disconnected)
 		usb_enum_state = 0;
 
@@ -279,6 +338,17 @@ static void android_work(struct work_struct *data)
 		}
 #endif
 			printk(KERN_DEBUG "usb: %s sent uevent %s\n",
+=======
+		if (dev->connected && cdev->config) {
+			if (dev->cdev && (dev->cdev->desc.bcdUSB == 0x310)) {
+				dev->usb310_count++;	// Super-Speed	
+			} else {
+				dev->usb210_count++;	// High-Speed
+			}
+		}
+#endif
+		printk(KERN_DEBUG "usb: %s sent uevent %s\n",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			 __func__, uevent_envp[0]);
 	} else {
 		printk(KERN_DEBUG "usb: %s did not send uevent (%d %d %pK)\n",
@@ -314,7 +384,10 @@ static void android_disable(struct android_dev *dev)
 
 /*-------------------------------------------------------------------------*/
 /* Supported functions initialization */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct functionfs_config {
 	bool opened;
 	bool enabled;
@@ -532,6 +605,10 @@ static struct android_usb_function adb_function = {
 	.bind_config	= adb_function_bind_config,
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void adb_ready_callback(void)
 {
 	struct android_dev *dev = _android_dev;
@@ -814,9 +891,18 @@ rndis_function_bind_config(struct android_usb_function *f,
 		rndis->ethaddr[0], rndis->ethaddr[1], rndis->ethaddr[2],
 		rndis->ethaddr[3], rndis->ethaddr[4], rndis->ethaddr[5]);
 #endif
+<<<<<<< HEAD
 
 	dev = gether_setup_name(c->cdev->gadget, rndis->ethaddr, "rndis");
 
+=======
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
+	dev = gether_setup_name(c->cdev->gadget, rndis->ethaddr, "rndis");
+#else
+	dev = gether_setup_name(c->cdev->gadget, dev_addr, host_addr,
+			rndis->ethaddr, qmult, "rndis");
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (IS_ERR(dev)) {
 		ret = PTR_ERR(dev);
 		pr_err("%s: gether_setup failed\n", __func__);
@@ -984,6 +1070,10 @@ static struct android_usb_function rndis_function = {
 	.attributes	= rndis_function_attributes,
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MAX_LUN_STR_LEN 25
 static char lun_info[MAX_LUN_STR_LEN] = {'\0'};
 struct mass_storage_function_config {
@@ -997,10 +1087,18 @@ static int mass_storage_function_init(struct android_usb_function *f,
 	struct mass_storage_function_config *config;
 	struct fsg_common *common;
 	int err;
+<<<<<<< HEAD
 	config = kzalloc(sizeof(struct mass_storage_function_config),
 								GFP_KERNEL);
 	if (!config)
 			return -ENOMEM;
+=======
+
+	config = kzalloc(sizeof(struct mass_storage_function_config),
+								GFP_KERNEL);
+	if (!config)
+		return -ENOMEM;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	config->fsg.nluns = 1;
 
@@ -1488,6 +1586,12 @@ static struct android_usb_function *supported_functions[] = {
 	&conn_gadget_function,
 #endif
 	&midi_function,
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_CCR_PROTOCOL
+	&ccr_function,
+#endif		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	NULL
 };
 
@@ -1604,6 +1708,7 @@ static int android_enable_function(struct android_dev *dev, char *name)
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 /*  */
 static ssize_t								
@@ -1633,6 +1738,8 @@ static DEVICE_ATTR(iDebugLevel, S_IRUGO | S_IWUSR, NULL, debug_store);
 #endif
 
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 /*-------------------------------------------------------------------------*/
 /* /sys/class/android_usb/android%d/ interface */
 
@@ -1688,7 +1795,11 @@ functions_store(struct device *pdev, struct device_attribute *attr,
 	b = strim(buf);
 
 #ifdef CONFIG_USB_NOTIFY_PROC_LOG
+<<<<<<< HEAD
 	store_usblog_notify(NOTIFY_USBMODE, (void *)b, NULL);
+=======
+		store_usblog_notify(NOTIFY_USBMODE, (void *)b, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 	while (b) {
 		name = strsep(&b, ",");
@@ -1767,6 +1878,10 @@ static ssize_t enable_store(struct device *pdev, struct device_attribute *attr,
 		return -ENODEV;
 
 	mutex_lock(&dev->mutex);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	sscanf(buff, "%d", &enabled);
 	printk(KERN_DEBUG "usb: %s enabled=%d, !dev->enabled=%d\n",
 			__func__, enabled, !dev->enabled);
@@ -1825,6 +1940,12 @@ static ssize_t enable_store(struct device *pdev, struct device_attribute *attr,
 		}
 		android_enable(dev);
 		dev->enabled = true;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_USB_TYPEC_MANAGER_NOTIFIER
+		set_usb_enable_state();
+#endif		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else if (!enabled && dev->enabled) {
 #ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 		/* avoid sending a disconnect switch event
@@ -2013,7 +2134,10 @@ static struct device_attribute *android_usb_attributes[] = {
 	&dev_attr_state,
 #ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 	&dev_attr_bcdUSB,
+<<<<<<< HEAD
 	&dev_attr_iDebugLevel,
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #ifdef CONFIG_USB_LOCK_SUPPORT_FOR_MDM
 	&dev_attr_usb_lock,
@@ -2050,10 +2174,17 @@ static int android_bind(struct usb_composite_dev *cdev)
 	int			id, ret;
 
 	printk(KERN_DEBUG "usb: %s disconnect\n", __func__);
+<<<<<<< HEAD
 #ifndef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
 	/* Save the default handler */
 	dev->setup_complete = cdev->req->complete;
 #endif
+=======
+
+	/* Save the default handler */
+	dev->setup_complete = cdev->req->complete;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/*
 	 * Start disconnected. Userspace will connect the gadget once
 	 * it is done configuring the functions.
@@ -2107,12 +2238,15 @@ static int android_usb_unbind(struct usb_composite_dev *cdev)
 	android_cleanup_functions(dev->functions);
 	return 0;
 }
+<<<<<<< HEAD
 static void android_gadget_complete(struct usb_ep *ep, struct usb_request *req)
 {
 	if(req->status || req->actual != req->length)
 			printk(KERN_DEBUG "usb: %s: %d, %d/%d\n", __func__,
 				req->status, req->actual, req->length);
 }
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 /* HACK: android needs to override setup for accessory to work */
 static int (*composite_setup_func)(struct usb_gadget *gadget, const struct usb_ctrlrequest *c);
@@ -2129,10 +2263,16 @@ android_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *c)
 
 	req->zero = 0;
 	req->length = 0;
+<<<<<<< HEAD
 	gadget->ep0->driver_data = cdev;
 
 	req->complete = android_gadget_complete;
 
+=======
+	req->complete = dev->setup_complete;
+	gadget->ep0->driver_data = cdev;
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	list_for_each_entry(f, &dev->enabled_functions, enabled_list) {
 		if (f->ctrlrequest) {
 			value = f->ctrlrequest(f, cdev, c);
@@ -2145,7 +2285,14 @@ android_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *c)
 	if (value < 0)
 		value = terminal_ctrl_request(cdev, c);
 #endif
+<<<<<<< HEAD
 
+=======
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_CCR_PROTOCOL
+	if (value < 0)
+		value = ccr_ctrl_request(cdev, c);
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Special case the accessory function.
 	 * It needs to handle control requests before it is enabled.
 	 */
@@ -2285,7 +2432,11 @@ static int __init init(void)
 	if (err) {
 		printk(KERN_ERR "usb: %s To create terminal_atttrr is failed\n",
 				__func__);
+<<<<<<< HEAD
 		return err;
+=======
+		goto err_probe;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 #endif
 	err = usb_composite_probe(&android_usb_driver);

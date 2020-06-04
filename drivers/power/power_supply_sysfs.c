@@ -46,12 +46,25 @@ static ssize_t power_supply_show_property(struct device *dev,
 	static char *type_text[] = {
 		"Unknown", "Battery", "UPS", "Mains", "USB",
 		"USB_DCP", "USB_CDP", "USB_ACA", "BMS", "MISC",
+<<<<<<< HEAD
 		"Wireless", "HV_Wireless", "PMA_Wireless", "CARDOCK", "UARTOFF",
 		"OTG", "LAN_HUB", "MHL_500", "MHL_900", "MHL_1500",
 		"MHL_USB", "SMART_OTG", "SMART_NOTG", "POWER_SHARING", "HV_Mains",
 		"HV_Mains_12V", "HV_Prepare_Mains", "HV_ERR", "MHL_USB_100", "MHL_2000",
 		"HV_Unknown", "MDOCK_TA", "HMT_CONNECTED", "HMT_CHARGE", "WIRELESS_PACK",
 		"WIRELESS_PACK_TA"
+=======
+		"Wireless", "HV_Wireless", "PMA_Wireless", "CARDOCK", "UARTOFF", "OTG", "LAN_HUB",
+		"MHL_500", "MHL_900", "MHL_1500", "MHL_USB",
+		"SMART_OTG", "SMART_NOTG", "POWER_SHARING",
+		"HV_Mains", "HV_Mains_12V", "HV_Prepare_Mains", "HV_ERR", "MHL_USB_100", "MHL_2000",
+		"HV_Unknown", "MDOCK_TA", "HMT_CONNECTED", "HMT_CHARGE", 
+		"Wireless_Pack", "Wireless_Pack_TA",
+#if defined(CONFIG_BATTERY_SAMSUNG_V2)
+		"Wireless_Stand", "HV_Wireless_Stand", "PDIC", "HV_Mains_CHG_LIMIT", "HV_QC20", "HV_QC30",
+#endif
+		"POGO", "FACTORY_UART",
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	};
 	static char *status_text[] = {
 		"Unknown", "Charging", "Discharging", "Not charging", "Full"
@@ -171,7 +184,13 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(power_design),
 	POWER_SUPPLY_ATTR(power_now),
 	POWER_SUPPLY_ATTR(power_avg),
+<<<<<<< HEAD
 	POWER_SUPPLY_ATTR(filter_cfg),
+=======
+#if defined(CONFIG_BATTERY_SAMSUNG_V2)
+	POWER_SUPPLY_ATTR(filter_cfg),
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	POWER_SUPPLY_ATTR(charge_full_design),
 	POWER_SUPPLY_ATTR(charge_empty_design),
 	POWER_SUPPLY_ATTR(charge_full),
@@ -226,10 +245,19 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(afc_charger_mode),
 	POWER_SUPPLY_ATTR(usb_hc),
 	POWER_SUPPLY_ATTR(model_name),
+<<<<<<< HEAD
 #if defined(CONFIG_BATTERY_AGE_FORECAST)
 	POWER_SUPPLY_ATTR(update_battery_data),
 #endif
 
+=======
+	POWER_SUPPLY_ATTR(fuelgauge_factory),
+	POWER_SUPPLY_ATTR(current_measure),
+	POWER_SUPPLY_ATTR(factory_voltage_regulation),
+#if !defined(CONFIG_BATTERY_SAMSUNG_V2)
+	POWER_SUPPLY_ATTR(inbat_voltage_fgsrc_switchg),
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 static struct attribute *

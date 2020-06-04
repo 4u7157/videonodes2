@@ -47,9 +47,12 @@ void mbox_set_interrupt(enum mcu_ipc_region id, u32 int_num);
 void mcu_ipc_send_command(enum mcu_ipc_region id, u32 int_num, u16 cmd);
 u32 mbox_get_value(enum mcu_ipc_region id, u32 mbx_num);
 void mbox_set_value(enum mcu_ipc_region id, u32 mbx_num, u32 msg);
+<<<<<<< HEAD
 void mbox_update_value(enum mcu_ipc_region id, u32 mbx_num,
 					u32 msg, u32 mask, u32 pos);
 u32 mbox_extract_value(enum mcu_ipc_region id, u32 mbx_num, u32 mask, u32 pos);
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 void mbox_sw_reset(enum mcu_ipc_region id);
 
 #endif

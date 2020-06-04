@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright (c) 2013-2015 TRUSTONIC LIMITED
+=======
+ * Copyright (c) 2013-2017 TRUSTONIC LIMITED
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
  * All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
@@ -17,6 +21,10 @@
 #include <linux/slab.h>
 #include <linux/device.h>
 #include <linux/debugfs.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #include "main.h"
 #include "fastcall.h"
@@ -71,7 +79,15 @@ static struct logging_ctx {
 	int	thread_err;
 	u16	prev_source;		/* Previous Log source */
 	char	line[LOG_LINE_SIZE];	/* Log Line buffer */
+<<<<<<< HEAD
 	u32	enabled;		/* Log can be disabled via debugfs */
+=======
+#if KERNEL_VERSION(4, 4, 0) > LINUX_VERSION_CODE
+	u32	enabled;		/* Log can be disabled via debugfs */
+#else
+	bool	enabled;		/* Log can be disabled via debugfs */
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	bool	dead;
 } log_ctx;
 
@@ -238,7 +254,11 @@ int mc_logging_init(void)
 
 	INIT_WORK(&log_ctx.work, log_worker);
 	log_ctx.enabled = true;
+<<<<<<< HEAD
 	debugfs_create_bool("swd_debug", 0400, g_ctx.debug_dir,
+=======
+	debugfs_create_bool("swd_debug", 0600, g_ctx.debug_dir,
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			    &log_ctx.enabled);
 	return 0;
 }

@@ -23,7 +23,61 @@
 
 #define BT532_TS_DEVICE		"bt532_ts_device"
 
+<<<<<<< HEAD
 #ifdef CONFIG_SEC_DEBUG_TSP_LOG
+=======
+#ifdef CONFIG_INPUT_TOUCHSCREEN_TCLMV2
+#define TCLM_CONCEPT
+#endif
+
+/* TCLM_CONCEPT */
+#define BT532_TS_NVM_OFFSET_FAC_RESULT			0
+#define BT532_TS_NVM_OFFSET_DISASSEMBLE_COUNT		2
+
+#define BT532_TS_NVM_OFFSET_CAL_COUNT			4
+#define BT532_TS_NVM_OFFSET_TUNE_VERSION			5
+#define BT532_TS_NVM_OFFSET_CAL_POSITION			7
+#define BT532_TS_NVM_OFFSET_HISTORY_QUEUE_COUNT		8
+#define BT532_TS_NVM_OFFSET_HISTORY_QUEUE_LASTP		9
+#define BT532_TS_NVM_OFFSET_HISTORY_QUEUE_ZERO		10
+#define BT532_TS_NVM_OFFSET_HISTORY_QUEUE_SIZE		20
+
+#define BT532_TS_NVM_OFFSET_LENGTH		(BT532_TS_NVM_OFFSET_HISTORY_QUEUE_ZERO + BT532_TS_NVM_OFFSET_HISTORY_QUEUE_SIZE)
+
+#ifdef CONFIG_SEC_DEBUG_TSP_LOG
+#include <linux/sec_debug.h>
+
+#define tsp_debug_dbg(mode, dev, fmt, ...) \
+({ \
+	if (mode) { \
+		dev_dbg(dev, fmt, ## __VA_ARGS__); \
+		sec_debug_tsp_log(fmt, ## __VA_ARGS__); \
+	} \
+	else \
+		dev_dbg(dev, fmt, ## __VA_ARGS__); \
+})
+
+#define tsp_debug_info(mode, dev, fmt, ...) \
+({ \
+	if (mode) { \
+		dev_info(dev, fmt, ## __VA_ARGS__); \
+		sec_debug_tsp_log(fmt, ## __VA_ARGS__); \
+	} \
+	else \
+		dev_info(dev, fmt, ## __VA_ARGS__); \
+})
+
+#define tsp_debug_err(mode, dev, fmt, ...) \
+({ \
+	if (mode) { \
+		dev_err(dev, fmt, ## __VA_ARGS__); \
+		sec_debug_tsp_log(fmt, ## __VA_ARGS__); \
+	} \
+	else \
+		dev_err(dev, fmt, ## __VA_ARGS__); \
+})
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define zinitix_debug_msg(fmt, args...) \
 	do { \
 		if (m_ts_debug_mode){ \
@@ -58,6 +112,13 @@
 	do { \
 		pr_err("bt532_ts : %s " fmt, __func__); \
 	} while (0);
+<<<<<<< HEAD
+=======
+
+#define tsp_debug_dbg(mode, dev, fmt, ...)	dev_dbg(dev, fmt, ## __VA_ARGS__)
+#define tsp_debug_info(mode, dev, fmt, ...)	dev_info(dev, fmt, ## __VA_ARGS__)
+#define tsp_debug_err(mode, dev, fmt, ...)	dev_err(dev, fmt, ## __VA_ARGS__)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif	//CONFIG_SEC_DEBUG_TSP_LOG
 
 struct bt532_ts_platform_data {
@@ -66,9 +127,18 @@ struct bt532_ts_platform_data {
 	u32		gpio_scl;
 	u32		gpio_sda;
 	u32		gpio_ldo_en;
+<<<<<<< HEAD
 	int 		(*tsp_power)(void *data, bool on);
 	u16		x_resolution;
 	u16		y_resolution;
+=======
+	int		(*tsp_power)(void *data, bool on);
+	u16		x_resolution;
+	u16		y_resolution;
+	u8		area_indicator;
+	u8		area_navigation;
+	u8		area_edge;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	u16		page_size;
 	u8		orientation;
 	bool		support_touchkey;
@@ -78,7 +148,11 @@ struct bt532_ts_platform_data {
 	bool		bringup;
 	bool		mis_cal_check;
 	u16 		pat_function;
+<<<<<<< HEAD
 	u16 		afe_base;	
+=======
+	u16 		afe_base;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	const char *project_name;
 	void (*register_cb)(void *);
 
@@ -88,15 +162,22 @@ struct bt532_ts_platform_data {
 	const char *firmware_name;
 	const char *chip_name;
 	struct pinctrl *pinctrl;
+<<<<<<< HEAD
+=======
+	int item_version;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 };
 
 extern struct class *sec_class;
 
 void tsp_charger_infom(bool en);
 
+<<<<<<< HEAD
 #ifdef CONFIG_TRUSTONIC_TRUSTED_UI
 extern void trustedui_mode_on(void);
 extern void trustedui_mode_off(void);
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif /* LINUX_BT532_TS_H */

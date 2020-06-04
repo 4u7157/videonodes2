@@ -46,6 +46,10 @@
 #include <linux/usblog_proc_notify.h>
 #endif
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #define MAX_INST_NAME_LEN        40
 #define BULK_BUFFER_SIZE    16384
 #define ACC_STRING_SIZE     256
@@ -577,12 +581,19 @@ static ssize_t acc_read(struct file *fp, char __user *buf,
 {
 	struct acc_dev *dev = fp->private_data;
 	struct usb_request *req;
+<<<<<<< HEAD
 	ssize_t r = count;
 	unsigned xfer;
 	int len;
 	int ret = 0;
 
 	pr_debug("acc_read(%zu)\n", count);
+=======
+	ssize_t r = count, xfer, len;
+	int ret = 0;
+
+	pr_debug("usb: acc_read(%zu)\n", count);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (dev->disconnected) {
 		pr_debug("acc_read disconnected");
@@ -601,7 +612,11 @@ static ssize_t acc_read(struct file *fp, char __user *buf,
 	}
 
 	len = ALIGN(count, dev->ep_out->maxpacket);
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (dev->rx_done) {
 		// last req cancelled. try to get it.
 		req = dev->rx_req[0];
@@ -618,7 +633,11 @@ requeue_req:
 		r = -EIO;
 		goto done;
 	} else {
+<<<<<<< HEAD
 		pr_debug("rx %p queue\n", req);
+=======
+		pr_debug("rx %pK queue\n", req);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	/* wait for a request to complete */
@@ -641,7 +660,11 @@ copy_data:
 		if (req->actual == 0)
 			goto requeue_req;
 
+<<<<<<< HEAD
 		pr_debug("rx %p %u\n", req, req->actual);
+=======
+		pr_debug("rx %pK %u\n", req, req->actual);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		xfer = (req->actual < count) ? req->actual : count;
 		r = xfer;
 		if (copy_to_user(buf, req->buf, xfer))
@@ -779,7 +802,11 @@ static int acc_open(struct inode *ip, struct file *fp)
 
 static int acc_release(struct inode *ip, struct file *fp)
 {
+<<<<<<< HEAD
 	printk(KERN_INFO "acc_release\n");
+=======
+	printk(KERN_INFO "usb: acc_release\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	WARN_ON(!atomic_xchg(&_acc_dev->open_excl, 0));
 	/* indicate that we are disconnected
@@ -822,6 +849,17 @@ static int acc_hid_probe(struct hid_device *hdev,
 	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
 }
 
+<<<<<<< HEAD
+=======
+static void acc_complete_setup_noop(struct usb_ep *ep, struct usb_request *req)
+{
+	/*
+	 * Default no-op function when nothing needs to be done for the
+	 * setup request
+	 */
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct miscdevice acc_device = {
 	.minor = MISC_DYNAMIC_MINOR,
 	.name = "usb_accessory",
@@ -839,6 +877,7 @@ static struct hid_driver acc_hid_driver = {
 	.probe = acc_hid_probe,
 };
 
+<<<<<<< HEAD
 static void acc_complete_setup_noop(struct usb_ep *ep, struct usb_request *req)
 {
 	/*
@@ -847,6 +886,8 @@ static void acc_complete_setup_noop(struct usb_ep *ep, struct usb_request *req)
 	 */
 }
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 int acc_ctrlrequest(struct usb_composite_dev *cdev,
 				const struct usb_ctrlrequest *ctrl)
 {
@@ -936,7 +977,11 @@ int acc_ctrlrequest(struct usb_composite_dev *cdev,
 			dev->start_requested = 0;
 			dev->audio_mode = 0;
 			strlcpy(dev->manufacturer, "Android", ACC_STRING_SIZE);
+<<<<<<< HEAD
 			strlcpy(dev->model, "Android", ACC_STRING_SIZE);			
+=======
+			strlcpy(dev->model, "Android", ACC_STRING_SIZE);		
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		}
 	}
 
@@ -1081,8 +1126,12 @@ acc_function_unbind(struct usb_configuration *c, struct usb_function *f)
 static void acc_start_work(struct work_struct *data)
 {
 	char *envp[2] = { "ACCESSORY=START", NULL };
+<<<<<<< HEAD
 
 	printk(KERN_INFO "usb: Send uevent, ACCESSORY=START\n");	
+=======
+	printk(KERN_INFO "usb: Send uevent, ACCESSORY=START\n");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	kobject_uevent_env(&acc_device.this_device->kobj, KOBJ_CHANGE, envp);
 #ifdef CONFIG_USB_NOTIFY_PROC_LOG
 	store_usblog_notify(NOTIFY_USBSTATE, (void *)envp[0], NULL);
@@ -1280,10 +1329,18 @@ static int acc_setup(void)
 	INIT_DELAYED_WORK(&dev->start_work, acc_start_work);
 	INIT_WORK(&dev->hid_work, acc_hid_work);
 
+<<<<<<< HEAD
 	ret = misc_register(&acc_device);
 	if (ret)
 		goto err;
 
+=======
+
+	ret = misc_register(&acc_device);
+	if (ret)
+		goto err;
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* _acc_dev must be set before calling usb_gadget_register_driver */
 	_acc_dev = dev;
 

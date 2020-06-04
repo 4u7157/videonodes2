@@ -35,6 +35,11 @@
 #include <linux/sensor/sensors_core.h>
 #include "yas.h"
 
+<<<<<<< HEAD
+=======
+#define YAS_DEFAULT_DELAY          200000000LL
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct i2c_client *this_client;
 
 enum {
@@ -60,12 +65,20 @@ struct yas_state {
 	struct device *yas_device;
 	int poll_delay;
 	int enable;
+<<<<<<< HEAD
 #if defined(CONFIG_SENSORS_YAS_RESET_DEFENCE_CODE)
+=======
+	int reset_flag;	
+#if defined(CONFIG_SENSORS_BHA250_DEFENCE_SW_RESET)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int reset_state;
 #endif
 	int32_t compass_data[3];
 
+<<<<<<< HEAD
 	int reset_flag;
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int position;
 	int16_t m[9];
 };
@@ -84,12 +97,22 @@ static int yas_device_write(int32_t type, uint8_t addr, const uint8_t *buf,
 		int len)
 {
 	uint8_t tmp[2];
+<<<<<<< HEAD
 	if (sizeof(tmp) - 1 < len)
 		return -1;
 	tmp[0] = addr;
 	memcpy(&tmp[1], buf, len);
 	if (i2c_master_send(this_client, tmp, len + 1) < 0)
 		return -1;
+=======
+
+	if (sizeof(tmp) - 1 < len)
+		return -EPERM;
+	tmp[0] = addr;
+	memcpy(&tmp[1], buf, len);
+	if (i2c_master_send(this_client, tmp, len + 1) < 0)
+		return -EPERM;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return 0;
 }
 
@@ -97,6 +120,10 @@ static int yas_device_read(int32_t type, uint8_t addr, uint8_t *buf, int len)
 {
 	struct i2c_msg msg[2];
 	int err;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	msg[0].addr = this_client->addr;
 	msg[0].flags = 0;
 	msg[0].len = 1;
@@ -108,10 +135,15 @@ static int yas_device_read(int32_t type, uint8_t addr, uint8_t *buf, int len)
 
 	err = i2c_transfer(this_client->adapter, msg, 2);
 	if (err != 2) {
+<<<<<<< HEAD
 		dev_err(&this_client->dev,
 				"i2c_transfer() read error: "
 				"slave_addr=%02x, reg_addr=%02x, err=%d\n",
 				this_client->addr, addr, err);
+=======
+		SENSOR_ERR("i2c err(%d) slave_addr=%02x, reg_addr=%02x\n",
+				err, this_client->addr, addr);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return err;
 	}
 	return 0;
@@ -151,7 +183,11 @@ static ssize_t yas_enable_store(struct device *dev,
 		return ret;
 	}
 
+<<<<<<< HEAD
 #if defined(CONFIG_SENSORS_YAS_RESET_DEFENCE_CODE)
+=======
+#if defined(CONFIG_SENSORS_BHA250_DEFENCE_SW_RESET)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->reset_state) {
 		data->enable = enable;
 		return size;
@@ -195,6 +231,7 @@ static ssize_t yas_delay_store(struct device *dev,
 {
 	struct yas_state *data = dev_get_drvdata(dev);
 	int ret, delay;
+<<<<<<< HEAD
 	ret = kstrtoint(buf, 10, &delay);
 	if (ret)
 		return ret;
@@ -205,6 +242,21 @@ static ssize_t yas_delay_store(struct device *dev,
 		delay = 200000000;
 
 #if defined(CONFIG_SENSORS_YAS_RESET_DEFENCE_CODE)
+=======
+
+	ret = kstrtoint(buf, 10, &delay);
+	if (ret)
+		return ret;
+
+	SENSOR_INFO("delay = %d\n", delay);
+
+	if (delay <= 0)
+		return -EINVAL;
+	else if (delay >= YAS_DEFAULT_DELAY)
+		delay = YAS_DEFAULT_DELAY;
+
+#if defined(CONFIG_SENSORS_BHA250_DEFENCE_SW_RESET)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->reset_state) {
 		data->delay = ns_to_ktime(delay);
 		data->poll_delay = delay / NSEC_PER_MSEC;
@@ -213,14 +265,20 @@ static ssize_t yas_delay_store(struct device *dev,
 	}
 #endif
 
+<<<<<<< HEAD
 	SENSOR_INFO("+ mutex_lock\n");
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	mutex_lock(&data->lock);
 	data->delay = ns_to_ktime(delay);
 	data->poll_delay = delay / NSEC_PER_MSEC;
 	data->mag.set_delay(data->poll_delay);
 	mutex_unlock(&data->lock);
+<<<<<<< HEAD
 	SENSOR_INFO("- mutex_unlock\n");
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return size;
 }
 
@@ -257,7 +315,10 @@ static ssize_t yas_self_test_show(struct device *dev,
 	struct yas_state *data = i2c_get_clientdata(this_client);
 	struct yas539_self_test_result r;
 	s8 err[7] = { 0, };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	int ret;
 
 	mutex_lock(&data->lock);
@@ -291,13 +352,18 @@ static ssize_t yas_self_test_show(struct device *dev,
 	if (unlikely(r.xyz[2] < -1000 || r.xyz[2] > 1000))
 		err[6] = -1;
 
+<<<<<<< HEAD
 	pr_info("[SENSOR] %s\n"
 		"[SENSOR] Test1 - err = %d, id = %d\n"
+=======
+	SENSOR_INFO("\n[SENSOR] Test1 - err = %d, id = %d\n"
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		"[SENSOR] Test3 - err = %d\n"
 		"[SENSOR] Test4 - err = %d, offset = %d,%d,%d\n"
 		"[SENSOR] Test5 - err = %d, direction = %d\n"
 		"[SENSOR] Test6 - err = %d, sensitivity = %d,%d,%d\n"
 		"[SENSOR] Test7 - err = %d, offset = %d,%d,%d\n"
+<<<<<<< HEAD
 		"[SENSOR] Test2 - err = %d\n", __func__,
 		err[0], r.id, err[2], err[3], err[4], err[4],
 		err[4], err[4], err[4], err[5],r.sxy1y2[0], r.sxy1y2[1],r.sxy1y2[2],
@@ -312,6 +378,26 @@ exit:
 			err[4], err[4], err[4], err[4],
 			err[5],r.sxy1y2[0], r.sxy1y2[1],r.sxy1y2[2], err[6],
 			r.xyz[0], r.xyz[1], r.xyz[2], err[1]);
+=======
+		"[SENSOR] Test2 - err = %d\n",
+		err[0], r.id,
+		err[2],
+		err[3], err[4], err[4], err[4],
+		err[4], err[4],
+		err[5], r.sxy1y2[0], r.sxy1y2[1], r.sxy1y2[2],
+		err[6], r.xyz[0], r.xyz[1], r.xyz[2],
+		err[1]);
+exit:
+	data->reset_flag = 1;
+
+	return snprintf(buf, PAGE_SIZE,
+		"%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",
+		err[0], r.id,
+		err[2], err[3], err[4], err[4], err[4],
+		err[4], err[4],
+		err[5], r.sxy1y2[0], r.sxy1y2[1], r.sxy1y2[2],
+		err[6], r.xyz[0], r.xyz[1], r.xyz[2], err[1]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static ssize_t yas_self_test_noise_show(struct device *dev,
@@ -328,7 +414,12 @@ static ssize_t yas_self_test_noise_show(struct device *dev,
 	if (ret < 0)
 		return -EFAULT;
 
+<<<<<<< HEAD
 	return sprintf(buf, "%d,%d,%d\n", xyz_raw[0], xyz_raw[1], xyz_raw[2]);
+=======
+	return snprintf(buf, PAGE_SIZE, "%d,%d,%d\n",
+		xyz_raw[0], xyz_raw[1], xyz_raw[2]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static ssize_t yas_self_test_noise_store(struct device *dev,
@@ -347,6 +438,7 @@ static ssize_t yas_self_test_noise_store(struct device *dev,
 	SENSOR_INFO("%u\n", enable);
 	if (enable == 1)
 		data->reset_flag = 1;
+<<<<<<< HEAD
 
 	return size;
 }
@@ -364,6 +456,12 @@ static ssize_t yas_dhr_sensor_info_show(struct device *dev,
 		m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
 }
 
+=======
+		
+	return size;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t yas_static_matrix_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t size)
 {
@@ -401,9 +499,26 @@ static ssize_t yas_static_matrix_show(struct device *dev,
 	return ret;
 }
 
+<<<<<<< HEAD
 
 
 #if defined(CONFIG_SENSORS_YAS_RESET_DEFENCE_CODE)
+=======
+static ssize_t yas_dhr_sensor_info_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	int16_t m[9];
+	struct yas_state *data = dev_get_drvdata(dev);
+
+	data->mag.ext(YAS539_GET_STATIC_MATRIX, m);
+
+	return snprintf(buf, PAGE_SIZE,
+		"\"SI_PARAMETER\":\"%d %d %d %d %d %d %d %d %d\"\n",
+		m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8]);
+}
+
+#if defined(CONFIG_SENSORS_BHA250_DEFENCE_SW_RESET)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static ssize_t yas_power_reset_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -418,7 +533,12 @@ static ssize_t yas_power_reset_show(struct device *dev,
 	}
 	mutex_unlock(&data->enable_lock);
 	SENSOR_INFO("Done!\n");
+<<<<<<< HEAD
 	return sprintf(buf, "1");
+=======
+
+	return snprintf(buf, PAGE_SIZE, "1");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 
 static ssize_t yas_sw_reset_show(struct device *dev,
@@ -446,6 +566,7 @@ static ssize_t yas_sw_reset_show(struct device *dev,
 		data->mag.set_delay(data->poll_delay);
 		hrtimer_start(&data->mag_timer, data->delay,
 						HRTIMER);
+<<<<<<< HEAD
 	} else {
 		data->mag.set_enable(0);
 	}
@@ -453,6 +574,15 @@ static ssize_t yas_sw_reset_show(struct device *dev,
 	mutex_unlock(&data->enable_lock);
 	SENSOR_INFO("Done!\n");
 	return sprintf(buf, "1");
+=======
+	} else
+		data->mag.set_enable(0);
+
+	mutex_unlock(&data->enable_lock);
+	SENSOR_INFO("Done!\n");
+
+	return snprintf(buf, PAGE_SIZE, "1");
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 }
 static DEVICE_ATTR(power_reset, S_IRUSR | S_IRGRP, yas_power_reset_show, NULL);
 static DEVICE_ATTR(sw_reset, S_IRUSR | S_IRGRP, yas_sw_reset_show, NULL);
@@ -462,19 +592,32 @@ static DEVICE_ATTR(name, S_IRUGO, yas_name_show, NULL);
 static DEVICE_ATTR(selftest, S_IRUSR, yas_self_test_show, NULL);
 static DEVICE_ATTR(raw_data, S_IRUGO | S_IWUSR | S_IWGRP,
 	yas_self_test_noise_show, yas_self_test_noise_store);
+<<<<<<< HEAD
 static DEVICE_ATTR(dhr_sensor_info, S_IRUSR | S_IRGRP,
 			yas_dhr_sensor_info_show, NULL);
 static DEVICE_ATTR(matrix, S_IRUGO | S_IWUSR | S_IWGRP,
 	yas_static_matrix_show, yas_static_matrix_store);
+=======
+static DEVICE_ATTR(matrix, S_IRUGO | S_IWUSR | S_IWGRP,
+	yas_static_matrix_show, yas_static_matrix_store);
+static DEVICE_ATTR(dhr_sensor_info, S_IRUSR | S_IRGRP,
+			yas_dhr_sensor_info_show, NULL);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct device_attribute *mag_sensor_attrs[] = {
 	&dev_attr_vendor,
 	&dev_attr_name,
 	&dev_attr_selftest,
 	&dev_attr_raw_data,
+<<<<<<< HEAD
 	&dev_attr_dhr_sensor_info,
 	&dev_attr_matrix,
 #if defined(CONFIG_SENSORS_YAS_RESET_DEFENCE_CODE)
+=======
+	&dev_attr_matrix,
+	&dev_attr_dhr_sensor_info,	
+#if defined(CONFIG_SENSORS_BHA250_DEFENCE_SW_RESET)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	&dev_attr_power_reset,
 	&dev_attr_sw_reset,
 #endif
@@ -499,7 +642,13 @@ static void yas_work_func(struct work_struct *work)
 	struct yas_data mag[1];
 	struct yas_state *data = container_of(work,
 			struct yas_state, mag_work);
+<<<<<<< HEAD
 	int ret, i;
+=======
+	struct timespec ts = ktime_to_timespec(ktime_get_boottime());
+	u64 timestamp = ts.tv_sec * 1000000000ULL + ts.tv_nsec;
+	int ret, i, time_hi, time_lo;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	mutex_lock(&data->lock);
 
@@ -514,6 +663,11 @@ static void yas_work_func(struct work_struct *work)
 
 	mutex_unlock(&data->lock);
 
+<<<<<<< HEAD
+=======
+	time_hi = (int)((timestamp & TIME_HI_MASK) >> TIME_HI_SHIFT);
+	time_lo = (int)(timestamp & TIME_LO_MASK);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_report_rel(data->input, REL_X, data->compass_data[0]);
 	input_report_rel(data->input, REL_Y, data->compass_data[1]);
 	input_report_rel(data->input, REL_Z, data->compass_data[2]);
@@ -521,7 +675,13 @@ static void yas_work_func(struct work_struct *work)
 		SENSOR_INFO("Magnetic cal reset!\n");
 		input_report_rel(data->input, REL_RZ, data->reset_flag);
 		data->reset_flag = 0;
+<<<<<<< HEAD
 	}
+=======
+	}	
+	input_report_rel(data->input, REL_RX, time_hi);
+	input_report_rel(data->input, REL_RY, time_lo);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_sync(data->input);
 
 exit:
@@ -551,6 +711,11 @@ static int yas_input_init(struct yas_state *data)
 	input_set_capability(dev, EV_REL, REL_X);
 	input_set_capability(dev, EV_REL, REL_Y);
 	input_set_capability(dev, EV_REL, REL_Z);
+<<<<<<< HEAD
+=======
+	input_set_capability(dev, EV_REL, REL_RX);
+	input_set_capability(dev, EV_REL, REL_RY);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	input_set_capability(dev, EV_REL, REL_RZ);
 	input_set_drvdata(dev, data);
 
@@ -592,15 +757,30 @@ static int yas_parse_dt(struct device *dev, struct yas_state *data)
 	else
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SENSORS_YAS539_DEFAULT_MATRIX)
+	SENSOR_INFO("yas softiron : default\n");
+#else
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (of_property_read_u32_array(np, "yas,softiron", softiron, 9) < 0)
 		SENSOR_ERR("get softiron(%d) error\n", softiron[0]);
 
 	if (of_property_read_u32_array(np, "yas,softiron_sign", sign, 9) < 0)
 		SENSOR_ERR("get softiron(%d) error\n", sign[0]);
+<<<<<<< HEAD
 
 	for (i = 0; i < 9; i++) {
 		data->m[i] = (softiron[i])*(sign[i]-1);
 		SENSOR_ERR("softiron = %d, sign = %d\n", softiron[i], sign[i]);
+=======
+#endif
+
+	for (i = 0; i < 9; i++) {
+		data->m[i] = (softiron[i]) * (sign[i]-1);
+		SENSOR_INFO("softiron = %5d, sign = %2d (%6d)\n",
+			softiron[i], sign[i], data->m[i]);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	return 0;
@@ -633,7 +813,11 @@ static int yas_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 	data->mag.callback.usleep = yas_usleep;
 	data->mag.callback.current_time = yas_current_time;
 
+<<<<<<< HEAD
 	/* workqueue init */
+=======
+		/* workqueue init */
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	hrtimer_init(&data->mag_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 	data->delay = ns_to_ktime(YAS_DEFAULT_SENSOR_DELAY);
 	data->mag_timer.function = yas_timer_func;
@@ -648,7 +832,11 @@ static int yas_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 	INIT_WORK(&data->mag_work, yas_work_func);
 
 	data->enable = OFF;
+<<<<<<< HEAD
 #if defined(CONFIG_SENSORS_YAS_RESET_DEFENCE_CODE)
+=======
+#if defined(CONFIG_SENSORS_BHA250_DEFENCE_SW_RESET)
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	data->reset_state = OFF;
 #endif
 	mutex_init(&data->lock);
@@ -681,10 +869,17 @@ static int yas_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
 		ret = data->mag.set_position(position);
 		SENSOR_INFO("set_position (%d)\n", position);
 
+<<<<<<< HEAD
 	   	for (i = 0; i < 9; i++)
 			m[i] = data->m[i];
 
 	   	ret = data->mag.ext(YAS539_SET_STATIC_MATRIX, m);
+=======
+		for (i = 0; i < 9; i++)
+			m[i] = data->m[i];
+
+		ret = data->mag.ext(YAS539_SET_STATIC_MATRIX, m);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	} else {
 		SENSOR_ERR("parse_dt error\n");
 		ret = -ENODEV;
@@ -760,6 +955,10 @@ static void yas_shutdown(struct i2c_client *i2c)
 static int yas_suspend(struct device *dev)
 {
 	struct yas_state *data = dev_get_drvdata(dev);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->enable) {
 		hrtimer_cancel(&data->mag_timer);
 		cancel_work_sync(&data->mag_work);
@@ -771,6 +970,10 @@ static int yas_suspend(struct device *dev)
 static int yas_resume(struct device *dev)
 {
 	struct yas_state *data = dev_get_drvdata(dev);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	if (data->enable) {
 		data->mag.set_enable(1);
 		hrtimer_start(&data->mag_timer, data->delay,

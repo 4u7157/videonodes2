@@ -2720,7 +2720,11 @@ reset:
 			}
 		}
 
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		common->fsg = NULL;
 		wake_up(&common->fsg_wait);
 	}
@@ -2803,12 +2807,21 @@ static void fsg_disable(struct usb_function *f)
 	if (fsg->bulk_in_enabled) {
 		usb_ep_disable(fsg->bulk_in);
 		fsg->bulk_in_enabled = 0;
+<<<<<<< HEAD
+=======
+		fsg->bulk_in->driver_data = NULL;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 	if (fsg->bulk_out_enabled) {
 		usb_ep_disable(fsg->bulk_out);
 		fsg->bulk_out_enabled = 0;
+<<<<<<< HEAD
 	}
 	
+=======
+		fsg->bulk_out->driver_data = NULL;
+	}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	fsg->common->new_fsg = NULL;
 	raise_exception(fsg->common, FSG_STATE_CONFIG_CHANGE);
 }
@@ -3632,4 +3645,8 @@ static int fsg_add_lun(struct fsg_common *common,
 	}
 
 	return rc;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos

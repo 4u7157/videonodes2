@@ -33,11 +33,14 @@
 #include <linux/slab.h>
 #include <linux/pm_qos.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_ANDROID
 #include <linux/syscalls.h>
 #include <linux/android_aid.h>
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #ifdef CONFIG_ARM_EXYNOS_MP_CPUFREQ
 #include <soc/samsung/cpufreq.h>
 #endif
@@ -57,6 +60,14 @@ struct cpufreq_interactive_cpuinfo {
 	u64 time_in_idle_timestamp;
 	u64 cputime_speedadj;
 	u64 cputime_speedadj_timestamp;
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_LOAD_BASED_CORE_CURRENT_CAL
+	unsigned int pre_cpu_for_load;
+	u64 curr_speed_total_time;
+	u64 curr_speed_idle_time;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	struct cpufreq_policy *policy;
 	struct cpufreq_frequency_table *freq_table;
 	spinlock_t target_freq_lock; /*protects target freq */
@@ -344,6 +355,19 @@ static u64 update_load(int cpu)
 	else
 		active_time = delta_time - delta_idle;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_LOAD_BASED_CORE_CURRENT_CAL
+	if(pcpu->pre_cpu_for_load == pcpu->policy->cur) {
+		pcpu->curr_speed_total_time += delta_time;
+		pcpu->curr_speed_idle_time += delta_idle;
+	} else {
+		pcpu->curr_speed_total_time = delta_time;
+		pcpu->curr_speed_idle_time = delta_idle;
+	}
+	pcpu->pre_cpu_for_load = pcpu->policy->cur;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	pcpu->cputime_speedadj += active_time * pcpu->policy->cur;
 
 #if defined(CONFIG_CPU_THERMAL_IPA) || defined(CONFIG_EXYNOS_HOTPLUG_GOVERNOR)
@@ -355,6 +379,26 @@ static u64 update_load(int cpu)
 	return now;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_LOAD_BASED_CORE_CURRENT_CAL
+ unsigned int get_cpu_load(int cpu)
+{
+	struct cpufreq_interactive_cpuinfo *pcpu = &per_cpu(cpuinfo, cpu);
+	unsigned int active_time, total_time;
+
+	if((pcpu == NULL) || (pcpu->curr_speed_total_time == 0) 
+			||(pcpu->curr_speed_idle_time > pcpu->curr_speed_total_time)) {
+		return 0;
+	}
+
+	active_time = (unsigned int)(pcpu->curr_speed_total_time - pcpu->curr_speed_idle_time);
+	total_time = (unsigned int)(pcpu->curr_speed_total_time);
+	return (active_time*100) / total_time; 
+}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static void cpufreq_interactive_timer(unsigned long data)
 {
 	u64 now;
@@ -1118,6 +1162,7 @@ static struct attribute_group interactive_attr_group_gov_pol = {
 	.name = "interactive",
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_ANDROID
 static const char *interactive_sysfs[] = {
 	"target_loads",
@@ -1134,6 +1179,8 @@ static const char *interactive_sysfs[] = {
 };
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct attribute_group *get_sysfs_attr(void)
 {
 	if (have_governor_per_policy())
@@ -1156,6 +1203,7 @@ static struct notifier_block cpufreq_interactive_idle_nb = {
 	.notifier_call = cpufreq_interactive_idle_notifier,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_ANDROID
 static void change_sysfs_owner(struct cpufreq_policy *policy)
 {
@@ -1181,6 +1229,8 @@ static void change_sysfs_owner(struct cpufreq_policy *policy)
 static inline void change_sysfs_owner(struct cpufreq_policy *policy) { }
 #endif
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 		unsigned int event)
 {
@@ -1255,8 +1305,11 @@ static int cpufreq_governor_interactive(struct cpufreq_policy *policy,
 			return rc;
 		}
 
+<<<<<<< HEAD
 		change_sysfs_owner(policy);
 
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		if (!policy->governor->initialized) {
 			idle_notifier_register(&cpufreq_interactive_idle_nb);
 			cpufreq_register_notifier(&cpufreq_notifier_block,
@@ -1397,7 +1450,10 @@ unsigned int cpufreq_interactive_get_hispeed_freq(int cpu)
 }
 
 #ifdef CONFIG_ARCH_EXYNOS
+<<<<<<< HEAD
 #ifndef CONFIG_ARM_EXYNOS_SC_CPUFREQ
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int cpufreq_interactive_cluster1_min_qos_handler(struct notifier_block *b,
 						unsigned long val, void *v)
 {
@@ -1405,7 +1461,15 @@ static int cpufreq_interactive_cluster1_min_qos_handler(struct notifier_block *b
 	struct cpufreq_interactive_tunables *tunables;
 	unsigned long flags;
 	int ret = NOTIFY_OK;
+<<<<<<< HEAD
 	int cpu = cpumask_weight(cpu_coregroup_mask(0));
+=======
+#if defined(CONFIG_ARM_EXYNOS_MP_CPUFREQ)
+	int cpu = NR_CLUST0_CPUS;
+#else
+	int cpu = 0;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pcpu = &per_cpu(cpuinfo, cpu);
 
@@ -1452,7 +1516,15 @@ static int cpufreq_interactive_cluster1_max_qos_handler(struct notifier_block *b
 	struct cpufreq_interactive_tunables *tunables;
 	unsigned long flags;
 	int ret = NOTIFY_OK;
+<<<<<<< HEAD
 	int cpu = cpumask_weight(cpu_coregroup_mask(0));
+=======
+#if defined(CONFIG_ARM_EXYNOS_MP_CPUFREQ)
+	int cpu = NR_CLUST0_CPUS;
+#else
+	int cpu = 0;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	pcpu = &per_cpu(cpuinfo, cpu);
 
@@ -1491,8 +1563,13 @@ exit:
 static struct notifier_block cpufreq_interactive_cluster1_max_qos_notifier = {
 	.notifier_call = cpufreq_interactive_cluster1_max_qos_handler,
 };
+<<<<<<< HEAD
 #endif
 
+=======
+
+#ifdef CONFIG_ARM_EXYNOS_MP_CPUFREQ
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int cpufreq_interactive_cluster0_min_qos_handler(struct notifier_block *b,
 						unsigned long val, void *v)
 {
@@ -1518,7 +1595,11 @@ static int cpufreq_interactive_cluster0_min_qos_handler(struct notifier_block *b
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	trace_cpufreq_interactive_cpu_min_qos(0, val, pcpu->policy->cur);
+=======
+	trace_cpufreq_interactive_kfc_min_qos(0, val, pcpu->policy->cur);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (val < pcpu->policy->cur) {
 		tunables = pcpu->policy->governor_data;
@@ -1564,7 +1645,11 @@ static int cpufreq_interactive_cluster0_max_qos_handler(struct notifier_block *b
 		goto exit;
 	}
 
+<<<<<<< HEAD
 	trace_cpufreq_interactive_cpu_max_qos(0, val, pcpu->policy->cur);
+=======
+	trace_cpufreq_interactive_kfc_max_qos(0, val, pcpu->policy->cur);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 	if (val > pcpu->policy->cur) {
 		tunables = pcpu->policy->governor_data;
@@ -1585,6 +1670,10 @@ static struct notifier_block cpufreq_interactive_cluster0_max_qos_notifier = {
 	.notifier_call = cpufreq_interactive_cluster0_max_qos_handler,
 };
 #endif
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static int __init cpufreq_interactive_init(void)
 {
@@ -1602,6 +1691,14 @@ static int __init cpufreq_interactive_init(void)
 		spin_lock_init(&pcpu->load_lock);
 		spin_lock_init(&pcpu->target_freq_lock);
 		init_rwsem(&pcpu->enable_sem);
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_LOAD_BASED_CORE_CURRENT_CAL
+		pcpu->pre_cpu_for_load = 0;
+		pcpu->curr_speed_total_time = 0;
+		pcpu->curr_speed_idle_time = 0;
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	}
 
 	spin_lock_init(&speedchange_cpumask_lock);
@@ -1616,11 +1713,19 @@ static int __init cpufreq_interactive_init(void)
 	kthread_bind(speedchange_task, 0);
 
 #ifdef CONFIG_ARCH_EXYNOS
+<<<<<<< HEAD
 	pm_qos_add_notifier(PM_QOS_CLUSTER0_FREQ_MIN, &cpufreq_interactive_cluster0_min_qos_notifier);
 	pm_qos_add_notifier(PM_QOS_CLUSTER0_FREQ_MAX, &cpufreq_interactive_cluster0_max_qos_notifier);
 #ifndef CONFIG_ARM_EXYNOS_SC_CPUFREQ
 	pm_qos_add_notifier(PM_QOS_CLUSTER1_FREQ_MIN, &cpufreq_interactive_cluster1_min_qos_notifier);
 	pm_qos_add_notifier(PM_QOS_CLUSTER1_FREQ_MAX, &cpufreq_interactive_cluster1_max_qos_notifier);
+=======
+	pm_qos_add_notifier(PM_QOS_CLUSTER1_FREQ_MIN, &cpufreq_interactive_cluster1_min_qos_notifier);
+	pm_qos_add_notifier(PM_QOS_CLUSTER1_FREQ_MAX, &cpufreq_interactive_cluster1_max_qos_notifier);
+#ifdef CONFIG_ARM_EXYNOS_MP_CPUFREQ
+	pm_qos_add_notifier(PM_QOS_CLUSTER0_FREQ_MIN, &cpufreq_interactive_cluster0_min_qos_notifier);
+	pm_qos_add_notifier(PM_QOS_CLUSTER0_FREQ_MAX, &cpufreq_interactive_cluster0_max_qos_notifier);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 #endif
 

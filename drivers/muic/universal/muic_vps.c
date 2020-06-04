@@ -40,6 +40,11 @@
 #include <linux/of_gpio.h>
 #endif /* CONFIG_OF */
 
+<<<<<<< HEAD
+=======
+#include <linux/battery/sec_charging_common.h> 
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #include "muic-internal.h"
 #include "muic_apis.h"
 #include "muic_i2c.h"
@@ -109,6 +114,17 @@ static struct vps_cfg cfg_HMT = {
 	.name = "HMT",
 	.attr = MATTR(VCOM_USB, VB_ANY),
 };
+<<<<<<< HEAD
+=======
+static struct vps_cfg cfg_POGO = {
+	.name = "POGO",
+	.attr = MATTR(VCOM_USB, VB_ANY) | MATTR_SUPP,
+};
+static struct vps_cfg cfg_CHARGING_POGO_VB = {
+	.name = "Charging POGO VB",
+	.attr = MATTR(VCOM_OPEN, VB_ANY) | MATTR_SUPP,
+};
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static struct vps_cfg cfg_AUDIODOCK = {
 	.name = "Audiodock",
 	.attr = MATTR(VCOM_USB, VB_HIGH),
@@ -166,10 +182,13 @@ static struct vps_cfg cfg_UNDEFINED_CHARGING = {
 	.name = "Undefined Charging",
 	.attr = MATTR(VCOM_OPEN, VB_HIGH) | MATTR_SUPP,
 };
+<<<<<<< HEAD
 static struct vps_cfg cfg_TIMEOUT_OPEN = {
 	.name = "DCD Timeout",
 	.attr = MATTR(VCOM_OPEN, VB_HIGH),
 };
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 static struct vps_tbl_data vps_table[] = {
 	[MDEV(OTG)]			= {0x00, "GND",	&cfg_OTG,},
@@ -179,6 +198,10 @@ static struct vps_tbl_data vps_table[] = {
 	[MDEV(VZW_INCOMPATIBLE)]	= {0x0f, "34K",	&cfg_VZW_INCOMPATIBLE,},
 	[MDEV(SMARTDOCK)]		= {0x10, "40.2K",	&cfg_SMARTDOCK,},
 	[MDEV(HMT)]			= {0x11, "49.9K",	&cfg_HMT,},
+<<<<<<< HEAD
+=======
+	[MDEV(POGO)]			= {0x11, "49.9K",	&cfg_POGO,},
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	[MDEV(AUDIODOCK)]		= {0x12, "64.9K",	&cfg_AUDIODOCK,},
 	[MDEV(USB_LANHUB)]		= {0x13, "80.07K",	&cfg_USB_LANHUB,},
 	[MDEV(CHARGING_CABLE)]	= {0x14, "102K",	&cfg_CHARGING_CABLE,},
@@ -195,11 +218,35 @@ static struct vps_tbl_data vps_table[] = {
 	[MDEV(TA)]			= {0x1f, "OPEN",	&cfg_TA,},
 	[MDEV(USB)]			= {0x1f, "OPEN",	&cfg_USB,},
 	[MDEV(CDP)]			= {0x1f, "OPEN",	&cfg_CDP,},
+<<<<<<< HEAD
 	[MDEV(UNDEFINED_CHARGING)]	= {0xfe, "UNDEFINED",	&cfg_UNDEFINED_CHARGING,},
 	[MDEV(TIMEOUT_OPEN)]		= {0x1f, "OPEN",	&cfg_TIMEOUT_OPEN,},
 	[ATTACHED_DEV_NUM]		= {0x00, "NUM", NULL,},
 };
 
+=======
+	[MDEV(CHARGING_POGO_VB)]	= {0x1f, "OPEN",	&cfg_CHARGING_POGO_VB,},
+	[MDEV(UNDEFINED_CHARGING)]	= {0xfe, "UNDEFINED",	&cfg_UNDEFINED_CHARGING,},
+	[ATTACHED_DEV_NUM]		= {0x00, "NUM", NULL,},
+};
+
+bool mdev_undefined_range(int adc)
+{
+	switch (adc) {
+	case ADC_SEND_END ... ADC_RDU_TA:
+	case ADC_AUDIODOCK ... ADC_UNIVERSAL_MMDOCK:
+	case ADC_CEA936ATYPE1_CHG:
+	case ADC_DESKDOCK ... ADC_CEA936ATYPE2_CHG:
+	case ADC_AUDIOMODE_W_REMOTE:
+		return true;
+	default:
+		break;
+	}
+
+	return false;
+}
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 struct vps_tbl_data * mdev_to_vps(muic_attached_dev_t mdev)
 {
 	if (mdev >= ATTACHED_DEV_NUM) {
@@ -293,7 +340,15 @@ static bool vps_is_1k_mhl_cable(vps_data_t *pmsr)
 
 static bool vps_is_adc(vps_data_t *pmsr, struct vps_tbl_data *pvps)
 {
+<<<<<<< HEAD
 	if (pmsr->t.adc == pvps->adc)
+=======
+#if defined(CONFIG_MUIC_UNIVERSAL_SM5705)
+	if (pmsr->s.adc == pvps->adc)
+#else
+	if (pmsr->t.adc == pvps->adc)
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return true;
 
 	 return false;
@@ -303,8 +358,16 @@ static bool vps_is_adc(vps_data_t *pmsr, struct vps_tbl_data *pvps)
 static bool vps_is_vbvolt(vps_data_t *pmsr, struct vps_tbl_data *pvps)
 {
 	int attr = pvps->cfg->attr;
+<<<<<<< HEAD
 
 	if (pmsr->t.vbvolt == MATTR_TO_VBUS(attr))
+=======
+#if defined(CONFIG_MUIC_UNIVERSAL_SM5705)
+	if (pmsr->s.vbvolt == MATTR_TO_VBUS(attr))
+#else
+	if (pmsr->t.vbvolt == MATTR_TO_VBUS(attr))
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		return true;
 
 	if (MATTR_TO_VBUS(attr) == VB_ANY)
@@ -331,10 +394,22 @@ int resolve_twin_mdev(int mdev, bool vbus)
 int resolve_dev_based_on_adc_chgtype(muic_data_t *pmuic, vps_data_t *pmsr)
 {
 	int dev_type;
+<<<<<<< HEAD
 
 	pr_info("%s: adc=%02x, chgtyp=%02x\n",__func__, pmsr->t.adc, pmsr->t.chgtyp);
 
 	switch(pmsr->t.adc){
+=======
+#if defined(CONFIG_MUIC_UNIVERSAL_SM5705)
+	pr_info("%s: adc=%02x, chgtyp=%02x\n",__func__, pmsr->s.adc, pmsr->t.chgtyp);
+
+	switch(pmsr->s.adc){
+#else
+	pr_info("%s: adc=%02x, chgtyp=%02x\n",__func__, pmsr->t.adc, pmsr->t.chgtyp);
+
+	switch(pmsr->t.adc){
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	case ADC_OPEN:
 		if(pmsr->t.chgtyp == CHGTYP_DEDICATED_CHARGER)
 			dev_type = ATTACHED_DEV_TA_MUIC;
@@ -423,7 +498,15 @@ int vps_find_attached_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, int *pi
 	}
 
 	if (mdev == ATTACHED_DEV_NUM) {
+<<<<<<< HEAD
 		if (pmsr->t.vbvolt == VB_HIGH) {
+=======
+#if defined(CONFIG_MUIC_UNIVERSAL_SM5705)
+		if (pmsr->s.vbvolt == VB_HIGH) {
+#else
+		if (pmsr->t.vbvolt == VB_HIGH) {
+#endif
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			new_dev = ATTACHED_DEV_UNDEFINED_CHARGING_MUIC;
 			pr_info("%s:%s unsupported ID + VB\n", MUIC_DEV_NAME, __func__);
 		}
@@ -530,6 +613,10 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 	int intr = MUIC_INTR_DETACH;
 	int vbvolt = 0, adc = 0;
 	int twin_mdev = 0;
+<<<<<<< HEAD
+=======
+	union power_supply_propval wcvalue;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 #if defined(CONFIG_MUIC_UNIVERSAL_SM5504)
 	new_dev = pmuic->vps.t.attached_dev;
@@ -546,6 +633,46 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 	adc = pmuic->vps.s.adc;
 	vbvolt = pmuic->vps.s.vbvolt;
 
+<<<<<<< HEAD
+=======
+	psy_do_property("pogo", get, POWER_SUPPLY_PROP_ONLINE, wcvalue);
+
+	pr_info("%s:%s wcvalue: %d\n", MUIC_DEV_NAME, __func__, wcvalue.intval);
+
+#ifdef CONFIG_MUIC_POGO
+	/* Check Undefined range */
+	if (pmuic->undefined_range && wcvalue.intval) {
+		pr_info("%s:%s adc:%02x\n", MUIC_DEV_NAME, __func__, pmuic->vps.s.adc);
+
+		if (mdev_undefined_range(pmuic->vps.s.adc)) {
+			pr_info("%s:%s undefined range detect\n",
+				MUIC_DEV_NAME, __func__);
+
+			*pintr = intr = MUIC_INTR_ATTACH;
+			*pdev = new_dev = ATTACHED_DEV_UNDEFINED_RANGE_MUIC;
+			return 0;
+		}
+
+		if (pmuic->vps.s.adc == ADC_OPEN) {
+			pr_info("%s:%s Charging pogo detect\n", MUIC_DEV_NAME, __func__);
+
+			*pintr = intr = MUIC_INTR_ATTACH;
+			*pdev = new_dev = ATTACHED_DEV_CHARGING_POGO_VB_MUIC;
+			return 0;
+		}
+	} else if (pmuic->attached_dev == ATTACHED_DEV_CHARGING_POGO_VB_MUIC) {
+		pr_info("%s:%s Charging pogo detached\n", MUIC_DEV_NAME, __func__);
+
+		BCD_rescan_incomplete_insertion(pmuic, pmuic->is_rescanned);
+		pmuic->is_dcdtmr_intr = true;
+		pmuic->is_rescanned = true;
+
+		*pintr = intr = MUIC_INTR_DETACH;
+		return 0;
+	}
+#endif
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	/* Attached */
 	switch (val1) {
 	case DEV_TYPE1_CDP:
@@ -613,6 +740,10 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 
 		if (val3 & DEV_TYPE3_NO_STD_CHG) {
 			new_dev = ATTACHED_DEV_USB_MUIC;
+<<<<<<< HEAD
+=======
+			pmuic->is_dcdtmr_intr = true;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			pr_info("%s : TYPE3 DCD_OUT_TIMEOUT DETECTED\n", MUIC_DEV_NAME);
 
 		} else {
@@ -646,6 +777,7 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 			pr_info("%s : LANHUB DETECTED\n", MUIC_DEV_NAME);
 			break;
 
+<<<<<<< HEAD
 		case ADC_CEA936ATYPE1_CHG : /* 200k ohm */
 			if (!vbvolt)
 				break;
@@ -662,6 +794,29 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 			intr = MUIC_INTR_ATTACH;
 			pr_info("%s : TYPE2 CHARGER DETECTED(%d)\n", MUIC_DEV_NAME, new_dev);
 
+=======
+		case ADC_CEA936ATYPE1_CHG : /*200k ohm */
+		{
+			int rescanned_dev;
+
+			if (!vbvolt)
+				break;
+
+			/* For LG USB cable which has 219k ohm ID */
+			rescanned_dev = do_BCD_rescan(pmuic);
+
+			if (rescanned_dev > 0) {
+				pr_info("%s : TYPE1 CHARGER DETECTED(USB)\n", MUIC_DEV_NAME);
+				intr = MUIC_INTR_ATTACH;
+				new_dev = rescanned_dev;
+			}
+			break;
+		}
+		case ADC_CEA936ATYPE2_CHG:
+			intr = MUIC_INTR_ATTACH;
+			new_dev = ATTACHED_DEV_TA_MUIC;
+			pr_info("%s : TYPE1/2 CHARGER DETECTED(TA)\n", MUIC_DEV_NAME);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			break;
 		case ADC_JIG_USB_OFF: /* 255k */
 			if (!vbvolt) break;
@@ -721,6 +876,7 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 				new_dev = ATTACHED_DEV_UNKNOWN_MUIC;
 				intr = MUIC_INTR_DETACH;
 				pr_info("%s : ADC OPEN DETECTED\n", MUIC_DEV_NAME);
+<<<<<<< HEAD
 
 				break;
 			}
@@ -752,6 +908,10 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 #endif
 			break;
 
+=======
+			}
+			break;
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		case ADC_UNIVERSAL_MMDOCK:
 			intr = MUIC_INTR_ATTACH;
 			new_dev = ATTACHED_DEV_UNIVERSAL_MMDOCK_MUIC;
@@ -770,10 +930,17 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 			pr_info("%s : ADC INCOMPATIBLE_VZW DETECTED\n", MUIC_DEV_NAME);
 			break;
 
+<<<<<<< HEAD
 		case ADC_HMT:
 			new_dev = ATTACHED_DEV_HMT_MUIC;
 			intr = MUIC_INTR_ATTACH;
 			pr_info("%s : ADC HMT DETECTED\n", MUIC_DEV_NAME);
+=======
+		case ADC_POGO:
+			new_dev = ATTACHED_DEV_POGO_MUIC;
+			intr = MUIC_INTR_ATTACH;
+			pr_info("%s : ADC POGO DETECTED\n", MUIC_DEV_NAME);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 			break;
 
 		default:
@@ -798,12 +965,16 @@ static int resolve_dedicated_dev(muic_data_t *pmuic, muic_attached_dev_t *pdev, 
 			pr_info("%s:Supported twin mdev-> %d\n", __func__, twin_mdev);
 		} else
 			pr_info("%s:Supported.\n", __func__);
+<<<<<<< HEAD
 	} else if (vbvolt && pmuic->undefined_range && (adc != ADC_OPEN)
 			&& (intr == MUIC_INTR_ATTACH)) {
 		/* for water proof project */
 		new_dev = ATTACHED_DEV_UNDEFINED_RANGE_MUIC;
 		pr_info("%s:Unsupported->UNDEFINED_RANGE\n", __func__);
 	} else if (vbvolt && (intr == MUIC_INTR_ATTACH)) {
+=======
+	} else if(vbvolt && (intr == MUIC_INTR_ATTACH)) {
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		new_dev = ATTACHED_DEV_UNDEFINED_CHARGING_MUIC;
 		pr_info("%s:Unsupported->UNDEFINED_CHARGING\n", __func__);
 	} else {

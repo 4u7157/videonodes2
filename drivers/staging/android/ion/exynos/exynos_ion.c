@@ -349,6 +349,10 @@ DECLARE_EXYNOS_ION_RESERVED_REGION("exynos8890-ion,", vframe);
 DECLARE_EXYNOS_ION_RESERVED_REGION("exynos8890-ion,", vscaler);
 DECLARE_EXYNOS_ION_RESERVED_REGION("exynos8890-ion,", gpu_crc);
 DECLARE_EXYNOS_ION_RESERVED_REGION("exynos8890-ion,", gpu_buffer);
+<<<<<<< HEAD
+=======
+DECLARE_EXYNOS_ION_RESERVED_REGION("exynos8890-ion,", secure_camera);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 
 int ion_exynos_contig_heap_info(int region_id, phys_addr_t *phys, size_t *size)
 {
@@ -498,6 +502,31 @@ err:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+static int ion_system_heap_size_notifier(struct notifier_block *nb,
+					 unsigned long action, void *data)
+{
+	show_ion_system_heap_size((struct seq_file *)data);
+	return 0;
+}
+
+static struct notifier_block ion_system_heap_nb = {
+	.notifier_call = ion_system_heap_size_notifier,
+};
+
+static int ion_system_heap_pool_size_notifier(struct notifier_block *nb,
+					      unsigned long action, void *data)
+{
+	show_ion_system_heap_pool_size((struct seq_file *)data);
+	return 0;
+}
+
+static struct notifier_block ion_system_heap_pool_nb = {
+	.notifier_call = ion_system_heap_pool_size_notifier,
+};
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int __init exynos_ion_probe(struct platform_device *pdev)
 {
 	int ret;
@@ -514,6 +543,12 @@ static int __init exynos_ion_probe(struct platform_device *pdev)
 	if (ret)
 		return ret;
 
+<<<<<<< HEAD
+=======
+	show_mem_extra_notifier_register(&ion_system_heap_nb);
+	show_mem_extra_notifier_register(&ion_system_heap_pool_nb);
+	
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 	return exynos_ion_populate_heaps(pdev, ion_exynos);
 }
 

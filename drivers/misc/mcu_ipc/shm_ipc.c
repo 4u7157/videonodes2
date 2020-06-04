@@ -163,9 +163,14 @@ static int __init modem_if_reserved_mem_setup(struct reserved_mem *remem)
 
    return 0;
 }
+<<<<<<< HEAD
 RESERVEDMEM_OF_DECLARE(modem_if, "exynos,modem_if", modem_if_reserved_mem_setup);
 
 #if !defined (CONFIG_SOC_EXYNOS7570)
+=======
+RESERVEDMEM_OF_DECLARE(modem_if, "exynos7870,modem_if", modem_if_reserved_mem_setup);
+
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 static int __init deliver_cp_reserved_mem_setup(struct reserved_mem *remem)
 {
    pdata.p_sysram_addr = remem->base;
@@ -176,9 +181,13 @@ static int __init deliver_cp_reserved_mem_setup(struct reserved_mem *remem)
 
    return 0;
 }
+<<<<<<< HEAD
 RESERVEDMEM_OF_DECLARE(deliver_cp, "exynos,deliver_cp", deliver_cp_reserved_mem_setup);
 #endif
 
+=======
+RESERVEDMEM_OF_DECLARE(deliver_cp, "exynos7870,deliver_cp", deliver_cp_reserved_mem_setup);
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 #endif
 
 static int shm_probe(struct platform_device *pdev)
@@ -221,7 +230,10 @@ static const struct of_device_id exynos_shm_dt_match[] = {
 		{ .compatible = "samsung,exynos7580-shm_ipc", },
 		{ .compatible = "samsung,exynos8890-shm_ipc", },
 		{ .compatible = "samsung,exynos7870-shm_ipc", },
+<<<<<<< HEAD
 		{ .compatible = "samsung,exynos-shm_ipc", },
+=======
+>>>>>>> 6e0bf6af... a6 without drivers/media/platform/exynos
 		{},
 };
 MODULE_DEVICE_TABLE(of, exynos_shm_dt_match);
